@@ -3,6 +3,11 @@
 import GameEngine from 'lance/GameEngine';
 import SimplePhysicsEngine from 'lance/physics/SimplePhysicsEngine';
 import PlayerAvatar from './PlayerAvatar';
+import TwoVector from 'lance/serialize/TwoVector';
+
+const STEP = 5;
+const WIDTH = 400;
+const HEIGHT = 400;
 
 export default class MyGameEngine extends GameEngine {
 
@@ -20,9 +25,23 @@ export default class MyGameEngine extends GameEngine {
         super.start();
 
         this.worldSettings = {
-            width: 400,
-            height: 400
+            width: WIDTH,
+            height: HEIGHT
         };
+    }
+
+    initGame() {
+        // create the player object
+        this.addObjectToWorld(
+            new PlayerAvatar(
+                this,
+                null,
+                {
+                    position: new TwoVector(WIDTH / 2, HEIGHT / 2),
+                    playerId: 1
+                }
+            )
+        );
     }
 
     processInput(inputData, playerId) {
@@ -30,17 +49,17 @@ export default class MyGameEngine extends GameEngine {
         super.processInput(inputData, playerId);
 
         // get the player's primary object
-        let player = this.world.getPlayerObject(playerId);
+        let player = this.world.queryObject({ playerId });
         if (player) {
             console.log(`player ${playerId} pressed ${inputData.input}`);
             if (inputData.input === 'up') {
-                player.isMovingUp = true;
+                player.position.y -= STEP;
             } else if (inputData.input === 'down') {
-                player.isMovingDown = true;
+                player.position.y += STEP;
             } else if (inputData.input === 'right') {
-                player.isRotatingRight = true;
+                player.position.x += STEP;
             } else if (inputData.input === 'left') {
-                player.isRotatingLeft = true;
+                player.position.x -= STEP;
             } else if (inputData.input === 'space') {
                 this.fire(player, inputData.messageIndex);
                 this.emit('fire');

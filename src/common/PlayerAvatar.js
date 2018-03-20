@@ -12,6 +12,16 @@ export default class PlayerAvatar extends DynamicObject {
 
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
+        if (props && props.playerId) {
+            this.playerId = props.playerId;
+        }
         this.class = PlayerAvatar;
     };
+
+    onAddToWorld(gameEngine) {
+        if (gameEngine.renderer) {
+            gameEngine.renderer.addSprite(this, 'player');
+        }
+    }
+
 }
