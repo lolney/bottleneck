@@ -21,22 +21,14 @@ export default class PlayerAvatar extends DynamicObject {
 
     onAddToWorld(gameEngine) {
         if (gameEngine.renderer) {
-            let actor = new PlayerActor();
-            let sprite = actor.sprite;
-            sprite.position.set(this.position.x, this.position.y);
-            gameEngine.renderer.sprites[this.id] = sprite;
-            gameEngine.renderer.layer1.addChild(sprite);
+            this.actor = new PlayerActor(this, gameEngine.renderer);
         }
     }
 
     onRemoveFromWorld(gameEngine) {
         console.log(`removing player ${this.id}`)
         if (gameEngine.renderer) {
-            let sprite = gameEngine.renderer.sprites[this.id];
-            if (sprite) {
-                sprite.destroy();
-                delete gameEngine.renderer.sprites[this.id];
-            }
+            this.actor.destroy(this.id, gameEngine.renderer);
         }
     }
 

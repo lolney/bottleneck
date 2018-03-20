@@ -33,7 +33,7 @@ export default class MyRenderer extends Renderer {
                 .load(() => {
                     console.log(`PIXI has loaded assets`);
                     this.isReady = true;
-                    this.gameEngine.emit('renderer.ready');
+                    this.gameEngine.emit('renderer.ready'); // TODO: client needs to listen for this?
                     resolve();
                 });
         });
