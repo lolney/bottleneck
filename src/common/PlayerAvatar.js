@@ -1,6 +1,7 @@
 'use strict';
 
 import DynamicObject from 'lance/serialize/DynamicObject';
+import PlayerActor from '../client/PlayerActor.js';
 
 export default class PlayerAvatar extends DynamicObject {
 
@@ -20,7 +21,22 @@ export default class PlayerAvatar extends DynamicObject {
 
     onAddToWorld(gameEngine) {
         if (gameEngine.renderer) {
-            gameEngine.renderer.addSprite(this, 'player');
+            let actor = new PlayerActor();
+            let sprite = actor.sprite;
+            sprite.position.set(this.position.x, this.position.y);
+            gameEngine.renderer.sprites[this.id] = sprite;
+            gameEngine.renderer.layer1.addChild(sprite);
+        }
+    }
+
+    onRemoveFromWorld(gameEngine) {
+        console.log(`removing player ${this.id}`)
+        if (gameEngine.renderer) {
+            let sprite = gameEngine.renderer.sprites[this.id];
+            if (sprite) {
+                sprite.destroy();
+                delete gameEngine.renderer.sprites[this.id];
+            }
         }
     }
 

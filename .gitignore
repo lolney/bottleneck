@@ -7,3 +7,5 @@ npm-debug.log
 *.trace
 
 package-lock\.json
+
+notes\.txt

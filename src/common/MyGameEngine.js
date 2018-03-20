@@ -25,20 +25,21 @@ export default class MyGameEngine extends GameEngine {
         super.start();
 
         this.worldSettings = {
+            worldWrap: true,
             width: WIDTH,
             height: HEIGHT
         };
     }
 
-    initGame() {
-        // create the player object
+    makePlayer(playerId) {
+        console.log(`adding player ${playerId}`);
         this.addObjectToWorld(
             new PlayerAvatar(
                 this,
                 null,
                 {
                     position: new TwoVector(WIDTH / 2, HEIGHT / 2),
-                    playerId: 1
+                    playerId: playerId
                 }
             )
         );
@@ -51,7 +52,7 @@ export default class MyGameEngine extends GameEngine {
         // get the player's primary object
         let player = this.world.queryObject({ playerId });
         if (player) {
-            console.log(`player ${playerId} pressed ${inputData.input}`);
+            this.trace.info(() => `player ${playerId} pressed ${inputData.input}`);
             if (inputData.input === 'up') {
                 player.position.y -= STEP;
             } else if (inputData.input === 'down') {
