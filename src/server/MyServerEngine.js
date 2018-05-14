@@ -15,11 +15,15 @@ export default class MyServerEngine extends ServerEngine {
 
     onPlayerConnected(socket) {
         super.onPlayerConnected(socket);
+        this.gameEngine.makePlayer(socket.playerId);
     }
 
     onPlayerDisconnected(socketId, playerId) {
         super.onPlayerDisconnected(socketId, playerId);
-
-        delete this.gameEngine.world.objects[playerId];
+        console.log(`removing player ${playerId}`);
+        let playerObjects = this.gameEngine.world.queryObjects({ playerId: playerId });
+        playerObjects.forEach(obj => {
+            this.gameEngine.removeObjectFromWorld(obj.id);
+        });
     }
 }
