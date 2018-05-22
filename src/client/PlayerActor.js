@@ -8,10 +8,17 @@ export default class PlayerActor {
     constructor(player, renderer) {
         PIXI = require('pixi.js');
         // Create the sprite
-        this.sprite = new PIXI.Container();
-        this.sprite.position.set(player.position.x, player.position.y);
-        let playerSprite = new PIXI.Sprite(PIXI.loader.resources.player.texture);
-        this.sprite.addChild(playerSprite);
+        let frames = [];
+
+        for (let i = 0; i < 3; i++) {
+            frames.push(PIXI.Texture.fromFrame(i));
+        }
+
+        this.sprite = new PIXI.extras.AnimatedSprite(frames);
+
+        this.sprite.x = player.position.x;
+        this.sprite.y = player.position.y;
+        this.sprite.animationSpeed = 0.25;
 
         // Store in the renderer and in PIXI's renderer
         renderer.sprites[player.id] = this.sprite;

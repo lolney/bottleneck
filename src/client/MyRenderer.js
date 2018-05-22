@@ -7,7 +7,7 @@ export default class MyRenderer extends Renderer {
 
     get ASSETPATHS() {
         return {
-            player: 'assets/sprites/rightWalk2.png',
+            player: 'assets/sprites/walking.json',
         };
     }
 
@@ -49,6 +49,7 @@ export default class MyRenderer extends Renderer {
         for (let objId of Object.keys(this.sprites)) {
             let objData = this.gameEngine.world.objects[objId];
             let sprite = this.sprites[objId];
+            sprite.play();
             if (objData) {
                 sprite.x = objData.position.x;
                 sprite.y = objData.position.y;
