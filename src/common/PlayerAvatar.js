@@ -25,11 +25,6 @@ export default class PlayerAvatar extends DynamicObject {
         }
     }
 
-    //toggleAnimate(gameEngine)
-      //  if (gameEngine.renderer) {
-
-       // }
-
     onRemoveFromWorld(gameEngine) {
         console.log(`removing player ${this.id}`)
         if (gameEngine.renderer) {

@@ -55,24 +55,12 @@ export default class MyGameEngine extends GameEngine {
             this.trace.info(() => `player ${playerId} pressed ${inputData.input}`);
             if (inputData.input === 'up') {
                 player.position.y -= STEP;
-                if (player.actor) {
-                    player.actor.animate = true;
-                }
             } else if (inputData.input === 'down') {
                 player.position.y += STEP;
-                if (player.actor) {
-                    player.actor.animate = true;
-                }
             } else if (inputData.input === 'right') {
                 player.position.x += STEP;
-                if (player.actor) {
-                    player.actor.animate = true;
-                }
             } else if (inputData.input === 'left') {
                 player.position.x -= STEP;
-                if (player.actor) {
-                    player.actor.animate = true;
-                }
             } else if (inputData.input === 'space') {
                 this.fire(player, inputData.messageIndex);
                 this.emit('fire');
