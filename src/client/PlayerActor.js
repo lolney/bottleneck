@@ -18,6 +18,11 @@ export default class PlayerActor {
 
         this.sprite.x = player.position.x;
         this.sprite.y = player.position.y;
+
+        this.last_position = [player.position.x, player.position.y];
+
+
+        this.animate = false;
         this.sprite.animationSpeed = 0.25;
 
         // Store in the renderer and in PIXI's renderer

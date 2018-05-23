@@ -49,10 +49,23 @@ export default class MyRenderer extends Renderer {
         for (let objId of Object.keys(this.sprites)) {
             let objData = this.gameEngine.world.objects[objId];
             let sprite = this.sprites[objId];
-            sprite.play();
+            if (objData.actor.animate == true)  {
+                    sprite.play();
+                    console.log('hello');
+
+                }
+            if ((objData.actor.last_position[0] == objData.position.x) && (objData.actor.last_position[1] == objData.position.y)) {
+                objData.actor.animate = false;
+                sprite.gotoAndStop(0);
+
+
+            }
+            //sprite.play();
             if (objData) {
                 sprite.x = objData.position.x;
                 sprite.y = objData.position.y;
+                objData.actor.last_position = [objData.position.x, objData.position.y];
+
             }
         }
         this.renderer.render(this.layer1);
