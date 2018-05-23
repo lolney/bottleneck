@@ -23,7 +23,7 @@ module.exports = {
                 ],
                 loader: 'babel-loader',
                 query: {
-                    presets: ['babel-preset-es2015'].map(require.resolve)
+                    presets: ['babel-preset-es2017'].map(require.resolve)
                 }
             }
         ]

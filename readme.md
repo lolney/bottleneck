@@ -5,4 +5,9 @@ npm run-script build
 npm start
 ```
 
+Running tests:
+```
+npm test
+```
+
 Demo at scripting-rpg.herokuapp.com
