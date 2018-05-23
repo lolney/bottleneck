@@ -26,7 +26,7 @@ export default class PlayerAvatar extends DynamicObject {
     }
 
     onRemoveFromWorld(gameEngine) {
-        console.log(`removing player ${this.id}`)
+        console.log(`removing player ${this.id}`);
         if (gameEngine.renderer) {
             this.actor.destroy(this.id, gameEngine.renderer);
         }

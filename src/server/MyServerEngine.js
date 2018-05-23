@@ -1,7 +1,6 @@
 'use strict';
 
 import ServerEngine from 'lance/ServerEngine';
-import PlayerAvatar from '../common/PlayerAvatar';
 
 export default class MyServerEngine extends ServerEngine {
 
@@ -22,7 +21,7 @@ export default class MyServerEngine extends ServerEngine {
         super.onPlayerDisconnected(socketId, playerId);
         console.log(`removing player ${playerId}`);
         let playerObjects = this.gameEngine.world.queryObjects({ playerId: playerId });
-        playerObjects.forEach(obj => {
+        playerObjects.forEach((obj) => {
             this.gameEngine.removeObjectFromWorld(obj.id);
         });
     }

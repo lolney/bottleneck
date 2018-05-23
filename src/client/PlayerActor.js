@@ -1,6 +1,6 @@
 let PIXI = null;
 
-/** 
+/**
  * Handles renderer-specific details for player
  */
 export default class PlayerActor {
