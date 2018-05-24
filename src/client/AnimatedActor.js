@@ -15,6 +15,8 @@ export default class AnimatedActor {
         }
 
         this.sprite = new PIXI.extras.AnimatedSprite(frames);
+        this.sprite.anchor.set(0.5,0.5);
+
 
         this.sprite.x = avatar.position.x;
         this.sprite.y = avatar.position.y;
