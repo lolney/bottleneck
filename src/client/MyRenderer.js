@@ -21,6 +21,10 @@ export default class MyRenderer extends Renderer {
 
     init() {
         console.log(`init renderer`);
+
+        this.viewportWidth = window.innerWidth;
+        this.viewportHeight = window.innerHeight;
+
         this.layer1 = new PIXI.Container();
         // this.stage = new PIXI.Container();
 
@@ -53,12 +57,12 @@ export default class MyRenderer extends Renderer {
     var app = this.renderer;
     document.body.appendChild(app.view);
 
-    var texture = PIXI.Texture.fromImage('/assets/space3.png');
+    var texture = PIXI.Texture.fromImage('/assets/grass.jpg');
 
     var tilingSprite = new PIXI.extras.TilingSprite(
         texture,
-        800,
-        800
+        this.viewportWidth,
+        this.viewportHeight
     );
     this.layer1.addChild(tilingSprite);
 
