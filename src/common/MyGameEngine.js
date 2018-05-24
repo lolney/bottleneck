@@ -25,7 +25,6 @@ export default class MyGameEngine extends GameEngine {
     start() {
 
         super.start();
-        this.makeTrees();
 
         this.worldSettings = {
             worldWrap: true,

@@ -10,6 +10,7 @@ export default class MyServerEngine extends ServerEngine {
 
     start() {
         super.start();
+        this.gameEngine.makeTrees();
     }
 
     onPlayerConnected(socket) {
