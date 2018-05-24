@@ -9,6 +9,7 @@ export default class MyRenderer extends Renderer {
         return {
             player: 'assets/sprites/walking.json',
             tree: 'assets/sprites/Rock1.png',
+            background: '/assets/grass.jpg',
         };
     }
 
@@ -54,17 +55,17 @@ export default class MyRenderer extends Renderer {
 
     setupStage() {
 
-    var app = this.renderer;
-    document.body.appendChild(app.view);
+        let app = this.renderer;
+        document.body.appendChild(app.view);
 
-    var texture = PIXI.Texture.fromImage('/assets/grass.jpg');
+        let texture = PIXI.loader.resources.background.texture;
 
-    var tilingSprite = new PIXI.extras.TilingSprite(
-        texture,
-        this.viewportWidth,
-        this.viewportHeight
-    );
-    this.layer1.addChild(tilingSprite);
+        let tilingSprite = new PIXI.extras.TilingSprite(
+            texture,
+            this.viewportWidth,
+            this.viewportHeight
+        );
+        this.layer1.addChild(tilingSprite);
 
     }
 

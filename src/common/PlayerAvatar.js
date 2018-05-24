@@ -20,6 +20,7 @@ export default class PlayerAvatar extends DynamicObject {
     };
 
     onAddToWorld(gameEngine) {
+        console.log(`adding player ${this.id}`);
         if (gameEngine.renderer) {
             this.actor = new AnimatedActor(this, gameEngine.renderer);
         }

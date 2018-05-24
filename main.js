@@ -9,9 +9,9 @@ const INDEX = path.join(__dirname, './index.html');
 
 // define routes and socket
 const server = express();
-server.get('/', function(req, res) { res.sendFile(INDEX); });
+server.get('/', function (req, res) { res.sendFile(INDEX); });
 server.use('/', express.static(path.join(__dirname, '.')));
-let requestHandler = server.listen(PORT, () => console.log(`Listening on ${ PORT }`));
+let requestHandler = server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 const io = socketIO(requestHandler);
 
 // Game Server
@@ -21,7 +21,7 @@ import Trace from 'lance/lib/Trace';
 
 // Game Instances
 const gameEngine = new MyGameEngine({ traceLevel: Trace.TRACE_NONE });
-const serverEngine = new MyServerEngine(io, gameEngine, { debug: {}, updateRate: 6 });
+const serverEngine = new MyServerEngine(io, gameEngine, { debug: {}, updateRate: 6, timeoutInterval: 0 });
 
 // start the game
 serverEngine.start();

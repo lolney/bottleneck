@@ -67,7 +67,7 @@ export default class MyGameEngine extends GameEngine {
         super.processInput(inputData, playerId);
 
         // get the player's primary object
-        let player = this.world.queryObject({ playerId });
+        let player = this.world.queryObject({ playerId: playerId });
         if (player) {
             this.trace.info(() => `player ${playerId} pressed ${inputData.input}`);
             if (inputData.input === 'up') {
@@ -78,9 +78,6 @@ export default class MyGameEngine extends GameEngine {
                 player.position.x += STEP;
             } else if (inputData.input === 'left') {
                 player.position.x -= STEP;
-            } else if (inputData.input === 'space') {
-                this.fire(player, inputData.messageIndex);
-                this.emit('fire');
             }
         }
     }
