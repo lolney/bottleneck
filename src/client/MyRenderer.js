@@ -8,7 +8,7 @@ export default class MyRenderer extends Renderer {
     get ASSETPATHS() {
         return {
             player: 'assets/sprites/walking.json',
-            //background: 'assets/space3.png',
+            tree: 'assets/sprites/Rock1.png',
         };
     }
 
@@ -76,7 +76,8 @@ export default class MyRenderer extends Renderer {
             let sprite = this.sprites[objId];
 
             if (objData) {
-                objData.actor.handleDraw(objData.position);
+                if (objData.actor.handleDraw)
+                    objData.actor.handleDraw(objData.position);
                 sprite.x = objData.position.x;
                 sprite.y = objData.position.y;
             }

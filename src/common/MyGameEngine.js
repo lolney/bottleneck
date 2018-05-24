@@ -3,6 +3,7 @@
 import GameEngine from 'lance/GameEngine';
 import SimplePhysicsEngine from 'lance/physics/SimplePhysicsEngine';
 import PlayerAvatar from './PlayerAvatar';
+import Avatar from './Avatar';
 import TwoVector from 'lance/serialize/TwoVector';
 
 const STEP = 5;
@@ -18,17 +19,34 @@ export default class MyGameEngine extends GameEngine {
 
     registerClasses(serializer) {
         serializer.registerClass(PlayerAvatar);
+        serializer.registerClass(Avatar);
     }
 
     start() {
 
         super.start();
+        this.makeTrees();
 
         this.worldSettings = {
             worldWrap: true,
             width: WIDTH,
             height: HEIGHT
         };
+    }
+
+    makeTrees() {
+        for (let i = 0; i < 10; i++) {
+            this.addObjectToWorld(
+                new Avatar(
+                    this,
+                    null,
+                    {
+                        position: new TwoVector(Math.random() * WIDTH, Math.random() * HEIGHT),
+                        objectType: 'tree',
+                    }
+                )
+            );
+        }
     }
 
     makePlayer(playerId) {

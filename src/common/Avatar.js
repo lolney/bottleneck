@@ -1,32 +1,31 @@
 'use strict';
 
 import DynamicObject from 'lance/serialize/DynamicObject';
-import AnimatedActor from '../client/AnimatedActor.js';
+import Serializer from 'lance/serialize/Serializer';
+import StaticActor from '../client/StaticActor.js';
 
-export default class PlayerAvatar extends DynamicObject {
+export default class Avatar extends DynamicObject {
 
     static get netScheme() {
         return Object.assign({
-            // add serializable properties here
+            objectType: { type: Serializer.TYPES.STRING },
         }, super.netScheme);
     }
 
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
-        if (props && props.playerId) {
-            this.playerId = props.playerId;
-        }
-        this.class = PlayerAvatar;
+        if (props && props.objectType)
+            this.objectType = props.objectType;
+        this.class = Avatar;
     };
 
     onAddToWorld(gameEngine) {
         if (gameEngine.renderer) {
-            this.actor = new AnimatedActor(this, gameEngine.renderer);
+            this.actor = new StaticActor(this, gameEngine.renderer, this.objectType);
         }
     }
 
     onRemoveFromWorld(gameEngine) {
-        console.log(`removing player ${this.id}`);
         if (gameEngine.renderer) {
             this.actor.destroy(this.id, gameEngine.renderer);
         }
