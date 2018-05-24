@@ -8,6 +8,7 @@ export default class MyRenderer extends Renderer {
     get ASSETPATHS() {
         return {
             player: 'assets/sprites/walking.json',
+            //background: 'assets/space3.png',
         };
     }
 
@@ -21,6 +22,8 @@ export default class MyRenderer extends Renderer {
     init() {
         console.log(`init renderer`);
         this.layer1 = new PIXI.Container();
+        // this.stage = new PIXI.Container();
+
         this.attachRenderer();
 
         return new Promise((resolve, reject) => {
@@ -33,6 +36,7 @@ export default class MyRenderer extends Renderer {
                 .load(() => {
                     console.log(`PIXI has loaded assets`);
                     this.isReady = true;
+                    this.setupStage();
                     this.gameEngine.emit('renderer.ready'); // TODO: client needs to listen for this?
                     resolve();
                 });
@@ -43,6 +47,23 @@ export default class MyRenderer extends Renderer {
         this.renderer = PIXI.autoDetectRenderer(this.viewportWidth, this.viewportHeight);
         document.body.querySelector('.pixiContainer').appendChild(this.renderer.view);
     }
+
+    setupStage() {
+
+    var app = this.renderer;
+    document.body.appendChild(app.view);
+
+    var texture = PIXI.Texture.fromImage('/assets/space3.png');
+
+    var tilingSprite = new PIXI.extras.TilingSprite(
+        texture,
+        800,
+        800
+    );
+    this.layer1.addChild(tilingSprite);
+
+    }
+
 
     draw(t, dt) {
         super.draw(t, dt);
@@ -57,6 +78,9 @@ export default class MyRenderer extends Renderer {
             }
         }
         this.renderer.render(this.layer1);
+        // this.renderer.render(this.stage);
+
+
     }
 
 }
