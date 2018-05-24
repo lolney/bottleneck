@@ -1,6 +1,9 @@
 import querystring from 'query-string';
 import MyClientEngine from '../client/MyClientEngine';
 import MyGameEngine from '../common/MyGameEngine';
+
+import createApp from "../react-app/app.jsx";
+
 const qsOptions = querystring.parse(location.search);
 
 // default options, overwritten by query-string options
@@ -22,4 +25,7 @@ let options = Object.assign(defaults, qsOptions);
 const gameEngine = new MyGameEngine(options);
 const clientEngine = new MyClientEngine(gameEngine, options);
 
-document.addEventListener('DOMContentLoaded', function(e) { clientEngine.start(); });
+document.addEventListener('DOMContentLoaded', function (e) { clientEngine.start(); });
+
+// Create the react app
+createApp();

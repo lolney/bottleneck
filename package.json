@@ -15,6 +15,9 @@
     "lance-gg": "^2.0.5",
     "pixi.js": "^4.7.1",
     "query-string": "^4.2.3",
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
+    "react-modal": "^3.4.4",
     "socket.io": "^1.4.8",
     "webpack": "^3.8.1"
   },
@@ -22,6 +25,7 @@
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-es2017": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
     "babel-register": "^6.26.0",
     "babelify": "^7.3.0",
     "eslint": "^3.16.1",

@@ -25,7 +25,15 @@ module.exports = {
                 query: {
                     presets: ['babel-preset-es2017'].map(require.resolve)
                 }
-            }
+            },
+            {
+                test: /\.jsx$/,
+                include: [
+                    path.resolve(__dirname, 'src/react-app'),
+                ],
+                loader: 'babel-loader',
+                options: { presets: ['react'] }
+            },
         ]
     },
     resolve: {
