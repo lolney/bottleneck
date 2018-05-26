@@ -29,7 +29,7 @@ class App extends React.Component {
 
     openModal() {
         this.setState({ modalIsOpen: true });
-        this.setState({ title: "Pending" });
+        this.setState({ title: "ending" });
         fetch("http://localhost:3000/problem/1")
             .then(res => {
                 console.log(res);
@@ -43,7 +43,7 @@ class App extends React.Component {
 
     afterOpenModal() {
         // references are now sync'd and can be accessed.
-        this.subtitle.style.color = '#f00';
+        //this.subtitle.style.color = '#f00';
     }
 
     closeModal() {
@@ -62,16 +62,26 @@ class App extends React.Component {
                     contentLabel={this.title}
                 >
 
-                    <h2 ref={subtitle => this.subtitle = subtitle}>{this.state.title}</h2>
-                    <button onClick={this.closeModal}>close</button>
-                    <div>I am a modal</div>
-                    <form>
-                        <input />
-                        <button>tab navigation</button>
-                        <button>stays</button>
-                        <button>inside</button>
-                        <button>the modal</button>
-                    </form>
+                    <div className="wrapper">
+                        <header className="header">Header: Fixed height</header>
+                        <section className="content">
+                            <div className="row-1">
+                                <sidebar-1 className="sidebar-1"></sidebar-1>
+                                <sidebar-2 className="sidebar-2"></sidebar-2>
+                                <main className="main"></main>
+                                <aside className="caption-first">Caption First</aside>
+                                <aside className="caption-second">Caption Second</aside>
+                            </div>
+                            <div className="row-2">
+                                <sidebar-1 className="sidebar-1"></sidebar-1>
+                                <sidebar-2 className="sidebar-2"></sidebar-2>
+                                <main className="main"></main>
+                                <img src="https://source.unsplash.com/random" className="image-first"></img>
+                                <img src="https://source.unsplash.com/random" className="image-second"></img>
+                            </div>
+                        </section>
+                        <footer className="footer">Footer: Fixed height</footer>
+                    </div>
                 </Modal>
             </div>
         );
