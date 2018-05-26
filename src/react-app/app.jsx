@@ -18,7 +18,8 @@ class App extends React.Component {
         super();
 
         this.state = {
-            modalIsOpen: false
+            modalIsOpen: false,
+            title: "No problem yet"
         };
         console.log("run");
         this.openModal = this.openModal.bind(this);
@@ -28,6 +29,16 @@ class App extends React.Component {
 
     openModal() {
         this.setState({ modalIsOpen: true });
+        this.setState({ title: "Pending" });
+        fetch("http://localhost:3000/problem/1")
+            .then(res => {
+                console.log(res);
+                if (res.status == 200) {
+                    res.json().then(json => {
+                        this.setState({ title: json.title });
+                    });
+                }
+            });
     }
 
     afterOpenModal() {
@@ -48,10 +59,10 @@ class App extends React.Component {
                     onAfterOpen={this.afterOpenModal}
                     onRequestClose={this.closeModal}
                     style={customStyles}
-                    contentLabel="Example Modal"
+                    contentLabel={this.title}
                 >
 
-                    <h2 ref={subtitle => this.subtitle = subtitle}>Hello</h2>
+                    <h2 ref={subtitle => this.subtitle = subtitle}>{this.state.title}</h2>
                     <button onClick={this.closeModal}>close</button>
                     <div>I am a modal</div>
                     <form>
