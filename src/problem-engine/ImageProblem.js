@@ -22,6 +22,14 @@ export default class ImageProblem {
         return ImageProblem.genImage(this.original);
     }
 
+    getTitle() {
+        return "Title";
+    }
+
+    getDescription() {
+        return "This is the description";
+    }
+
     static genImage(generator) {
         return Jimp.read('blank.bmp').then((image) => {
 

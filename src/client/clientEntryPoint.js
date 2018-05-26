@@ -26,6 +26,11 @@ const gameEngine = new MyGameEngine(options);
 const clientEngine = new MyClientEngine(gameEngine, options);
 
 document.addEventListener('DOMContentLoaded', function (e) { clientEngine.start(); });
+window.setTimeout(() => {
+    clientEngine.socket.on('problem', (data) => {
+        console.log('display', data);
+    });
+}, 1000);
 
 // Create the react app
 createApp();

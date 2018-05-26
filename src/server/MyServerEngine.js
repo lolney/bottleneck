@@ -14,7 +14,7 @@ export default class MyServerEngine extends ServerEngine {
     start() {
         super.start();
         this.gameEngine.makeTrees();
-        this.gameEngine.on('collisionStart', MyServerEngine.collision);
+        this.gameEngine.on('collisionStart', MyServerEngine.collision.bind(this));
         this.socketsMap = {};
     }
 
@@ -28,7 +28,7 @@ export default class MyServerEngine extends ServerEngine {
 
         console.log('Emitting problem:display event: ', player.playerId);
 
-        Controller.putProblem(socketsMap[player.playerId], player.playerId);
+        Controller.pushProblem(this.socketsMap[player.playerId], player.playerId);
         problemEmitter.emit('display', player.playerId);
     }
 
