@@ -2,13 +2,13 @@ body{
   margin: 0;
 } 
 .wrapper{
-  min-height: 100vh;
+  max-height: 100vh;
   background: #ccc;
   display: flex;
   flex-direction: column;
 }
 .header, .footer{
-  height: 50px;
+  min-height: 10vh;
   background: #666;
   color: #fff;
   text-align: center;
@@ -23,12 +23,14 @@ body{
 .row-1{
   display: flex;
   flex:0.1;
-  height: 5%;
+  min-height: 5vh;
+  vertical-align: middle;
+
 }
 .row-2{
   display: flex;
   flex:3;
-  height: 95%;
+  min-height: 75vh;
 }
 .main{
   flex: 1;
@@ -53,6 +55,7 @@ body{
   text-align: center;
   padding-bottom: 5px;
 
+
 }
 .caption-second{ 
   width: 49%;
@@ -60,6 +63,7 @@ body{
   background: #ddd;
   text-align: center;
   padding-bottom: 5px;
+
 
 }
 
