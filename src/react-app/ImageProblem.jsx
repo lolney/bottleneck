@@ -22,12 +22,12 @@ export default class ImageProblem extends React.Component {
                         <sidebar-1 className="sidebar-1"></sidebar-1>
                         <sidebar-2 className="sidebar-2"></sidebar-2>
                         <main className="main"></main>
-                        <img src="https://source.unsplash.com/random" className="image-first"></img>
-                        <img src="https://source.unsplash.com/random" className="image-second"></img>
+                        <img src={this.props.problem.original} className="image-first"></img>
+                        <img src={this.props.problem.target} className="image-second"></img>
                     </div>
-                </section>
+                </section >
                 <footer className="footer">{this.props.problem.description}</footer>
-            </div>
+            </div >
         )
     }
 

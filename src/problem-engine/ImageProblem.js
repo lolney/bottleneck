@@ -22,6 +22,12 @@ export default class ImageProblem {
         return ImageProblem.genImage(this.original);
     }
 
+    getBase64(cb) {
+        return this.getImage().then((image) => {
+            image.getBase64(Jimp.MIME_BMP, cb);
+        });
+    }
+
     getTitle() {
         return 'Title';
     }

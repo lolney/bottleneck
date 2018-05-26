@@ -1,6 +1,5 @@
 import ImageProblem from '../problem-engine/ImageProblem';
 import EventEmitter from 'events';
-//import { rendered } from '../react-app/ImageProblem.jsx';
 
 export class ProblemEmitter extends EventEmitter { }
 export const problemEmitter = new ProblemEmitter();
@@ -42,13 +41,15 @@ export default class Controller {
         // TODO: look up problem for this object in the DB
         let problem = new ImageProblem();
         // TODO: send react component instead
-        socket.emit('problem',
-            {
-                title: problem.getTitle(),
-                description: problem.getDescription(),/*
-                original: rendered(),
-                target: rendered(),*/
-            }
-        );
+        problem.getBase64((err, buffer) => {
+            socket.emit('problem',
+                {
+                    title: problem.getTitle(),
+                    description: problem.getDescription(),
+                    original: buffer,
+                    target: buffer,
+                }
+            );
+        });
     }
 }
