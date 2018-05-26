@@ -19,6 +19,7 @@
     "react-dom": "^16.4.0",
     "react-modal": "^3.4.4",
     "socket.io": "^1.4.8",
+    "style-loader": "^0.21.0",
     "webpack": "^3.8.1"
   },
   "devDependencies": {

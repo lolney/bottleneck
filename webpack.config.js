@@ -9,7 +9,7 @@ module.exports = {
     },
     module: {
         loaders: [
-            { test: /\.css$/, loader: 'style!css' },
+            { test: /\.css$/, loader: 'style-loader!css-loader' },
             {
                 test: /\.scss$/,
                 loaders: ['style-loader', 'raw-loader', 'sass-loader']
@@ -37,6 +37,6 @@ module.exports = {
         ]
     },
     resolve: {
-        alias: { lance: path.resolve(__dirname, 'node_modules/lance-gg/src/') }
+        alias: { lance: path.resolve(__dirname, 'node_modules/lance-gg/src/') } 
     }
 };
