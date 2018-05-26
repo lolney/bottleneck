@@ -1,5 +1,6 @@
 import ImageProblem from '../problem-engine/ImageProblem';
 import EventEmitter from 'events';
+//import { rendered } from '../react-app/ImageProblem.jsx';
 
 export class ProblemEmitter extends EventEmitter { }
 export const problemEmitter = new ProblemEmitter();
@@ -28,7 +29,7 @@ problemEmitter.on('display', (playerId) => {
 });
 
 export default class Controller {
-    static getProblem(playerId, res) {
+    static getProblem(req, res) {
         if (problemQueue.dequeue(req.params.playerId)) {
             console.log("sending problem");
             res.json({ title: 'New problem' });
@@ -44,7 +45,9 @@ export default class Controller {
         socket.emit('problem',
             {
                 title: problem.getTitle(),
-                description: problem.getDescription(),
+                description: problem.getDescription(),/*
+                original: rendered(),
+                target: rendered(),*/
             }
         );
     }

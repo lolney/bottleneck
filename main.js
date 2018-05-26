@@ -17,7 +17,7 @@ let requestHandler = server.listen(PORT, () => console.log(`Listening on ${PORT}
 const io = socketIO(requestHandler);
 
 server.get('/problem/:playerId/', (req, res) => {
-    Controller.getProblem(req.params.playerId, res);
+    Controller.getProblem(req, res);
 });
 
 // Game Server

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
-import './CSS/Modal.css';
+import ImageProblem from './ImageProblem.jsx';
 
 const customStyles = {
     content: {
@@ -20,12 +20,21 @@ class App extends React.Component {
 
         this.state = {
             modalIsOpen: false,
-            title: "No problem yet"
+            title: "No problem yet",
+            problem: null,
         };
         console.log("run");
         this.openModal = this.openModal.bind(this);
         this.afterOpenModal = this.afterOpenModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
+
+        window.setTimeout(() => {
+            this.props.clientEngine.socket.on('problem', (data) => {
+                console.log('display', data);
+                this.setState({ problem: data })
+                this.openModal();
+            });
+        }, 1000);
     }
 
     openModal() {
@@ -62,36 +71,16 @@ class App extends React.Component {
                     style={customStyles}
                     contentLabel={this.title}
                 >
-
-                    <div className="wrapper">
-                        <header className="header">Header: Fixed height</header>
-                        <section className="content">
-                            <div className="row-1">
-                                <sidebar-1 className="sidebar-1"></sidebar-1>
-                                <sidebar-2 className="sidebar-2"></sidebar-2>
-                                <main className="main"></main>
-                                <aside className="caption-first">Caption First</aside>
-                                <aside className="caption-second">Caption Second</aside>
-                            </div>
-                            <div className="row-2">
-                                <sidebar-1 className="sidebar-1"></sidebar-1>
-                                <sidebar-2 className="sidebar-2"></sidebar-2>
-                                <main className="main"></main>
-                                <img src="https://source.unsplash.com/random" className="image-first"></img>
-                                <img src="https://source.unsplash.com/random" className="image-second"></img>
-                            </div>
-                        </section>
-                        <footer className="footer">Footer: Fixed height</footer>
-                    </div>
+                    <ImageProblem problem={this.state.problem} />
                 </Modal>
             </div>
         );
     }
 }
 
-export default function createApp() {
+export default function createApp(clientEngine) {
     window.addEventListener('DOMContentLoaded', () => {
         Modal.setAppElement('#overlay');
-        ReactDOM.render(<App />, document.getElementById('overlay'));
+        ReactDOM.render(<App clientEngine={clientEngine} />, document.getElementById('overlay'));
     });
 }

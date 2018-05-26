@@ -23,11 +23,11 @@ export default class ImageProblem {
     }
 
     getTitle() {
-        return "Title";
+        return 'Title';
     }
 
     getDescription() {
-        return "This is the description";
+        return 'This is the description';
     }
 
     static genImage(generator) {
