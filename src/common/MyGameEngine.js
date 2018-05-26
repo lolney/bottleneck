@@ -76,12 +76,12 @@ export default class MyGameEngine extends GameEngine {
                 player.position.y += STEP;
             } else if (inputData.input === 'right') {
                 if (player.actor) {
-                    player.actor.sprite.scale.set(1,1);
+                    player.actor.sprite.scale.set(1, 1);
                 }
                 player.position.x += STEP;
             } else if (inputData.input === 'left') {
                 if (player.actor) {
-                    player.actor.sprite.scale.set(-1,1);
+                    player.actor.sprite.scale.set(-1, 1);
                 }
                 player.position.x -= STEP;
             }

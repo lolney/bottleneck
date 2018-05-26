@@ -1,12 +1,9 @@
 'use strict';
 
 import ServerEngine from 'lance/ServerEngine';
-import EventEmitter from 'events';
 import Avatar from '../common/Avatar';
 import PlayerAvatar from '../common/PlayerAvatar';
-
-export class ProblemEmitter extends EventEmitter { }
-export const problemEmitter = new ProblemEmitter();
+import Controller, { problemEmitter } from './Controller';
 
 export default class MyServerEngine extends ServerEngine {
 
@@ -18,6 +15,7 @@ export default class MyServerEngine extends ServerEngine {
         super.start();
         this.gameEngine.makeTrees();
         this.gameEngine.on('collisionStart', MyServerEngine.collision);
+        this.socketsMap = {};
     }
 
     static collision(e) {
@@ -28,13 +26,16 @@ export default class MyServerEngine extends ServerEngine {
         if (!object || !player)
             return;
 
-        console.log("Emitting problem:display event");
+        console.log('Emitting problem:display event: ', player.playerId);
+
+        Controller.putProblem(socketsMap[player.playerId], player.playerId);
         problemEmitter.emit('display', player.playerId);
     }
 
 
     onPlayerConnected(socket) {
         super.onPlayerConnected(socket);
+        this.socketsMap[socket.playerId] = socket;
         this.gameEngine.makePlayer(socket.playerId);
     }
 
@@ -45,5 +46,6 @@ export default class MyServerEngine extends ServerEngine {
         playerObjects.forEach((obj) => {
             this.gameEngine.removeObjectFromWorld(obj.id);
         });
+        delete this.socketsMap[playerId];
     }
 }
