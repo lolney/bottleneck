@@ -31,6 +31,19 @@ describe('constructor', () => {
         });
     });
 
+    it('generate a blank image', (done) => {
+        let image1 = ImageProblem.genBlank();
+        let image2 = ImageProblem.create(() => { return 0 })
+            .then((image) => {
+                return image.getImage();
+            });
+        return Promise.all([image1, image2]).then((images) => {
+            const [image1, image2] = images;
+            expect(ImageProblem.compareImages(image1, image2)).toBe(true);
+            done();
+        });
+    });
+
     it('throws error when calling constructor without arg', () => {
         expect(() => { new ImageProblem() }).toThrow(new TypeError("Expected base64 string"));
     });

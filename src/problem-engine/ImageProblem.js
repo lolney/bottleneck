@@ -51,16 +51,29 @@ export default class ImageProblem {
         return 'This is the description';
     }
 
+    static genBlank() {
+        return new Promise((resolve, reject) => {
+            new Jimp(100, 100, 255, (err, image) => {
+                if (err)
+                    reject(err);
+                image.write('test_blank.bmp');
+                resolve(image);
+            });
+        });
+    }
+
     static genImage(generator) {
-        return Jimp.read('blank.bmp').then((image) => {
+        return ImageProblem.genBlank().then((image) => {
 
             let h = image.bitmap.height;
             let w = image.bitmap.width;
             for (let y = 0; y < h; y++) {
                 for (let x = 0; x < w; x++) {
-                    for (let k = 0; k < 3; k++) {
+                    for (var k = 0; k < 3; k++) {
                         image.bitmap.data[4 * (y * h + x) + k] = generator(x / w, y / h);
                     }
+                    // May need to set alpha channel
+                    // image.bitmap.data[4 * (y * h + x) + k] = 255;
                 }
             }
             return image;
