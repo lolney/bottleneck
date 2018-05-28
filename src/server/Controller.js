@@ -39,9 +39,7 @@ export default class Controller {
 
     static pushProblem(socket, playerId) {
         // TODO: look up problem for this object in the DB
-        let problem = new ImageProblem();
-        // TODO: send react component instead
-        problem.getBase64((err, buffer) => {
+        let problem = ImageProblem.create().then((buffer) => {
             socket.emit('problem',
                 {
                     title: problem.getTitle(),

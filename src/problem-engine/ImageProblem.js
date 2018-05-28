@@ -14,18 +14,33 @@ function* imageIterator(image) {
 
 export default class ImageProblem {
 
-    constructor() {
-        this.original = ImageProblem.generate();
+    constructor(base64) {
+        if (base64 == null)
+            throw new TypeError('Expected base64 string');
+        this.original = base64;
+    }
+
+    static create(generator) {
+        let gen = generator == null ? ImageProblem.generate() : generator;
+        return ImageProblem.genImage(gen)
+            .then((image) => {
+                return new Promise((resolve, reject) => {
+                    image.getBase64(Jimp.MIME_BMP, (err, base64) => {
+                        if (err)
+                            reject(err);
+                        resolve(new ImageProblem(base64));
+                    });
+                }
+                );
+            });
     }
 
     getImage() {
-        return ImageProblem.genImage(this.original);
+        return Jimp.read(Buffer.from(this.original.slice(22), 'base64'));
     }
 
     getBase64(cb) {
-        return this.getImage().then((image) => {
-            image.getBase64(Jimp.MIME_BMP, cb);
-        });
+        return this.original;
     }
 
     getTitle() {
@@ -43,7 +58,7 @@ export default class ImageProblem {
             let w = image.bitmap.width;
             for (let y = 0; y < h; y++) {
                 for (let x = 0; x < w; x++) {
-                    for (let k = 0; k < 4; k++) {
+                    for (let k = 0; k < 3; k++) {
                         image.bitmap.data[4 * (y * h + x) + k] = generator(x / w, y / h);
                     }
                 }
@@ -54,16 +69,20 @@ export default class ImageProblem {
         });
     }
 
-    compareImage(player) {
+    compareImage(generator) {
         let orig = this.getImage();
-        let play = ImageProblem.genImage(player);
+        let play = ImageProblem.genImage(generator);
         return Promise.all([orig, play]).then((images) => {
-            for (const index of imageIterator(images[0])) {
-                if (images[0].bitmap.data[index] != images[1].bitmap.data[index])
-                    return false;
-            }
-            return true;
+            return ImageProblem.compareImages(images[0], images[1]);
         });
+    }
+
+    static compareImages(image1, image2) {
+        for (const index of imageIterator(image1)) {
+            if (image1.bitmap.data[index] != image2.bitmap.data[index])
+                return false;
+        }
+        return true;
     }
 
     static generate() {
