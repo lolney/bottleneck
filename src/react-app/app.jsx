@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import ImageProblem from './ImageProblem.jsx';
+import Editor from './Editor.jsx';
+import ace from 'ace-builds';
+
 
 const customStyles = {
     content: {
@@ -35,6 +38,12 @@ class App extends React.Component {
                 this.openModal();
             });
         }, 1000);
+
+
+    }
+
+    componentDidMount() {
+            ace.edit('ace-editorid');
     }
 
     openModal() {
@@ -63,7 +72,6 @@ class App extends React.Component {
     render() {
         return (
             <div>
-                <button onClick={this.openModal}>Open Modal</button>
                 <Modal
                     isOpen={this.state.modalIsOpen}
                     onAfterOpen={this.afterOpenModal}
@@ -73,6 +81,7 @@ class App extends React.Component {
                 >
                     <ImageProblem problem={this.state.problem} />
                 </Modal>
+                	<Editor/>
             </div>
         );
     }

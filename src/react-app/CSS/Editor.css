@@ -1,0 +1,51 @@
+@import url(https://fonts.googleapis.com/css?family=Lato:100,300,400);
+*,*:before,*:after{
+  box-sizing:border-box;
+  margin:0;padding:0;
+}
+
+body { padding:1.5em; background:rgba(255, 135, 199, .5); }
+
+label, title, a { font:300 1em/1.5em 'Lato', sans-serif; color:rgba(255, 135, 199, 1);}
+fieldset {
+  background:#f1f1f1;
+  border:1px solid #ddd;
+  border-radius:3px;  
+  padding:1.5em 1.5em 2em;
+  margin-bottom:-3px;
+  //height:50vh;
+  width:50em;
+  a {float:right; display:block; text-decoration:none; margin-left:-100%;}
+  img { width: 50px; float:left;}
+  title {float: left; display:inline-block; margin-left:1%; margin-top:0em; color:black; font:300; font-size: 2em;}
+  label{ float:right; display:inline-block; margin-left:-100%; margin-top:1.5em;} 
+  label         { margin-right:170px; }
+  label + label { margin-right:0px; }
+  select { 
+    display:block;
+    width:150px; 
+    -moz-appearance: menulist-button;
+    -webkit-appearance: menulist-button;
+    appearance: menulist-button;
+
+
+  }
+}
+.wrapper {
+  position:relative;
+  height:50vh;
+  width:50em;
+  /* width: 1400px;*/
+  /*background:#f1f1f1; */
+}
+
+#ace-editorid { 
+  font-size:.9em;
+  font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+  position: absolute;
+  top:0; right:0; bottom:0; left:0;
+  border:1px solid #ddd;
+  border-radius:3px;
+
+  /*background:#f1f1f1; // #f1f1f1; */
+}

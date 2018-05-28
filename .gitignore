@@ -13,3 +13,4 @@ notes\.txt
 \.vscode/
 
 test\.bmp
+*.DS_Store
