@@ -1,4 +1,4 @@
-const Jimp = require('jimp');
+const Jimp = require('jimp'); // note: gets replaced by webpack 
 
 function* imageIterator(image) {
     let h = image.bitmap.height;
@@ -36,7 +36,7 @@ export default class ImageProblem {
     }
 
     getImage() {
-        return Jimp.read(Buffer.from(this.original.slice(22), 'base64'));
+        return Jimp.read(ArrayBuffer.from(this.original.slice(22), 'base64'));
     }
 
     getBase64(cb) {
@@ -56,7 +56,6 @@ export default class ImageProblem {
             new Jimp(100, 100, 255, (err, image) => {
                 if (err)
                     reject(err);
-                image.write('test_blank.bmp');
                 resolve(image);
             });
         });

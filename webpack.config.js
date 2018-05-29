@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 
 module.exports = {
-    entry: './src/client/clientEntryPoint.js',
+    entry: ['babel-polyfill', './src/client/clientEntryPoint.js'],
     output: {
         path: path.join(__dirname, 'dist'),
         filename: 'bundle.js'
@@ -32,11 +32,20 @@ module.exports = {
                     path.resolve(__dirname, 'src/react-app'),
                 ],
                 loader: 'babel-loader',
-                options: { presets: ['react'] }
+                options: { presets: ['env', 'react'] }
+            },
+            {
+                test: /ImageProblem\.js$/,
+                loader: 'string-replace-loader',
+                options: {
+                    search: 'require(\'jimp\')',
+                    replace: 'require(\'jimp/browser/lib/jimp\')',
+                }
             },
         ]
     },
     resolve: {
-        alias: { lance: path.resolve(__dirname, 'node_modules/lance-gg/src/') } 
+        alias: { lance: path.resolve(__dirname, 'node_modules/lance-gg/src/') },
+        alias: { jimp: path.resolve(__dirname, 'node_modules/jimp') }
     }
 };

@@ -1,0 +1,68 @@
+import React from 'react';
+import './CSS/Modal.css';
+import ImageProblem from '../problem-engine/ImageProblem';
+import PropTypes from 'prop-types';
+
+export default class ImageComponent extends React.Component {
+    constructor() {
+        super();
+
+        this.state = {
+            target: this.props.problem.target,
+            done: false,
+        };
+        this.problem = new ImageProblem(this.props.problem.original);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (this.props.generator != prevProps.generator) {
+            problem.genImage(generator).then((targ) => {
+                this.setState({ target: targ });
+                problem.getImage().then((orig) => {
+                    let done = ImageProblem.compareImages(orig, targ);
+                    this.setState({ done: done })
+                });
+            })
+        }
+    }
+
+    // Passes props title, description, original and  to ProblemComponent
+    // Passing JSX:
+    // https://stackoverflow.com/questions/25797048/how-to-pass-in-a-react-component-into-another-react-component-to-transclude-the?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+    render() {
+        const description = this.state.done ? "You're done!" : this.props.problem.description;
+        return (
+            <div className="wrapper">
+                <header className="header">{this.props.problem.title}</header>
+                <section className="content">
+                    <div className="row-1">
+                        <sidebar-1 className="sidebar-1"></sidebar-1>
+                        <sidebar-2 className="sidebar-2"></sidebar-2>
+                        <main className="main"></main>
+                        <aside className="caption-first">Original</aside>
+                        <aside className="caption-second">Target</aside>
+                    </div>
+                    <div className="row-2">
+                        <sidebar-1 className="sidebar-1"></sidebar-1>
+                        <sidebar-2 className="sidebar-2"></sidebar-2>
+                        <main className="main"></main>
+                        <img src={this.props.problem.original} className="image-first"></img>
+                        <img src={this.state.target} className="image-second"></img>
+                    </div>
+                </section >
+                <footer className="footer">{description}</footer>
+            </div >
+        )
+    }
+
+}
+
+ImageComponent.propTypes = {
+    generator: PropTypes.func.isRequired,
+    problem: PropTypes.shape({
+        title: PropTypes.string,
+        description: PropTypes.string,
+        original: PropTypes.string,
+        description: PropTypes.string,
+    }),
+};

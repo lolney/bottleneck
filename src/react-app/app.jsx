@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
-import ImageProblem from './ImageProblem.jsx';
+import ImageComponent from './ImageComponent.jsx';
 
 const customStyles = {
     content: {
@@ -22,6 +22,7 @@ class App extends React.Component {
             modalIsOpen: false,
             title: "No problem yet",
             problem: null,
+            generator: function (x, y) { return x },
         };
         console.log("run");
         this.openModal = this.openModal.bind(this);
@@ -35,6 +36,10 @@ class App extends React.Component {
                 this.openModal();
             });
         }, 1000);
+    }
+
+    setGenerator(func) {
+        this.setState({ generator: func })
     }
 
     openModal() {
@@ -71,7 +76,10 @@ class App extends React.Component {
                     style={customStyles}
                     contentLabel={this.title}
                 >
-                    <ImageProblem problem={this.state.problem} />
+                    <ImageComponent
+                        problem={this.state.problem}
+                        generator={this.state.generator}
+                    />
                 </Modal>
             </div>
         );
