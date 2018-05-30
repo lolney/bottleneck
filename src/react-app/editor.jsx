@@ -1,6 +1,11 @@
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import './CSS/Editor.css';
+import brace from 'brace';
+import AceEditor from 'react-ace';
+import 'brace/mode/java';
+import 'brace/theme/github';
+
+import './CSS/Editor.scss';
 
 
 export default class Editor extends React.Component {
@@ -22,7 +27,7 @@ export default class Editor extends React.Component {
     <option value="github">github</option>
     <option value="solarized_light">solarized_light</option>
     <option value="textmate">textmate</option>
-    <option value="tomorrow" selected>tomorrow</option>
+    <option value="tomorrow" defaultValue>tomorrow</option>
     <option value="xcode">xcode</option>
   </optgroup>
   <optgroup label="dark">
@@ -136,7 +141,7 @@ export default class Editor extends React.Component {
   <option value="SCAD">SCAD</option>
   <option value="Scala">Scala</option>
   <option value="Scheme">Scheme</option>
-  <option value="SCSS" selected>SCSS</option>
+  <option value="SCSS" defaultValue>SCSS</option>
   <option value="SH">SH</option>
   <option value="SJS">SJS</option>
   <option value="Smarty">Smarty</option>
@@ -164,11 +169,15 @@ export default class Editor extends React.Component {
 </label> 
 
 </fieldset> 
-<div class="wrapper">
-  <code id="ace-editorid">
-  
-  </code>
-</div>  
+<div className="wrapper">
+  <AceEditor
+    mode="java"
+    theme="github"
+//  onChange={onChange}
+    name="UNIQUE_ID_OF_DIV"
+    editorProps={{$blockScrolling: true}}
+  />
+</div>
 </div>
 );
 }

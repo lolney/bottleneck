@@ -37,14 +37,14 @@ class App extends React.Component {
                 this.setState({ problem: data })
                 this.openModal();
             });
-        }, 1000);
+        }, 2000);
 
 
     }
 
-    componentDidMount() {
-            ace.edit('ace-editorid');
-    }
+    //componentDidMount() {
+    //        ace.edit('ace-editorid');
+   // }
 
     openModal() {
         this.setState({ modalIsOpen: true });
@@ -80,8 +80,8 @@ class App extends React.Component {
                     contentLabel={this.title}
                 >
                     <ImageProblem problem={this.state.problem} />
+                    <Editor/>
                 </Modal>
-                	<Editor/>
             </div>
         );
     }
