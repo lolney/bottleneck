@@ -8,22 +8,33 @@ export default class ImageComponent extends React.Component {
         super(props);
 
         this.state = {
+            generator: this.props.generator,
             target: this.props.problem.target,
             done: false,
         };
         this.problem = new ImageProblem(this.props.problem.original);
     }
 
-    static getDerivedStateFromProps(prevProps, prevState) {
-        if (this.props.generator != prevProps.generator) {
+    static getDerivedStateFromProps(nextProps, prevState) {
+
+        let newState = {}
+
+        if (prevState.generator != nextProps.generator) {
+
+            let generator = nextProps.generator;
+            newState.generator = generator;
+
             problem.genImage(generator).then((targ) => {
-                this.setState({ target: targ });
+
+                newState.target = targ;
+
                 problem.getImage().then((orig) => {
                     let done = ImageProblem.compareImages(orig, targ);
-                    this.setState({ done: done })
+                    newState.done = done;
                 });
             })
         }
+        return newState;
     }
 
     // Passes props title, description, original and  to ProblemComponent

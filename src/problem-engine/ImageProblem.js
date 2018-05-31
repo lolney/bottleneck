@@ -24,15 +24,18 @@ export default class ImageProblem {
         let gen = generator == null ? ImageProblem.generate() : generator;
         return ImageProblem.genImage(gen)
             .then((image) => {
-                return new Promise((resolve, reject) => {
-                    image.getBase64(Jimp.MIME_BMP, (err, base64) => {
-                        if (err)
-                            reject(err);
-                        resolve(new ImageProblem(base64));
-                    });
-                }
-                );
+                return ImageProblem.fromImage(image);
             });
+    }
+
+    static fromImage(image) {
+        return new Promise((resolve, reject) => {
+            image.getBase64(Jimp.MIME_BMP, (err, base64) => {
+                if (err)
+                    reject(err);
+                resolve(new ImageProblem(base64));
+            });
+        });
     }
 
     getImage() {
@@ -50,6 +53,21 @@ export default class ImageProblem {
 
     getDescription() {
         return 'This is the description';
+    }
+
+    serialize() {
+        return ImageProblem.genBlank()
+            .then((blank) => {
+                return ImageProblem.fromImage(blank);
+            })
+            .then((image) => {
+                return {
+                    title: this.getTitle(),
+                    description: this.getDescription(),
+                    original: this.original,
+                    target: image.original,
+                };
+            });
     }
 
     static genBlank() {

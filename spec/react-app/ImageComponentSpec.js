@@ -4,14 +4,14 @@ import ImageComponent from "../../src/react-app/ImageComponent";
 import sinon from 'sinon';
 import Adapter from 'enzyme-adapter-react-16';
 import ReactJSDOM from 'react-jsdom';
+import ImageProblem from '../../src/problem-engine/ImageProblem';
 
 Enzyme.configure({ adapter: new Adapter() });
 
 describe('ImageComponent', () => {
 
-    let props;
     let mountedImageComponent;
-    const imageComponent = () => {
+    const imageComponent = (props) => {
         if (!mountedImageComponent) {
             mountedImageComponent = ReactJSDOM.render(
                 <ImageComponent {...props} />
@@ -20,12 +20,19 @@ describe('ImageComponent', () => {
         return mountedImageComponent;
     }
 
-    beforeEach(() => {
-        props = {
-            generator: (x, y) => { return y },
-            problem: { target: "" }
-        };
-        mountedImageComponent = imageComponent();
+    beforeEach((done) => {
+        ImageProblem.create(function (x, y) { return y })
+            .then((prob) => {
+                return prob.serialize();
+            })
+            .then((serialized) => {
+                let props = {
+                    generator: (x, y) => { return y },
+                    problem: serialized
+                };
+                mountedImageComponent = imageComponent(props);
+                done();
+            });
     });
 
     it('use generator to render new image', () => {

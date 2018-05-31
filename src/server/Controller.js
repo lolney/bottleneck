@@ -39,15 +39,12 @@ export default class Controller {
 
     static pushProblem(socket, playerId) {
         // TODO: look up problem for this object in the DB
-        ImageProblem.create().then((problem) => {
-            socket.emit('problem',
-                {
-                    title: problem.getTitle(),
-                    description: problem.getDescription(),
-                    original: problem.original,
-                    target: problem.original,
-                }
-            );
-        });
+        ImageProblem.create()
+            .then((problem) => {
+                return problem.serialize();
+            })
+            .then((serialized) => {
+                socket.emit('problem', serialized);
+            });
     }
 }
