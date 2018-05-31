@@ -25,7 +25,7 @@ class App extends React.Component {
             modalIsOpen: false,
             title: "No problem yet",
             problem: undefined,
-            generator: function (x, y) { return x },
+            generator: function (x, y) { return 1.0 },
         };
         console.log("run");
         this.openModal = this.openModal.bind(this);

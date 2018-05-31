@@ -1,5 +1,5 @@
 import React from 'react';
-//import './CSS/Modal.scss';
+import './CSS/Modal.scss';
 import ImageProblem from '../problem-engine/ImageProblem';
 import PropTypes from 'prop-types';
 
