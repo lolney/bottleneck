@@ -39,13 +39,13 @@ export default class Controller {
 
     static pushProblem(socket, playerId) {
         // TODO: look up problem for this object in the DB
-        let problem = ImageProblem.create().then((buffer) => {
+        ImageProblem.create().then((problem) => {
             socket.emit('problem',
                 {
                     title: problem.getTitle(),
                     description: problem.getDescription(),
-                    original: buffer,
-                    target: buffer,
+                    original: problem.original,
+                    target: problem.original,
                 }
             );
         });

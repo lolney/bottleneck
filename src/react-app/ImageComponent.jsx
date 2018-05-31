@@ -1,11 +1,11 @@
 import React from 'react';
-import './CSS/Modal.css';
+//import './CSS/Modal.scss';
 import ImageProblem from '../problem-engine/ImageProblem';
 import PropTypes from 'prop-types';
 
 export default class ImageComponent extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         this.state = {
             target: this.props.problem.target,
@@ -14,7 +14,7 @@ export default class ImageComponent extends React.Component {
         this.problem = new ImageProblem(this.props.problem.original);
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    static getDerivedStateFromProps(prevProps, prevState) {
         if (this.props.generator != prevProps.generator) {
             problem.genImage(generator).then((targ) => {
                 this.setState({ target: targ });
@@ -63,6 +63,6 @@ ImageComponent.propTypes = {
         title: PropTypes.string,
         description: PropTypes.string,
         original: PropTypes.string,
-        description: PropTypes.string,
-    }),
+        target: PropTypes.string,
+    }).isRequired,
 };

@@ -38,8 +38,16 @@ module.exports = {
                 test: /ImageProblem\.js$/,
                 loader: 'string-replace-loader',
                 options: {
-                    search: 'require(\'jimp\')',
-                    replace: 'require(\'jimp/browser/lib/jimp\')',
+                    multiple: [
+                        {
+                            search: 'require(\'jimp\')',
+                            replace: 'require(\'jimp/browser/lib/jimp\')'
+                        },
+                        {
+                            search: `ArrayBuffer.from(s, 'base64')`,
+                            replace: `Uint8Array.from(atob(s), (c) => c.charCodeAt(0))`
+                        }
+                    ]
                 }
             },
         ]

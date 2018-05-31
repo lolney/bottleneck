@@ -36,7 +36,8 @@ export default class ImageProblem {
     }
 
     getImage() {
-        return Jimp.read(ArrayBuffer.from(this.original.slice(22), 'base64'));
+        let s = this.original.slice(22);
+        return Jimp.read(Buffer.from(s, 'base64'));
     }
 
     getBase64(cb) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
-import Editor from './Editor.jsx';
+import Editor from './editor.jsx';
 import ace from 'ace-builds';
 import ImageComponent from './ImageComponent.jsx';
 
@@ -18,13 +18,13 @@ const customStyles = {
 };
 
 class App extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         this.state = {
             modalIsOpen: false,
             title: "No problem yet",
-            problem: null,
+            problem: undefined,
             generator: function (x, y) { return x },
         };
         console.log("run");
@@ -32,15 +32,20 @@ class App extends React.Component {
         this.afterOpenModal = this.afterOpenModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
 
-        window.setTimeout(() => {
-            this.props.clientEngine.socket.on('problem', (data) => {
-                console.log('display', data);
-                this.setState({ problem: data })
-                this.openModal();
-            });
-        }, 2000);
-
-
+        let setSocketEvent = (() => {
+            if (!this.props.clientEngine.socket) {
+                window.setTimeout(() => {
+                    setSocketEvent();
+                }, 1000);
+            } else {
+                this.props.clientEngine.socket.on('problem', (data) => {
+                    console.log('display', data);
+                    this.setState({ problem: data })
+                    this.openModal();
+                });
+            }
+        }).bind(this);
+        setSocketEvent();
     }
 
     setGenerator(func) {
@@ -80,11 +85,12 @@ class App extends React.Component {
                     style={customStyles}
                     contentLabel={this.title}
                 >
-                    <ImageComponent
-                        problem={this.state.problem}
-                        generator={this.state.generator}
-                    />
-                    <Editor/>
+                    {this.state.problem &&
+                        <ImageComponent
+                            problem={this.state.problem}
+                            generator={this.state.generator}
+                        />}
+                    <Editor />
                 </Modal>
             </div>
         );
