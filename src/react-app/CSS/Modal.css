@@ -1,6 +1,14 @@
 body{
   margin: 0;
 } 
+.ReactModal__Content--after-open {
+  max-height: 90vh;
+}
+
+.ace_editor {
+  width: 100% !important;
+}
+
 .wrapper{
   max-height: 50vh;
   max-width: 50vw;
@@ -11,7 +19,7 @@ body{
 
 }
 .header, .footer{
-  min-height: 5vh;
+  min-height: 20px; /* previously 5vh*/
   background: #666;
   color: #fff;
   text-align: center;
@@ -27,7 +35,7 @@ body{
 .row-1{
   display: flex;
   flex:0.1;
-  min-height: 2.5vh;
+  min-height: 20px;
   vertical-align: middle;
   background-size: contain;
 
@@ -36,7 +44,7 @@ body{
 .row-2{
   display: flex;
   flex:1;
-  min-height: 37.5vh;
+  min-height: 37.5%;
   background-size: contain;
 
 }

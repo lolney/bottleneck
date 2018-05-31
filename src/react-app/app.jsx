@@ -1,7 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
+import Editor from './Editor.jsx';
+import ace from 'ace-builds';
 import ImageComponent from './ImageComponent.jsx';
+
 
 const customStyles = {
     content: {
@@ -35,7 +38,9 @@ class App extends React.Component {
                 this.setState({ problem: data })
                 this.openModal();
             });
-        }, 1000);
+        }, 2000);
+
+
     }
 
     setGenerator(func) {
@@ -68,7 +73,6 @@ class App extends React.Component {
     render() {
         return (
             <div>
-                <button onClick={this.openModal}>Open Modal</button>
                 <Modal
                     isOpen={this.state.modalIsOpen}
                     onAfterOpen={this.afterOpenModal}
@@ -80,6 +84,7 @@ class App extends React.Component {
                         problem={this.state.problem}
                         generator={this.state.generator}
                     />
+                    <Editor/>
                 </Modal>
             </div>
         );
