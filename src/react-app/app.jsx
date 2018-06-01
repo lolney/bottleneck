@@ -5,6 +5,7 @@ import Editor from './editor.jsx';
 import ace from 'ace-builds';
 import ImageComponent from './ImageComponent.jsx';
 
+import './CSS/Modal.scss';
 
 const customStyles = {
     content: {
@@ -25,7 +26,7 @@ class App extends React.Component {
             modalIsOpen: false,
             title: "No problem yet",
             problem: undefined,
-            generator: function (x, y) { return 1.0 },
+            generator: function (x, y) { return 0 },
         };
         console.log("run");
         this.openModal = this.openModal.bind(this);

@@ -100,12 +100,19 @@ export default class ImageProblem {
         });
     }
 
-    compareImage(generator) {
+    compareGenerator(generator) {
         let orig = this.getImage();
         let play = ImageProblem.genImage(generator);
         return Promise.all([orig, play]).then((images) => {
             return ImageProblem.compareImages(images[0], images[1]);
         });
+    }
+
+    compareImage(problem) {
+        return Promise.all([this, problem].map((a) => a.getImage()))
+            .then((images) => {
+                return ImageProblem.compareImages(images[0], images[1]);
+            });
     }
 
     static compareImages(image1, image2) {

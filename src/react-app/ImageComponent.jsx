@@ -1,5 +1,4 @@
 import React from 'react';
-import './CSS/Modal.scss';
 import ImageProblem from '../problem-engine/ImageProblem';
 import PropTypes from 'prop-types';
 
@@ -15,26 +14,16 @@ export default class ImageComponent extends React.Component {
         this.problem = new ImageProblem(this.props.problem.original);
     }
 
-    static getDerivedStateFromProps(nextProps, prevState) {
+    componentDidUpdate(prevProps, prevState) {
 
-        let newState = {}
-
-        if (prevState.generator != nextProps.generator) {
-
-            let generator = nextProps.generator;
-            newState.generator = generator;
-
-            problem.genImage(generator).then((targ) => {
-
-                newState.target = targ;
-
-                problem.getImage().then((orig) => {
-                    let done = ImageProblem.compareImages(orig, targ);
-                    newState.done = done;
+        if (this.props.generator != prevProps.generator) {
+            ImageProblem.create(this.props.generator).then((targ) => {
+                this.setState({ target: targ.original });
+                this.problem.compareImage(targ).then((done) => {
+                    this.setState({ done: done });
                 });
             })
         }
-        return newState;
     }
 
     // Passes props title, description, original and  to ProblemComponent
