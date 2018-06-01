@@ -18,7 +18,7 @@ fieldset {
   width:50vw;
   a {float:right; display:block; text-decoration:none; margin-left:-100%;}
   img { width: 50px; float:left;}
-  title {float: left; display:inline-block; margin-left:1%; margin-top:1%; color:black; font:300; font-size: 2em;}
+  title {float: left; display:inline-block; margin-left:1%; margin-top:0%; color:black; font:300; font-size: 2em;}
   label{ float:right; display:inline-block; margin-left:-100%; margin-top:1.5em;} 
   label         { margin-right:170px; }
   label + label { margin-right:0px; }
@@ -36,6 +36,8 @@ fieldset {
   position:relative;
   height:50vh; // troublemaker
   width:50vw;
+  border:1px solid #ddd;
+  border-radius:3px;  
   //height: 1400px;
   /*background:#f1f1f1; */
 }

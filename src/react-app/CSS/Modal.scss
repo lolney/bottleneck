@@ -17,13 +17,33 @@ body {
   display: flex;
   flex-direction: column;
   background-size: contain;
+  border-radius: 3px;
 
 }
-.header, .footer{
-  min-height: 20px; /* previously 5vh*/
+
+.header {
+  min-height: 20px;
   background: #666;
   color: #fff;
   text-align: center;
+  border-top-right-radius: 3px;	
+  border-top-left-radius: 3px;	
+  font-family: "Lato", sans-serif;
+  font-weight: 300;	
+  font-size: 1.5em;
+}
+
+.footer{
+  min-height: 20px;
+  background: #666;
+  color: #fff;
+  text-align: center;
+  border-bottom-right-radius: 3px;	
+  border-bottom-left-radius: 3px;	
+  font-family: "Lato", sans-serif;	
+  font-weight: 300;
+  
+
 }
 .content {
   display: flex;
@@ -39,7 +59,9 @@ body {
   min-height: 20px;
   vertical-align: middle;
   background-size: contain;
-
+  background: #666;
+  font-family: "Lato", sans-serif;
+  font-weight: 300;	
 
 }
 .row-2{
@@ -47,25 +69,31 @@ body {
   flex:1;
   min-height: 37.5%;
   background-size: contain;
+  background: #666;
+
 
 }
 .main{
   flex: 1;
   order: 3;
-  background: #eee;
+  background: #666;
 }
 .image-first{
   width: 49%;
-  background: #ccc;
+  background: #666;
   order: 2;
   background-size: contain;
+  border-bottom-right-radius: 3px;	
+  //border-bottom-left-radius: 3px;	
 
 }
 .image-second{ 
   width: 49%;
   order: 4;
-  background: #ddd;
+  background: #666;
   background-size: contain;
+  //border-bottom-right-radius: 3px;	
+  border-bottom-left-radius: 3px;	
 }
 
 .caption-first{
@@ -74,24 +102,27 @@ body {
   order: 2;
   text-align: center;
   padding-bottom: 5px;
-
+  border-top-right-radius: 3px;	
+  //border-top-left-radius: 3px;	
 
 }
 .caption-second{ 
   width: 49%;
   order: 4;
-  background: #ddd;
+  background: #ccc;
   text-align: center;
   padding-bottom: 5px;
+  //border-top-right-radius: 3px;	
+  border-top-left-radius: 3px;	
 }
 
 .sidebar-1{
   flex: 1;
   order: 1;
-  background: #eee;
+  background: #666;
 }
 .sidebar-2{
   flex: 1;
   order: 5;
-  background: #eee;
+  background: #666;
 }
