@@ -10,4 +10,4 @@ Running tests:
 npm test
 ```
 
-Demo at scripting-rpg.herokuapp.com
+Still early in development, but demo at scripting-rpg.herokuapp.com
