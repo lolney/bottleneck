@@ -1,4 +1,4 @@
-const Jimp = require('jimp'); // note: gets replaced by webpack 
+import Jimp from 'jimp';
 
 function* imageIterator(image) {
     let h = image.bitmap.height;
@@ -71,6 +71,7 @@ export default class ImageProblem {
     }
 
     static genBlank() {
+        console.log(new Jimp(100, 100, 255));
         return new Promise((resolve, reject) => {
             new Jimp(100, 100, 255, (err, image) => {
                 if (err)
@@ -81,6 +82,7 @@ export default class ImageProblem {
     }
 
     static genImage(generator) {
+        console.log(Jimp);
         return ImageProblem.genBlank().then((image) => {
 
             let h = image.bitmap.height;

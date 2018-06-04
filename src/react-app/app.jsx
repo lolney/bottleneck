@@ -32,6 +32,7 @@ class App extends React.Component {
         this.openModal = this.openModal.bind(this);
         this.afterOpenModal = this.afterOpenModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
+        this.setGenerator = this.setGenerator.bind(this);
 
         let setSocketEvent = (() => {
             if (!this.props.clientEngine.socket) {
@@ -49,8 +50,14 @@ class App extends React.Component {
         setSocketEvent();
     }
 
-    setGenerator(func) {
-        this.setState({ generator: func })
+    setGenerator(code) {
+        console.log("onchange");
+        try {
+            let func = eval(code);
+            this.setState({ generator: func })
+        } catch (error) {
+
+        }
     }
 
     openModal() {
@@ -91,7 +98,7 @@ class App extends React.Component {
                             problem={this.state.problem}
                             generator={this.state.generator}
                         />}
-                    <Editor />
+                    <Editor onChange={this.setGenerator} />
                 </Modal>
             </div>
         );

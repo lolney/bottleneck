@@ -16,7 +16,9 @@ export default class ImageComponent extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
 
+        console.log(this.props.generator);
         if (this.props.generator != prevProps.generator) {
+
             ImageProblem.create(this.props.generator).then((targ) => {
                 this.setState({ target: targ.original });
                 this.problem.compareImage(targ).then((done) => {

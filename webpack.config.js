@@ -19,6 +19,7 @@ module.exports = {
                 include: [
                     path.resolve(__dirname, 'src'),
                     path.resolve(__dirname, 'node_modules/lance-gg'),
+                    path.resolve(__dirname, 'node_modules/jimp'),
                     fs.realpathSync('./node_modules/lance-gg')
                 ],
                 loader: 'babel-loader',
@@ -40,8 +41,8 @@ module.exports = {
                 options: {
                     multiple: [
                         {
-                            search: 'require(\'jimp\')',
-                            replace: 'require(\'jimp/browser/lib/jimp\')'
+                            search: '\'jimp\'',
+                            replace: '\'jimp/browser/lib/jimp.js\''
                         },
                         {
                             search: `ArrayBuffer.from(s, 'base64')`,
@@ -53,7 +54,6 @@ module.exports = {
         ]
     },
     resolve: {
-        alias: { lance: path.resolve(__dirname, 'node_modules/lance-gg/src/') },
-        alias: { jimp: path.resolve(__dirname, 'node_modules/jimp') }
+        alias: { lance: path.resolve(__dirname, 'node_modules/lance-gg/src/') }
     }
 };
