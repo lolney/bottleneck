@@ -41,6 +41,7 @@
     "raw-loader": "^0.5.1",
     "react-jsdom": "git+https://github.com/tomcardoso/react-jsdom.git",
     "sass-loader": "^7.0.1",
+    "sequelize-cli": "^4.0.0",
     "sinon": "^5.0.10",
     "string-replace-loader": "^2.1.1",
     "webpack": "^3.12.0"

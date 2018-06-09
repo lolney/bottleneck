@@ -7,8 +7,8 @@ import Avatar from './Avatar';
 import TwoVector from 'lance/serialize/TwoVector';
 
 const STEP = 5;
-const WIDTH = 1000;
-const HEIGHT = 600;
+export const WIDTH = 1000;
+export const HEIGHT = 600;
 
 export default class MyGameEngine extends GameEngine {
 
