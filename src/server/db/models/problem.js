@@ -1,8 +1,12 @@
-import sequelize from './index';
-
-export default Problem = sequelize.define('user', {
-    id: Sequelize.STRING,
-    title: Sequelize.STRING,
-    description: Sequelize.STRING,
-    original: Sequelize.String,
-});
+module.exports = (sequelize, DataTypes) => {
+    return sequelize.define('problem', {
+        id: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV1,
+            primaryKey: true
+        },
+        title: DataTypes.STRING,
+        description: DataTypes.STRING,
+        original: DataTypes.STRING
+    });
+};

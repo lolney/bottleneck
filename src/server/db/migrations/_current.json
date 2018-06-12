@@ -1,0 +1,64 @@
+{
+    "tables": {
+        "gameObjects": {
+            "tableName": "gameObjects",
+            "schema": {
+                "id": {
+                    "defaultValue": {
+                        "internal": true,
+                        "value": "Sequelize.UUIDV1"
+                    },
+                    "primaryKey": true,
+                    "seqType": "Sequelize.UUID"
+                },
+                "location": {
+                    "seqType": "Sequelize.GEOMETRY"
+                },
+                "objectType": {
+                    "seqType": "Sequelize.STRING"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "problems": {
+            "tableName": "problems",
+            "schema": {
+                "id": {
+                    "defaultValue": {
+                        "internal": true,
+                        "value": "Sequelize.UUIDV1"
+                    },
+                    "primaryKey": true,
+                    "seqType": "Sequelize.UUID"
+                },
+                "title": {
+                    "seqType": "Sequelize.STRING"
+                },
+                "description": {
+                    "seqType": "Sequelize.STRING"
+                },
+                "original": {
+                    "seqType": "Sequelize.STRING"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        }
+    },
+    "revision": 1
+}

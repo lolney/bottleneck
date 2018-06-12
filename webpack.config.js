@@ -28,9 +28,7 @@ module.exports = {
             },
             {
                 test: /\.jsx$/,
-                include: [
-                    path.resolve(__dirname, 'src/react-app'),
-                ],
+                include: [path.resolve(__dirname, 'src/react-app')],
                 loader: 'babel-loader',
                 options: { presets: ['env', 'react'] }
             },
@@ -49,7 +47,7 @@ module.exports = {
                         }
                     ]
                 }
-            },
+            }
         ]
     },
     resolve: {

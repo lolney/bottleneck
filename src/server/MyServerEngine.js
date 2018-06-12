@@ -4,6 +4,7 @@ import ServerEngine from 'lance/ServerEngine';
 import Avatar from '../common/Avatar';
 import PlayerAvatar from '../common/PlayerAvatar';
 import Controller, { problemEmitter } from './Controller';
+import { objects } from './db/views';
 
 export default class MyServerEngine extends ServerEngine {
 
@@ -13,7 +14,7 @@ export default class MyServerEngine extends ServerEngine {
 
     start() {
         super.start();
-        this.gameEngine.makeTrees();
+        this.gameEngine.makeTrees(objects());
         this.gameEngine.on('collisionStart', MyServerEngine.collision.bind(this));
         this.socketsMap = {};
     }
