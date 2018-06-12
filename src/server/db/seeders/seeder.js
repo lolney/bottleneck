@@ -1,27 +1,19 @@
 // import { WIDTH, HEIGHT } from '../../../common/MyGameEngine';
 import ImageProblem from '../../../problem-engine/ImageProblem';
 import uuidv1 from 'uuid/v1';
+import moment from 'moment';
 
 const WIDTH = 1000;
 const HEIGHT = 600;
-
-export function objects(queryInterface, Sequelize) {
-    return queryInterface.bulkInsert(
-        'GameObject',
-        [...Array(10).keys()].map(() => {
-            return {
-                location: [Math.random() * WIDTH, Math.random() * HEIGHT],
-                objectType: 'tree'
-            };
-        }),
-        {}
-    );
-}
 
 function createPoint() {
     let x = Math.random() * WIDTH;
     let y = Math.random() * HEIGHT;
     return 'POINT(' + x + ' ' + y + ')';
+}
+
+function date() {
+    return moment().format('YYYY-MM-DD HH:mm:ss');
 }
 
 export async function up(queryInterface, Sequelize) {
@@ -38,7 +30,9 @@ export async function up(queryInterface, Sequelize) {
                 id: uuidv1(),
                 title: problem.getTitle(),
                 description: problem.getDescription(),
-                original: problem.getBase64()
+                original: problem.getBase64(),
+                createdAt: date(),
+                updatedAt: date()
             };
         }),
         {}
@@ -53,7 +47,9 @@ export async function up(queryInterface, Sequelize) {
                 id: uuidv1(),
                 location: Sequelize.fn('ST_GeomFromText', createPoint()),
                 objectType: 'tree',
-                problemId: row.id
+                problemId: row.id,
+                createdAt: date(),
+                updatedAt: date()
             };
         }),
         {}

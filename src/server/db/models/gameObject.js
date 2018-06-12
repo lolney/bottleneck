@@ -1,5 +1,3 @@
-import Problem from './problem';
-
 module.exports = (sequelize, DataTypes) => {
     let GameObject = sequelize.define(
         'gameObject',
@@ -10,7 +8,9 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true
             },
             location: DataTypes.GEOMETRY('POINT'),
-            objectType: DataTypes.TEXT
+            objectType: DataTypes.TEXT,
+            createdAt: DataTypes.DATE,
+            updatedAt: DataTypes.DATE
         },
         {
             classMethods: {

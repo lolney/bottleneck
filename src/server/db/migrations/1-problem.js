@@ -36,6 +36,16 @@ let migrationCommands = [
                 },
                 original: {
                     type: Sequelize.TEXT
+                },
+                createdAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                },
+                updatedAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
                 }
             },
             {}
@@ -63,6 +73,16 @@ let migrationCommands = [
                         model: 'problems',
                         key: 'id'
                     }
+                },
+                createdAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                },
+                updatedAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
                 }
             },
             {}

@@ -52,6 +52,6 @@ module.exports = {
     },
     resolve: {
         alias: { lance: path.resolve(__dirname, 'node_modules/lance-gg/src/') },
-        alias: { jimp: path.resolve(__dirname, 'node_modules/jimp') }
+        alias: { jimp: path.resolve(__dirname, 'node_modules/jimp/') }
     }
 };

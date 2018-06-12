@@ -11,7 +11,6 @@ export const WIDTH = 1000;
 export const HEIGHT = 600;
 
 export default class MyGameEngine extends GameEngine {
-
     constructor(options) {
         super(options);
         this.physicsEngine = new SimplePhysicsEngine({ gameEngine: this });
@@ -23,7 +22,6 @@ export default class MyGameEngine extends GameEngine {
     }
 
     start() {
-
         super.start();
 
         this.worldSettings = {
@@ -33,43 +31,31 @@ export default class MyGameEngine extends GameEngine {
         };
     }
 
-    makeTrees() {
-        for (let i = 0; i < 10; i++) {
-            this.addObjectToWorld(
-                new Avatar(
-                    this,
-                    null,
-                    {
-                        position: new TwoVector(Math.random() * WIDTH, Math.random() * HEIGHT),
-                        objectType: 'tree',
-                    }
-                )
-            );
+    makeTrees(objects) {
+        for (let obj of objects) {
+            this.addObjectToWorld(new Avatar(this, null, obj));
         }
     }
 
     makePlayer(playerId) {
         console.log(`adding player ${playerId}`);
         this.addObjectToWorld(
-            new PlayerAvatar(
-                this,
-                null,
-                {
-                    position: new TwoVector(WIDTH / 2, HEIGHT / 2),
-                    playerId: playerId
-                }
-            )
+            new PlayerAvatar(this, null, {
+                position: new TwoVector(WIDTH / 2, HEIGHT / 2),
+                playerId: playerId
+            })
         );
     }
 
     processInput(inputData, playerId) {
-
         super.processInput(inputData, playerId);
 
         // get the player's primary object
         let player = this.world.queryObject({ playerId: playerId });
         if (player) {
-            this.trace.info(() => `player ${playerId} pressed ${inputData.input}`);
+            this.trace.info(
+                () => `player ${playerId} pressed ${inputData.input}`
+            );
             if (inputData.input === 'up') {
                 player.position.y -= STEP;
             } else if (inputData.input === 'down') {

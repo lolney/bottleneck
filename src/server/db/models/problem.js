@@ -7,6 +7,8 @@ module.exports = (sequelize, DataTypes) => {
         },
         title: DataTypes.TEXT,
         description: DataTypes.TEXT,
-        original: DataTypes.TEXT
+        original: DataTypes.TEXT,
+        createdAt: DataTypes.DATE,
+        updatedAt: DataTypes.DATE
     });
 };
