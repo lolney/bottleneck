@@ -37,7 +37,13 @@ apt-get install postgis*
 Run migrations:
 
 ```
-sequelize db:migrate
+sequelize db:migrate:undo:all && sequelize db:migrate
+```
+
+Run the seeder:
+
+```
+sequelize db:seed:all
 ```
 
 Note: to generate migrations:
@@ -46,6 +52,8 @@ Note: to generate migrations:
 cd /src/server/db
 babel-node ../../../node_modules/sequelize-auto-migrations/bin/makemigration --name problem
 ```
+
+Note that this has some bugs - need to change `GEOMETRY` to `Sequelize.GEOMETRY` manually, and doesn't create the `down` methods.
 
 ### Build and run:
 

@@ -12,40 +12,12 @@ let Sequelize = require('sequelize');
 
 let info = {
     revision: 1,
-    name: 'problem',
-    created: '2018-06-12T04:32:27.056Z',
+    name: 'gameObject',
+    created: '2018-06-12T06:05:23.156Z',
     comment: ''
 };
 
 let migrationCommands = [
-    {
-        fn: 'createTable',
-        params: [
-            'gameObjects',
-            {
-                id: {
-                    type: Sequelize.UUID,
-                    primaryKey: true,
-                    defaultValue: Sequelize.UUIDV1
-                },
-                location: {
-                    type: Sequelize.GEOMETRY
-                },
-                objectType: {
-                    type: Sequelize.STRING
-                },
-                createdAt: {
-                    type: Sequelize.DATE,
-                    allowNull: false
-                },
-                updatedAt: {
-                    type: Sequelize.DATE,
-                    allowNull: false
-                }
-            },
-            {}
-        ]
-    },
     {
         fn: 'createTable',
         params: [
@@ -57,21 +29,40 @@ let migrationCommands = [
                     defaultValue: Sequelize.UUIDV1
                 },
                 title: {
-                    type: Sequelize.STRING
+                    type: Sequelize.TEXT
                 },
                 description: {
-                    type: Sequelize.STRING
+                    type: Sequelize.TEXT
                 },
                 original: {
-                    type: Sequelize.STRING
+                    type: Sequelize.TEXT
+                }
+            },
+            {}
+        ]
+    },
+    {
+        fn: 'createTable',
+        params: [
+            'gameObjects',
+            {
+                id: {
+                    type: Sequelize.UUID,
+                    primaryKey: true,
+                    defaultValue: Sequelize.UUIDV1
                 },
-                createdAt: {
-                    type: Sequelize.DATE,
-                    allowNull: false
+                location: {
+                    type: Sequelize.GEOMETRY('POINT')
                 },
-                updatedAt: {
-                    type: Sequelize.DATE,
-                    allowNull: false
+                objectType: {
+                    type: Sequelize.TEXT
+                },
+                problemId: {
+                    type: Sequelize.UUID,
+                    references: {
+                        model: 'problems',
+                        key: 'id'
+                    }
                 }
             },
             {}
@@ -98,5 +89,11 @@ module.exports = {
             next();
         });
     },
-    info: info
+    info: info,
+    down: function(queryInterface, Sequelize) {
+        return Promise.all([
+            queryInterface.dropTable('gameObjects'),
+            queryInterface.dropTable('problems')
+        ]);
+    }
 };

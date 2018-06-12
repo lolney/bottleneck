@@ -5,8 +5,8 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: DataTypes.UUIDV1,
             primaryKey: true
         },
-        title: DataTypes.STRING,
-        description: DataTypes.STRING,
-        original: DataTypes.STRING
+        title: DataTypes.TEXT,
+        description: DataTypes.TEXT,
+        original: DataTypes.TEXT
     });
 };
