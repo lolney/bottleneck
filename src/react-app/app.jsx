@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import Editor from './editor.jsx';
 import ace from 'ace-builds';
-import ImageComponent from './ImageComponent.jsx';
+// import ImageComponent from './ImageComponent.jsx';
 
 import './CSS/Modal.scss';
 
@@ -24,11 +24,13 @@ class App extends React.Component {
 
         this.state = {
             modalIsOpen: false,
-            title: "No problem yet",
+            title: 'No problem yet',
             problem: undefined,
-            generator: function (x, y) { return 0 },
+            generator: function(x, y) {
+                return 0;
+            }
         };
-        console.log("run");
+        console.log('run');
         this.openModal = this.openModal.bind(this);
         this.afterOpenModal = this.afterOpenModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
@@ -42,7 +44,7 @@ class App extends React.Component {
             } else {
                 this.props.clientEngine.socket.on('problem', (data) => {
                     console.log('display', data);
-                    this.setState({ problem: data })
+                    this.setState({ problem: data });
                     this.openModal();
                 });
             }
@@ -51,27 +53,26 @@ class App extends React.Component {
     }
 
     setGenerator(code) {
-        console.log("onchange");
+        console.log('onchange');
         try {
             let func = eval(code);
-            this.setState({ generator: func })
+            //this.setState({ generator: func });
         } catch (error) {
-
+            console.log(error);
         }
     }
 
     openModal() {
         this.setState({ modalIsOpen: true });
-        this.setState({ title: "ending" });
-        fetch("http://localhost:3000/problem/1")
-            .then(res => {
-                console.log(res);
-                if (res.status == 200) {
-                    res.json().then(json => {
-                        this.setState({ title: json.title });
-                    });
-                }
-            });
+        this.setState({ title: 'ending' });
+        fetch('http://localhost:3000/problem/1').then((res) => {
+            console.log(res);
+            if (res.status == 200) {
+                res.json().then((json) => {
+                    this.setState({ title: json.title });
+                });
+            }
+        });
     }
 
     afterOpenModal() {
@@ -83,6 +84,14 @@ class App extends React.Component {
         this.setState({ modalIsOpen: false });
     }
 
+    /*
+    {this.state.problem && (
+        <ImageComponent
+            problem={this.state.problem}
+            generator={this.state.generator}
+        />
+    )}
+    */
     render() {
         return (
             <div>
@@ -93,11 +102,6 @@ class App extends React.Component {
                     style={customStyles}
                     contentLabel={this.title}
                 >
-                    {this.state.problem &&
-                        <ImageComponent
-                            problem={this.state.problem}
-                            generator={this.state.generator}
-                        />}
                     <Editor onChange={this.setGenerator} />
                 </Modal>
             </div>
@@ -108,6 +112,9 @@ class App extends React.Component {
 export default function createApp(clientEngine) {
     window.addEventListener('DOMContentLoaded', () => {
         Modal.setAppElement('#overlay');
-        ReactDOM.render(<App clientEngine={clientEngine} />, document.getElementById('overlay'));
+        ReactDOM.render(
+            <App clientEngine={clientEngine} />,
+            document.getElementById('overlay')
+        );
     });
 }
