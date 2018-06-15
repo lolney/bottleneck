@@ -28,7 +28,8 @@
     "sequelize": "^4.37.10",
     "socket.io": "^1.4.8",
     "style-loader": "^0.21.0",
-    "uuid": "^3.2.1"
+    "uuid": "^3.2.1",
+    "pg": "^7.4.3"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -42,7 +43,6 @@
     "eslint-config-google": "^0.7.1",
     "jasmine": "^3.1.0",
     "node-sass": "^4.9.0",
-    "pg": "^7.4.3",
     "raw-loader": "^0.5.1",
     "react-jsdom": "git+https://github.com/tomcardoso/react-jsdom.git",
     "sass-loader": "^7.0.1",
