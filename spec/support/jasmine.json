@@ -3,6 +3,7 @@
     "spec_files": [
         "problem-engine/*.js",
         "server/*.js",
+        "server/*/*.js",
         "react-app/*.js"
     ]
 }

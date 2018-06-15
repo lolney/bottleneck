@@ -1,15 +1,58 @@
 [![Waffle.io - Columns and their card count](https://badge.waffle.io/lolney/bottleneck.svg?columns=all)](https://waffle.io/lolney/bottleneck)
 
-Build and run:
+Still early in development, but demo at scripting-rpg.herokuapp.com
+
+## Setup
+
+### Install dependencies:
+
 ```
 npm install
-npm run-script build
-npm start
 ```
 
-Running tests:
+### Setting up the Database:
+
+Install Postgres and create the database `bottleneck_development`.
+Create a .env file at the project root, containing:
+
+```
+DATABASE_URL=postgresql://USERNAME:PASSWORD@localhost:5432/DB_NAME
+```
+
+Install postgis. On Ubuntu:
+
+```
+apt-get install postgis*
+```
+
+Run migrations:
+
+```
+sequelize db:migrate:undo:all && sequelize db:migrate
+```
+
+Run the seeder:
+
+```
+sequelize db:seed:all
+```
+
+Note: to generate migrations:
+
+```
+cd /src/server/db
+babel-node ../../../node_modules/sequelize-auto-migrations/bin/makemigration --name problem
+```
+
+Note that this has some bugs - need to change `GEOMETRY` to `Sequelize.GEOMETRY` manually, and doesn't create the `down` methods.
+
+### Build and run:
+
+npm run-script build
+npm start
+
+### Running tests:
+
 ```
 npm test
 ```
-
-Still early in development, but demo at scripting-rpg.herokuapp.com

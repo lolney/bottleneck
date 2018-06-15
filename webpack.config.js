@@ -29,9 +29,7 @@ module.exports = {
             },
             {
                 test: /\.jsx$/,
-                include: [
-                    path.resolve(__dirname, 'src/react-app'),
-                ],
+                include: [path.resolve(__dirname, 'src/react-app')],
                 loader: 'babel-loader',
                 options: { presets: ['env', 'react'] }
             },
@@ -50,10 +48,11 @@ module.exports = {
                         }
                     ]
                 }
-            },
+            }
         ]
     },
     resolve: {
-        alias: { lance: path.resolve(__dirname, 'node_modules/lance-gg/src/') }
+        alias: { lance: path.resolve(__dirname, 'node_modules/lance-gg/src/') },
+        alias: { jimp: path.resolve(__dirname, 'node_modules/jimp/') }
     }
 };
