@@ -14,5 +14,3 @@ notes\.txt
 
 test\.bmp
 *.DS_Store
-
-src/server/db/config/

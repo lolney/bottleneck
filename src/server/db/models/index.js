@@ -1,5 +1,6 @@
 'use strict';
 
+require('dotenv');
 let fs = require('fs');
 let path = require('path');
 let Sequelize = require('sequelize');
@@ -8,7 +9,13 @@ let env = process.env.NODE_ENV || 'development';
 let config = require(__dirname + '/../config/config.json')[env];
 let db = {};
 
-if (config.use_env_variable) {
+if (process.env.DATABASE_URL) {
+    // the application is executed on Heroku ... use the postgres database
+    var sequelize = new Sequelize(process.env.DATABASE_URL, {
+        dialect: 'postgres',
+        protocol: 'postgres'
+    });
+} else if (config.use_env_variable) {
     var sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
     var sequelize = new Sequelize(

@@ -12,20 +12,11 @@ npm install
 
 ### Setting up the Database:
 
-Install Postgres.
-Create the database `bottleneck_development`.
-Create the file src/db/config/config.json, containing:
+Install Postgres and create the database `bottleneck_development`.
+Create a .env file at the project root, containing:
 
 ```
-{
-    "development": {
-        "username": USERNAME,
-        "password": PASSWORD,
-        "database": "bottleneck_development",
-        "host": "127.0.0.1",
-        "dialect": "postgres"
-    }
-}
+DATABASE_URL=postgresql://USERNAME:PASSWORD@localhost:5432/DB_NAME
 ```
 
 Install postgis. On Ubuntu:
