@@ -16,7 +16,7 @@ Install Postgres and create the database `bottleneck_development`.
 Create a .env file at the project root, containing:
 
 ```
-DATABASE_URL=postgresql://USERNAME:PASSWORD@localhost:5432/DB_NAME
+DATABASE_URL=postgresql://USERNAME:PASSWORD@localhost:5432/bottleneck_development
 ```
 
 Install postgis. On Ubuntu:
@@ -25,22 +25,23 @@ Install postgis. On Ubuntu:
 apt-get install postgis*
 ```
 
-Run migrations:
+Install the Sequelize command line tools and pg module:
+
+```
+npm install -g sequelize-cli pg
+```
+
+Run migrations and seeders:
 
 ```
 sequelize db:migrate:undo:all && sequelize db:migrate
-```
-
-Run the seeder:
-
-```
 sequelize db:seed:all
 ```
 
 Note: to generate migrations:
 
 ```
-cd /src/server/db
+cd src/server/db
 babel-node ../../../node_modules/sequelize-auto-migrations/bin/makemigration --name problem
 ```
 
