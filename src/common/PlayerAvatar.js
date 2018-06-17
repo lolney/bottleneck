@@ -4,11 +4,13 @@ import DynamicObject from 'lance/serialize/DynamicObject';
 import AnimatedActor from '../client/AnimatedActor.js';
 
 export default class PlayerAvatar extends DynamicObject {
-
     static get netScheme() {
-        return Object.assign({
-            // add serializable properties here
-        }, super.netScheme);
+        return Object.assign(
+            {
+                // add serializable properties here
+            },
+            super.netScheme
+        );
     }
 
     constructor(gameEngine, options, props) {
@@ -17,12 +19,16 @@ export default class PlayerAvatar extends DynamicObject {
             this.playerId = props.playerId;
         }
         this.class = PlayerAvatar;
-    };
+    }
 
     onAddToWorld(gameEngine) {
         console.log(`adding player ${this.id}`);
         if (gameEngine.renderer) {
-            this.actor = new AnimatedActor(this, gameEngine.renderer);
+            this.actor = new AnimatedActor(
+                this,
+                gameEngine.renderer,
+                gameEngine.isOwnedByPlayer(this)
+            );
         }
     }
 
@@ -32,5 +38,4 @@ export default class PlayerAvatar extends DynamicObject {
             this.actor.destroy(this.id, gameEngine.renderer);
         }
     }
-
 }

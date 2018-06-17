@@ -4,8 +4,7 @@ let PIXI = null;
  * Handles renderer-specific details for player
  */
 export default class AnimatedActor {
-
-    constructor(avatar, renderer) {
+    constructor(avatar, renderer, mainPlayer) {
         PIXI = require('pixi.js');
         // Create the sprite
         let frames = [];
@@ -15,19 +14,25 @@ export default class AnimatedActor {
         }
 
         this.sprite = new PIXI.extras.AnimatedSprite(frames);
-        this.sprite.anchor.set(0.5,0.5);
+        this.sprite.anchor.set(0.5, 0.5);
 
-
-        this.sprite.x = avatar.position.x;
-        this.sprite.y = avatar.position.y;
         this.lastPosition = Object.assign({}, avatar.position);
 
         this.animate = false;
         this.sprite.animationSpeed = 0.25;
+        this.mainPlayer = mainPlayer;
 
         // Store in the renderer and in PIXI's renderer
         renderer.sprites[avatar.id] = this.sprite;
-        renderer.layer1.addChild(this.sprite);
+        if (!mainPlayer) {
+            this.sprite.x = avatar.position.x;
+            this.sprite.y = avatar.position.y;
+            renderer.camera.addChild(this.sprite);
+        } else {
+            this.sprite.x = renderer.viewportWidth / 2;
+            this.sprite.y = renderer.viewportHeight / 2;
+            renderer.layer1.addChild(this.sprite);
+        }
     }
 
     handleDraw(position) {
@@ -46,8 +51,10 @@ export default class AnimatedActor {
     }
 
     moved(position) {
-        return this.lastPosition.x != position.x
-            || this.lastPosition.y != position.y;
+        return (
+            this.lastPosition.x != position.x ||
+            this.lastPosition.y != position.y
+        );
     }
 
     destroy(id, renderer) {

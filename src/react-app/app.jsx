@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import Editor from './editor.jsx';
 import ace from 'ace-builds';
-// import ImageComponent from './ImageComponent.jsx';
+import ImageComponent from './ImageComponent.jsx';
 
 import './CSS/Modal.scss';
 
@@ -56,7 +56,12 @@ class App extends React.Component {
         console.log('onchange');
         try {
             let func = eval(code);
-            //this.setState({ generator: func });
+            // this.setState({ generator: func });
+            /* this.setState({
+                generator: (x, y) => {
+                    return Math.cos(x);
+                }
+            });*/
         } catch (error) {
             console.log(error);
         }
@@ -84,14 +89,6 @@ class App extends React.Component {
         this.setState({ modalIsOpen: false });
     }
 
-    /*
-    {this.state.problem && (
-        <ImageComponent
-            problem={this.state.problem}
-            generator={this.state.generator}
-        />
-    )}
-    */
     render() {
         return (
             <div>
@@ -102,6 +99,12 @@ class App extends React.Component {
                     style={customStyles}
                     contentLabel={this.title}
                 >
+                    {this.state.problem && (
+                        <ImageComponent
+                            problem={this.state.problem}
+                            generator={this.state.generator}
+                        />
+                    )}
                     <Editor onChange={this.setGenerator} />
                 </Modal>
             </div>

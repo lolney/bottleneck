@@ -1,4 +1,4 @@
-import Jimp from 'jimp';
+const Jimp = require('jimp');
 
 function* imageIterator(image) {
     let h = image.bitmap.height;
@@ -14,6 +14,7 @@ function* imageIterator(image) {
 
 export default class ImageProblem {
     constructor(base64) {
+        // console.log(new Jimp(100, 100, 255));
         if (base64 == null) throw new TypeError('Expected base64 string');
         this.original = base64;
     }
@@ -67,7 +68,6 @@ export default class ImageProblem {
     }
 
     static genBlank() {
-        // console.log(new Jimp(100, 100, 255));
         return new Promise((resolve, reject) => {
             new Jimp(100, 100, 255, (err, image) => {
                 if (err) reject(err);
