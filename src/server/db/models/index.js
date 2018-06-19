@@ -1,6 +1,6 @@
 'use strict';
 
-require('dotenv');
+require('dotenv').config();
 let fs = require('fs');
 let path = require('path');
 let Sequelize = require('sequelize');

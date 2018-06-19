@@ -57,9 +57,9 @@ class App extends React.Component {
         try {
             let func = eval(code);
             // this.setState({ generator: func });
-            /* this.setState({
+            /*this.setState({
                 generator: (x, y) => {
-                    return Math.cos(x);
+                    return Math.cos(x) * 255;
                 }
             });*/
         } catch (error) {

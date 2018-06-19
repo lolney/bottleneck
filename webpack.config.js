@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const webpack = require('webpack');
 
 module.exports = {
     entry: ['babel-polyfill', './src/client/clientEntryPoint.js'],
@@ -39,12 +40,9 @@ module.exports = {
                 options: {
                     multiple: [
                         {
-                            search: '\'jimp\'',
-                            replace: '\'jimp/browser/lib/jimp.js\''
-                        },
-                        {
-                            search: `ArrayBuffer.from(s, 'base64')`,
-                            replace: `Uint8Array.from(atob(s), (c) => c.charCodeAt(0))`
+                            search: 'global.Jimp(?= = require)',
+                            replace: 'const Jimp', // '\'jimp/browser/lib/jimp.js\''
+                            flags: 'i'
                         }
                     ]
                 }
@@ -54,5 +52,12 @@ module.exports = {
     resolve: {
         alias: { lance: path.resolve(__dirname, 'node_modules/lance-gg/src/') },
         alias: { jimp: path.resolve(__dirname, 'node_modules/jimp/') }
-    }
+    },
+    plugins: [
+        new webpack.DefinePlugin({
+            'process.env': {
+                ENVIRONMENT: JSON.stringify('BROWSER')
+            }
+        })
+    ]
 };

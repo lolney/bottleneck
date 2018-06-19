@@ -1,4 +1,4 @@
-const Jimp = require('jimp');
+global.Jimp = require('jimp'); // does not work in browser if not global
 
 function* imageIterator(image) {
     let h = image.bitmap.height;
@@ -28,7 +28,7 @@ export default class ImageProblem {
 
     static fromImage(image) {
         return new Promise((resolve, reject) => {
-            image.getBase64(Jimp.MIME_BMP, (err, base64) => {
+            image.getBase64(global.Jimp.MIME_BMP, (err, base64) => {
                 if (err) reject(err);
                 resolve(new ImageProblem(base64));
             });
@@ -37,7 +37,7 @@ export default class ImageProblem {
 
     getImage() {
         let s = this.original.slice(22);
-        return Jimp.read(Buffer.from(s, 'base64'));
+        return global.Jimp.read(Buffer.from(s, 'base64'));
     }
 
     getBase64(cb) {
@@ -69,7 +69,7 @@ export default class ImageProblem {
 
     static genBlank() {
         return new Promise((resolve, reject) => {
-            new Jimp(100, 100, 255, (err, image) => {
+            new global.Jimp(100, 100, 255, (err, image) => {
                 if (err) reject(err);
                 resolve(image);
             });

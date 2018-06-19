@@ -12,6 +12,8 @@ export default class ImageComponent extends React.Component {
             done: false
         };
         this.problem = new ImageProblem(this.props.problem.original);
+
+        this.componentDidUpdate = this.componentDidUpdate.bind(this);
     }
 
     componentDidUpdate(prevProps, prevState) {
