@@ -1,14 +1,12 @@
 import models from './models';
-import TwoVector from 'lance/serialize/TwoVector';
+//import TwoVector from 'lance/serialize/TwoVector';
+// not sure why we can't import TwoVector here
 
 function destructure(obj) {
     let dv = obj.dataValues;
     return {
-        position: new TwoVector(
-            dv.location.coordinates[0],
-            dv.location.coordinates[1]
-        ),
-        id: dv.id,
+        position: [dv.location.coordinates[0], dv.location.coordinates[1]],
+        dbId: dv.id,
         objectType: dv.objectType
     };
 }
@@ -20,9 +18,10 @@ export async function objects() {
 }
 
 // Get problem for this game object
-export function problem(objId) {
-    return models.gameObject.find({
+export async function problem(objId) {
+    let obj = await models.gameObject.find({
         where: { id: objId },
         include: [models.problem]
     });
+    return obj.problem;
 }

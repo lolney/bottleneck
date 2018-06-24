@@ -87,6 +87,10 @@ let migrationCommands = [
             },
             {}
         ]
+    },
+    {
+        fn: 'addColumn',
+        params: ['problems', 'gameObjectId', Sequelize.UUID]
     }
 ];
 
@@ -112,7 +116,9 @@ module.exports = {
     info: info,
     down: function(queryInterface, Sequelize) {
         return Promise.all([
-            queryInterface.dropTable('gameObjects'),
+            queryInterface.dropTable('gameObjects', {
+                force: true
+            }),
             queryInterface.dropTable('problems')
         ]);
     }

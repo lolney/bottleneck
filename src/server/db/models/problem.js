@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('problem', {
+    let Problem = sequelize.define('problem', {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV1,
@@ -11,4 +11,8 @@ module.exports = (sequelize, DataTypes) => {
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE
     });
+    Problem.associate = function(models) {
+        Problem.belongsTo(models.gameObject);
+    };
+    return Problem;
 };

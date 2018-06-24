@@ -33,6 +33,7 @@ export default class MyGameEngine extends GameEngine {
 
     makeTrees(objects) {
         for (let obj of objects) {
+            obj.position = new TwoVector(obj.position[0], obj.position[1]);
             this.addObjectToWorld(new Avatar(this, null, obj));
         }
     }

@@ -30,10 +30,12 @@ export default class MyServerEngine extends ServerEngine {
         if (!object || !player) return;
 
         console.log('Emitting problem:display event: ', player.playerId);
+        console.log('Object id: ', object.dbId);
 
         Controller.pushProblem(
             this.socketsMap[player.playerId],
-            player.playerId
+            player.playerId,
+            object.dbId
         );
         problemEmitter.emit('display', player.playerId);
     }

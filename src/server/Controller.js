@@ -1,7 +1,8 @@
 import ImageProblem from '../problem-engine/ImageProblem';
 import EventEmitter from 'events';
+import { problem } from './db/views';
 
-export class ProblemEmitter extends EventEmitter { }
+export class ProblemEmitter extends EventEmitter {}
 export const problemEmitter = new ProblemEmitter();
 
 class ProblemQueue {
@@ -30,18 +31,17 @@ problemEmitter.on('display', (playerId) => {
 export default class Controller {
     static getProblem(req, res) {
         if (problemQueue.dequeue(req.params.playerId)) {
-            console.log("sending problem");
+            console.log('sending problem');
             res.json({ title: 'New problem' });
         } else {
             res.status(204).send('No problem yet');
         }
     }
 
-    static pushProblem(socket, playerId) {
-        // TODO: look up problem for this object in the DB
-        ImageProblem.create()
+    static pushProblem(socket, playerId, dbId) {
+        problem(dbId)
             .then((problem) => {
-                return problem.serialize();
+                return new ImageProblem(problem.original).serialize();
             })
             .then((serialized) => {
                 socket.emit('problem', serialized);

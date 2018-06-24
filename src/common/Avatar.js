@@ -5,23 +5,32 @@ import Serializer from 'lance/serialize/Serializer';
 import StaticActor from '../client/StaticActor.js';
 
 export default class Avatar extends DynamicObject {
-
     static get netScheme() {
-        return Object.assign({
-            objectType: { type: Serializer.TYPES.STRING },
-        }, super.netScheme);
+        return Object.assign(
+            {
+                objectType: { type: Serializer.TYPES.STRING },
+                dbId: { type: Serializer.TYPES.STRING }
+            },
+            super.netScheme
+        );
     }
 
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
-        if (props && props.objectType)
+        if (props) {
             this.objectType = props.objectType;
+            this.dbId = props.dbId;
+        }
         this.class = Avatar;
-    };
+    }
 
     onAddToWorld(gameEngine) {
         if (gameEngine.renderer) {
-            this.actor = new StaticActor(this, gameEngine.renderer, this.objectType);
+            this.actor = new StaticActor(
+                this,
+                gameEngine.renderer,
+                this.objectType
+            );
         }
     }
 
@@ -30,5 +39,4 @@ export default class Avatar extends DynamicObject {
             this.actor.destroy(this.id, gameEngine.renderer);
         }
     }
-
 }
