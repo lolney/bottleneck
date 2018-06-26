@@ -83,14 +83,14 @@ export default class ImageProblem {
                 let w = image.bitmap.width;
                 for (let y = 0; y < h; y++) {
                     for (let x = 0; x < w; x++) {
-                        for (let k = 0; k < 3; k++) {
+                        for (var k = 0; k < 3; k++) {
                             image.bitmap.data[4 * (y * h + x) + k] = generator(
                                 x / w,
                                 y / h
                             );
                         }
                         // May need to set alpha channel
-                        // image.bitmap.data[4 * (y * h + x) + k] = 255;
+                        image.bitmap.data[4 * (y * h + x) + k] = 255;
                     }
                 }
                 return image;

@@ -26,6 +26,7 @@ class App extends React.Component {
             modalIsOpen: false,
             title: 'No problem yet',
             problem: undefined,
+            code: '',
             generator: function(x, y) {
                 return 0;
             }
@@ -56,8 +57,9 @@ class App extends React.Component {
         console.log('onchange');
         try {
             let func = eval(code);
-            // this.setState({ generator: func });
+            this.setState({ generator: func, code: code });
             /*this.setState({
+                code: code,
                 generator: (x, y) => {
                     return Math.cos(x) * 255;
                 }
@@ -105,7 +107,10 @@ class App extends React.Component {
                             generator={this.state.generator}
                         />
                     )}
-                    <Editor onChange={this.setGenerator} />
+                    <Editor
+                        onChange={this.setGenerator}
+                        value={this.state.code}
+                    />
                 </Modal>
             </div>
         );

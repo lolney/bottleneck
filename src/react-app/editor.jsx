@@ -84,6 +84,7 @@ export default class Editor extends React.Component {
                     <AceEditor
                         mode="javascript"
                         theme="github"
+                        value={this.props.value}
                         onChange={this.props.onChange}
                         name="UNIQUE_ID_OF_DIV"
                         editorProps={{ $blockScrolling: true }}
