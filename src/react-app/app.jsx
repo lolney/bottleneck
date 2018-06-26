@@ -45,7 +45,7 @@ class App extends React.Component {
             } else {
                 this.props.clientEngine.socket.on('problem', (data) => {
                     console.log('display', data);
-                    this.setState({ problem: data });
+                    this.setState({ problem: data, code: data.code });
                     this.openModal();
                 });
             }

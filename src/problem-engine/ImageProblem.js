@@ -45,11 +45,15 @@ export default class ImageProblem {
     }
 
     getTitle() {
-        return 'Title';
+        return 'Image Matching';
     }
 
     getDescription() {
-        return 'This is the description';
+        return 'Try to match the target image with the original. Write a function that takes the coordinates x,y, normalized to the range [0,1], and returns the greyscale value at that location (in the range [0, 255]).';
+    }
+
+    getStartingCode() {
+        return '(x,y) => {return 255};';
     }
 
     serialize() {
@@ -62,7 +66,8 @@ export default class ImageProblem {
                     title: this.getTitle(),
                     description: this.getDescription(),
                     original: this.original,
-                    target: image.original
+                    target: image.original,
+                    code: this.getStartingCode()
                 };
             });
     }
