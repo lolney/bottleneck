@@ -3,6 +3,7 @@ const fs = require('fs');
 const webpack = require('webpack');
 
 module.exports = {
+    watch: true,
     entry: ['babel-polyfill', './src/client/clientEntryPoint.js'],
     output: {
         path: path.join(__dirname, 'dist'),
