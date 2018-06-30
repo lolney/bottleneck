@@ -57,13 +57,7 @@ class App extends React.Component {
         console.log('onchange');
         try {
             let func = eval(code);
-            this.setState({ generator: func, code: code });
-            /*this.setState({
-                code: code,
-                generator: (x, y) => {
-                    return Math.cos(x) * 255;
-                }
-            });*/
+            this.setState({ generator: func });
         } catch (error) {
             console.log(error);
         }
