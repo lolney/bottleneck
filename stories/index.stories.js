@@ -19,4 +19,4 @@ storiesOf('Button', module)
     </Button>
   ));
 
-storiesOf('BinaryTreeComponent', module)
+storiesOf('BinaryTreeComponent', module).add('the tree', () => <BinaryTreeComponent/>);

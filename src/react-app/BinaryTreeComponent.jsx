@@ -1,4 +1,5 @@
 import React from 'react';
+import VisualTree from './VisualTree';
 
 export default class BinaryTreeComponent extends React.Component {
     constructor(props) {
