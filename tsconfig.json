@@ -1,9 +1,9 @@
 {
     "compilerOptions": {
+        "module": "es2015",
         "outDir": "./dist",
         "allowJs": true,
         "target": "es2017"
     },
-    "include": ["./src/**/*"],
-    "moduleResolution": "node"
+    "include": ["./src/**/*"]
 }
