@@ -1,4 +1,4 @@
-paper.install(window);
+import paper from 'paper';
 
 class BinaryTree {
     constructor(el) {
@@ -85,6 +85,7 @@ class BinaryNode {
 export default class VisualTree {
     constructor(tree, canvas, animation) {
         paper.install(window);
+        paper.install(window);
         paper.setup('myCanvas');
 
         this.staticConfig = {
@@ -94,7 +95,7 @@ export default class VisualTree {
         };
         this.canvas = canvas;
 
-        canvas.height = height * dH + 10;
+        canvas.height = height * this.staticConfig.dH + 10;
 
         window.onresize = () => {
             this.draw();
