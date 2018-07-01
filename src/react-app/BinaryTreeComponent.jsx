@@ -1,5 +1,7 @@
 import React from 'react';
 import VisualTree from './VisualTree';
+import { BinaryTree } from './VisualTree';
+import './CSS/BinaryTree.scss';
 
 export default class BinaryTreeComponent extends React.Component {
     constructor(props) {
@@ -14,7 +16,7 @@ export default class BinaryTreeComponent extends React.Component {
     }
 
     componentDidMount() {
-        const tree = createTree(this.state.nodes);
+        const tree = BinaryTree.createTree(this.state.nodes);
         new VisualTree(tree, document.getElementById('myCanvas'), false);
     }
 

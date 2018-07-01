@@ -1,6 +1,6 @@
 import paper from 'paper';
 
-class BinaryTree {
+export class BinaryTree {
     constructor(el) {
         this.element = el;
         this.left = null;
@@ -10,7 +10,7 @@ class BinaryTree {
 
     getHeight() {
         if (this == null) return 0;
-        return Math.max(getHeight(tree.left) + 1, getHeight(tree.right) + 1);
+        return Math.max(this.left.getHeight + 1, this.right.getHeight + 1);
     }
 
     static createTree(nodes) {
@@ -29,8 +29,8 @@ class BinaryTree {
         if (nodes == null || nodes == '-') return null;
 
         let tree = new BinaryTree(datum(nodes) || nodes);
-        tree.left = createTree(leftChild(nodes));
-        tree.right = createTree(rightChild(nodes));
+        tree.left = BinaryTree.createTree(leftChild(nodes));
+        tree.right = BinaryTree.createTree(rightChild(nodes));
 
         return tree;
     }
@@ -87,6 +87,7 @@ export default class VisualTree {
         paper.install(window);
         paper.install(window);
         paper.setup('myCanvas');
+        this.animation = animation;
 
         this.staticConfig = {
             height: tree.getHeight(),
@@ -95,13 +96,13 @@ export default class VisualTree {
         };
         this.canvas = canvas;
 
-        canvas.height = height * this.staticConfig.dH + 10;
+        canvas.height = this.staticConfig.height * this.staticConfig.dH + 10;
 
         window.onresize = () => {
-            this.draw();
+            this.draw(tree);
         };
 
-        this.draw();
+        this.draw(tree);
     }
 
     getConfig() {
@@ -109,29 +110,29 @@ export default class VisualTree {
         return {
             canvasWidth: canvasWidth,
             origin: [canvasWidth / 2, 35],
-            dW: (canvasWidth - staticConfig.sideMargin) / 4,
+            dW: (canvasWidth - this.staticConfig.sideMargin) / 4,
             height: this.staticConfig.height,
             dH: this.staticConfig.dH,
             sideMargin: this.staticConfig.sideMargin
         };
     }
 
-    draw() {
+    draw(tree) {
         this.t = 0;
-        VisualTree.drawPreOrder(this.getCOnfig(), tree, 0, 0);
+        this.drawPreOrder(tree, 0, 0);
     }
 
     drawPreOrder(tree, depth, x) {
         // depth: depth of the current node, x: x-coordinate of the current node
         if (tree == null) return;
 
-        if (animation)
+        if (this.animation)
             setTimeout(function() {
-                tree.node = new BinaryNode(tree, depth, x);
+                tree.node = new BinaryNode(tree, depth, x, this.getConfig);
             }, 500 * this.t++);
-        else tree.node = new BinaryNode(tree, depth, x);
+        else tree.node = new BinaryNode(tree, depth, x, this.getConfig);
 
-        drawPreOrder(tree.left, depth + 1, x - 1 / Math.pow(2, depth));
-        drawPreOrder(tree.right, depth + 1, x + 1 / Math.pow(2, depth));
+        this.drawPreOrder(tree.left, depth + 1, x - 1 / Math.pow(2, depth));
+        this.drawPreOrder(tree.right, depth + 1, x + 1 / Math.pow(2, depth));
     }
 }
