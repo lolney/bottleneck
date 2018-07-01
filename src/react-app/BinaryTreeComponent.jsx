@@ -1,8 +1,11 @@
 import React from 'react';
 
-class BinaryTreeComponent extends React.Component {
+export default class BinaryTreeComponent extends React.Component {
     constructor(props) {
         super(props);
+    }
+
+    componentDidMount() {
         const nodes = [
             10,
             [5, [3, 2, 4], [8, 7, 9]],
