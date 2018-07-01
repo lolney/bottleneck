@@ -4,15 +4,17 @@ import VisualTree from './VisualTree';
 export default class BinaryTreeComponent extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            nodes: [
+                10,
+                [5, [3, 2, 4], [8, 7, 9]],
+                [15, [12, '-', 14], [18, 19, [20, 21, [22, 23, 24]]]]
+            ]
+        };
     }
 
     componentDidMount() {
-        const nodes = [
-            10,
-            [5, [3, 2, 4], [8, 7, 9]],
-            [15, [12, '-', 14], [18, 19, [20, 21, [22, 23, 24]]]]
-        ];
-        const tree = createTree(nodes);
+        const tree = createTree(this.state.nodes);
         new VisualTree(tree, document.getElementById('myCanvas'), false);
     }
 
@@ -23,7 +25,7 @@ export default class BinaryTreeComponent extends React.Component {
                     <canvas id="myCanvas" resize />
                 </div>
                 <div class="row-2">
-                    <p>{this.props.array.toString()}</p>
+                    <p>{this.state.nodes.toString()}</p>
                 </div>
             </section>
         );
