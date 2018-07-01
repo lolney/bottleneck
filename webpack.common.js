@@ -3,14 +3,14 @@ const fs = require('fs');
 const webpack = require('webpack');
 
 module.exports = {
-    watch: true,
     entry: ['babel-polyfill', './src/client/clientEntryPoint.js'],
     output: {
         path: path.join(__dirname, 'dist'),
         filename: 'bundle.js'
     },
     module: {
-        loaders: [
+        rules: [
+            { test: /\.tsx?$/, loader: 'awesome-typescript-loader' },
             { test: /\.css$/, loader: 'style-loader!css-loader' },
             {
                 test: /\.scss$/,
