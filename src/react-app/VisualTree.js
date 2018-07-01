@@ -110,7 +110,9 @@ export default class VisualTree {
             canvasWidth: canvasWidth,
             origin: [canvasWidth / 2, 35],
             dW: (canvasWidth - staticConfig.sideMargin) / 4,
-            ...this.staticConfig
+            height: this.staticConfig.height,
+            dH: this.staticConfig.dH,
+            sideMargin: this.staticConfig.sideMargin
         };
     }
 
