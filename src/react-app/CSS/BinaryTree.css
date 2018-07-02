@@ -1,0 +1,44 @@
+.content {
+  display: flex;
+  flex: 1;
+  color: #000;
+  flex-direction: column;
+}
+.row-1 {
+  display: flex;
+  flex: 0.1;
+  min-height: 20px; /* previously min-height: 2.5vh; */
+  vertical-align: middle;
+}
+
+.canvasContainer {
+  max-width: 1000px;
+  object-fit: contain;
+}
+
+.row-2 {
+  display: flex; /* previously display: flex*/
+  flex: 3;
+  min-height: 1px; /* previously min-height: 37.5vh; */
+}
+.main {
+  flex: 1;
+  order: 3;
+  background: #eee;
+}
+
+.treeCanvas[resize] {
+  width: 100%;
+  background: #ccc;
+  order: 2;
+  background-size: contain;
+  border-radius: 3px;
+  object-fit: contain;
+}
+p {
+  width: 100%;
+  order: 3;
+  /*background: #ccc;*/
+  background-size: contain;
+  border-radius: 3px;
+}
