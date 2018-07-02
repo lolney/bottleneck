@@ -26,7 +26,7 @@
   order: 3;
   background: #eee;
 }
-canvas[resize] {
+.treeCanvas[resize] {
   width: 100%;
   background: #ccc;
   order: 2;
