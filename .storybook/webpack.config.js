@@ -11,11 +11,6 @@ module.exports = {
         // your custom plugins
     ],
     module: {
-        rules: [
-            {
-                test: /\.scss$/,
-                loaders: ['style-loader', 'raw-loader', 'sass-loader']
-            }
-        ]
+        rules: [{ test: /\.css$/, loader: 'style-loader!css-loader' }]
     }
 };
