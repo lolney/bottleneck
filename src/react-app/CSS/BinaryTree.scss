@@ -26,7 +26,7 @@
   order: 3;
   background: #eee;
 }
-#myCanvas[resize] {
+canvas[resize] { //#myCanvas
   width: 100%;
   background: #ccc;
   order: 2;

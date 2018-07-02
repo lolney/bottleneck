@@ -91,7 +91,7 @@ export default class VisualTree {
 
         this.staticConfig = {
             height: tree.getHeight(),
-            dH: 6,
+            dH: 60,
             sideMargin: 20
         };
         this.canvas = canvas;
@@ -100,9 +100,11 @@ export default class VisualTree {
 
         window.onresize = () => {
             this.draw(tree);
+            console.log("Piper");
         };
 
         this.draw(tree);
+        console.log("Peter");
     }
 
     getConfig() {
@@ -128,9 +130,9 @@ export default class VisualTree {
 
         if (this.animation)
             setTimeout(function() {
-                tree.node = new BinaryNode(tree, depth, x, this.getConfig);
+                tree.node = new BinaryNode(tree, depth, x, this.getConfig());
             }, 500 * this.t++);
-        else tree.node = new BinaryNode(tree, depth, x, this.getConfig);
+        else tree.node = new BinaryNode(tree, depth, x, this.getConfig());
 
         this.drawPreOrder(tree.left, depth + 1, x - 1 / Math.pow(2, depth));
         this.drawPreOrder(tree.right, depth + 1, x + 1 / Math.pow(2, depth));
