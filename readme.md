@@ -57,3 +57,9 @@ npm start
 ```
 npm test
 ```
+
+Storybook tests:
+
+```
+npm run storybook
+```
