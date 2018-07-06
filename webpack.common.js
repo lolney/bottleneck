@@ -8,9 +8,6 @@ module.exports = {
         path: path.join(__dirname, 'dist'),
         filename: 'bundle.js'
     },
-    resolve: {
-        extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js', '.jsx']
-    },
     module: {
         rules: [
             { test: /\.css$/, loader: 'style-loader!css-loader' },
@@ -20,7 +17,12 @@ module.exports = {
             },
             {
                 test: /\.js$/,
-                include: [path.resolve(__dirname, 'src')],
+                include: [
+                    path.resolve(__dirname, 'src'),
+                    path.resolve(__dirname, 'node_modules/lance-gg'),
+                    path.resolve(__dirname, 'node_modules/jimp'),
+                    fs.realpathSync('./node_modules/lance-gg')
+                ],
                 loader: 'babel-loader',
                 query: {
                     presets: ['babel-preset-env'].map(require.resolve)
@@ -39,13 +41,18 @@ module.exports = {
                     multiple: [
                         {
                             search: 'global.Jimp(?= = require)',
-                            replace: 'const Jimp', // '\'jimp/browser/lib/jimp.js\''
+                            replace: 'const Jimp',
                             flags: 'i'
                         }
                     ]
                 }
-            }
+            },
+            { test: /\.tsx?$/, loader: 'awesome-typescript-loader' }
         ]
+    },
+    resolve: {
+        alias: { lance: path.resolve(__dirname, 'node_modules/lance-gg/src/') },
+        alias: { jimp: path.resolve(__dirname, 'node_modules/jimp/') }
     },
     plugins: [
         new webpack.DefinePlugin({

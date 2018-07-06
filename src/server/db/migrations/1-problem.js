@@ -117,7 +117,8 @@ module.exports = {
     down: function(queryInterface, Sequelize) {
         return Promise.all([
             queryInterface.dropTable('gameObjects', {
-                force: true
+                force: true,
+                cascade: true
             }),
             queryInterface.dropTable('problems')
         ]);
