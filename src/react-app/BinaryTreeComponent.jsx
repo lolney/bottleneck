@@ -24,7 +24,11 @@ export default class BinaryTreeComponent extends React.Component {
         return (
             <section className="content">
                 <div className="row-1">
-                    <canvas className="treeCanvas" id="myCanvas" resize />
+                    <canvas
+                        className="treeCanvas"
+                        id="myCanvas"
+                        resize="true"
+                    />
                 </div>
                 <div className="row-2">
                     <p>{this.state.nodes.toString()}</p>
