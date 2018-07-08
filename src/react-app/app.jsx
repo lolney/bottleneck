@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import Editor from './editor.jsx';
 import ace from 'ace-builds';
-import ImageComponent from './ImageComponent.jsx';
+//import ImageComponent from './ImageComponent.jsx';
+import BinaryTreeComponent from './BinaryTreeComponent.jsx';
 
 import './CSS/Modal.scss';
 
@@ -14,7 +15,9 @@ const customStyles = {
         right: 'auto',
         bottom: 'auto',
         marginRight: '-50%',
-        transform: 'translate(-50%, -50%)'
+        transform: 'translate(-50%, -50%)',
+        width: '500px',
+        height: '500px'
     }
 };
 
@@ -96,7 +99,7 @@ class App extends React.Component {
                     contentLabel={this.title}
                 >
                     {this.state.problem && (
-                        <ImageComponent
+                        <BinaryTreeComponent
                             problem={this.state.problem}
                             generator={this.state.generator}
                         />

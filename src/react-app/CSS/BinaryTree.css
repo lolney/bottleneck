@@ -1,13 +1,14 @@
-.content {
+bTree {
+  font-size:20px
+
+bTree.content {
   display: flex;
-  flex: 1;
   color: #000;
   flex-direction: column;
 }
 .row-1 {
   display: flex;
-  flex: 0.1;
-  min-height: 20px; /* previously min-height: 2.5vh; */
+  min-height: 100px; /* previously min-height: 2.5vh; */
   vertical-align: middle;
 }
 
@@ -18,15 +19,10 @@
 
 .row-2 {
   display: flex; /* previously display: flex*/
-  flex: 3;
-  min-height: 1px; /* previously min-height: 37.5vh; */
+  max-height: 25px;
 }
-.main {
-  flex: 1;
-  order: 3;
-  background: #eee;
-}
-.treeCanvas[resize] {
+
+.treeCanvas {
   width: 100%;
   background: #ccc;
   order: 2;
@@ -40,4 +36,5 @@ p {
   /*background: #ccc;*/
   background-size: contain;
   border-radius: 3px;
+}
 }

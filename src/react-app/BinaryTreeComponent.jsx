@@ -1,7 +1,7 @@
 import React from 'react';
 import VisualTree from './VisualTree';
 import { BinaryTree } from './VisualTree';
-import './CSS/BinaryTree.css';
+import './CSS/BinaryTree.scss';
 
 export default class BinaryTreeComponent extends React.Component {
     constructor(props) {
@@ -22,18 +22,20 @@ export default class BinaryTreeComponent extends React.Component {
 
     render() {
         return (
-            <section className="content">
-                <div className="row-1">
-                    <canvas
-                        className="treeCanvas"
-                        id="myCanvas"
-                        resize="true"
-                    />
-                </div>
-                <div className="row-2">
-                    <p>{this.state.nodes.toString()}</p>
-                </div>
-            </section>
+            <div class="bTree">
+                <section className="content">
+                    <div className="row-1">
+                        <canvas
+                            className="treeCanvas"
+                            id="myCanvas"
+                            //resize="true"
+                        />
+                    </div>
+                    <div className="row-2">
+                        <p>{this.state.nodes.toString()}</p>
+                    </div>
+                </section>
+            </div>
         );
     }
 }
