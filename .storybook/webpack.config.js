@@ -19,6 +19,10 @@ module.exports = {
                 include: [path.resolve(__dirname, '../src/react-app')],
                 loader: 'babel-loader',
                 options: { presets: ['env', 'react'] }
+            },
+            {
+                test: /\.scss$/,
+                loaders: ['style-loader', 'raw-loader', 'sass-loader']
             }
         ]
     }

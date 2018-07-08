@@ -3,8 +3,7 @@ import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import Editor from './editor.jsx';
 import ace from 'ace-builds';
-//import ImageComponent from './ImageComponent.jsx';
-import BinaryTreeComponent from './BinaryTreeComponent.jsx';
+import ProblemComponent from './ProblemComponent.jsx';
 
 import './CSS/Modal.scss';
 
@@ -21,7 +20,7 @@ const customStyles = {
     }
 };
 
-class App extends React.Component {
+export class App extends React.Component {
     constructor(props) {
         super(props);
 
@@ -99,7 +98,7 @@ class App extends React.Component {
                     contentLabel={this.title}
                 >
                     {this.state.problem && (
-                        <BinaryTreeComponent
+                        <ProblemComponent
                             problem={this.state.problem}
                             generator={this.state.generator}
                         />
