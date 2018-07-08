@@ -1,7 +1,7 @@
 import React from 'react';
 import VisualTree from './VisualTree';
 import { BinaryTree } from './VisualTree';
-import './CSS/BinaryTree.css';
+import './CSS/BinaryTree.scss';
 
 export default class BinaryTreeComponent extends React.Component {
     constructor(props) {

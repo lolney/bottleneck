@@ -11,6 +11,7 @@ process.env.NODE_ENV = 'test';
 
 describe('ImageComponent', () => {
     let mountedImageComponent;
+    let isDone;
     const goalGenerator = function(x, y) {
         return y * 255;
     };
@@ -22,6 +23,7 @@ describe('ImageComponent', () => {
     };
 
     beforeEach((done) => {
+        isDone = false;
         ImageProblem.create(goalGenerator)
             .then((prob) => {
                 return prob.serialize();
@@ -29,7 +31,10 @@ describe('ImageComponent', () => {
             .then((serialized) => {
                 let props = {
                     generator: blankGenerator,
-                    problem: serialized
+                    problem: serialized,
+                    setDone: () => {
+                        isDone = true;
+                    }
                 };
                 mountedImageComponent = <ImageComponent {...props} />;
                 done();
@@ -49,7 +54,7 @@ describe('ImageComponent', () => {
                 // https://github.com/airbnb/enzyme/issues/964
                 wrapper.update();
                 expect(wrapper.state('target')).toEqual(problem.original);
-                expect(wrapper.state('done')).toEqual(false);
+                expect(isDone).toEqual(false);
                 done();
             }, 100);
         });
@@ -70,7 +75,7 @@ describe('ImageComponent', () => {
         // Check that the component's target is equal to `a.original`
         setTimeout(() => {
             wrapper.update();
-            expect(wrapper.state('done')).toEqual(true);
+            expect(isDone).toEqual(true);
             done();
         }, 100);
     });

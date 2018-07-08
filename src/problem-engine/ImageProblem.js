@@ -1,4 +1,5 @@
 global.Jimp = require('jimp'); // does not work in browser if not global
+import Problem from './Problem';
 
 function* imageIterator(image) {
     let h = image.bitmap.height;
@@ -12,8 +13,9 @@ function* imageIterator(image) {
     }
 }
 
-export default class ImageProblem {
+export default class ImageProblem extends Problem {
     constructor(base64) {
+        super();
         // console.log(new Jimp(100, 100, 255));
         if (base64 == null) throw new TypeError('Expected base64 string');
         this.original = base64;
@@ -56,6 +58,10 @@ export default class ImageProblem {
         return '(x,y) => {return 255};';
     }
 
+    getTypeString() {
+        return 'image';
+    }
+
     serialize() {
         return ImageProblem.genBlank()
             .then((blank) => {
@@ -63,11 +69,9 @@ export default class ImageProblem {
             })
             .then((image) => {
                 return {
-                    title: this.getTitle(),
-                    description: this.getDescription(),
+                    ...super.serialize(), 
                     original: this.original,
-                    target: image.original,
-                    code: this.getStartingCode()
+                    target: image.original
                 };
             });
     }

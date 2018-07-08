@@ -134,7 +134,7 @@ export default class VisualTree {
         if (tree == null) return;
 
         if (this.animation)
-            setTimeout(function() {
+            setTimeout(() => {
                 tree.node = new BinaryNode(tree, depth, x, this.getConfig());
             }, 500 * this.t++);
         else {
