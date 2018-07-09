@@ -90,7 +90,7 @@ export default class Validator {
      * @return {T}
      */
     callGeneratorWithValidator(generator, args) {
-        result = generator.apply(args);
+        let result = generator.apply(args);
         this.test(result, args);
         return result;
     }

@@ -33,11 +33,13 @@ export default class ProblemComponent extends React.Component {
         const child = React.createElement(
             this.getChild(this.props.problem.type),
             {
+                // TODO: consider a context here?
                 problem: this.props.problem,
                 setDone: () => {
                     this.setState({ done: true });
                 },
-                generator: this.props.generator
+                generator: this.props.generator,
+                reportError: this.props.reportError
             }
         );
         return (
