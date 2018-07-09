@@ -29,7 +29,6 @@
         "react-ace": "^6.1.1",
         "react-dom": "^16.4.0",
         "react-modal": "^3.4.4",
-        "runtypes": "^2.0.6",
         "sequelize": "^4.37.10",
         "socket.io": "^1.4.8",
         "source-map-loader": "^0.2.3",

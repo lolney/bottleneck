@@ -1,7 +1,6 @@
 import React from 'react';
 import ImageProblem from '../problem-engine/ImageProblem';
 import PropTypes from 'prop-types';
-import './CSS/Image.scss';
 
 export default class ImageComponent extends React.Component {
     constructor(props) {

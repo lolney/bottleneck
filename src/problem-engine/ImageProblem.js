@@ -1,5 +1,6 @@
 global.Jimp = require('jimp'); // does not work in browser if not global
 import Problem from './Problem';
+import Validator, { Type, Range } from './Validator';
 
 function* imageIterator(image) {
     let h = image.bitmap.height;
@@ -69,7 +70,7 @@ export default class ImageProblem extends Problem {
             })
             .then((image) => {
                 return {
-                    ...super.serialize(), 
+                    ...super.serialize(),
                     original: this.original,
                     target: image.original
                 };
@@ -141,5 +142,16 @@ export default class ImageProblem extends Problem {
 
     static random(x, y) {
         return Math.round(Math.random() * 255);
+    }
+
+    static wrapGenerator(generator) {
+        return (args) => {
+            let returnValidator = new Validator([
+                Type.is(Number),
+                Type.isInteger(),
+                Range.in(0, 255)
+            ]);
+            returnValidator.callGeneratorWithValidator(generator, args);
+        };
     }
 }

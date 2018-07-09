@@ -2,6 +2,8 @@ import React from 'react';
 import BinaryTreeComponent from './BinaryTreeComponent.jsx';
 import ImageComponent from './ImageComponent.jsx';
 
+import './CSS/Image.scss';
+
 export default class ProblemComponent extends React.Component {
     constructor(props) {
         super(props);
