@@ -19,6 +19,23 @@ module.exports = {
                 include: [path.resolve(__dirname, '../src/react-app')],
                 loader: 'babel-loader',
                 options: { presets: ['env', 'react'] }
+            },
+            {
+                test: /\.scss$/,
+                loaders: ['style-loader', 'raw-loader', 'sass-loader']
+            },
+            {
+                test: /ImageProblem\.js$/,
+                loader: 'string-replace-loader',
+                options: {
+                    multiple: [
+                        {
+                            search: 'global.Jimp(?= = require)',
+                            replace: 'const Jimp',
+                            flags: 'i'
+                        }
+                    ]
+                }
             }
         ]
     }

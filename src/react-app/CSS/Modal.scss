@@ -1,6 +1,6 @@
 body {
   margin: 0;
-} 
+}
 
 .ReactModal__Content--after-open {
   max-height: 90vh;
@@ -10,119 +10,25 @@ body {
   width: 100% !important;
 }
 
-.wrapper{
-  max-height: 50vh;
-  max-width: 50vw;
-  background: #ccc;
-  display: flex;
-  flex-direction: column;
-  background-size: contain;
-  border-radius: 3px;
-
-}
-
 .header {
   min-height: 20px;
   background: #666;
   color: #fff;
   text-align: center;
-  border-top-right-radius: 3px;	
-  border-top-left-radius: 3px;	
+  border-top-right-radius: 3px;
+  border-top-left-radius: 3px;
   font-family: "Lato", sans-serif;
-  font-weight: 300;	
+  font-weight: 300;
   font-size: 1.5em;
 }
 
-.footer{
+.footer {
   min-height: 20px;
   background: #666;
   color: #fff;
   text-align: center;
-  border-bottom-right-radius: 3px;	
-  border-bottom-left-radius: 3px;	
-  font-family: "Lato", sans-serif;	
-  font-weight: 300;
-  
-
-}
-.content {
-  display: flex;
-  flex: 1;
-  background: #999;
-  color: #000;
-  flex-direction: column;
-
-}
-.row-1{
-  display: flex;
-  flex:0.1;
-  min-height: 20px;
-  vertical-align: middle;
-  background-size: contain;
-  background: #666;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
   font-family: "Lato", sans-serif;
-  font-weight: 300;	
-
-}
-.row-2{
-  display: flex;
-  flex:1;
-  min-height: 37.5%;
-  background-size: contain;
-  background: #666;
-
-
-}
-.main{
-  flex: 1;
-  order: 3;
-  background: #666;
-}
-.image-first{
-  width: 49%;
-  background: #666;
-  order: 2;
-  background-size: contain;
-  border-bottom-right-radius: 3px;	
-  //border-bottom-left-radius: 3px;	
-
-}
-.image-second{ 
-  width: 49%;
-  order: 4;
-  background: #666;
-  background-size: contain;
-  //border-bottom-right-radius: 3px;	
-  border-bottom-left-radius: 3px;	
-}
-
-.caption-first{
-  width: 49%;
-  background: #ccc;
-  order: 2;
-  text-align: center;
-  padding-bottom: 5px;
-  border-top-right-radius: 3px;	
-  //border-top-left-radius: 3px;	
-
-}
-.caption-second{ 
-  width: 49%;
-  order: 4;
-  background: #ccc;
-  text-align: center;
-  padding-bottom: 5px;
-  //border-top-right-radius: 3px;	
-  border-top-left-radius: 3px;	
-}
-
-.sidebar-1{
-  flex: 1;
-  order: 1;
-  background: #666;
-}
-.sidebar-2{
-  flex: 1;
-  order: 5;
-  background: #666;
+  font-weight: 300;
 }

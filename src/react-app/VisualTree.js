@@ -8,9 +8,12 @@ export class BinaryTree {
         this.node = null;
     }
 
-    getHeight() {
-        if (this == null) return 0;
-        return Math.max(this.left.getHeight + 1, this.right.getHeight + 1);
+    static getHeight(tree) {
+        if (tree == null) return 0;
+        return Math.max(
+            BinaryTree.getHeight(tree.left) + 1,
+            BinaryTree.getHeight(tree.right) + 1
+        );
     }
 
     static createTree(nodes) {
@@ -39,7 +42,10 @@ export class BinaryTree {
 class BinaryNode {
     constructor(tree, depth, x, config) {
         let { dW, dH } = config;
-        let pos = new Point(origin[0] + x * dW, origin[1] + depth * dH);
+        let pos = new Point(
+            config.origin[0] + x * dW,
+            config.origin[1] + depth * dH
+        );
 
         function drawEdge(pos1, pos2) {
             return new Path.Line({
@@ -90,7 +96,7 @@ export default class VisualTree {
         this.animation = animation;
 
         this.staticConfig = {
-            height: tree.getHeight(),
+            height: BinaryTree.getHeight(tree),
             dH: 60,
             sideMargin: 20
         };
@@ -99,12 +105,11 @@ export default class VisualTree {
         canvas.height = this.staticConfig.height * this.staticConfig.dH + 10;
 
         window.onresize = () => {
+            this.deleteTreeVisual(tree);
             this.draw(tree);
-            console.log("Piper");
         };
 
         this.draw(tree);
-        console.log("Peter");
     }
 
     getConfig() {
@@ -129,12 +134,29 @@ export default class VisualTree {
         if (tree == null) return;
 
         if (this.animation)
-            setTimeout(function() {
+            setTimeout(() => {
                 tree.node = new BinaryNode(tree, depth, x, this.getConfig());
             }, 500 * this.t++);
-        else tree.node = new BinaryNode(tree, depth, x, this.getConfig());
+        else {
+            tree.node = new BinaryNode(tree, depth, x, this.getConfig());
+            view.update();
+        }
 
         this.drawPreOrder(tree.left, depth + 1, x - 1 / Math.pow(2, depth));
         this.drawPreOrder(tree.right, depth + 1, x + 1 / Math.pow(2, depth));
+    }
+
+    deleteTreeVisual(tree) {
+        if (tree == null) return;
+
+        this.deleteTreeVisual(tree.left);
+        this.deleteTreeVisual(tree.right);
+
+        if (tree.node.leftEdge) tree.node.leftEdge.remove();
+
+        if (tree.node.rightEdge) tree.node.rightEdge.remove();
+
+        tree.node.circle.remove();
+        tree.node.text.remove();
     }
 }

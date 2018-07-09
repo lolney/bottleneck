@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import Editor from './editor.jsx';
 import ace from 'ace-builds';
-import ImageComponent from './ImageComponent.jsx';
+import ProblemComponent from './ProblemComponent.jsx';
 
 import './CSS/Modal.scss';
 
@@ -14,30 +14,29 @@ const customStyles = {
         right: 'auto',
         bottom: 'auto',
         marginRight: '-50%',
-        transform: 'translate(-50%, -50%)'
+        transform: 'translate(-50%, -50%)',
+        width: '500px',
+        height: '500px'
     }
 };
 
-class App extends React.Component {
+export class App extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
             modalIsOpen: false,
-            title: 'No problem yet',
             problem: undefined,
             code: '',
             generator: function(x, y) {
                 return 0;
             }
         };
-        console.log('run');
         this.openModal = this.openModal.bind(this);
-        this.afterOpenModal = this.afterOpenModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
         this.setGenerator = this.setGenerator.bind(this);
 
-        let setSocketEvent = (() => {
+        let setSocketEvent = () => {
             if (!this.props.clientEngine.socket) {
                 window.setTimeout(() => {
                     setSocketEvent();
@@ -49,7 +48,7 @@ class App extends React.Component {
                     this.openModal();
                 });
             }
-        }).bind(this);
+        };
         setSocketEvent();
     }
 
@@ -65,20 +64,6 @@ class App extends React.Component {
 
     openModal() {
         this.setState({ modalIsOpen: true });
-        this.setState({ title: 'ending' });
-        fetch('http://localhost:3000/problem/1').then((res) => {
-            console.log(res);
-            if (res.status == 200) {
-                res.json().then((json) => {
-                    this.setState({ title: json.title });
-                });
-            }
-        });
-    }
-
-    afterOpenModal() {
-        // references are now sync'd and can be accessed.
-        //this.subtitle.style.color = '#f00';
     }
 
     closeModal() {
@@ -90,13 +75,11 @@ class App extends React.Component {
             <div>
                 <Modal
                     isOpen={this.state.modalIsOpen}
-                    onAfterOpen={this.afterOpenModal}
                     onRequestClose={this.closeModal}
                     style={customStyles}
-                    contentLabel={this.title}
                 >
                     {this.state.problem && (
-                        <ImageComponent
+                        <ProblemComponent
                             problem={this.state.problem}
                             generator={this.state.generator}
                         />

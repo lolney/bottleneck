@@ -1,0 +1,68 @@
+.imageProblem {
+  .wrapper {
+    max-height: 100%;
+    max-width: 100%;
+    background: #ccc;
+    display: flex;
+    flex-direction: column;
+    background-size: contain;
+    border-radius: 3px;
+  }
+  .content {
+    display: flex;
+    flex: 1;
+    background: #999;
+    color: #000;
+    flex-direction: column;
+  }
+  .row-1 {
+    display: flex;
+    min-height: 20px;
+    vertical-align: middle;
+    background-size: contain;
+    background: #666;
+    font-family: "Lato", sans-serif;
+    font-weight: 300;
+  }
+  .row-2 {
+    display: flex;
+    min-height: 37.5%;
+    background-size: contain;
+    background: #666;
+  }
+  .main {
+    flex: 1;
+    order: 3;
+    background: #666;
+  }
+  @mixin image {
+    width: 49%;
+    height: 49%; // equal to width
+    background: #666;
+    background-size: contain;
+    border-bottom-right-radius: 3px;
+  }
+  .image-first {
+    @include image;
+    order: 2;
+  }
+  .image-second {
+    @include image;
+    order: 4;
+  }
+  @mixin caption {
+    width: 49%;
+    background: #ccc;
+    text-align: center;
+    padding-bottom: 5px;
+    border-top-right-radius: 3px;
+  }
+  .caption-first {
+    @include caption;
+    order: 2;
+  }
+  .caption-second {
+    @include caption;
+    order: 4;
+  }
+}
