@@ -13,10 +13,10 @@ describe('ImageComponent', () => {
     let mountedImageComponent;
     let isDone;
     const goalGenerator = function(x, y) {
-        return y * 255;
+        return Math.round(y * 255);
     };
     const otherGenerator = function(x, y) {
-        return x * 255;
+        return Math.round(x * 255);
     };
     const blankGenerator = function(x, y) {
         return 0;

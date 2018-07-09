@@ -23,6 +23,7 @@ export default class ImageComponent extends React.Component {
                     if (this.problem.original == newImage.original)
                         this.props.setDone();
                     this.setState({ target: newImage.original });
+                    this.props.reportError(null);
                 })
                 .catch((error) => {
                     this.props.reportError(error);

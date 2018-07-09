@@ -10,7 +10,9 @@ class Condition {
 
 export class ValidationError extends Error {
     constructor(result, args, message) {
-        super(`Invalid return value ${result} for args ${args}: ${message}`);
+        super(
+            `Invalid return value \'${result}\' for args ${args}: ${message}`
+        );
     }
 }
 
@@ -90,7 +92,7 @@ export default class Validator {
      * @return {T}
      */
     callGeneratorWithValidator(generator, args) {
-        let result = generator.apply(args);
+        let result = generator.apply(this, args);
         this.test(result, args);
         return result;
     }
