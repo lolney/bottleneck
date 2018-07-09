@@ -63,7 +63,6 @@ export class App extends React.Component {
     }
 
     openModal() {
-        console.log('modal is open');
         this.setState({ modalIsOpen: true });
     }
 

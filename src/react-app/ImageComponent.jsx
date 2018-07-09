@@ -1,6 +1,7 @@
 import React from 'react';
 import ImageProblem from '../problem-engine/ImageProblem';
 import PropTypes from 'prop-types';
+import './CSS/Image.scss';
 
 export default class ImageComponent extends React.Component {
     constructor(props) {
@@ -27,25 +28,21 @@ export default class ImageComponent extends React.Component {
 
     render() {
         return (
-            <section className="content">
-                <div className="row-1">
-                    <sidebar-1 className="sidebar-1" />
-                    <sidebar-2 className="sidebar-2" />
-                    <main className="main" />
-                    <aside className="caption-first">Original</aside>
-                    <aside className="caption-second">Target</aside>
-                </div>
-                <div className="row-2">
-                    <sidebar-1 className="sidebar-1" />
-                    <sidebar-2 className="sidebar-2" />
-                    <main className="main" />
-                    <img
-                        src={this.props.problem.original}
-                        className="image-first"
-                    />
-                    <img src={this.state.target} className="image-second" />
-                </div>
-            </section>
+            <div className="imageProblem">
+                <section className="content">
+                    <div className="row-1">
+                        <aside className="caption-first">Original</aside>
+                        <aside className="caption-second">Target</aside>
+                    </div>
+                    <div className="row-2">
+                        <img
+                            src={this.props.problem.original}
+                            className="image-first"
+                        />
+                        <img src={this.state.target} className="image-second" />
+                    </div>
+                </section>
+            </div>
         );
     }
 }

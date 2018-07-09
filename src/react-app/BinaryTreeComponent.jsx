@@ -22,7 +22,7 @@ export default class BinaryTreeComponent extends React.Component {
 
     render() {
         return (
-            <div class="bTree">
+            <div className="bTree">
                 <section className="content">
                     <div className="row-1">
                         <canvas

@@ -35,7 +35,7 @@ class AsyncComponent extends React.Component {
     }
 
     componentDidMount() {
-        this.props.fetchData().then((data) => this.setState({ data }));
+        this.props.fetchProps().then((data) => this.setState({ data }));
     }
 
     render() {
@@ -63,13 +63,13 @@ storiesOf('App', module)
         return <App clientEngine={mockedEngine} />;
     })
     .add('ImageComponent', () => {
-        let fetchData = async () => {
+        let fetchProps = async () => {
             let problem = await ImageProblem.create();
             let serialized = await problem.serialize();
             return { clientEngine: mockEngine(serialized) };
         };
         return (
-            <AsyncComponent fetchData={fetchData}>
+            <AsyncComponent fetchProps={fetchProps}>
                 <App />
             </AsyncComponent>
         );
