@@ -23,6 +23,19 @@ module.exports = {
             {
                 test: /\.scss$/,
                 loaders: ['style-loader', 'raw-loader', 'sass-loader']
+            },
+            {
+                test: /ImageProblem\.js$/,
+                loader: 'string-replace-loader',
+                options: {
+                    multiple: [
+                        {
+                            search: 'global.Jimp(?= = require)',
+                            replace: 'const Jimp',
+                            flags: 'i'
+                        }
+                    ]
+                }
             }
         ]
     }
