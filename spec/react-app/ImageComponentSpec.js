@@ -40,8 +40,8 @@ describe('ImageComponent', () => {
                     reportError: (e) => {
                         error = e;
                     },
-                    setDone: () => {
-                        isDone = true;
+                    setDone: (done) => {
+                        isDone = done;
                     }
                 };
                 mountedImageComponent = <ImageComponent {...props} />;
@@ -98,7 +98,13 @@ describe('ImageComponent', () => {
         setTimeout(() => {
             expect(isDone).toEqual(true);
             expect(error).toEqual(null);
-            done();
+            // Change the generator again
+            wrapper.setProps({ generator: otherGenerator });
+            setTimeout(() => {
+                expect(isDone).toEqual(false);
+                expect(error).toEqual(null);
+                done();
+            }, 100);
         }, 100);
     });
 });

@@ -55,7 +55,6 @@ export class App extends React.Component {
     }
 
     setGenerator(code) {
-        console.log('onchange');
         try {
             let func = eval(code);
             this.setState({ generator: func });

@@ -35,8 +35,8 @@ export default class ProblemComponent extends React.Component {
             {
                 // TODO: consider a context here?
                 problem: this.props.problem,
-                setDone: () => {
-                    this.setState({ done: true });
+                setDone: (done) => {
+                    this.setState({ done: done });
                 },
                 generator: this.props.generator,
                 reportError: this.props.reportError

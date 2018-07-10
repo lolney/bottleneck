@@ -21,7 +21,9 @@ export default class ImageComponent extends React.Component {
             ImageProblem.create(wrapped)
                 .then((newImage) => {
                     if (this.problem.original == newImage.original)
-                        this.props.setDone();
+                        this.props.setDone(true);
+                    else this.props.setDone(false);
+
                     this.setState({ target: newImage.original });
                     this.props.reportError(null);
                 })
