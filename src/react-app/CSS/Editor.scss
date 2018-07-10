@@ -9,14 +9,20 @@
   padding: 0;
 }
 
+//.editorError::before {
+//  content: "œ";
+//  position: "absolute";
+//  transform: "translateY(-20px)";
+//}
+
 .editor {
   fieldset {
     background: #f1f1f1;
     border: 1px solid #ddd;
     border-radius: 3px;
-    padding: 1em 1em 0.5em;
+    padding: 1em 1em 1.5em;
     //margin-bottom: -3px;
-    //height: 100px; // 100px This works for my screen, but may want to reset to 50vh or sth.
+    //height: 100px + 2em; // 100px This works for my screen, but may want to reset to 50vh or sth.
     width: 100%;
     title {
       float: left;
@@ -42,6 +48,25 @@
       -moz-appearance: menulist-button;
       -webkit-appearance: menulist-button;
       appearance: menulist-button;
+    }
+    .editorError {
+      //clear: both;
+      //transform: translateY(55px);
+      float: left;
+      margin-right: 1em;
+      font-size: 1em;
+      font-family: "Courier New", Courier, "Lucida Sans Typewriter",
+        "Lucida Typewriter", monospace;
+
+      //transform: translate(-20px, -20px);
+    }
+
+    .editorError:before {
+      content: "";
+      display: block;
+      background: url("/assets/issue-opened.svg") no-repeat;
+      width: 20;
+      height: 20;
     }
   }
   .wrapper {
