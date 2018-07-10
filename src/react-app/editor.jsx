@@ -32,16 +32,14 @@ export default class Editor extends React.Component {
                     <img src="https://avatars2.githubusercontent.com/u/8031562?s=400&u=f5735733f4049e4b75af582407b6766262465827&v=4" />
                     <title>Editor</title>
                     <ThemeSelector />
+                    <div>
+                        {this.props.generatorError && (
+                            <div className="editorError">
+                                {this.props.generatorError.message}
+                            </div>
+                        )}
+                    </div>
                 </fieldset>
-                <div
-                    style={{
-                        position: 'absolute',
-                        transform: 'translateY(-20px)'
-                    }}
-                >
-                    {this.props.generatorError &&
-                        this.props.generatorError.message}
-                </div>
                 <div className="wrapper">
                     <AceEditor
                         ref={this.aceEditor}
