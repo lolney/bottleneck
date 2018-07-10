@@ -64,9 +64,9 @@
     .editorError:before {
       content: "";
       display: block;
-      background: url("/assets/issue-opened.svg") no-repeat;
-      width: 20;
-      height: 20;
+      background: url("assets/issue-opened.svg") no-repeat;
+      width: 20px;
+      height: 20px;
     }
   }
   .wrapper {

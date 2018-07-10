@@ -34,7 +34,7 @@ export default class Editor extends React.Component {
                     <ThemeSelector />
                     <div>
                         {this.props.generatorError && (
-                            <div class="editorError">
+                            <div className="editorError">
                                 {this.props.generatorError.message}
                             </div>
                         )}
