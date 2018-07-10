@@ -13,20 +13,15 @@ export default class Editor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            value: props.value
+            value: props.value,
+            markers: []
         };
         this.onChange = this.onChange.bind(this);
-        this.validate = this.validate.bind(this);
-    }
-
-    validate(code) {
-        return true;
+        this.aceEditor = React.createRef();
     }
 
     onChange(code) {
-        if (this.validate(code)) {
-            this.props.onChange(code);
-        }
+        this.props.onChange(code);
         this.setState({ value: code });
     }
 
@@ -38,8 +33,18 @@ export default class Editor extends React.Component {
                     <title>Editor</title>
                     <ThemeSelector />
                 </fieldset>
+                <div
+                    style={{
+                        position: 'absolute',
+                        transform: 'translateY(-20px)'
+                    }}
+                >
+                    {this.props.generatorError &&
+                        this.props.generatorError.message}
+                </div>
                 <div className="wrapper">
                     <AceEditor
+                        ref={this.aceEditor}
                         mode="javascript"
                         theme="github"
                         value={this.state.value}
@@ -54,6 +59,7 @@ export default class Editor extends React.Component {
 }
 
 Editor.propTypes = {
+    generatorError: PropTypes.object,
     onChange: PropTypes.func.isRequired,
     value: PropTypes.string.isRequired
 };

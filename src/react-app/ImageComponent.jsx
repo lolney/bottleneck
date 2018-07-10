@@ -17,11 +17,19 @@ export default class ImageComponent extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         if (this.props.generator != prevProps.generator) {
-            ImageProblem.create(this.props.generator).then((newImage) => {
-                if (this.problem.original == newImage.original)
-                    this.props.setDone();
-                this.setState({ target: newImage.original });
-            });
+            let wrapped = ImageProblem.wrapGenerator(this.props.generator);
+            ImageProblem.create(wrapped)
+                .then((newImage) => {
+                    if (this.problem.original == newImage.original)
+                        this.props.setDone(true);
+                    else this.props.setDone(false);
+
+                    this.setState({ target: newImage.original });
+                    this.props.reportError(null);
+                })
+                .catch((error) => {
+                    this.props.reportError(error);
+                });
         }
     }
 
@@ -49,6 +57,7 @@ export default class ImageComponent extends React.Component {
 ImageComponent.propTypes = {
     generator: PropTypes.func.isRequired,
     setDone: PropTypes.func.isRequired,
+    reportError: PropTypes.func.isRequired,
     problem: PropTypes.shape({
         title: PropTypes.string,
         description: PropTypes.string,

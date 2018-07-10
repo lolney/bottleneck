@@ -25,8 +25,9 @@ export class App extends React.Component {
         super(props);
 
         this.state = {
+            generatorError: null,
             modalIsOpen: false,
-            problem: undefined,
+            problem: null,
             code: '',
             generator: function(x, y) {
                 return 0;
@@ -35,6 +36,7 @@ export class App extends React.Component {
         this.openModal = this.openModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
         this.setGenerator = this.setGenerator.bind(this);
+        this.reportError = this.reportError.bind(this);
 
         let setSocketEvent = () => {
             if (!this.props.clientEngine.socket) {
@@ -53,12 +55,11 @@ export class App extends React.Component {
     }
 
     setGenerator(code) {
-        console.log('onchange');
         try {
             let func = eval(code);
             this.setState({ generator: func });
         } catch (error) {
-            console.log(error);
+            this.setState({ generatorError: error });
         }
     }
 
@@ -68,6 +69,10 @@ export class App extends React.Component {
 
     closeModal() {
         this.setState({ modalIsOpen: false });
+    }
+
+    reportError(error) {
+        this.setState({ generatorError: error });
     }
 
     render() {
@@ -82,11 +87,13 @@ export class App extends React.Component {
                         <ProblemComponent
                             problem={this.state.problem}
                             generator={this.state.generator}
+                            reportError={this.reportError}
                         />
                     )}
                     <Editor
                         onChange={this.setGenerator}
                         value={this.state.code}
+                        generatorError={this.state.generatorError}
                     />
                 </Modal>
             </div>

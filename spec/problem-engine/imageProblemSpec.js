@@ -44,8 +44,17 @@ describe('serialize', () => {
     });
 });
 
+describe('validator', () => {
+    it('correctly passes valid return values', () => {
+        [0, 100, 255].forEach((val) => {
+            let generate = ImageProblem.wrapGenerator(() => val);
+            expect(generate()).toEqual(val);
+        });
+    });
+});
+
 describe('constructor', () => {
-    it('correctly generate the base64 encoding', (done) => {
+    it('correctly generates the base64 encoding', (done) => {
         ImageProblem.create()
             .then((problem) => {
                 return new ImageProblem(problem.original).compareGenerator(

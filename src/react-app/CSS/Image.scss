@@ -1,3 +1,5 @@
+$image-width: 49%;
+
 .imageProblem {
   .wrapper {
     max-height: 100%;
@@ -15,20 +17,23 @@
     color: #000;
     flex-direction: column;
   }
-  .row-1 {
-    display: flex;
-    min-height: 20px;
-    vertical-align: middle;
+
+  @mixin row {
+    justify-content: center;
     background-size: contain;
+    display: flex;
     background: #666;
     font-family: "Lato", sans-serif;
     font-weight: 300;
   }
+  .row-1 {
+    @include row;
+    min-height: 20px;
+    vertical-align: middle;
+  }
   .row-2 {
-    display: flex;
+    @include row;
     min-height: 37.5%;
-    background-size: contain;
-    background: #666;
   }
   .main {
     flex: 1;
@@ -36,33 +41,36 @@
     background: #666;
   }
   @mixin image {
-    width: 49%;
-    height: 49%; // equal to width
+    width: $image-width;
+    height: $image-width; // equal to width
     background: #666;
     background-size: contain;
-    border-bottom-right-radius: 3px;
   }
   .image-first {
     @include image;
     order: 2;
+    border-bottom-left-radius: 3px;
   }
   .image-second {
     @include image;
     order: 4;
+    border-bottom-right-radius: 3px;
   }
   @mixin caption {
-    width: 49%;
+    width: $image-width;
     background: #ccc;
     text-align: center;
     padding-bottom: 5px;
-    border-top-right-radius: 3px;
+    font-size: 1.25em;
   }
   .caption-first {
     @include caption;
     order: 2;
+    border-top-left-radius: 3px;
   }
   .caption-second {
     @include caption;
     order: 4;
+    border-top-right-radius: 3px;
   }
 }

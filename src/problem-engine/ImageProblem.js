@@ -87,27 +87,23 @@ export default class ImageProblem extends Problem {
     }
 
     static genImage(generator) {
-        return ImageProblem.genBlank()
-            .then((image) => {
-                let h = image.bitmap.height;
-                let w = image.bitmap.width;
-                for (let y = 0; y < h; y++) {
-                    for (let x = 0; x < w; x++) {
-                        for (var k = 0; k < 3; k++) {
-                            image.bitmap.data[4 * (y * h + x) + k] = generator(
-                                x / w,
-                                y / h
-                            );
-                        }
-                        // May need to set alpha channel
-                        image.bitmap.data[4 * (y * h + x) + k] = 255;
+        return ImageProblem.genBlank().then((image) => {
+            let h = image.bitmap.height;
+            let w = image.bitmap.width;
+            for (let y = 0; y < h; y++) {
+                for (let x = 0; x < w; x++) {
+                    for (var k = 0; k < 3; k++) {
+                        image.bitmap.data[4 * (y * h + x) + k] = generator(
+                            x / w,
+                            y / h
+                        );
                     }
+                    // May need to set alpha channel
+                    image.bitmap.data[4 * (y * h + x) + k] = 255;
                 }
-                return image;
-            })
-            .catch((err) => {
-                console.error(err);
-            });
+            }
+            return image;
+        });
     }
 
     compareGenerator(generator) {
@@ -145,13 +141,13 @@ export default class ImageProblem extends Problem {
     }
 
     static wrapGenerator(generator) {
-        return (args) => {
+        return (...args) => {
             let returnValidator = new Validator([
-                Type.is(Number),
+                Type.is('number'),
                 Type.isInteger(),
                 Range.in(0, 255)
             ]);
-            returnValidator.callGeneratorWithValidator(generator, args);
+            return returnValidator.callGeneratorWithValidator(generator, args);
         };
     }
 }
