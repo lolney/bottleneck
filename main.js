@@ -28,19 +28,18 @@ require('socketio-auth')(io, {
         console.log(`Received credentials: ${data.username}, ${data.password}`);
         let db = {
             findUser: (string, username, callback) => {
-                callback(null, { password: 'username' });
+                callback(null, { password: 'password' });
             }
         };
         db.findUser('User', { username: username }, (err, user) => {
             // inform the callback of auth success/failure
             if (err || !user) return callback(new Error('User not found'));
+            console.log(
+                `authentication succeeded: ${user.password == password}`
+            );
             return callback(null, user.password == password);
         });
     }
-});
-
-server.get('/problem/:playerId/', (req, res) => {
-    Controller.getProblem(req, res);
 });
 
 // Game Server

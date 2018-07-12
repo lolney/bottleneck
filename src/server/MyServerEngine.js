@@ -3,7 +3,7 @@
 import ServerEngine from 'lance/ServerEngine';
 import Avatar from '../common/Avatar';
 import PlayerAvatar from '../common/PlayerAvatar';
-import Controller, { problemEmitter } from './Controller';
+import Controller from './Controller';
 import { objects } from './db/views';
 
 export default class MyServerEngine extends ServerEngine {
@@ -37,7 +37,6 @@ export default class MyServerEngine extends ServerEngine {
             player.playerId,
             object.dbId
         );
-        problemEmitter.emit('display', player.playerId);
     }
 
     onPlayerConnected(socket) {
