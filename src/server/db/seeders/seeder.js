@@ -1,7 +1,7 @@
 // import { WIDTH, HEIGHT } from '../../../common/MyGameEngine';
 import ImageProblem from '../../../problem-engine/ImageProblem';
 import uuidv4 from 'uuid/v4';
-import moment from 'moment';
+import { date } from '../views';
 
 const WIDTH = 1000;
 const HEIGHT = 600;
@@ -10,10 +10,6 @@ function createPoint() {
     let x = Math.random() * WIDTH;
     let y = Math.random() * HEIGHT;
     return 'POINT(' + x + ' ' + y + ')';
-}
-
-function date() {
-    return moment().format('YYYY-MM-DD HH:mm:ss');
 }
 
 export async function up(queryInterface, Sequelize) {

@@ -1,6 +1,8 @@
 [![Waffle.io - Columns and their card count](https://badge.waffle.io/lolney/bottleneck.svg?columns=all)](https://waffle.io/lolney/bottleneck)
 
-Still early in development, but demo at scripting-rpg.herokuapp.com
+Still early in development, but demo at [bottleneck-production.herokuapp.com](http://bottleneck-production.herokuapp.com/).
+
+Latest build at [scripting-rpg.herokuapp.com](http://scripting-rpg.herokuapp.com/).
 
 ## Setup
 
@@ -34,6 +36,7 @@ npm install -g sequelize-cli pg
 Run migrations and seeders:
 
 ```
+source .env
 sequelize db:migrate:undo:all && sequelize db:migrate
 sequelize db:seed:all
 ```
