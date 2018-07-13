@@ -22,5 +22,3 @@ dist/bundle\.js\.map
 dist/main.js
 
 src/index.js
-
-src/react-app/app.jsx

@@ -1,7 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
-import Editor from './editor.jsx';
+import Editor from './Editor.jsx';
 import ace from 'ace-builds';
 import ProblemComponent from './ProblemComponent.jsx';
 
@@ -20,9 +19,11 @@ const customStyles = {
     }
 };
 
-export class App extends React.Component {
+export default class EditorModal extends React.Component {
     constructor(props) {
         super(props);
+
+        // Modal.setAppElement('#overlay');
 
         this.state = {
             generatorError: null,
@@ -99,14 +100,4 @@ export class App extends React.Component {
             </div>
         );
     }
-}
-
-export default function createApp(clientEngine) {
-    window.addEventListener('DOMContentLoaded', () => {
-        Modal.setAppElement('#overlay');
-        ReactDOM.render(
-            <App clientEngine={clientEngine} />,
-            document.getElementById('overlay')
-        );
-    });
 }

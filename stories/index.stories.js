@@ -7,7 +7,7 @@ import { linkTo } from '@storybook/addon-links';
 import { Button, Welcome } from '@storybook/react/demo';
 import BinaryTreeComponent from '../src/react-app/BinaryTreeComponent.jsx';
 import ProblemComponent from '../src/react-app/ProblemComponent.jsx';
-import { App } from '../src/react-app/app.jsx';
+import EditorModal from '../src/react-app/EditorModal.jsx';
 import ImageProblem from '../src/problem-engine/ImageProblem';
 
 const btreeProblem = {
@@ -57,10 +57,10 @@ storiesOf('ProblemComponent', module).add('binary tree component', () => (
     <ProblemComponent problem={btreeProblem} />
 ));
 
-storiesOf('App', module)
+storiesOf('EditorModal', module)
     .add('BinaryTreeComponent', () => {
         let mockedEngine = mockEngine(btreeProblem);
-        return <App clientEngine={mockedEngine} />;
+        return <EditorModal clientEngine={mockedEngine} />;
     })
     .add('ImageComponent', () => {
         let fetchProps = async () => {
@@ -70,7 +70,7 @@ storiesOf('App', module)
         };
         return (
             <AsyncComponent fetchProps={fetchProps}>
-                <App />
+                <EditorModal />
             </AsyncComponent>
         );
     });

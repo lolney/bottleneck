@@ -2,7 +2,7 @@ import querystring from 'query-string';
 import MyClientEngine from '../client/MyClientEngine';
 import MyGameEngine from '../common/MyGameEngine';
 
-import createApp from '../react-app/app.jsx';
+import createApp from '../react-app/App.jsx';
 
 const qsOptions = querystring.parse(location.search);
 
