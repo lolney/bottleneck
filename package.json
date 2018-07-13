@@ -32,7 +32,6 @@
         "react-dom": "^16.4.0",
         "react-modal": "^3.4.4",
         "sequelize": "^4.37.10",
-        "sequelize-isunique-validator": "^1.1.1",
         "socket.io": "^1.4.8",
         "socketio-auth": "^0.1.1",
         "source-map-loader": "^0.2.3",

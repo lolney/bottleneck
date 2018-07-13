@@ -27,11 +27,7 @@ module.exports = (sequelize, DataTypes) => {
                 validate: {
                     isEmail: {
                         msg: 'Must be a valid email.'
-                    } /* ,
-                    isUnique: sequelize.validateIsUnique(
-                        'email',
-                        'An account is already registered with this email.'
-                    )*/
+                    }
                 }
             },
             password: {

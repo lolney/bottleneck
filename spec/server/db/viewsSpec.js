@@ -49,7 +49,7 @@ describe('checkPassword', () => {
         });
     });
 
-    it('returns an error with an incorrect username', () => {
+    it('returns false with an incorrect username', (done) => {
         checkPassword('incorrect', 'secret').then((result) => {
             expect(result).toEqual(false);
             done();

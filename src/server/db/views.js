@@ -49,7 +49,8 @@ export async function problem(objId) {
  */
 export async function checkPassword(username, password) {
     let user = await models.user.find({ where: { username: username } });
-    return user.validPassword(password);
+    if (user) return user.validPassword(password);
+    else return false;
 }
 
 export function createUser(username, password, email) {
