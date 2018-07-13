@@ -9,6 +9,8 @@ let env = process.env.NODE_ENV || 'development';
 let config = require(__dirname + '/../config/config.json')[env];
 let db = {};
 
+require('sequelize-isunique-validator')(Sequelize);
+
 if (process.env.DATABASE_URL) {
     // the application is executed on Heroku ... use the postgres database
     var sequelize = new Sequelize(process.env.DATABASE_URL, {

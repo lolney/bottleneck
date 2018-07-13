@@ -19,8 +19,8 @@ const defaults = {
         bendingIncrements: 6
     },
     auth: {
-        username: 'username',
-        password: 'password'
+        username: 'test',
+        password: 'secret'
     }
 };
 let options = Object.assign(defaults, qsOptions);

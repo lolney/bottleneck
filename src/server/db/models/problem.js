@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
     let Problem = sequelize.define('problem', {
         id: {
             type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV1,
+            defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
         title: DataTypes.TEXT,

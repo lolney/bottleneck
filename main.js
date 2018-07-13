@@ -3,8 +3,7 @@
 import express from 'express';
 import socketIO from 'socket.io';
 import path from 'path';
-
-import Controller from './src/server/Controller';
+import { checkPassword } from './src/server/db/views';
 
 const PORT = process.env.PORT || 3000;
 const INDEX = path.join(__dirname, './index.html');
@@ -18,27 +17,18 @@ server.use('/', express.static(path.join(__dirname, '.')));
 let requestHandler = server.listen(PORT, () =>
     console.log(`Listening on ${PORT}`)
 );
+
+// Socket auth
 const io = socketIO(requestHandler);
 require('socketio-auth')(io, {
-    authenticate: function(socket, data, callback) {
-        // get credentials sent by the client
+    authenticate: async function(socket, data, callback) {
         let username = data.username;
         let password = data.password;
 
         console.log(`Received credentials: ${data.username}, ${data.password}`);
-        let db = {
-            findUser: (string, username, callback) => {
-                callback(null, { password: 'password' });
-            }
-        };
-        db.findUser('User', { username: username }, (err, user) => {
-            // inform the callback of auth success/failure
-            if (err || !user) return callback(new Error('User not found'));
-            console.log(
-                `authentication succeeded: ${user.password == password}`
-            );
-            return callback(null, user.password == password);
-        });
+        let succeeded = await checkPassword(username, password);
+        console.log(`Authentication succeeded: ${succeeded}`);
+        callback(null, succeeded);
     }
 });
 

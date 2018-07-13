@@ -26,7 +26,7 @@ let migrationCommands = [
                 id: {
                     type: Sequelize.UUID,
                     primaryKey: true,
-                    defaultValue: Sequelize.UUIDV1
+                    defaultValue: Sequelize.UUIDV4
                 },
                 title: {
                     type: Sequelize.TEXT
@@ -59,7 +59,7 @@ let migrationCommands = [
                 id: {
                     type: Sequelize.UUID,
                     primaryKey: true,
-                    defaultValue: Sequelize.UUIDV1
+                    defaultValue: Sequelize.UUIDV4
                 },
                 location: {
                     type: Sequelize.GEOMETRY('POINT')
@@ -91,6 +91,44 @@ let migrationCommands = [
     {
         fn: 'addColumn',
         params: ['problems', 'gameObjectId', Sequelize.UUID]
+    },
+    {
+        fn: 'createTable',
+        params: [
+            'users',
+            {
+                id: {
+                    type: Sequelize.UUID,
+                    primaryKey: true,
+                    defaultValue: Sequelize.UUIDV4
+                },
+                username: {
+                    type: Sequelize.STRING,
+                    allowNull: false,
+                    unique: true
+                },
+                email: {
+                    type: Sequelize.STRING,
+                    allowNull: false,
+                    unique: true
+                },
+                password: {
+                    type: Sequelize.STRING,
+                    allowNull: false
+                },
+                createdAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                },
+                updatedAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                }
+            },
+            {}
+        ]
     }
 ];
 
@@ -120,7 +158,8 @@ module.exports = {
                 force: true,
                 cascade: true
             }),
-            queryInterface.dropTable('problems')
+            queryInterface.dropTable('problems'),
+            queryInterface.dropTable('users')
         ]);
     }
 };

@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
     let GameObject = sequelize.define('gameObject', {
         id: {
             type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV1,
+            defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
         location: DataTypes.GEOMETRY('POINT'),
