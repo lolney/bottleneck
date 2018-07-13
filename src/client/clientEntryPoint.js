@@ -2,7 +2,7 @@ import querystring from 'query-string';
 import MyClientEngine from '../client/MyClientEngine';
 import MyGameEngine from '../common/MyGameEngine';
 
-import createApp from "../react-app/app.jsx";
+import createApp from '../react-app/app.jsx';
 
 const qsOptions = querystring.parse(location.search);
 
@@ -17,6 +17,10 @@ const defaults = {
         localObjBending: 0.0,
         remoteObjBending: 0.8,
         bendingIncrements: 6
+    },
+    auth: {
+        username: 'test',
+        password: 'secret'
     }
 };
 let options = Object.assign(defaults, qsOptions);
@@ -25,7 +29,9 @@ let options = Object.assign(defaults, qsOptions);
 const gameEngine = new MyGameEngine(options);
 const clientEngine = new MyClientEngine(gameEngine, options);
 
-document.addEventListener('DOMContentLoaded', function (e) { clientEngine.start(); });
+document.addEventListener('DOMContentLoaded', function(e) {
+    clientEngine.start();
+});
 
 // Create the react app
 createApp(clientEngine);
