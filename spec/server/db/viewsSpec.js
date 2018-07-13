@@ -15,7 +15,7 @@ describe('objects', () => {
                 expect(obj.objectType).toEqual('tree');
             }
             done();
-        });
+        }).catch(done.fail);
     });
 });
 
@@ -28,8 +28,8 @@ describe('problem', () => {
             Promise.all(promises).then((vals) => {
                 expect(vals.length).toEqual(objs.length);
                 done();
-            });
-        });
+            }).catch(done.fail);
+        }).catch(done.fail);
     });
 });
 
@@ -53,21 +53,21 @@ describe('checkPassword', () => {
         checkPassword('incorrect', 'secret').then((result) => {
             expect(result).toEqual(false);
             done();
-        });
+        }).catch(done.fail);
     });
 
     it('returns true with the correct password', (done) => {
         checkPassword('test1', 'secret').then((result) => {
             expect(result).toEqual(true);
             done();
-        });
+        }).catch(done.fail);
     });
 
     it('returns false with the incorrect password', (done) => {
         checkPassword('test1', '').then((result) => {
             expect(result).toEqual(false);
             done();
-        });
+        }).catch(done.fail);
     });
 });
 

@@ -60,13 +60,13 @@ storiesOf('ProblemComponent', module).add('binary tree component', () => (
 storiesOf('EditorModal', module)
     .add('BinaryTreeComponent', () => {
         let mockedEngine = mockEngine(btreeProblem);
-        return <EditorModal clientEngine={mockedEngine} />;
+        return <EditorModal socket={mockedEngine.socket} />;
     })
     .add('ImageComponent', () => {
         let fetchProps = async () => {
             let problem = await ImageProblem.create();
             let serialized = await problem.serialize();
-            return { clientEngine: mockEngine(serialized) };
+            return { socket: mockEngine(serialized).socket };
         };
         return (
             <AsyncComponent fetchProps={fetchProps}>

@@ -23,8 +23,6 @@ export default class EditorModal extends React.Component {
     constructor(props) {
         super(props);
 
-        // Modal.setAppElement('#overlay');
-
         this.state = {
             generatorError: null,
             modalIsOpen: false,
@@ -38,21 +36,15 @@ export default class EditorModal extends React.Component {
         this.closeModal = this.closeModal.bind(this);
         this.setGenerator = this.setGenerator.bind(this);
         this.reportError = this.reportError.bind(this);
+    }
 
-        let setSocketEvent = () => {
-            if (!this.props.clientEngine.socket) {
-                window.setTimeout(() => {
-                    setSocketEvent();
-                }, 1000);
-            } else {
-                this.props.clientEngine.socket.on('problem', (data) => {
-                    console.log('display', data);
-                    this.setState({ problem: data, code: data.code });
-                    this.openModal();
-                });
-            }
-        };
-        setSocketEvent();
+    componentDidMount() {
+        Modal.setAppElement('#overlay');
+        this.props.socket.on('problem', (data) => {
+            console.log('display', data);
+            this.setState({ problem: data, code: data.code });
+            this.openModal();
+        });
     }
 
     setGenerator(code) {
@@ -78,7 +70,7 @@ export default class EditorModal extends React.Component {
 
     render() {
         return (
-            <div>
+            <div id="overlay">
                 <Modal
                     isOpen={this.state.modalIsOpen}
                     onRequestClose={this.closeModal}

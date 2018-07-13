@@ -1,6 +1,6 @@
 module.exports = {
-    extends: 'google',
-    installedESLint: true,
+    plugins: ['jasmine'],
+    extends: ['google', 'eslint:recommended', 'plugin:jasmine/recommended'],
     parserOptions: {
         ecmaVersion: 7,
         sourceType: 'module',
@@ -9,6 +9,8 @@ module.exports = {
         }
     },
     rules: {
+        'arrow-parens': ['error', 'always'],
+        quotes: ['error', 'single'],
         'brace-style': ['error', '1tbs', { allowSingleLine: true }],
         'comma-dangle': 'off',
         'guard-for-in': 'off',
@@ -21,5 +23,8 @@ module.exports = {
         'object-curly-spacing': ['error', 'always'],
         'padded-blocks': 'off',
         'require-jsdoc': 'off'
+    },
+    env: {
+        jasmine: true
     }
 };
