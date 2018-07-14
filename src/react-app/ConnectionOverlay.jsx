@@ -2,9 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const State = Object.freeze({
-    Connected: Symbol('connected'),
-    Connecting: Symbol('connecting'),
-    Loading: Symbol('loading')
+    Connected: 'connected',
+    Connecting: 'connecting',
+    Loading: 'loading',
+    Authenticating: 'authenticating'
 });
 
 export default class ConnectionOverlay extends React.Component {
@@ -12,16 +13,27 @@ export default class ConnectionOverlay extends React.Component {
         super(props);
         if (this.props.socket) {
             this.state = {
-                state:
-                    this.props.socket.readyState == 1
-                        ? State.Connected
-                        : State.Connecting
+                authenticated: false,
+                state: this.props.socket.connected
+                    ? State.Connected
+                    : State.Connecting
             };
-            this.props.socket.addEventListener('open', (event) => {
-                this.setState({ state: State.Connected });
+            this.props.socket.addEventListener('connect', (event) => {
+                console.log('connected');
+                if (this.state.authenticated)
+                    this.setState({ state: State.Connected });
+                else this.setState({ state: State.Authenticating });
             });
-            this.props.socket.addEventListener('close', (event) => {
-                this.setState({ state: State.Connecting });
+            this.props.socket.addEventListener('disconnect', (event) => {
+                console.log('disconnected');
+                this.setState({
+                    state: State.Connecting,
+                    authenticated: false
+                });
+            });
+            this.props.socket.addEventListener('authenticated', (event) => {
+                console.log('authenticated');
+                this.setState({ state: State.Connected, authenticated: true });
             });
         } else {
             this.state = { state: State.Loading };
@@ -32,10 +44,8 @@ export default class ConnectionOverlay extends React.Component {
         switch (this.state.state) {
             case State.Connected:
                 return null;
-            case State.Connecting:
-                return <div> Connecting </div>;
-            case State.Loading:
-                return <div> Loading </div>;
+            default:
+                return <div> {this.state.state} </div>;
         }
     }
 }
