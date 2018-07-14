@@ -1,5 +1,5 @@
 import React from 'react';
-import ImageProblem from '../problem-engine/ImageProblem';
+import { Image } from '../problem-engine/ImageProblem';
 import PropTypes from 'prop-types';
 
 export default class ImageComponent extends React.Component {
@@ -10,15 +10,15 @@ export default class ImageComponent extends React.Component {
             generator: this.props.generator,
             target: this.props.problem.target
         };
-        this.problem = new ImageProblem(this.props.problem.original);
+        this.problem = new Image(this.props.problem.original);
 
         this.componentDidUpdate = this.componentDidUpdate.bind(this);
     }
 
     componentDidUpdate(prevProps, prevState) {
         if (this.props.generator != prevProps.generator) {
-            let wrapped = ImageProblem.wrapGenerator(this.props.generator);
-            ImageProblem.create(wrapped)
+            let wrapped = Image.wrapGenerator(this.props.generator);
+            Image.create(wrapped)
                 .then((newImage) => {
                     if (this.problem.original == newImage.original)
                         this.props.setDone(true);

@@ -1,10 +1,7 @@
 import React from 'react';
 
 import { storiesOf } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
-import { linkTo } from '@storybook/addon-links';
 
-import { Button, Welcome } from '@storybook/react/demo';
 import BinaryTreeComponent from '../src/react-app/BinaryTreeComponent.jsx';
 import ProblemComponent from '../src/react-app/ProblemComponent.jsx';
 import EditorModal from '../src/react-app/EditorModal.jsx';
@@ -57,14 +54,20 @@ storiesOf('ProblemComponent', module).add('binary tree component', () => (
     <ProblemComponent problem={btreeProblem} />
 ));
 
-storiesOf('EditorModal', module)
-    .add('BinaryTreeComponent', () => {
+let stories = storiesOf('EditorModal', module).add(
+    'BinaryTreeComponent',
+    () => {
         let mockedEngine = mockEngine(btreeProblem);
         return <EditorModal socket={mockedEngine.socket} />;
-    })
-    .add('ImageComponent', () => {
+    }
+);
+
+let generators = ImageProblem.getGenerators();
+for (const i in generators) {
+    let generator = generators[i];
+    stories.add('ImageComponent' + i, () => {
         let fetchProps = async () => {
-            let problem = await ImageProblem.create();
+            let problem = await ImageProblem.create(generator);
             let serialized = await problem.serialize();
             return { socket: mockEngine(serialized).socket };
         };
@@ -74,3 +77,4 @@ storiesOf('EditorModal', module)
             </AsyncComponent>
         );
     });
+}

@@ -11,6 +11,10 @@ export default class Problem {
         return '() => {return 0};';
     }
 
+    getTypeString() {
+        return 'generic';
+    }
+
     serialize() {
         return {
             title: this.getTitle(),

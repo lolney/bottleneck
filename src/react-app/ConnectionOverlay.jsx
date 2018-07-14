@@ -18,10 +18,10 @@ export default class ConnectionOverlay extends React.Component {
                         : State.Connecting
             };
             this.props.socket.addEventListener('open', (event) => {
-                this.setState({ connected: true });
+                this.setState({ state: State.Connected });
             });
             this.props.socket.addEventListener('close', (event) => {
-                this.setState({ connected: false });
+                this.setState({ state: State.Connecting });
             });
         } else {
             this.state = { state: State.Loading };

@@ -14,41 +14,31 @@ function* imageIterator(image) {
     }
 }
 
+/**
+ * Represents metadeta linking the `Image` class to a problem
+ */
 export default class ImageProblem extends Problem {
     constructor(base64) {
         super();
-        // console.log(new Jimp(100, 100, 255));
-        if (base64 == null) throw new TypeError('Expected base64 string');
-        this.original = base64;
+        this.image = new Image(base64);
     }
 
-    static create(generator) {
+    static async create(generator) {
         let gen = generator == null ? ImageProblem.generate() : generator;
-        return ImageProblem.genImage(gen).then((image) => {
-            return ImageProblem.fromImage(image);
-        });
+        let image = await Image.create(gen);
+        return new ImageProblem(image.getBase64());
     }
 
-    static fromImage(image) {
-        return new Promise((resolve, reject) => {
-            image.getBase64(global.Jimp.MIME_BMP, (err, base64) => {
-                if (err) reject(err);
-                resolve(new ImageProblem(base64));
-            });
-        });
-    }
-
-    getImage() {
-        let s = this.original.slice(22);
-        return global.Jimp.read(Buffer.from(s, 'base64'));
-    }
-
-    getBase64(cb) {
-        return this.original;
+    static createProblemId(id) {
+        return ImageProblem.create(ImageProblem.getGenerators()[id]);
     }
 
     getTitle() {
         return 'Image Matching';
+    }
+
+    getId() {
+        return 0;
     }
 
     getDescription() {
@@ -64,17 +54,106 @@ export default class ImageProblem extends Problem {
     }
 
     serialize() {
-        return ImageProblem.genBlank()
+        return Image.genBlank()
             .then((blank) => {
-                return ImageProblem.fromImage(blank);
+                return Image.fromImage(blank);
             })
             .then((image) => {
                 return {
                     ...super.serialize(),
-                    original: this.original,
+                    original: this.image.original,
                     target: image.original
                 };
             });
+    }
+
+    static generate() {
+        return (x, y) => {
+            return Math.round(255 * x);
+        };
+    }
+
+    static getGenerators() {
+        return [
+            (x, y) => Math.round(255 * x),
+            (x, y) => Math.round(255 * y)
+        ].concat(ImageProblem.makeSinGenerators());
+    }
+
+    static makeSinGenerators() {
+        let periods = [1/8, 1/4, 1/2];
+        let amplitudes = [100, 255, 128];
+        let zeros = [0, 128];
+
+        function* gen() {
+            for (const period of periods) {
+                for (const amplitude of amplitudes) {
+                    for (const zero of zeros) {
+                        for (const independentX of [true, false]) {
+                            yield ImageProblem.sinGenerator(
+                                period,
+                                amplitude,
+                                zero,
+                                independentX
+                            );
+                        }
+                    }
+                }
+            }
+        }
+
+        return [...gen()];
+    }
+
+    static sinGenerator(period, amplitude, zero, independentX = true) {
+        let factor = (2 * Math.PI) / period;
+        let clamp = (x) => {
+            if(x < 0)
+                return 0;
+            if(x > 255)
+                return 255;
+            return x;
+        };
+        let fn = (x) => Math.round(clamp(amplitude * Math.sin(x * factor) + zero));
+
+        if (independentX) return (x, y) => fn(x);
+        else return (x, y) => fn(y);
+    }
+
+    static random(x, y) {
+        return Math.round(Math.random() * 255);
+    }
+}
+
+export class Image {
+    constructor(base64) {
+        if (base64 == null) throw new TypeError('Expected base64 string');
+        this.original = base64;
+    }
+
+    static create(generator) {
+        let gen = generator == null ? ImageProblem.generate() : generator;
+        return Image.genImage(gen).then((image) => {
+            return Image.fromImage(image);
+        });
+    }
+
+    static fromImage(image) {
+        return new Promise((resolve, reject) => {
+            image.getBase64(global.Jimp.MIME_BMP, (err, base64) => {
+                if (err) reject(err);
+                resolve(new Image(base64));
+            });
+        });
+    }
+
+    getImage() {
+        let s = this.original.slice(22);
+        return global.Jimp.read(Buffer.from(s, 'base64'));
+    }
+
+    getBase64(cb) {
+        return this.original;
     }
 
     static genBlank() {
@@ -87,7 +166,7 @@ export default class ImageProblem extends Problem {
     }
 
     static genImage(generator) {
-        return ImageProblem.genBlank().then((image) => {
+        return Image.genBlank().then((image) => {
             let h = image.bitmap.height;
             let w = image.bitmap.width;
             for (let y = 0; y < h; y++) {
@@ -108,16 +187,16 @@ export default class ImageProblem extends Problem {
 
     compareGenerator(generator) {
         let orig = this.getImage();
-        let play = ImageProblem.genImage(generator);
+        let play = Image.genImage(generator);
         return Promise.all([orig, play]).then((images) => {
-            return ImageProblem.compareImages(images[0], images[1]);
+            return Image.compareImages(images[0], images[1]);
         });
     }
 
     compareImage(problem) {
         return Promise.all([this, problem].map((a) => a.getImage())).then(
             (images) => {
-                return ImageProblem.compareImages(images[0], images[1]);
+                return Image.compareImages(images[0], images[1]);
             }
         );
     }
@@ -128,16 +207,6 @@ export default class ImageProblem extends Problem {
                 return false;
         }
         return true;
-    }
-
-    static generate() {
-        return (x, y) => {
-            return Math.round(255 * x);
-        };
-    }
-
-    static random(x, y) {
-        return Math.round(Math.random() * 255);
     }
 
     static wrapGenerator(generator) {
