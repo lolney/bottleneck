@@ -47,6 +47,13 @@ module.exports = {
                     ]
                 }
             },
+            {
+                test: /.(ttf|otf|eot|svg|woff|woff2)(\?[a-z0-9]+)?$/,
+                loader: 'file-loader',
+                options: {
+                    publicPath: 'dist/'
+                }
+            },
             { test: /\.tsx?$/, loader: 'awesome-typescript-loader' }
         ]
     },

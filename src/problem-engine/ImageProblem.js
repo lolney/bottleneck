@@ -81,7 +81,7 @@ export default class ImageProblem extends Problem {
     }
 
     static makeSinGenerators() {
-        let periods = [1/8, 1/4, 1/2];
+        let periods = [1 / 8, 1 / 4, 1 / 2];
         let amplitudes = [100, 255, 128];
         let zeros = [0, 128];
 
@@ -108,13 +108,12 @@ export default class ImageProblem extends Problem {
     static sinGenerator(period, amplitude, zero, independentX = true) {
         let factor = (2 * Math.PI) / period;
         let clamp = (x) => {
-            if(x < 0)
-                return 0;
-            if(x > 255)
-                return 255;
+            if (x < 0) return 0;
+            if (x > 255) return 255;
             return x;
         };
-        let fn = (x) => Math.round(clamp(amplitude * Math.sin(x * factor) + zero));
+        let fn = (x) =>
+            Math.round(clamp(amplitude * Math.sin(x * factor) + zero));
 
         if (independentX) return (x, y) => fn(x);
         else return (x, y) => fn(y);
@@ -211,11 +210,10 @@ export class Image {
 
     static wrapGenerator(generator) {
         return (...args) => {
-            let returnValidator = new Validator([
-                Type.is('number'),
-                Type.isInteger(),
-                Range.in(0, 255)
-            ]);
+            let returnValidator = new Validator(
+                [Type.is('number'), Type.isInteger(), Range.in(0, 255)],
+                2
+            );
             return returnValidator.callGeneratorWithValidator(generator, args);
         };
     }

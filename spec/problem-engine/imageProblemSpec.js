@@ -55,9 +55,9 @@ describe('serialize', () => {
 describe('validator', () => {
     it('correctly passes valid return values', () => {
         [0, 100, 255].forEach((val) => {
-            let generate = Image.wrapGenerator(() => val);
+            let generate = Image.wrapGenerator((x, y) => val);
 
-            expect(generate()).toEqual(val);
+            expect(generate(1, 2)).toEqual(val);
         });
     });
 });

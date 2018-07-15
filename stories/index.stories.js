@@ -2,16 +2,11 @@ import React from 'react';
 
 import { storiesOf } from '@storybook/react';
 
-import BinaryTreeComponent from '../src/react-app/BinaryTreeComponent.jsx';
-import ProblemComponent from '../src/react-app/ProblemComponent.jsx';
+import { VisualTreeComponent } from '../src/react-app/BinaryTreeComponent.jsx';
 import EditorModal from '../src/react-app/EditorModal.jsx';
 import ImageProblem from '../src/problem-engine/ImageProblem';
-
-const btreeProblem = {
-    title: 'title',
-    description: 'description',
-    type: 'btree'
-};
+import BinaryTreeProblem from '../src/problem-engine/BinaryTreeProblem';
+import VisualTree from '../src/react-app/VisualTree';
 
 const mockEngine = (data) => ({
     socket: {
@@ -46,21 +41,29 @@ class AsyncComponent extends React.Component {
     }
 }
 
-storiesOf('BinaryTreeComponent', module).add('the tree', () => (
-    <BinaryTreeComponent />
-));
+let treeStories = storiesOf('VisualTree', module);
 
-storiesOf('ProblemComponent', module).add('binary tree component', () => (
-    <ProblemComponent problem={btreeProblem} />
-));
+let trees = BinaryTreeProblem.getTrees();
+for (const i in trees) {
+    let tree = trees[i];
+    treeStories.add('Tree' + i, () => <VisualTreeComponent nodes={tree} />);
+}
 
-let stories = storiesOf('EditorModal', module).add(
-    'BinaryTreeComponent',
-    () => {
-        let mockedEngine = mockEngine(btreeProblem);
-        return <EditorModal socket={mockedEngine.socket} />;
-    }
-);
+storiesOf('BinaryTreeComponent', module).add('inorder traversal', () => {
+    let fetchProps = async () => {
+        let problem = new BinaryTreeProblem();
+        let serialized = await problem.serialize();
+        console.log(serialized);
+        return { socket: mockEngine(serialized).socket };
+    };
+    return (
+        <AsyncComponent fetchProps={fetchProps}>
+            <EditorModal />
+        </AsyncComponent>
+    );
+});
+
+let stories = storiesOf('ImageComponent', module);
 
 let generators = ImageProblem.getGenerators();
 for (const i in generators) {

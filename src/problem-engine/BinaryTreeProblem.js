@@ -1,0 +1,69 @@
+import Problem from './Problem';
+
+export default class BinaryTreeProblem extends Problem {
+    getTitle() {
+        return 'Inorder Traversal';
+    }
+
+    getId() {
+        return 0;
+    }
+
+    getDescription() {
+        return 'Do an inorder traversal of `tree`, returning the results as an array.';
+    }
+
+    getStartingCode() {
+        return '(tree) => [];';
+    }
+
+    getTypeString() {
+        return 'btree';
+    }
+
+    static getTrees() {
+        return [
+            [5, '-', [3, '-', [2, '-', [1, '-', 0]]]],
+            [
+                10,
+                [5, [3, 2, 4], [8, 7, 9]],
+                [15, [12, '-', 14], [18, 19, [20, 21, [22, 23, 24]]]]
+            ],
+            (() => {
+                let nestedRight = (i) => {
+                    if (i <= 1) return [1, 0, '-'];
+                    else return [i, nestedRight(i - 1), '-'];
+                };
+                return nestedRight(15);
+            })()
+        ];
+    }
+
+    getTestCases() {
+        let traverse = (node) => {
+            let result = [];
+            let _traverse = (node) => {
+                if (Array.isArray(node)) {
+                    _traverse(node[1]);
+                    result.push(node[0]);
+                    _traverse(node[2]);
+                } else if (typeof node == 'number') result.push(node);
+            };
+            _traverse(node);
+            return result;
+        };
+        return BinaryTreeProblem.getTrees().map((tree) => ({
+            tree: tree,
+            solution: traverse(tree)
+        }));
+    }
+
+    serialize() {
+        return new Promise((resolve) => {
+            resolve({
+                ...super.serialize(),
+                testCases: this.getTestCases()
+            });
+        });
+    }
+}

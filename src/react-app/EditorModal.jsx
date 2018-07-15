@@ -15,7 +15,8 @@ const customStyles = {
         marginRight: '-50%',
         transform: 'translate(-50%, -50%)',
         width: '500px',
-        height: '500px'
+        height: '75vh',
+        maxHeight: '1000px'
     }
 };
 
@@ -50,6 +51,11 @@ export default class EditorModal extends React.Component {
     setGenerator(code) {
         try {
             let func = eval(code);
+            if (!func) {
+                throw new Error('Output is undefined');
+            }
+            if (typeof func != 'function')
+                throw new Error('Must enter a function');
             this.setState({ generator: func });
         } catch (error) {
             this.setState({ generatorError: error });

@@ -1,4 +1,5 @@
 import paper from 'paper';
+import Validator, { Type } from '../problem-engine/Validator';
 
 export class BinaryTree {
     constructor(el) {
@@ -37,11 +38,21 @@ export class BinaryTree {
 
         return tree;
     }
+
+    static wrapGenerator(generator) {
+        return (...args) => {
+            let returnValidator = new Validator(
+                [Type.is('object'), Type.isArray()],
+                1
+            );
+            return returnValidator.callGeneratorWithValidator(generator, args);
+        };
+    }
 }
 
 class BinaryNode {
     constructor(tree, depth, x, config) {
-        let { dW, dH } = config;
+        let { dW, dH, scale } = config;
         let pos = new Point(
             config.origin[0] + x * dW,
             config.origin[1] + depth * dH
@@ -52,7 +63,7 @@ class BinaryNode {
                 from: pos1,
                 to: pos2,
                 strokeColor: 'black',
-                strokeWidth: 2
+                strokeWidth: 2 * scale
             }).sendToBack();
         }
 
@@ -68,19 +79,22 @@ class BinaryNode {
                 pos.add([(1 / Math.pow(2, depth)) * dW, dH])
             );
 
+        const radius = 20 * scale;
         this.circle = new Path.Circle({
-            radius: 20,
-            strokeWidth: 2,
+            radius: radius,
+            strokeWidth: 2 * scale,
             fillColor: 'white',
             strokeColor: 'black',
             center: pos
         });
         this.text = new PointText({
             position: new Point(
-                tree.element >= 10 ? pos.x - 15 : pos.x - 8,
-                pos.y + 9
+                tree.element >= 10
+                    ? pos.x - (3 / 4) * radius
+                    : pos.x - (1 / 2) * radius,
+                pos.y + 9 * scale
             ),
-            fontSize: '26px',
+            fontSize: 26 * scale + 'px',
             fillColor: 'black',
             content: '' + tree.element
         });
@@ -92,17 +106,23 @@ export default class VisualTree {
     constructor(tree, canvas, animation) {
         paper.install(window);
         paper.install(window);
-        paper.setup('myCanvas');
+        paper.setup(canvas.id);
         this.animation = animation;
 
+        const scale = 0.5;
         this.staticConfig = {
             height: BinaryTree.getHeight(tree),
-            dH: 60,
-            sideMargin: 20
+            dH: 60 * scale,
+            sideMargin: 50 * scale,
+            scale: scale,
+            originY: 30 * scale
         };
         this.canvas = canvas;
 
-        canvas.height = this.staticConfig.height * this.staticConfig.dH + 10;
+        canvas.height =
+            this.staticConfig.height * this.staticConfig.dH +
+            this.staticConfig.originY;
+        canvas.style = '';
 
         window.onresize = () => {
             this.deleteTreeVisual(tree);
@@ -115,12 +135,10 @@ export default class VisualTree {
     getConfig() {
         const canvasWidth = this.canvas.width;
         return {
+            ...this.staticConfig,
             canvasWidth: canvasWidth,
-            origin: [canvasWidth / 2, 35],
-            dW: (canvasWidth - this.staticConfig.sideMargin) / 4,
-            height: this.staticConfig.height,
-            dH: this.staticConfig.dH,
-            sideMargin: this.staticConfig.sideMargin
+            origin: [canvasWidth / 2, this.staticConfig.originY],
+            dW: (canvasWidth - this.staticConfig.sideMargin) / 4
         };
     }
 

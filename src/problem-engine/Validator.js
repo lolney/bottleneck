@@ -55,16 +55,26 @@ export class Type extends Condition {
      * @return {Type}
      */
     static isInteger() {
-        return new Type((arg) => Number.isInteger(arg), `Must be an integer`);
+        return new Type((arg) => Number.isInteger(arg), 'Must be an integer');
+    }
+
+    /**
+     * Test for an Array
+     * @return {Type}
+     */
+    static isArray() {
+        return new Type((arg) => Array.isArray(arg), 'Must be an array');
     }
 }
 
 export default class Validator {
     /**
      * @param {Condition} conditions
+     * @param {number} nargs - optional
      */
-    constructor(conditions) {
+    constructor(conditions, nargs) {
         this.conditions = conditions;
+        this.nargs = nargs;
     }
 
     /**
@@ -75,7 +85,9 @@ export default class Validator {
      * @return {boolean}
      */
     test(result, args) {
-        for (const condition of this.conditions) {
+        for (const i in this.conditions) {
+            // can't use for-of here?
+            const condition = this.conditions[i];
             if (!condition.fn(result))
                 throw new ValidationError(result, args, condition.message);
         }
@@ -93,6 +105,12 @@ export default class Validator {
      */
     callGeneratorWithValidator(generator, args) {
         let result = generator.apply(this, args);
+        if (this.nargs != undefined && this.nargs != generator.length)
+            throw new Error(
+                `Expecting a function with ${this.nargs} parameters; supplied ${
+                    generator.length
+                }`
+            );
         this.test(result, args);
         return result;
     }

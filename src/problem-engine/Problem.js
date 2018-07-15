@@ -15,6 +15,9 @@ export default class Problem {
         return 'generic';
     }
 
+    /**
+     * Abstract method; when implemented, expected to return a promise
+     */
     serialize() {
         return {
             title: this.getTitle(),
