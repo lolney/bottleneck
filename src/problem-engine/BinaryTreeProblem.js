@@ -35,6 +35,17 @@ export default class BinaryTreeProblem extends Problem {
                     else return [i, nestedRight(i - 1), '-'];
                 };
                 return nestedRight(15);
+            })(),
+            (() => {
+                let assign = (current, next) => {
+                    if (current % 2) return [current, next, '-'];
+                    else return [current, '-', next];
+                };
+                let alternating = (i) => {
+                    if (i <= 1) return assign(1, 0);
+                    else return assign(i, alternating(i - 1));
+                };
+                return alternating(8);
             })()
         ];
     }

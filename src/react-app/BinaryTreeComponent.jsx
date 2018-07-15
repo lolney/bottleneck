@@ -13,6 +13,7 @@ export default class BinaryTreeComponent extends React.Component {
             solved: this.props.problem.testCases.map(() => false)
         };
         this.getTestCase = this.getTestCase.bind(this);
+        this.checkSolutions = this.checkSolutions.bind(this);
     }
 
     getTestCase(index) {
@@ -23,23 +24,31 @@ export default class BinaryTreeComponent extends React.Component {
         };
     }
 
+    checkSolutions(mySolutions) {
+        return mySolutions.map((mySolution, i) => {
+            let solution = this.getTestCase(i).solution;
+            return (
+                solution.length == mySolution.length &&
+                solution
+                    .map((_, i) => mySolution[i] == solution[i])
+                    .every((v) => v)
+            );
+        });
+    }
+
+    runGenerator(generator) {
+        let wrapped = BinaryTree.wrapGenerator(this.props.generator);
+        return this.props.problem.testCases.map((testCase) =>
+            wrapped(testCase.tree)
+        );
+    }
+
     componentDidUpdate(prevProps, prevState) {
         if (this.props.generator != prevProps.generator) {
-            let wrapped = BinaryTree.wrapGenerator(this.props.generator);
             try {
-                let mySolutions = this.props.problem.testCases.map((testCase) =>
-                    wrapped(testCase.tree)
-                );
+                let mySolutions = runGenerator(this.props.generator);
+                let solvedArray = checkSolutions(mySolutions);
 
-                let solvedArray = mySolutions.map((mySolution, i) => {
-                    let solution = this.getTestCase(i).solution;
-                    return (
-                        solution.length == mySolution.length &&
-                        solution
-                            .map((_, i) => mySolution[i] == solution[i])
-                            .every((v) => v)
-                    );
-                });
                 if (solvedArray.every((v) => v)) this.props.setDone(true);
                 else this.props.setDone(false);
 
@@ -60,7 +69,7 @@ export default class BinaryTreeComponent extends React.Component {
             <div className="bTree">
                 <section className="content">
                     <div className="canvas-row">
-                        <Switcher
+                        <TestIndicator
                             solvedArray={this.state.solved}
                             onSelect={(i) => {
                                 this.setState({ testCase: i });
@@ -93,7 +102,7 @@ export class VisualTreeComponent extends React.Component {
     }
 }
 
-class Switcher extends React.Component {
+class TestIndicator extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
