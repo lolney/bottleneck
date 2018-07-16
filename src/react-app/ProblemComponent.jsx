@@ -1,7 +1,7 @@
 import React from 'react';
 import BinaryTreeComponent from './BinaryTreeComponent.jsx';
 import ImageComponent from './ImageComponent.jsx';
-
+import PropTypes from 'prop-types';
 import './CSS/Image.scss';
 
 export default class ProblemComponent extends React.Component {
@@ -51,3 +51,12 @@ export default class ProblemComponent extends React.Component {
         );
     }
 }
+
+ProblemComponent.propTypes = {
+    generator: PropTypes.func.isRequired,
+    reportError: PropTypes.func.isRequired,
+    problem: PropTypes.shape({
+        title: PropTypes.string,
+        description: PropTypes.string
+    }).isRequired
+};

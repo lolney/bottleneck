@@ -1,6 +1,5 @@
 import models from './models';
 import moment from 'moment';
-import uuidv4 from 'uuid/v4';
 //import TwoVector from 'lance/serialize/TwoVector';
 // not sure why we can't import TwoVector here
 
@@ -31,7 +30,7 @@ export async function objects() {
 
 /**
  * @param {string} objId
- * @returns {object} The associated with object `objId`
+ * @returns {object} The problem associated with object `objId`
  */
 export async function problem(objId) {
     let obj = await models.gameObject.find({

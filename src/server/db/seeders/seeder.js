@@ -2,9 +2,10 @@
 import ImageProblem from '../../../problem-engine/ImageProblem';
 import uuidv4 from 'uuid/v4';
 import { date } from '../views';
+import BinaryTreeProblem from '../../../problem-engine/BinaryTreeProblem';
 
-const WIDTH = 1000;
-const HEIGHT = 600;
+const WIDTH = 2000;
+const HEIGHT = 1200;
 
 function createPoint() {
     let x = Math.random() * WIDTH;
@@ -16,9 +17,12 @@ export async function up(queryInterface, Sequelize) {
     const base = [...Array(10).keys()];
     let problems = await Promise.all(
         base.map(async (i) => {
-            return await ImageProblem.create(ImageProblem.generate());
+            return await ImageProblem.createProblemId(i);
         })
     );
+    // Add BinaryTree Problems
+    problems = problems.concat(base.map(() => new BinaryTreeProblem()));
+
     await queryInterface.bulkInsert(
         'problems',
         problems.map((problem, i) => {
@@ -26,7 +30,8 @@ export async function up(queryInterface, Sequelize) {
                 id: uuidv4(),
                 title: problem.getTitle(),
                 description: problem.getDescription(),
-                original: problem.getBase64(),
+                original: problem.image ? problem.image.getBase64() : '',
+                type: problem.getTypeString(),
                 createdAt: date(),
                 updatedAt: date(),
                 gameObjectId: uuidv4()
@@ -35,7 +40,7 @@ export async function up(queryInterface, Sequelize) {
         {}
     );
     const inserted_problems = await queryInterface.sequelize.query(
-        `SELECT id, "gameObjectId" FROM "problems";`
+        'SELECT id, "gameObjectId" FROM "problems";'
     );
     return await queryInterface.bulkInsert(
         'gameObjects',

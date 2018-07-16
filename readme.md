@@ -36,9 +36,7 @@ npm install -g sequelize-cli pg
 Run migrations and seeders:
 
 ```
-source .env
-sequelize db:migrate:undo:all && sequelize db:migrate
-sequelize db:seed:all
+bash migrations.sh
 ```
 
 Note: to generate migrations:

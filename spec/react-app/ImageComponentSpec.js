@@ -4,7 +4,7 @@ import ImageComponent from '../../src/react-app/ImageComponent';
 import sinon from 'sinon';
 import Adapter from 'enzyme-adapter-react-16';
 import ReactJSDOM from 'react-jsdom';
-import ImageProblem from '../../src/problem-engine/ImageProblem';
+import ImageProblem, { Image } from '../../src/problem-engine/ImageProblem';
 
 Enzyme.configure({ adapter: new Adapter() });
 process.env.NODE_ENV = 'test';
@@ -49,10 +49,10 @@ describe('ImageComponent', () => {
             });
     });
 
-    it('use generator to render new image', (done) => {
+    it('uses generator to render new image', (done) => {
         // Create image problem `a` with some generator
         const wrapper = shallow(mountedImageComponent);
-        ImageProblem.create(otherGenerator).then((problem) => {
+        Image.create(otherGenerator).then((problem) => {
             expect(wrapper.state('target')).not.toEqual(problem.original);
             // Pass that generator as props
             wrapper.setProps({ generator: otherGenerator });
@@ -80,7 +80,7 @@ describe('ImageComponent', () => {
 
     it('when generator is invalid, throw an error', (done) => {
         const wrapper = shallow(mountedImageComponent);
-        ImageProblem.create(otherGenerator).then((problem) => {
+        Image.create(otherGenerator).then((problem) => {
             expect(error).toEqual(null);
             wrapper.setProps({ generator: invalidGenerator });
             setTimeout(() => {

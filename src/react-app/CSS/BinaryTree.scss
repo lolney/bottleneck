@@ -6,7 +6,7 @@
     color: #000;
     flex-direction: column;
   }
-  .row-1 {
+  .canvas-row {
     display: flex;
     min-height: 100px;
     vertical-align: middle;
@@ -17,9 +17,8 @@
     object-fit: contain;
   }
 
-  .row-2 {
+  .array-row {
     display: flex;
-    max-height: 25px;
   }
 
   .treeCanvas {
@@ -35,5 +34,20 @@
     order: 3;
     background-size: contain;
     border-radius: 3px;
+  }
+
+  .buttonContainer {
+    position: absolute;
+    button {
+      padding: 10px;
+    }
+
+    .passing {
+      color: green;
+    }
+
+    .failing {
+      color: red;
+    }
   }
 }
