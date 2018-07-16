@@ -7,6 +7,7 @@ import EditorModal from '../src/react-app/EditorModal.jsx';
 import ImageProblem from '../src/problem-engine/ImageProblem';
 import BinaryTreeProblem from '../src/problem-engine/BinaryTreeProblem';
 import VisualTree from '../src/react-app/VisualTree';
+import SolutionHistory from '../src/react-app/SolutionHistory.jsx';
 
 const mockEngine = (data) => ({
     socket: {
@@ -42,6 +43,9 @@ class AsyncComponent extends React.Component {
 }
 
 let treeStories = storiesOf('VisualTree', module);
+storiesOf('SolutionHistory', module).add('Solution History', () => (
+    <SolutionHistory />
+));
 
 let trees = BinaryTreeProblem.getTrees();
 for (const i in trees) {
