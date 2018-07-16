@@ -46,8 +46,8 @@ export default class BinaryTreeComponent extends React.Component {
     componentDidUpdate(prevProps, prevState) {
         if (this.props.generator != prevProps.generator) {
             try {
-                let mySolutions = runGenerator(this.props.generator);
-                let solvedArray = checkSolutions(mySolutions);
+                let mySolutions = this.runGenerator(this.props.generator);
+                let solvedArray = this.checkSolutions(mySolutions);
 
                 if (solvedArray.every((v) => v)) this.props.setDone(true);
                 else this.props.setDone(false);

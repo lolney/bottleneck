@@ -104,9 +104,11 @@ class BinaryNode {
 
 export default class VisualTree {
     constructor(tree, canvas, animation) {
+        let a = Symbol.iterator;
         paper.install(window);
         paper.install(window);
         paper.setup(canvas.id);
+        Symbol.iterator = a;
         this.animation = animation;
 
         const scale = 0.5;
