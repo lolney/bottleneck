@@ -9,6 +9,7 @@ import BinaryTreeComponent from '../src/react-app/BinaryTreeComponent.jsx';
 import ProblemComponent from '../src/react-app/ProblemComponent.jsx';
 import EditorModal from '../src/react-app/EditorModal.jsx';
 import ImageProblem from '../src/problem-engine/ImageProblem';
+import SolutionHistory from '../src/react-app/SolutionHistory.jsx';
 
 const btreeProblem = {
     title: 'title',
@@ -48,6 +49,10 @@ class AsyncComponent extends React.Component {
         }
     }
 }
+
+storiesOf('SolutionHistory', module).add('Solution History', () => (
+    <SolutionHistory />
+));
 
 storiesOf('BinaryTreeComponent', module).add('the tree', () => (
     <BinaryTreeComponent />
