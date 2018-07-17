@@ -40,7 +40,8 @@ describe('serialize', () => {
                             'code',
                             'type',
                             'original',
-                            'target'
+                            'target',
+                            'id'
                         ].sort();
 
                         expect(actualProperties).toEqual(expectedProperties);

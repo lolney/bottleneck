@@ -37,6 +37,7 @@ export default class EditorModal extends React.Component {
         this.closeModal = this.closeModal.bind(this);
         this.setGenerator = this.setGenerator.bind(this);
         this.reportError = this.reportError.bind(this);
+        this.onSolution = this.onSolution.bind(this);
     }
 
     componentDidMount() {
@@ -56,10 +57,19 @@ export default class EditorModal extends React.Component {
             }
             if (typeof func != 'function')
                 throw new Error('Must enter a function');
-            this.setState({ generator: func });
+            this.setState({ generator: func, code: code });
         } catch (error) {
             this.setState({ generatorError: error });
         }
+    }
+
+    onSolution(problemId) {
+        if (!problemId)
+            throw new TypeError('Argument `problemId` is undefined');
+        this.props.socket.emit('solution', {
+            problemId: problemId,
+            code: this.state.code
+        });
     }
 
     openModal() {
@@ -87,6 +97,7 @@ export default class EditorModal extends React.Component {
                             problem={this.state.problem}
                             generator={this.state.generator}
                             reportError={this.reportError}
+                            onSolution={this.onSolution}
                         />
                     )}
                     <Editor

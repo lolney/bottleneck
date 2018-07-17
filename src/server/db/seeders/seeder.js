@@ -1,7 +1,7 @@
 // import { WIDTH, HEIGHT } from '../../../common/MyGameEngine';
 import ImageProblem from '../../../problem-engine/ImageProblem';
 import uuidv4 from 'uuid/v4';
-import { date } from '../views';
+import { date } from '../../db';
 import BinaryTreeProblem from '../../../problem-engine/BinaryTreeProblem';
 
 const WIDTH = 2000;
@@ -17,7 +17,7 @@ export async function up(queryInterface, Sequelize) {
     const base = [...Array(10).keys()];
     let problems = await Promise.all(
         base.map(async (i) => {
-            return await ImageProblem.createProblemId(i);
+            return await ImageProblem.createProblemFromGenerator(i);
         })
     );
     // Add BinaryTree Problems

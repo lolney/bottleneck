@@ -36,6 +36,7 @@ export default class ProblemComponent extends React.Component {
                 // TODO: consider a context here?
                 problem: this.props.problem,
                 setDone: (done) => {
+                    if (done) this.props.onSolution(this.props.problem.id);
                     this.setState({ done: done });
                 },
                 generator: this.props.generator,
@@ -55,7 +56,9 @@ export default class ProblemComponent extends React.Component {
 ProblemComponent.propTypes = {
     generator: PropTypes.func.isRequired,
     reportError: PropTypes.func.isRequired,
+    onSolution: PropTypes.func.isRequired,
     problem: PropTypes.shape({
+        id: PropTypes.string,
         title: PropTypes.string,
         description: PropTypes.string
     }).isRequired

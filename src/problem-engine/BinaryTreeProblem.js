@@ -5,10 +5,6 @@ export default class BinaryTreeProblem extends Problem {
         return 'Inorder Traversal';
     }
 
-    getId() {
-        return 0;
-    }
-
     getDescription() {
         return 'Do an inorder traversal of `tree`, returning the results as an array.';
     }

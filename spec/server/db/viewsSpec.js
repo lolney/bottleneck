@@ -2,34 +2,43 @@ import {
     objects,
     problem,
     checkPassword,
-    createUser
-} from '../../../src/server/db/views';
+    createUser,
+    addSolution,
+    getSolutions
+} from '../../../src/server/db';
+import models from '../../../src/server/db/models';
 
 describe('objects', () => {
     it('returns a list of objects with the correct fields', (done) => {
-        objects().then((objs) => {
-            expect(objs.length).toBeGreaterThan(0);
-            for (const obj of objs) {
-                expect(obj.dbId).toEqual(jasmine.any(String));
-                expect(obj.position.length).toEqual(2);
-                expect(obj.objectType).toEqual('tree');
-            }
-            done();
-        }).catch(done.fail);
+        objects()
+            .then((objs) => {
+                expect(objs.length).toBeGreaterThan(0);
+                for (const obj of objs) {
+                    expect(obj.dbId).toEqual(jasmine.any(String));
+                    expect(obj.position.length).toEqual(2);
+                    expect(obj.objectType).toEqual('tree');
+                }
+                done();
+            })
+            .catch(done.fail);
     });
 });
 
 describe('problem', () => {
     it('finds a problem for each object', (done) => {
-        objects().then((objs) => {
-            let promises = objs.map((obj) => {
-                problem(obj.dbId);
-            });
-            Promise.all(promises).then((vals) => {
-                expect(vals.length).toEqual(objs.length);
-                done();
-            }).catch(done.fail);
-        }).catch(done.fail);
+        objects()
+            .then((objs) => {
+                let promises = objs.map((obj) => {
+                    problem(obj.dbId);
+                });
+                Promise.all(promises)
+                    .then((vals) => {
+                        expect(vals.length).toEqual(objs.length);
+                        done();
+                    })
+                    .catch(done.fail);
+            })
+            .catch(done.fail);
     });
 });
 
@@ -50,24 +59,30 @@ describe('checkPassword', () => {
     });
 
     it('returns false with an incorrect username', (done) => {
-        checkPassword('incorrect', 'secret').then((result) => {
-            expect(result).toEqual(false);
-            done();
-        }).catch(done.fail);
+        checkPassword('incorrect', 'secret')
+            .then((result) => {
+                expect(result).toEqual(false);
+                done();
+            })
+            .catch(done.fail);
     });
 
     it('returns true with the correct password', (done) => {
-        checkPassword('test1', 'secret').then((result) => {
-            expect(result).toEqual(true);
-            done();
-        }).catch(done.fail);
+        checkPassword('test1', 'secret')
+            .then((result) => {
+                expect(result).toEqual(true);
+                done();
+            })
+            .catch(done.fail);
     });
 
     it('returns false with the incorrect password', (done) => {
-        checkPassword('test1', '').then((result) => {
-            expect(result).toEqual(false);
-            done();
-        }).catch(done.fail);
+        checkPassword('test1', '')
+            .then((result) => {
+                expect(result).toEqual(false);
+                done();
+            })
+            .catch(done.fail);
     });
 });
 
@@ -123,5 +138,44 @@ describe('createUser', () => {
     it('create user hashes password', () => {
         expect(user.password).not.toEqual('secret');
         expect(user.validPassword('secret')).toEqual(true);
+    });
+});
+
+describe('addSolution', () => {
+    let solutions = [];
+    const code = '() => \'test\'';
+    const limit = 2;
+    let user;
+
+    beforeAll(async (done) => {
+        user = await models.user.findOne();
+        let problems = await models.problem.findAll({ limit: limit });
+        for (const problem of problems) {
+            await addSolution(user.id, problem.id, code).then((s) => {
+                solutions.push(s);
+            });
+        }
+        done();
+    });
+
+    afterAll((done) => {
+        solutions.forEach((solution) =>
+            solution.destroy().then(() => {
+                done();
+            })
+        );
+    });
+
+    it('correctly adds the code', () => {
+        for (const solution of solutions) {
+            expect(solution.code).toEqual(code);
+        }
+    });
+
+    it('correctly associates with the problem', async () => {
+        let solutions = await getSolutions(user.id);
+
+        expect(solutions.solvedProblems.length).toEqual(limit);
+        expect(solutions.solvedProblems[0].problem).toBeDefined();
     });
 });

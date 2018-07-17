@@ -132,6 +132,47 @@ let migrationCommands = [
             },
             {}
         ]
+    },
+    {
+        fn: 'createTable',
+        params: [
+            'solvedProblems',
+            {
+                id: {
+                    type: Sequelize.UUID,
+                    primaryKey: true,
+                    defaultValue: Sequelize.UUIDV4
+                },
+                userId: {
+                    type: Sequelize.UUID,
+                    references: {
+                        model: 'users',
+                        key: 'id'
+                    }
+                },
+                problemId: {
+                    type: Sequelize.UUID,
+                    references: {
+                        model: 'problems',
+                        key: 'id'
+                    }
+                },
+                code: {
+                    type: Sequelize.TEXT
+                },
+                createdAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                },
+                updatedAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                }
+            },
+            {}
+        ]
     }
 ];
 
@@ -157,6 +198,10 @@ module.exports = {
     info: info,
     down: function(queryInterface, Sequelize) {
         return Promise.all([
+            queryInterface.dropTable('solvedProblems', {
+                force: true,
+                cascade: true
+            }),
             queryInterface.dropTable('gameObjects', {
                 force: true,
                 cascade: true

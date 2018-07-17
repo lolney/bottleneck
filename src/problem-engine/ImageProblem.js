@@ -18,8 +18,8 @@ function* imageIterator(image) {
  * Represents metadeta linking the `Image` class to a problem
  */
 export default class ImageProblem extends Problem {
-    constructor(base64) {
-        super();
+    constructor(base64, id) {
+        super(id);
         this.image = new Image(base64);
     }
 
@@ -29,16 +29,12 @@ export default class ImageProblem extends Problem {
         return new ImageProblem(image.getBase64());
     }
 
-    static createProblemId(id) {
+    static createProblemFromGenerator(id) {
         return ImageProblem.create(ImageProblem.getGenerators()[id]);
     }
 
     getTitle() {
         return 'Image Matching';
-    }
-
-    getId() {
-        return 0;
     }
 
     getDescription() {

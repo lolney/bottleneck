@@ -3,12 +3,18 @@ import moment from 'moment';
 //import TwoVector from 'lance/serialize/TwoVector';
 // not sure why we can't import TwoVector here
 
-/**
- * Contains
- */
-
 export function date() {
     return moment().format('YYYY-MM-DD HH:mm:ss');
+}
+
+function getDataValues(obj) {
+    let out = {};
+    for (const [key, value] of Object.entries(obj.dataValues)) {
+        if (Array.isArray(value)) out[key] = value.map((v) => getDataValues(v));
+        else if (value.dataValues) out[key] = getDataValues(value);
+        else out[key] = value;
+    }
+    return out;
 }
 
 function destructure(obj) {
@@ -58,4 +64,28 @@ export function createUser(username, password, email) {
         password: password,
         email: email
     });
+}
+
+export function addSolution(userId, problemId, code) {
+    return models.solvedProblem.create({
+        code: code,
+        userId: userId,
+        problemId: problemId
+    });
+}
+
+export async function getSolutions(userId) {
+    let obj = await models.user.find({
+        where: { id: userId },
+        include: [{ model: models.solvedProblem, include: [models.problem] }]
+    });
+    return getDataValues(obj);
+}
+
+export async function getUserId(username) {
+    let obj = await models.user.find({
+        where: { username: username },
+        attributes: ['id']
+    });
+    return obj.dataValues.id;
 }

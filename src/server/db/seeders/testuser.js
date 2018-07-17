@@ -1,4 +1,4 @@
-import { date } from '../views';
+import { date } from '../../db';
 import uuidv4 from 'uuid/v4';
 import bcrypt from 'bcrypt-nodejs';
 
