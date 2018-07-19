@@ -26,6 +26,20 @@ function destructure(obj) {
     };
 }
 
+async function getProblemSubTypes(problem) {
+    let subtype = problem.type;
+    if (subtype == 'image') {
+        let subproblem = await models[subtype].find({
+            where: { id: problem.id }
+        });
+        if (subproblem) {
+            subproblem = await getProblemSubTypes(subproblem.dataValues);
+            problem.subproblem = subproblem;
+        }
+    }
+    return problem;
+}
+
 /**
  * @returns all game objects
  */
@@ -43,7 +57,7 @@ export async function problem(objId) {
         where: { id: objId },
         include: [models.problem]
     });
-    return obj.problem;
+    return await getProblemSubTypes(obj.problem);
 }
 
 /**

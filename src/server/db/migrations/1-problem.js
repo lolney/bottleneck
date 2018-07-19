@@ -37,9 +37,6 @@ let migrationCommands = [
                 type: {
                     type: Sequelize.TEXT
                 },
-                original: {
-                    type: Sequelize.TEXT
-                },
                 createdAt: {
                     allowNull: false,
                     type: Sequelize.DATE,
@@ -158,6 +155,36 @@ let migrationCommands = [
                     }
                 },
                 code: {
+                    type: Sequelize.TEXT
+                },
+                createdAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                },
+                updatedAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                }
+            },
+            {}
+        ]
+    },
+    {
+        fn: 'createTable',
+        params: [
+            'images',
+            {
+                id: {
+                    type: Sequelize.UUID,
+                    primaryKey: true,
+                    defaultValue: Sequelize.UUIDV4
+                },
+                type: {
+                    type: Sequelize.TEXT
+                },
+                original: {
                     type: Sequelize.TEXT
                 },
                 createdAt: {

@@ -40,6 +40,16 @@ describe('problem', () => {
             })
             .catch(done.fail);
     });
+
+    it('finds a subproblem for each image problem', async () => {
+        let objs = await objects();
+        let problems = await Promise.all(objs.map((obj) => problem(obj.dbId)));
+        for (const problem of problems) {
+            if (problem.type == 'image') {
+                expect(typeof problem.subproblem.original).toEqual('string');
+            }
+        }
+    });
 });
 
 describe('checkPassword', () => {

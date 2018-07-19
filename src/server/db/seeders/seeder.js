@@ -22,15 +22,15 @@ export async function up(queryInterface, Sequelize) {
     );
     // Add BinaryTree Problems
     problems = problems.concat(base.map(() => new BinaryTreeProblem()));
+    let ids = problems.map(() => uuidv4());
 
     await queryInterface.bulkInsert(
         'problems',
         problems.map((problem, i) => {
             return {
-                id: uuidv4(),
+                id: ids[i],
                 title: problem.getTitle(),
                 description: problem.getDescription(),
-                original: problem.image ? problem.image.getBase64() : '',
                 type: problem.getTypeString(),
                 createdAt: date(),
                 updatedAt: date(),
@@ -39,6 +39,21 @@ export async function up(queryInterface, Sequelize) {
         }),
         {}
     );
+    await queryInterface.bulkInsert(
+        'images',
+        problems
+            .filter((x) => x.getTypeString() == 'image')
+            .map((problem, i) => {
+                return {
+                    id: ids[i],
+                    original: problem.image.getBase64(),
+                    createdAt: date(),
+                    updatedAt: date()
+                };
+            }),
+        {}
+    );
+
     const inserted_problems = await queryInterface.sequelize.query(
         'SELECT id, "gameObjectId" FROM "problems";'
     );
