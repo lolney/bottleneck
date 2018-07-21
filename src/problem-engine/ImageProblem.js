@@ -18,19 +18,20 @@ function* imageIterator(image) {
  * Represents metadeta linking the `Image` class to a problem
  */
 export default class ImageProblem extends Problem {
-    constructor(base64, id) {
-        super(id);
+    constructor(base64, id, subproblem, name) {
+        super(id, subproblem, name);
         this.image = new Image(base64);
     }
 
-    static async create(generator) {
+    static async create(generator, subproblem, name) {
         let gen = generator == null ? ImageProblem.generate() : generator;
         let image = await Image.create(gen);
-        return new ImageProblem(image.getBase64());
+        return new ImageProblem(image.getBase64(), subproblem, name);
     }
 
     static createProblemFromGenerator(id) {
-        return ImageProblem.create(ImageProblem.getGenerators()[id]);
+        let item = ImageProblem.getGenerators()[id];
+        return ImageProblem.create(item.generator, item.subproblem, item.name);
     }
 
     getTitle() {
@@ -71,8 +72,16 @@ export default class ImageProblem extends Problem {
 
     static getGenerators() {
         return [
-            (x, y) => Math.round(255 * x),
-            (x, y) => Math.round(255 * y)
+            {
+                generator: (x, y) => Math.round(255 * x),
+                name: 'increasing x',
+                subproblem: 'gradient'
+            },
+            {
+                generator: (x, y) => Math.round(255 * y),
+                name: 'increasing y',
+                subproblem: 'gradient'
+            }
         ].concat(ImageProblem.makeSinGenerators());
     }
 
@@ -86,12 +95,16 @@ export default class ImageProblem extends Problem {
                 for (const amplitude of amplitudes) {
                     for (const zero of zeros) {
                         for (const independentX of [true, false]) {
-                            yield ImageProblem.sinGenerator(
-                                period,
-                                amplitude,
-                                zero,
-                                independentX
-                            );
+                            yield {
+                                generator: ImageProblem.sinGenerator(
+                                    period,
+                                    amplitude,
+                                    zero,
+                                    independentX
+                                ),
+                                name: `period ${period}, amplitude ${amplitude}, zero ${zero}`,
+                                subproblem: 'sin'
+                            };
                         }
                     }
                 }

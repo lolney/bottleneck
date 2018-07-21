@@ -31,6 +31,7 @@ export async function up(queryInterface, Sequelize) {
                 id: ids[i],
                 title: problem.getTitle(),
                 description: problem.getDescription(),
+                name: problem.getName(),
                 type: problem.getTypeString(),
                 createdAt: date(),
                 updatedAt: date(),
@@ -46,6 +47,7 @@ export async function up(queryInterface, Sequelize) {
             .map((problem, i) => {
                 return {
                     id: ids[i],
+                    type: problem.getSubproblemString(),
                     original: problem.image.getBase64(),
                     createdAt: date(),
                     updatedAt: date()

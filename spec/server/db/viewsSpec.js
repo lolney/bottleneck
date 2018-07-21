@@ -186,6 +186,17 @@ describe('addSolution', () => {
         let solvedProblems = await getSolutions(user.id);
 
         expect(solvedProblems.length).toEqual(limit);
-        expect(solvedProblems[0].problem).toBeDefined();
+        for (const solved of solvedProblems) {
+            expect(solved.problem).toBeDefined();
+            expect(solved.problem.name).toBeDefined();
+            expect(solved.problem.type).toBeDefined();
+            if (solved.problem.type == 'image') {
+                expect(solved.problem.subproblem).toBeDefined();
+                expect(solved.problem.subproblem.type).toBeDefined();
+            } else {
+                expect(solved.problem.name).toEqual('Inorder traversal');
+                expect(solved.problem.subproblem).not.toBeDefined();
+            }
+        }
     });
 });

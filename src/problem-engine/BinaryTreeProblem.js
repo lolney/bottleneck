@@ -1,6 +1,10 @@
 import Problem from './Problem';
 
 export default class BinaryTreeProblem extends Problem {
+    constructor(id) {
+        super(id, null, 'Inorder traversal');
+    }
+
     getTitle() {
         return 'Inorder Traversal';
     }

@@ -1,10 +1,20 @@
 export default class Problem {
-    constructor(id) {
+    constructor(id, subproblem, name) {
         this.id = id;
+        this.subproblem = subproblem;
+        this.name = name;
     }
 
     getId() {
         return this.id;
+    }
+
+    getName() {
+        return this.name;
+    }
+
+    getSubproblemString() {
+        return this.subproblem;
     }
 
     getTitle() {

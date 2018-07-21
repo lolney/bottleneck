@@ -34,6 +34,9 @@ let migrationCommands = [
                 description: {
                     type: Sequelize.TEXT
                 },
+                name: {
+                    type: Sequelize.TEXT
+                },
                 type: {
                     type: Sequelize.TEXT
                 },

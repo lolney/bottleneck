@@ -11,7 +11,7 @@ function getDataValues(obj) {
     let out = {};
     for (const [key, value] of Object.entries(obj.dataValues)) {
         if (Array.isArray(value)) out[key] = value.map((v) => getDataValues(v));
-        else if (value.dataValues) out[key] = getDataValues(value);
+        else if (value && value.dataValues) out[key] = getDataValues(value);
         else out[key] = value;
     }
     return out;
@@ -28,10 +28,12 @@ function destructure(obj) {
 
 async function getProblemSubTypes(problem) {
     let subtype = problem.type;
-    if (subtype == 'image') {
+    if (models[subtype]) {
+        // Do subtypes exist in general?
         let subproblem = await models[subtype].find({
             where: { id: problem.id }
         });
+        // Does a subtype exist for this problem?
         if (subproblem) {
             subproblem = await getProblemSubTypes(subproblem.dataValues);
             problem.subproblem = subproblem;
@@ -57,7 +59,7 @@ export async function problem(objId) {
         where: { id: objId },
         include: [models.problem]
     });
-    return await getProblemSubTypes(obj.problem);
+    return await getProblemSubTypes(obj.problem.dataValues);
 }
 
 /**
@@ -93,7 +95,13 @@ export async function getSolutions(userId) {
         where: { id: userId },
         include: [{ model: models.solvedProblem, include: [models.problem] }]
     });
-    return getDataValues(obj).solvedProblems;
+    let solvedProblems = obj.solvedProblems.map((s) => getDataValues(s));
+    return await Promise.all(
+        solvedProblems.map(async (solved) => {
+            let problem = await getProblemSubTypes(solved.problem);
+            return { ...solved, problem: problem };
+        })
+    );
 }
 
 export async function getUserId(username) {
