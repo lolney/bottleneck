@@ -6,6 +6,8 @@ import {
     Button
 } from 'react-bootstrap';
 import './CSS/Solutions.scss';
+import { Grid } from './Grid.jsx';
+import { Problem } from './Grid.jsx';
 //import "bootstrap/dist/css/bootstrap.css";
 
 export default class SolutionHistory extends React.Component {
@@ -53,29 +55,18 @@ export default class SolutionHistory extends React.Component {
                     </div>
 
                     <div className="solutions-container bootstrap-styles">
-                        <DropdownButton
-                            bsStyle="default"
-                            bsSize="large"
-                            title="Large button"
-                            id="dropdown-size-large"
-                        >
-                            <MenuItem eventKey="1">Action</MenuItem>
-                            <MenuItem eventKey="2">Another action</MenuItem>
-                            <MenuItem eventKey="3">
-                                Something else here
-                            </MenuItem>
-                            <MenuItem divider />
-                            <MenuItem eventKey="4">Separated link</MenuItem>
-                        </DropdownButton>
+                        <Problem
+                            problems={[
+                                { name: 'Category?' },
+                                { name: 'Subcategory 1' },
+                                { name: 'Subcategory 2' },
+                                { name: 'Subcategory 3' }
+                            ]}
+                        />
 
-                        <div className="solution-grid">
-                            <Button />
-                            <Button />
-                            <Button />
-                            <Button />
-                            <Button />
-                            <Button />
-                        </div>
+                        <Grid
+                            problems={[{ name: 'hello' }, { name: 'goodbye' }]}
+                        />
                     </div>
 
                     <p className="instructions" />
