@@ -39,7 +39,8 @@ require('socketio-auth')(io, {
         let userId = await getUserId(username);
         socket.client.userId = userId;
         callback(null, succeeded);
-    }
+    },
+    timeout: 'none'
 });
 
 // Game Server

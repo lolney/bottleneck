@@ -183,9 +183,9 @@ describe('addSolution', () => {
     });
 
     it('correctly associates with the problem', async () => {
-        let solutions = await getSolutions(user.id);
+        let solvedProblems = await getSolutions(user.id);
 
-        expect(solutions.solvedProblems.length).toEqual(limit);
-        expect(solutions.solvedProblems[0].problem).toBeDefined();
+        expect(solvedProblems.length).toEqual(limit);
+        expect(solvedProblems[0].problem).toBeDefined();
     });
 });

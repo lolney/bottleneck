@@ -1,6 +1,7 @@
 import ImageProblem from '../problem-engine/ImageProblem';
 import BinaryTreeProblem from '../problem-engine/BinaryTreeProblem';
 import { problem, addSolution } from './db';
+import { getSolutions } from './db/index';
 
 export default class Controller {
     /**
@@ -16,7 +17,17 @@ export default class Controller {
                 addSolution(userId, data.problemId, data.code);
             });
         };
+
+        let solvedProblemsHandler = () => {
+            socket.on('solvedProblems', () => {
+                if (!socket.auth) throw new Error('User is not authenticated');
+
+                let userId = socket.client.userId;
+                socket.emit('solvedProblems', getSolutions(userId));
+            });
+        };
         solutionHandler();
+        solvedProblemsHandler();
     }
 
     static pushProblem(socket, playerId, dbId) {
@@ -29,7 +40,7 @@ export default class Controller {
                     return new BinaryTreeProblem(problem.id).serialize();
                 case 'image':
                     return new ImageProblem(
-                        problem.original,
+                        problem.subproblem.original,
                         problem.id
                     ).serialize();
                 default:
@@ -39,9 +50,6 @@ export default class Controller {
             .then((serialized) => {
                 console.log('Authenticated: ', socket.auth);
                 socket.emit('problem', serialized);
-            })
-            .catch((err) => {
-                console.log(`Unable to push problem: ${err}`);
             });
     }
 }

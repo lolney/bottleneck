@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { ENGINE_METHOD_DIGESTS } from 'constants';
 
-import EditorModal from './EditorModal.jsx';
+import SocketEditorContainer from './SocketEditorContainer.jsx';
 import ConnectionOverlay from './ConnectionOverlay.jsx';
 import Login from './Login.jsx';
 import HUD from './HUD.jsx';
@@ -63,7 +63,7 @@ class App extends React.Component {
                     />
                 )}
                 {this.state.socket && (
-                    <EditorModal socket={this.state.socket} />
+                    <SocketEditorContainer socket={this.state.socket} />
                 )}
                 {this.state.socket && <HUD socket={this.state.socket} />}
                 {this.state.token && (

@@ -24,7 +24,6 @@ export default class ProblemComponent extends React.Component {
         }
     }
 
-    // Receives props title, description, original and target
     render() {
         const description = this.state.done
             ? "You're done!"
@@ -33,10 +32,13 @@ export default class ProblemComponent extends React.Component {
         const child = React.createElement(
             this.getChild(this.props.problem.type),
             {
-                // TODO: consider a context here?
                 problem: this.props.problem,
                 setDone: (done) => {
-                    if (done) this.props.onSolution(this.props.problem.id);
+                    if (done)
+                        this.props.onSolution(
+                            this.props.problem.id,
+                            this.props.generator
+                        );
                     this.setState({ done: done });
                 },
                 generator: this.props.generator,

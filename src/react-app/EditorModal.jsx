@@ -1,8 +1,8 @@
 import React from 'react';
 import Modal from 'react-modal';
 import Editor from './Editor.jsx';
-import ace from 'ace-builds';
 import ProblemComponent from './ProblemComponent.jsx';
+import PropTypes from 'prop-types';
 
 import './CSS/Modal.scss';
 
@@ -26,9 +26,8 @@ export default class EditorModal extends React.Component {
 
         this.state = {
             generatorError: null,
-            modalIsOpen: false,
-            problem: null,
-            code: '',
+            modalIsOpen: true,
+            code: this.props.code,
             generator: function(x, y) {
                 return 0;
             }
@@ -37,16 +36,10 @@ export default class EditorModal extends React.Component {
         this.closeModal = this.closeModal.bind(this);
         this.setGenerator = this.setGenerator.bind(this);
         this.reportError = this.reportError.bind(this);
-        this.onSolution = this.onSolution.bind(this);
     }
 
     componentDidMount() {
         Modal.setAppElement('#overlay');
-        this.props.socket.on('problem', (data) => {
-            console.log('display', data);
-            this.setState({ problem: data, code: data.code });
-            this.openModal();
-        });
     }
 
     setGenerator(code) {
@@ -61,15 +54,6 @@ export default class EditorModal extends React.Component {
         } catch (error) {
             this.setState({ generatorError: error });
         }
-    }
-
-    onSolution(problemId) {
-        if (!problemId)
-            throw new TypeError('Argument `problemId` is undefined');
-        this.props.socket.emit('solution', {
-            problemId: problemId,
-            code: this.state.code
-        });
     }
 
     openModal() {
@@ -92,12 +76,12 @@ export default class EditorModal extends React.Component {
                     onRequestClose={this.closeModal}
                     style={customStyles}
                 >
-                    {this.state.problem && (
+                    {this.props.problem && (
                         <ProblemComponent
-                            problem={this.state.problem}
+                            problem={this.props.problem}
                             generator={this.state.generator}
                             reportError={this.reportError}
-                            onSolution={this.onSolution}
+                            onSolution={this.props.onSolution}
                         />
                     )}
                     <Editor
@@ -110,3 +94,9 @@ export default class EditorModal extends React.Component {
         );
     }
 }
+
+EditorModal.propTypes = {
+    onSolution: PropTypes.func.isRequired,
+    problem: PropTypes.object,
+    code: PropTypes.string.isRequired
+};

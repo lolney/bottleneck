@@ -93,7 +93,7 @@ export async function getSolutions(userId) {
         where: { id: userId },
         include: [{ model: models.solvedProblem, include: [models.problem] }]
     });
-    return getDataValues(obj);
+    return getDataValues(obj).solvedProblems;
 }
 
 export async function getUserId(username) {
