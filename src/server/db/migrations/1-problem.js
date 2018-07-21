@@ -34,10 +34,10 @@ let migrationCommands = [
                 description: {
                     type: Sequelize.TEXT
                 },
-                type: {
+                name: {
                     type: Sequelize.TEXT
                 },
-                original: {
+                type: {
                     type: Sequelize.TEXT
                 },
                 createdAt: {
@@ -132,6 +132,77 @@ let migrationCommands = [
             },
             {}
         ]
+    },
+    {
+        fn: 'createTable',
+        params: [
+            'solvedProblems',
+            {
+                id: {
+                    type: Sequelize.UUID,
+                    primaryKey: true,
+                    defaultValue: Sequelize.UUIDV4
+                },
+                userId: {
+                    type: Sequelize.UUID,
+                    references: {
+                        model: 'users',
+                        key: 'id'
+                    }
+                },
+                problemId: {
+                    type: Sequelize.UUID,
+                    references: {
+                        model: 'problems',
+                        key: 'id'
+                    }
+                },
+                code: {
+                    type: Sequelize.TEXT
+                },
+                createdAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                },
+                updatedAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                }
+            },
+            {}
+        ]
+    },
+    {
+        fn: 'createTable',
+        params: [
+            'images',
+            {
+                id: {
+                    type: Sequelize.UUID,
+                    primaryKey: true,
+                    defaultValue: Sequelize.UUIDV4
+                },
+                type: {
+                    type: Sequelize.TEXT
+                },
+                original: {
+                    type: Sequelize.TEXT
+                },
+                createdAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                },
+                updatedAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                }
+            },
+            {}
+        ]
     }
 ];
 
@@ -157,6 +228,10 @@ module.exports = {
     info: info,
     down: function(queryInterface, Sequelize) {
         return Promise.all([
+            queryInterface.dropTable('solvedProblems', {
+                force: true,
+                cascade: true
+            }),
             queryInterface.dropTable('gameObjects', {
                 force: true,
                 cascade: true

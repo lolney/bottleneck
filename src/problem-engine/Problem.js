@@ -1,4 +1,22 @@
 export default class Problem {
+    constructor(id, subproblem, name) {
+        this.id = id;
+        this.subproblem = subproblem;
+        this.name = name;
+    }
+
+    getId() {
+        return this.id;
+    }
+
+    getName() {
+        return this.name;
+    }
+
+    getSubproblemString() {
+        return this.subproblem;
+    }
+
     getTitle() {
         return 'Title';
     }
@@ -23,7 +41,8 @@ export default class Problem {
             title: this.getTitle(),
             description: this.getDescription(),
             code: this.getStartingCode(),
-            type: this.getTypeString()
+            type: this.getTypeString(),
+            id: this.getId()
         };
     }
 }

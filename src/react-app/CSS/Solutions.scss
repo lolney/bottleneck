@@ -1,0 +1,64 @@
+.solutions {
+  .fieldset {
+    background: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 1em 1em 1.5em;
+    width: 100%;
+    min-height: 20px;
+    text-align: center;
+    h1 {
+      margin-left: 1%;
+      margin-top: 1%;
+      color: black;
+      display: block;
+      font: 300 1em/1.5em "Lato", sans-serif;
+      font-size: 3em;
+    }
+    input {
+      width: 50%;
+    }
+  }
+  .searchResults {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    //padding: 1em 1em 1.5em;
+    width: 100%;
+    //height: 100%;
+    //min-height: 360px;
+    text-align: center;
+    .sidebar {
+      background: #f1f1f1;
+      border: 1px solid #ddd;
+      float: left;
+      padding: 1em;
+      height: 100%;
+      width: 25%;
+      min-height: 20px;
+      .category {
+        background: #f1f1f1;
+        border: 1px solid #ddd;
+        min-width: 40px;
+        min-height: 20px;
+        margin-top: 1em;
+        margin-bottom: 1em;
+        padding: 0.25em;
+        display: flex;
+        .column {
+          margin-left: 1%;
+          margin-top: 1%;
+          flex: 50%;
+          color: black;
+          display: block;
+          font: 300 1em/1.5em "Lato", sans-serif;
+          font-size: 1em;
+        }
+      }
+    }
+  }
+}
+
+.bootstrap-styles {
+  @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap.scss";
+}

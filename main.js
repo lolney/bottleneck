@@ -3,7 +3,7 @@
 import express from 'express';
 import socketIO from 'socket.io';
 import path from 'path';
-import { checkPassword } from './src/server/db/views';
+import { checkPassword, getUserId } from './src/server/db';
 
 const PORT = process.env.PORT || 3000;
 const INDEX = path.join(__dirname, './index.html');
@@ -18,6 +18,13 @@ let requestHandler = server.listen(PORT, () =>
     console.log(`Listening on ${PORT}`)
 );
 
+/*
+import bodyParser from 'body-parser';
+server.use(bodyParser);
+server.post('/solution', function(req, res) {
+    addSolution(req.user, req.query.problemId, req.body);
+});*/
+
 // Socket auth
 const io = socketIO(requestHandler);
 require('socketio-auth')(io, {
@@ -28,8 +35,12 @@ require('socketio-auth')(io, {
         console.log(`User is logging in: ${data.username}`);
         let succeeded = await checkPassword(username, password);
         console.log(`Authentication succeeded: ${succeeded}`);
+
+        let userId = await getUserId(username);
+        socket.client.userId = userId;
         callback(null, succeeded);
-    }
+    },
+    timeout: 'none'
 });
 
 // Game Server

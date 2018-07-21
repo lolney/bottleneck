@@ -3,10 +3,11 @@ import React from 'react';
 import { storiesOf } from '@storybook/react';
 
 import { VisualTreeComponent } from '../src/react-app/BinaryTreeComponent.jsx';
-import EditorModal from '../src/react-app/EditorModal.jsx';
+import SocketEditorContainer from '../src/react-app/SocketEditorContainer.jsx';
 import ImageProblem from '../src/problem-engine/ImageProblem';
 import BinaryTreeProblem from '../src/problem-engine/BinaryTreeProblem';
 import VisualTree from '../src/react-app/VisualTree';
+import SolutionHistory from '../src/react-app/SolutionHistory.jsx';
 
 const mockEngine = (data) => ({
     socket: {
@@ -42,6 +43,9 @@ class AsyncComponent extends React.Component {
 }
 
 let treeStories = storiesOf('VisualTree', module);
+storiesOf('SolutionHistory', module).add('Solution History', () => (
+    <SolutionHistory />
+));
 
 let trees = BinaryTreeProblem.getTrees();
 for (const i in trees) {
@@ -58,7 +62,7 @@ storiesOf('BinaryTreeComponent', module).add('inorder traversal', () => {
     };
     return (
         <AsyncComponent fetchProps={fetchProps}>
-            <EditorModal />
+            <SocketEditorContainer />
         </AsyncComponent>
     );
 });
@@ -76,7 +80,7 @@ for (const i in generators) {
         };
         return (
             <AsyncComponent fetchProps={fetchProps}>
-                <EditorModal />
+                <SocketEditorContainer />
             </AsyncComponent>
         );
     });

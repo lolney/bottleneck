@@ -1,7 +1,7 @@
 // import { WIDTH, HEIGHT } from '../../../common/MyGameEngine';
 import ImageProblem from '../../../problem-engine/ImageProblem';
 import uuidv4 from 'uuid/v4';
-import { date } from '../views';
+import { date } from '../../db';
 import BinaryTreeProblem from '../../../problem-engine/BinaryTreeProblem';
 
 const WIDTH = 2000;
@@ -17,20 +17,21 @@ export async function up(queryInterface, Sequelize) {
     const base = [...Array(10).keys()];
     let problems = await Promise.all(
         base.map(async (i) => {
-            return await ImageProblem.createProblemId(i);
+            return await ImageProblem.createProblemFromGenerator(i);
         })
     );
     // Add BinaryTree Problems
     problems = problems.concat(base.map(() => new BinaryTreeProblem()));
+    let ids = problems.map(() => uuidv4());
 
     await queryInterface.bulkInsert(
         'problems',
         problems.map((problem, i) => {
             return {
-                id: uuidv4(),
+                id: ids[i],
                 title: problem.getTitle(),
                 description: problem.getDescription(),
-                original: problem.image ? problem.image.getBase64() : '',
+                name: problem.getName(),
                 type: problem.getTypeString(),
                 createdAt: date(),
                 updatedAt: date(),
@@ -39,6 +40,22 @@ export async function up(queryInterface, Sequelize) {
         }),
         {}
     );
+    await queryInterface.bulkInsert(
+        'images',
+        problems
+            .filter((x) => x.getTypeString() == 'image')
+            .map((problem, i) => {
+                return {
+                    id: ids[i],
+                    type: problem.getSubproblemString(),
+                    original: problem.image.getBase64(),
+                    createdAt: date(),
+                    updatedAt: date()
+                };
+            }),
+        {}
+    );
+
     const inserted_problems = await queryInterface.sequelize.query(
         'SELECT id, "gameObjectId" FROM "problems";'
     );
