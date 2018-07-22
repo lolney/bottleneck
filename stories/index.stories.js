@@ -7,8 +7,6 @@ import SocketEditorContainer from '../src/react-app/SocketEditorContainer.jsx';
 import ImageProblem from '../src/problem-engine/ImageProblem';
 import BinaryTreeProblem from '../src/problem-engine/BinaryTreeProblem';
 import VisualTree from '../src/react-app/VisualTree';
-import SolutionHistory from '../src/react-app/SolutionHistory.jsx';
-import { Grid } from '../src/react-app/Grid.jsx';
 
 const mockEngine = (data) => ({
     socket: {
@@ -44,14 +42,6 @@ class AsyncComponent extends React.Component {
 }
 
 let treeStories = storiesOf('VisualTree', module);
-
-storiesOf('SolutionHistory', module).add('Solution History', () => (
-    <SolutionHistory />
-));
-
-storiesOf('Grid', module).add('Grid', () => (
-    <Grid problems={[{ name: 'hello' }, { name: 'goodbye' }]} />
-));
 
 let trees = BinaryTreeProblem.getTrees();
 for (const i in trees) {

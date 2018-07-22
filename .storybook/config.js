@@ -4,6 +4,7 @@ import 'babel-polyfill';
 function loadStories() {
     require('../stories/index.stories.js');
     require('../stories/pixiDemo.js');
+    require('../stories/solutionHistory.js');
     // You can require as many stories as you need.
 }
 
