@@ -102,7 +102,9 @@ export default class ImageProblem extends Problem {
                                     zero,
                                     independentX
                                 ),
-                                name: `period ${period}, amplitude ${amplitude}, zero ${zero}`,
+                                name: `period ${period}, amplitude ${amplitude}, zero ${zero}, ${
+                                    independentX ? 'x' : 'y'
+                                }`,
                                 subproblem: 'sin'
                             };
                         }

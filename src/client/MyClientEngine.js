@@ -1,5 +1,5 @@
 import ClientEngine from 'lance/ClientEngine';
-import MyRenderer from '../client/MyRenderer';
+import MyRenderer from './MyRenderer';
 import KeyboardControls from 'lance/controls/KeyboardControls';
 
 export default class MyClientEngine extends ClientEngine {

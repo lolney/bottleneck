@@ -1,6 +1,11 @@
 module.exports = {
-    plugins: ['jasmine'],
-    extends: ['google', 'eslint:recommended', 'plugin:jasmine/recommended'],
+    plugins: ['jasmine', 'react'],
+    extends: [
+        'google',
+        'eslint:recommended',
+        'plugin:jasmine/recommended',
+        'plugin:react/recommended'
+    ],
     parserOptions: {
         ecmaVersion: 7,
         sourceType: 'module',
