@@ -2,7 +2,6 @@ import React from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
 import '.././CSS/Solutions.scss';
 import Problem from './Problem.jsx';
-import Grid from './Grid.jsx';
 
 import PropTypes from 'prop-types';
 

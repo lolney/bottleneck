@@ -68,6 +68,7 @@
         "eslint-plugin-react": "^7.10.0",
         "file-loader": "^1.1.11",
         "jasmine": "^3.1.0",
+        "jsdom": "^11.11.0",
         "node-sass": "^4.9.0",
         "raw-loader": "^0.5.1",
         "react-jsdom": "git+https://github.com/tomcardoso/react-jsdom.git",

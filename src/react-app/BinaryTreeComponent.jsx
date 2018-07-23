@@ -93,12 +93,21 @@ export default class BinaryTreeComponent extends React.Component {
 }
 
 export class VisualTreeComponent extends React.Component {
+    constructor(props) {
+        super(props);
+        this.id = 'treeCanvas' + Math.random();
+    }
+
     componentDidMount() {
         const tree = BinaryTree.createTree(this.props.nodes);
-        new VisualTree(tree, document.getElementById('treeCanvas'), false);
+        new VisualTree(
+            tree,
+            document.getElementById(this.id),
+            false
+        );
     }
     render() {
-        return <canvas className="treeCanvas" id="treeCanvas" />;
+        return <canvas className="treeCanvas" id={this.id} />;
     }
 }
 

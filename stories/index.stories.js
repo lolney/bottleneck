@@ -3,10 +3,10 @@ import React from 'react';
 import { storiesOf } from '@storybook/react';
 
 import { VisualTreeComponent } from '../src/react-app/BinaryTreeComponent.jsx';
-import SocketEditorContainer from '../src/react-app/SocketEditorContainer.jsx';
+import EditorSocketWatcher from '../src/react-app/EditorSocketWatcher.jsx';
 import ImageProblem from '../src/problem-engine/ImageProblem';
 import BinaryTreeProblem from '../src/problem-engine/BinaryTreeProblem';
-import VisualTree from '../src/react-app/VisualTree';
+import Windows from '../src/react-app/Windows.jsx';
 
 const mockEngine = (data) => ({
     socket: {
@@ -24,20 +24,20 @@ class AsyncComponent extends React.Component {
         this.state = {
             data: null
         };
+        this.windows = React.createRef();
     }
 
     componentDidMount() {
-        this.props.fetchProps().then((data) => this.setState({ data }));
+        this.props.fetchProps().then((data) => {
+            new EditorSocketWatcher(
+                data.socket,
+                this.windows.current.addWindow
+            );
+        });
     }
 
     render() {
-        if (this.state.data) {
-            let elem = React.cloneElement(this.props.children, this.state.data);
-            console.log(elem);
-            return elem;
-        } else {
-            return <div> Loading </div>;
-        }
+        return <Windows ref={this.windows} />;
     }
 }
 
@@ -56,28 +56,20 @@ storiesOf('BinaryTreeComponent', module).add('inorder traversal', () => {
         console.log(serialized);
         return { socket: mockEngine(serialized).socket };
     };
-    return (
-        <AsyncComponent fetchProps={fetchProps}>
-            <SocketEditorContainer />
-        </AsyncComponent>
-    );
+    return <AsyncComponent fetchProps={fetchProps} />;
 });
 
 let stories = storiesOf('ImageComponent', module);
 
 let generators = ImageProblem.getGenerators();
 for (const i in generators) {
-    let generator = generators[i];
-    stories.add('ImageComponent' + i, () => {
+    let generator = generators[i].generator;
+    stories.add(generators[i].name, () => {
         let fetchProps = async () => {
             let problem = await ImageProblem.create(generator);
             let serialized = await problem.serialize();
             return { socket: mockEngine(serialized).socket };
         };
-        return (
-            <AsyncComponent fetchProps={fetchProps}>
-                <SocketEditorContainer />
-            </AsyncComponent>
-        );
+        return <AsyncComponent fetchProps={fetchProps} />;
     });
 }

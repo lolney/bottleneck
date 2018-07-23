@@ -1,5 +1,13 @@
 language: node_js
 services:
   - postgresql
-before_script:
+addons:
+  postgresql: "10"
+sudo: true
+before_install:
+  - sudo apt-get install postgresql-10-postgis-2.4 postgis -y -q
+  - sudo service postgresql start 10
   - psql -c 'create database bottleneck_development;' -U postgres
+  - psql -U postgres -c "create extension postgis"
+env:
+  - DATABASE_URL=postgresql://postgres@localhost:5432/bottleneck_development

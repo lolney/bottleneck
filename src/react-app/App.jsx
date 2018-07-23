@@ -2,11 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { ENGINE_METHOD_DIGESTS } from 'constants';
 
-import SocketEditorContainer from './SocketEditorContainer.jsx';
+import EditorSocketWatcher from './EditorSocketWatcher.jsx';
 import ConnectionOverlay from './ConnectionOverlay.jsx';
 import Login from './Login.jsx';
 import HUD from './HUD.jsx';
 import Game from './Game.jsx';
+import Windows from './Windows.jsx';
 
 /*
 \ App
@@ -40,6 +41,8 @@ class App extends React.Component {
         };
         this.onReceiveToken = this.onReceiveToken.bind(this);
         this.onReceiveSocket = this.onReceiveSocket.bind(this);
+
+        this.windows = React.createRef();
     }
 
     onReceiveToken(token) {
@@ -47,6 +50,7 @@ class App extends React.Component {
     }
 
     onReceiveSocket(socket) {
+        new EditorSocketWatcher(socket, this.windows.current.addWindow);
         this.setState({ socket: socket });
     }
 
@@ -62,10 +66,8 @@ class App extends React.Component {
                         socket={this.state.socket}
                     />
                 )}
-                {this.state.socket && (
-                    <SocketEditorContainer socket={this.state.socket} />
-                )}
                 {this.state.socket && <HUD socket={this.state.socket} />}
+                <Windows ref={this.windows} />
                 {this.state.token && (
                     <Game
                         onReceiveSocket={this.onReceiveSocket}
