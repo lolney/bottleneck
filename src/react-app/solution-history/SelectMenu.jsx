@@ -33,14 +33,7 @@ export default class SelectMenu extends React.Component {
                     </div>
 
                     <div className="solutions-container bootstrap-styles">
-                        <Problem
-                            problems={[
-                                { name: 'Category?' },
-                                { name: 'Subcategory 1' },
-                                { name: 'Subcategory 2' },
-                                { name: 'Subcategory 3' }
-                            ]}
-                        />
+                        <Problem solvedProblems={this.props.solvedProblems} />
 
                         <Grid
                             problems={[{ name: 'hello' }, { name: 'goodbye' }]}
@@ -96,17 +89,17 @@ class SelectItem extends React.Component {
     }
 }
 
-const subproblem = PropTypes.shape({
+export const subproblem = PropTypes.shape({
     type: PropTypes.string.isRequired
 });
 
-const problem = PropTypes.shape({
+export const problem = PropTypes.shape({
     name: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
     subproblem: subproblem
 });
 
-const solvedProblem = PropTypes.shape({
+export const solvedProblem = PropTypes.shape({
     problem: problem.isRequired,
     code: PropTypes.string.isRequired
 });
