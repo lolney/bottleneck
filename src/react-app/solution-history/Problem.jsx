@@ -38,36 +38,6 @@ export default class Problem extends React.Component {
     }
 }
 
-/*
-const subproblem = PropTypes.shape({
-    type: PropTypes.string.isRequired
-});
-
-const problem = PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
-    subproblem: subproblem
-});
-
-const solvedProblem = PropTypes.shape({
-    problem: problem.isRequired,
-    code: PropTypes.string.isRequired
-});
-
-
-
-                    {this.props.solvedProblems.map((solved) => (
-                        <MenuItem eventKey="1" key={solved.problem.type}>
-                            {solved.problem.type}
-                        </MenuItem>
-                    ))}
-
-
-
-
-
-*/
-
 Problem.propTypes = {
     solvedProblems: PropTypes.arrayOf(solvedProblem).isRequired
 };

@@ -66,8 +66,8 @@ class App extends React.Component {
                         socket={this.state.socket}
                     />
                 )}
-                <Windows ref={this.windows} />
                 {this.state.socket && <HUD socket={this.state.socket} />}
+                <Windows ref={this.windows} />
                 {this.state.token && (
                     <Game
                         onReceiveSocket={this.onReceiveSocket}

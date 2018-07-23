@@ -18,6 +18,7 @@ export default class Window extends React.Component {
         return (
             <Draggable
                 ref={this.ref}
+                handle=".bar"
                 onMouseDown={this.props.onClick}
                 defaultPosition={this.props.offset}
                 position={null}
@@ -25,7 +26,6 @@ export default class Window extends React.Component {
             >
                 <div
                     style={{
-                        overflowY: 'scroll',
                         boxShadow: 'rgba(0, 0, 0, 0.5) 0px 5px 15px',
                         position: 'absolute',
                         border: '1px solid rgba(0,0,0,.2)',
@@ -36,11 +36,33 @@ export default class Window extends React.Component {
                         background: 'white'
                     }}
                 >
-                    <div onClick={this.props.close} style={{ float: 'right' }}>
-                        {' '}
-                        X{' '}
+                    <div
+                        className="bar"
+                        style={{
+                            border: '1px solid rgba(0,0,0,.2)',
+                            borderTopLeftRadius: '6px',
+                            borderTopRightRadius: '6px',
+                            width: '100%',
+                            height: '22px',
+                            background: '#ddd'
+                        }}
+                    >
+                        <div
+                            onClick={this.props.close}
+                            style={{ float: 'right', padding: '1px' }}
+                        >
+                            {' '}
+                            X{' '}
+                        </div>
                     </div>
-                    {this.props.children}
+                    <div
+                        style={{
+                            overflowY: 'scroll',
+                            height: 'calc(100% - 22px)'
+                        }}
+                    >
+                        {this.props.children}
+                    </div>
                 </div>
             </Draggable>
         );
