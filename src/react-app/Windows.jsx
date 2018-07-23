@@ -1,5 +1,6 @@
 import React from 'react';
 import Window from './Window.jsx';
+import PropTypes from 'prop-types';
 
 export default class Windows extends React.Component {
     constructor(props) {
@@ -80,7 +81,7 @@ export default class Windows extends React.Component {
             return { x: (this.offset += 20) - 20, y: 0 };
         }
         let topKey = this.getTopKey();
-        if (topKey == undefined) return 0;
+        if (topKey == undefined) return { x: 0, y: 0 };
 
         let topOffset = this.state.windows[topKey].ref.current.getOffset();
 
@@ -138,3 +139,7 @@ export default class Windows extends React.Component {
         );
     }
 }
+
+Windows.propTypes = {
+    children: PropTypes.array
+};

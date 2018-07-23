@@ -1,19 +1,6 @@
 import React from 'react';
 import Draggable from 'react-draggable';
-
-const customStyles = {
-    content: {
-        top: '50%',
-        left: '50%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)',
-        width: '500px',
-        height: '75vh',
-        maxHeight: '1000px'
-    }
-};
+import PropTypes from 'prop-types';
 
 export default class Window extends React.Component {
     constructor(props) {
@@ -38,6 +25,7 @@ export default class Window extends React.Component {
             >
                 <div
                     style={{
+                        boxShadow: 'rgba(0, 0, 0, 0.5) 0px 5px 15px',
                         position: 'absolute',
                         border: '1px solid rgba(0,0,0,.2)',
                         borderRadius: '6px',
@@ -57,3 +45,13 @@ export default class Window extends React.Component {
         );
     }
 }
+
+Window.propTypes = {
+    close: PropTypes.func.isRequired,
+    onClick: PropTypes.func.isRequired,
+    children: PropTypes.object.isRequired,
+    offset: PropTypes.shape({
+        x: PropTypes.number.isRequired,
+        y: PropTypes.number.isRequired
+    }).isRequired
+};
