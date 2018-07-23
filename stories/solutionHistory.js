@@ -2,7 +2,7 @@ import React from 'react';
 
 import { storiesOf } from '@storybook/react';
 import SolutionHistory from '../src/react-app/solution-history/SolutionHistory.jsx';
-import { Grid } from '../src/react-app/solution-history/Grid.jsx';
+import Grid from '../src/react-app/solution-history/Grid.jsx';
 
 const solvedProblems = [
     { problem: { name: '1', type: 'image' }, code: 'code' },
@@ -18,10 +18,6 @@ const socket = {
     emit: () => {}
 };
 
-storiesOf('SolutionHistory', module).add('Solution History', () => (
-    <SolutionHistory socket={socket} />
-));
-
-storiesOf('Grid', module).add('Grid', () => (
-    <Grid problems={[{ name: 'hello' }, { name: 'goodbye' }]} />
-));
+storiesOf('SolutionHistory', module)
+    .add('Solution History', () => <SolutionHistory socket={socket} />)
+    .add('Grid', () => <Grid solvedProblems={solvedProblems} />);

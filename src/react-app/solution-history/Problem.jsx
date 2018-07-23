@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { DropdownButton, MenuItem } from 'react-bootstrap';
 import '.././CSS/Solutions.scss';
 import { solvedProblem } from './SelectMenu.jsx';
+import Grid from './Grid.jsx';
 
 export default class Problem extends React.Component {
     render() {
@@ -14,9 +15,8 @@ export default class Problem extends React.Component {
                 subproblems[subproblem].push(subproblem);
             else subproblems[subproblem] = [subproblem];
         }
-        console.log(subproblems);
         return (
-            <div className="bootstrap-styles">
+            <div className="solutions-container bootstrap-styles">
                 {this.props.solvedProblems.every(
                     (solvedProblem) => solvedProblem.problem.subproblem
                 ) && (
@@ -33,6 +33,8 @@ export default class Problem extends React.Component {
                         ))}
                     </DropdownButton>
                 )}
+
+                <Grid solvedProblems={this.props.solvedProblems} />
             </div>
         );
     }

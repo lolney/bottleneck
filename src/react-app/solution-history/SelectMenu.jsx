@@ -32,13 +32,7 @@ export default class SelectMenu extends React.Component {
                         </div>
                     </div>
 
-                    <div className="solutions-container bootstrap-styles">
-                        <Problem solvedProblems={this.props.solvedProblems} />
-
-                        <Grid
-                            problems={[{ name: 'hello' }, { name: 'goodbye' }]}
-                        />
-                    </div>
+                    <Problem solvedProblems={this.props.solvedProblems} />
 
                     <p className="instructions" />
                 </div>
