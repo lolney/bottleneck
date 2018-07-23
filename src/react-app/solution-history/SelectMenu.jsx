@@ -2,11 +2,20 @@ import React from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
 import '.././CSS/Solutions.scss';
 import Problem from './Problem.jsx';
-import Grid from './Grid.jsx';
 
 import PropTypes from 'prop-types';
 
 export default class SelectMenu extends React.Component {
+    constructor(props) {
+        super(props);
+
+        let solved = this.props.solvedProblems;
+        this.state = {
+            //selected: this.props.solvedProblems[0].problem.type
+            selected: solved.length == 0 ? undefined : solved[0].problem.type
+        };
+    }
+
     render() {
         return (
             <div className="solutions">
@@ -24,6 +33,15 @@ export default class SelectMenu extends React.Component {
                             <ButtonToolbar>
                                 {this.props.solvedProblems.map((solved) => (
                                     <SelectItem
+                                        onClick={() => {
+                                            this.setState({
+                                                selected: solved.problem.type
+                                            });
+                                        }}
+                                        active={
+                                            this.state.selected ==
+                                            solved.problem.type
+                                        }
                                         key={solved.problem.type}
                                         type={solved.problem.type}
                                     />
@@ -33,11 +51,6 @@ export default class SelectMenu extends React.Component {
                     </div>
 
                     <Problem solvedProblems={this.props.solvedProblems} />
-
-                    <Grid
-                        solvedProblems={this.props.solvedProblems}
-                        //problems={[{ name: 'hello' }, { name: 'goodbye' }]}
-                    />
 
                     <p className="instructions" />
                 </div>
@@ -73,7 +86,7 @@ class SelectItem extends React.Component {
 
     render() {
         return (
-            <Button>
+            <Button onClick={this.props.onClick} active={this.props.active}>
                 <div className="column">
                     <img
                         src={this.state.src}
