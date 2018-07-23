@@ -65,7 +65,7 @@ export default class Windows extends React.Component {
             order: [
                 ...this.state.order.slice(0, i),
                 ...this.state.order.slice(i + 1),
-                key.toString()
+                key
             ]
         });
     }
