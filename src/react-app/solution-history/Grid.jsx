@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
 import '.././CSS/Solutions.scss';
 
+import { solvedProblem } from './SelectMenu.jsx';
+
 export default class Grid extends React.Component {
     render() {
         return (
@@ -18,5 +20,5 @@ export default class Grid extends React.Component {
 }
 
 Grid.propTypes = {
-    problems: PropTypes.object.isRequired
+    problems: PropTypes.arrayOf(solvedProblem).isRequired
 };

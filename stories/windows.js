@@ -30,5 +30,9 @@ storiesOf('Windows', module).add('Windows', () => (
     <WindowsContainer>
         <p>Window 1</p>
         <p>Window 2</p>
+        <div>
+            <input placeholder="Window 3" style={{ display: 'block' }} />
+            <input placeholder="Window 3" />
+        </div>
     </WindowsContainer>
 ));
