@@ -2,6 +2,31 @@ import React from 'react';
 import Draggable from 'react-draggable';
 import PropTypes from 'prop-types';
 
+const windowStyle = {
+    boxShadow: 'rgba(0, 0, 0, 0.5) 0px 5px 15px',
+    position: 'absolute',
+    border: '1px solid rgba(0,0,0,.2)',
+    borderRadius: '6px',
+    width: '500px',
+    height: '75vh',
+    maxHeight: '1000px',
+    background: 'white'
+};
+
+const barStyle = {
+    border: '1px solid rgba(0,0,0,.2)',
+    borderTopLeftRadius: windowStyle.borderRadius,
+    borderTopRightRadius: windowStyle.borderRadius,
+    width: '100%',
+    height: '22px',
+    background: '#ddd'
+};
+
+const bodyStyle = {
+    overflowY: 'scroll',
+    height: `calc(100% - ${barStyle.height})`
+};
+
 export default class Window extends React.Component {
     constructor(props) {
         super(props);
@@ -24,45 +49,16 @@ export default class Window extends React.Component {
                 position={null}
                 grid={[25, 25]}
             >
-                <div
-                    style={{
-                        boxShadow: 'rgba(0, 0, 0, 0.5) 0px 5px 15px',
-                        position: 'absolute',
-                        border: '1px solid rgba(0,0,0,.2)',
-                        borderRadius: '6px',
-                        width: '500px',
-                        height: '75vh',
-                        maxHeight: '1000px',
-                        background: 'white'
-                    }}
-                >
-                    <div
-                        className="bar"
-                        style={{
-                            border: '1px solid rgba(0,0,0,.2)',
-                            borderTopLeftRadius: '6px',
-                            borderTopRightRadius: '6px',
-                            width: '100%',
-                            height: '22px',
-                            background: '#ddd'
-                        }}
-                    >
+                <div style={windowStyle}>
+                    <div className="bar" style={barStyle}>
                         <div
                             onClick={this.props.close}
                             style={{ float: 'right', padding: '1px' }}
                         >
-                            {' '}
-                            X{' '}
+                            X
                         </div>
                     </div>
-                    <div
-                        style={{
-                            overflowY: 'scroll',
-                            height: 'calc(100% - 22px)'
-                        }}
-                    >
-                        {this.props.children}
-                    </div>
+                    <div style={bodyStyle}>{this.props.children}</div>
                 </div>
             </Draggable>
         );

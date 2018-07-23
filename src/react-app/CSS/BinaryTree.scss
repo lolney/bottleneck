@@ -7,6 +7,7 @@
     flex-direction: column;
   }
   .canvas-row {
+    background: #ccc;
     display: flex;
     min-height: 100px;
     vertical-align: middle;
@@ -23,7 +24,6 @@
 
   .treeCanvas {
     width: 100%;
-    background: #ccc;
     order: 2;
     background-size: contain;
     border-radius: 3px;
