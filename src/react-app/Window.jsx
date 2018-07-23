@@ -25,6 +25,7 @@ export default class Window extends React.Component {
             >
                 <div
                     style={{
+                        overflowY: 'scroll',
                         boxShadow: 'rgba(0, 0, 0, 0.5) 0px 5px 15px',
                         position: 'absolute',
                         border: '1px solid rgba(0,0,0,.2)',
