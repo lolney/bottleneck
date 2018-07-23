@@ -16,11 +16,23 @@ const customStyles = {
 };
 
 export default class Window extends React.Component {
+    constructor(props) {
+        super(props);
+        this.getOffset = this.getOffset.bind(this);
+        this.ref = React.createRef();
+    }
+
+    getOffset() {
+        let draggable = this.ref.current;
+        return { x: draggable.state.x, y: draggable.state.y };
+    }
+
     render() {
         return (
             <Draggable
+                ref={this.ref}
                 onMouseDown={this.props.onClick}
-                defaultPosition={{ x: 0, y: 0 }}
+                defaultPosition={this.props.offset}
                 position={null}
                 grid={[25, 25]}
             >
