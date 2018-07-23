@@ -36,7 +36,8 @@ export default class SelectMenu extends React.Component {
                         <Problem solvedProblems={this.props.solvedProblems} />
 
                         <Grid
-                            problems={[{ name: 'hello' }, { name: 'goodbye' }]}
+                            solvedProblems={this.props.solvedProblems}
+                            //problems={[{ name: 'hello' }, { name: 'goodbye' }]}
                         />
                     </div>
 
