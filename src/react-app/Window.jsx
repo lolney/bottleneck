@@ -2,23 +2,24 @@ import React from 'react';
 import Draggable from 'react-draggable';
 import PropTypes from 'prop-types';
 
+const width = 500;
+const barHeight = 22;
 const windowStyle = {
     boxShadow: 'rgba(0, 0, 0, 0.5) 0px 5px 15px',
     position: 'absolute',
     border: '1px solid rgba(0,0,0,.2)',
     borderRadius: '6px',
-    width: '500px',
+    width: `${width}px`,
     height: '75vh',
     maxHeight: '1000px',
     background: 'white'
 };
 
 const barStyle = {
-    border: '1px solid rgba(0,0,0,.2)',
     borderTopLeftRadius: windowStyle.borderRadius,
     borderTopRightRadius: windowStyle.borderRadius,
     width: '100%',
-    height: '22px',
+    height: `${barHeight}px`,
     background: '#ddd'
 };
 
@@ -47,7 +48,12 @@ export default class Window extends React.Component {
                 onMouseDown={this.props.onClick}
                 defaultPosition={this.props.offset}
                 position={null}
-                grid={[25, 25]}
+                bounds={{
+                    left: 0,
+                    right: window.innerWidth - width,
+                    top: 0,
+                    bottom: window.innerHeight - barHeight
+                }}
             >
                 <div style={windowStyle}>
                     <div className="bar" style={barStyle}>
