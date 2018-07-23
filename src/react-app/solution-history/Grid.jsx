@@ -4,8 +4,6 @@ import { Button } from 'react-bootstrap';
 import '.././CSS/Solutions.scss';
 import { solvedProblem } from './SelectMenu.jsx';
 
-import { solvedProblem } from './SelectMenu.jsx';
-
 export default class Grid extends React.Component {
     render() {
         return (

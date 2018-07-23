@@ -2,6 +2,7 @@ import React from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
 import '.././CSS/Solutions.scss';
 import Problem from './Problem.jsx';
+import Grid from './Grid.jsx';
 
 import PropTypes from 'prop-types';
 
@@ -31,14 +32,12 @@ export default class SelectMenu extends React.Component {
                         </div>
                     </div>
 
-                    <div className="solutions-container bootstrap-styles">
-                        <Problem solvedProblems={this.props.solvedProblems} />
+                    <Problem solvedProblems={this.props.solvedProblems} />
 
-                        <Grid
-                            solvedProblems={this.props.solvedProblems}
-                            //problems={[{ name: 'hello' }, { name: 'goodbye' }]}
-                        />
-                    </div>
+                    <Grid
+                        solvedProblems={this.props.solvedProblems}
+                        //problems={[{ name: 'hello' }, { name: 'goodbye' }]}
+                    />
 
                     <p className="instructions" />
                 </div>
