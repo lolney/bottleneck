@@ -6,6 +6,7 @@ function loadStories() {
     require('../stories/pixiDemo.js');
     require('../stories/solutionHistory.js');
     require('../stories/windows.js');
+    require('../stories/defences.js');
     // You can require as many stories as you need.
 }
 

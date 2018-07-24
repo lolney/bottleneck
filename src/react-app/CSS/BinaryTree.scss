@@ -37,9 +37,12 @@
   }
 
   .buttonContainer {
-    button {
+    .btn {
       display: block;
       padding: 10px;
+      span {
+        width: 14px;
+      }
     }
 
     .passing {
@@ -50,4 +53,8 @@
       color: red;
     }
   }
+}
+
+.bootstrap-styles {
+  @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap.scss";
 }

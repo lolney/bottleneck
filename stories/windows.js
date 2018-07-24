@@ -1,10 +1,9 @@
 import React from 'react';
 
 import { storiesOf } from '@storybook/react';
-import Window from '../src/react-app/Window.jsx';
 import Windows from '../src/react-app/Windows.jsx';
 
-class WindowsContainer extends React.Component {
+export class WindowsContainer extends React.Component {
     constructor(props) {
         super(props);
         this.windows = React.createRef();
@@ -18,8 +17,7 @@ class WindowsContainer extends React.Component {
                     }
                     style={{ float: 'right' }}
                 >
-                    {' '}
-                    Add Window{' '}
+                    Add Window
                 </button>
                 <Windows ref={this.windows}>{this.props.children}</Windows>
             </div>

@@ -1,18 +1,19 @@
 import React from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
-import '.././CSS/Solutions.scss';
 import Problem from './Problem.jsx';
-
 import PropTypes from 'prop-types';
+import { solvedProblem } from './propTypes';
 
 export default class SelectMenu extends React.Component {
     constructor(props) {
         super(props);
 
-        let solved = this.props.solvedProblems;
+        let types = Array.from(
+            new Set(props.solvedProblems.map((solved) => solved.problem.type))
+        );
         this.state = {
-            //selected: this.props.solvedProblems[0].problem.type
-            selected: solved.length == 0 ? undefined : solved[0].problem.type
+            selected: types.length == 0 ? undefined : types[0],
+            types: types
         };
     }
 
@@ -31,19 +32,16 @@ export default class SelectMenu extends React.Component {
                     <div className="sidebar">
                         <div className="bootstrap-styles">
                             <ButtonToolbar>
-                                {this.props.solvedProblems.map((solved) => (
+                                {this.state.types.map((type) => (
                                     <SelectItem
                                         onClick={() => {
                                             this.setState({
-                                                selected: solved.problem.type
+                                                selected: type
                                             });
                                         }}
-                                        active={
-                                            this.state.selected ==
-                                            solved.problem.type
-                                        }
-                                        key={solved.problem.type}
-                                        type={solved.problem.type}
+                                        active={this.state.selected == type}
+                                        key={type}
+                                        type={type}
                                     />
                                 ))}
                             </ButtonToolbar>
@@ -100,21 +98,6 @@ class SelectItem extends React.Component {
         );
     }
 }
-
-export const subproblem = PropTypes.shape({
-    type: PropTypes.string.isRequired
-});
-
-export const problem = PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
-    subproblem: subproblem
-});
-
-export const solvedProblem = PropTypes.shape({
-    problem: problem.isRequired,
-    code: PropTypes.string.isRequired
-});
 
 SelectMenu.propTypes = {
     solvedProblems: PropTypes.arrayOf(solvedProblem).isRequired

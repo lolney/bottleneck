@@ -49,6 +49,7 @@
         "uuid": "^3.2.1"
     },
     "devDependencies": {
+        "@kadira/storybook-addons": "^1.6.1",
         "@storybook/addon-actions": "^4.0.0-alpha.3",
         "@storybook/addon-links": "^4.0.0-alpha.3",
         "@storybook/addons": "^4.0.0-alpha.3",
@@ -65,6 +66,7 @@
         "eslint": "^5.1.0",
         "eslint-config-google": "^0.7.1",
         "eslint-plugin-jasmine": "^2.10.1",
+        "eslint-plugin-newline-after-if-condition": "^1.1.0",
         "eslint-plugin-react": "^7.10.0",
         "file-loader": "^1.1.11",
         "jasmine": "^3.1.0",
@@ -72,6 +74,7 @@
         "node-sass": "^4.9.0",
         "raw-loader": "^0.5.1",
         "react-jsdom": "git+https://github.com/tomcardoso/react-jsdom.git",
+        "react-storybook-console": "^2.0.4",
         "sass-loader": "^7.0.1",
         "sequelize-auto-migrations": "^1.0.2",
         "sequelize-cli": "^4.0.0",
