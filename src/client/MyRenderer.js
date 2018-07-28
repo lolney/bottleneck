@@ -2,6 +2,8 @@
 
 import Renderer from 'lance/render/Renderer';
 import { WIDTH, HEIGHT } from '../common/MyGameEngine';
+import TwoVector from 'lance/serialize/TwoVector';
+
 let PIXI = null;
 
 export default class MyRenderer extends Renderer {
@@ -9,7 +11,8 @@ export default class MyRenderer extends Renderer {
         return {
             player: 'assets/sprites/walking.json',
             tree: 'assets/sprites/Rock1.png',
-            background: '/assets/grass.jpg'
+            background: '/assets/grass.jpg',
+            google: 'assets/sprites/tree1.png'
         };
     }
 
@@ -21,7 +24,7 @@ export default class MyRenderer extends Renderer {
     }
 
     init() {
-        console.log(`init renderer`);
+        console.log('init renderer');
 
         this.viewportWidth = window.innerWidth;
         this.viewportHeight = window.innerHeight;
@@ -43,13 +46,21 @@ export default class MyRenderer extends Renderer {
                     })
                 )
                 .load(() => {
-                    console.log(`PIXI has loaded assets`);
+                    console.log('PIXI has loaded assets');
                     this.isReady = true;
                     this.setupStage();
                     this.gameEngine.emit('renderer.ready'); // TODO: client needs to listen for this?
                     resolve();
                 });
         });
+    }
+
+    canvasToWorldCoordinates(x, y) {
+        let center = new TwoVector(
+            this.viewportWidth / 2,
+            this.viewportHeight / 2
+        );
+        return this.prev.clone().add(new TwoVector(x, y).subtract(center));
     }
 
     attachRenderer() {
@@ -60,6 +71,19 @@ export default class MyRenderer extends Renderer {
         document.body
             .querySelector('.pixiContainer')
             .appendChild(this.renderer.view);
+
+        this.renderer.view.addEventListener('dragover', (ev) => {
+            ev.preventDefault();
+        });
+
+        this.renderer.view.addEventListener('drop', (ev) => {
+            let id = ev.dataTransfer.getData('text');
+            let position = this.canvasToWorldCoordinates(
+                ev.clientX,
+                ev.clientY
+            );
+            this.gameEngine.makeDefence(id, position);
+        });
     }
 
     setupStage() {

@@ -1,12 +1,24 @@
 import React from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
-import '.././CSS/Solutions.scss';
 import Problem from './Problem.jsx';
-import Grid from './Grid.jsx';
-
 import PropTypes from 'prop-types';
+import { solvedProblem } from './propTypes';
 
 export default class SelectMenu extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.checkIfSelected = this.checkIfSelected.bind(this);
+
+        let types = Array.from(
+            new Set(props.solvedProblems.map((solved) => solved.problem.type))
+        );
+        this.state = {
+            selected: undefined,
+            types: types
+        };
+    }
+
     render() {
         return (
             <div className="solutions">
@@ -22,28 +34,42 @@ export default class SelectMenu extends React.Component {
                     <div className="sidebar">
                         <div className="bootstrap-styles">
                             <ButtonToolbar>
-                                {this.props.solvedProblems.map((solved) => (
+                                {this.state.types.map((type) => (
                                     <SelectItem
-                                        key={solved.problem.type}
-                                        type={solved.problem.type}
+                                        onClick={() => {
+                                            this.setState({
+                                                selected:
+                                                    this.state.selected == type
+                                                        ? undefined
+                                                        : type
+                                            });
+                                        }}
+                                        active={this.state.selected == type}
+                                        key={type}
+                                        type={type}
                                     />
                                 ))}
                             </ButtonToolbar>
                         </div>
                     </div>
 
-                    <div className="solutions-container bootstrap-styles">
-                        <Problem solvedProblems={this.props.solvedProblems} />
-
-                        <Grid
-                            problems={[{ name: 'hello' }, { name: 'goodbye' }]}
-                        />
-                    </div>
+                    <Problem
+                        solvedProblems={this.props.solvedProblems.filter(
+                            this.checkIfSelected
+                        )}
+                        openWindow={this.props.openWindow}
+                    />
 
                     <p className="instructions" />
                 </div>
             </div>
         );
+    }
+
+    checkIfSelected(solved) {
+        return this.state.selected == undefined
+            ? solved
+            : solved.problem.type == this.state.selected;
     }
 }
 
@@ -74,7 +100,7 @@ class SelectItem extends React.Component {
 
     render() {
         return (
-            <Button>
+            <Button onClick={this.props.onClick} active={this.props.active}>
                 <div className="column">
                     <img
                         src={this.state.src}
@@ -89,21 +115,7 @@ class SelectItem extends React.Component {
     }
 }
 
-export const subproblem = PropTypes.shape({
-    type: PropTypes.string.isRequired
-});
-
-export const problem = PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
-    subproblem: subproblem
-});
-
-export const solvedProblem = PropTypes.shape({
-    problem: problem.isRequired,
-    code: PropTypes.string.isRequired
-});
-
 SelectMenu.propTypes = {
-    solvedProblems: PropTypes.arrayOf(solvedProblem).isRequired
+    solvedProblems: PropTypes.arrayOf(solvedProblem).isRequired,
+    openWindow: PropTypes.func.isRequired
 };

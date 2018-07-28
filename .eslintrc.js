@@ -1,5 +1,5 @@
 module.exports = {
-    plugins: ['jasmine', 'react'],
+    plugins: ['jasmine', 'react', 'newline-after-if-condition'],
     extends: [
         'google',
         'eslint:recommended',
@@ -27,7 +27,8 @@ module.exports = {
         'no-warning-comments': 'off',
         'object-curly-spacing': ['error', 'always'],
         'padded-blocks': 'off',
-        'require-jsdoc': 'off'
+        'require-jsdoc': 'off',
+        'newline-after-if-condition/rule': ['error']
     },
     env: {
         jasmine: true

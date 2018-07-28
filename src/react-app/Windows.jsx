@@ -65,7 +65,7 @@ export default class Windows extends React.Component {
             order: [
                 ...this.state.order.slice(0, i),
                 ...this.state.order.slice(i + 1),
-                key.toString()
+                key
             ]
         });
     }
@@ -78,14 +78,14 @@ export default class Windows extends React.Component {
     getTopOffset() {
         if (!this.state) {
             if (this.offset == undefined) this.offset = 0;
-            return { x: (this.offset += 20) - 20, y: 0 };
+            return { x: (this.offset += 40) - 40, y: 0 };
         }
         let topKey = this.getTopKey();
         if (topKey == undefined) return { x: 0, y: 0 };
 
         let topOffset = this.state.windows[topKey].ref.current.getOffset();
 
-        return { x: topOffset.x + 20, y: topOffset.y + 0 };
+        return { x: topOffset.x + 40, y: topOffset.y + 0 };
     }
 
     createWindow(child, key) {

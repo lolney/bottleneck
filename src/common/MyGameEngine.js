@@ -48,6 +48,16 @@ export default class MyGameEngine extends GameEngine {
         );
     }
 
+    makeDefence(defenceId, position) {
+        this.addObjectToWorld(
+            new Avatar(this, null, {
+                position: position,
+                objectType: 'google',
+                dbId: defenceId
+            })
+        );
+    }
+
     processInput(inputData, playerId) {
         super.processInput(inputData, playerId);
 

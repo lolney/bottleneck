@@ -3,7 +3,6 @@ import Enzyme, { mount, shallow } from 'enzyme';
 import ImageComponent from '../../src/react-app/ImageComponent';
 import sinon from 'sinon';
 import Adapter from 'enzyme-adapter-react-16';
-import ReactJSDOM from 'react-jsdom';
 import ImageProblem, { Image } from '../../src/problem-engine/ImageProblem';
 
 Enzyme.configure({ adapter: new Adapter() });
@@ -52,21 +51,23 @@ describe('ImageComponent', () => {
     it('uses generator to render new image', (done) => {
         // Create image problem `a` with some generator
         const wrapper = shallow(mountedImageComponent);
-        Image.create(otherGenerator).then((problem) => {
-            expect(wrapper.state('target')).not.toEqual(problem.original);
-            // Pass that generator as props
-            wrapper.setProps({ generator: otherGenerator });
-            // Check that the component's target is equal to `a.original`
-            setTimeout(() => {
-                // to do this without timeout would I believe involve mocking the ImageProblem api
-                // https://github.com/airbnb/enzyme/issues/964
-                // wrapper.update();
-                expect(wrapper.state('target')).toEqual(problem.original);
-                expect(isDone).toEqual(false);
-                expect(error).toEqual(null);
-                done();
-            }, 100);
-        });
+        Image.create(otherGenerator)
+            .then((problem) => {
+                expect(wrapper.state('target')).not.toEqual(problem.original);
+                // Pass that generator as props
+                wrapper.setProps({ generator: otherGenerator });
+                // Check that the component's target is equal to `a.original`
+                setTimeout(() => {
+                    // to do this without timeout would I believe involve mocking the ImageProblem api
+                    // https://github.com/airbnb/enzyme/issues/964
+                    // wrapper.update();
+                    expect(wrapper.state('target')).toEqual(problem.original);
+                    expect(isDone).toEqual(false);
+                    expect(error).toEqual(null);
+                    done();
+                }, 100);
+            })
+            .catch(done.fail);
     });
 
     it('sanity check when passing props', () => {
@@ -75,20 +76,23 @@ describe('ImageComponent', () => {
 
         expect(spy.calledOnce).toEqual(false);
         wrapper.setProps({ prop: 2 });
+
         expect(spy.calledOnce).toEqual(true);
     });
 
     it('when generator is invalid, throw an error', (done) => {
         const wrapper = shallow(mountedImageComponent);
-        Image.create(otherGenerator).then((problem) => {
-            expect(error).toEqual(null);
-            wrapper.setProps({ generator: invalidGenerator });
-            setTimeout(() => {
-                expect(error).not.toEqual(null);
-                expect(isDone).toEqual(false);
-                done();
-            }, 100);
-        });
+        Image.create(otherGenerator)
+            .then((problem) => {
+                expect(error).toEqual(null);
+                wrapper.setProps({ generator: invalidGenerator });
+                setTimeout(() => {
+                    expect(error).not.toEqual(null);
+                    expect(isDone).toEqual(false);
+                    done();
+                }, 100);
+            })
+            .catch(done.fail);
     });
 
     it('when generator produces the correct image, set state to done', (done) => {

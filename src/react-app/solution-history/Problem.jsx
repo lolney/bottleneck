@@ -1,43 +1,105 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { DropdownButton, MenuItem } from 'react-bootstrap';
-import '.././CSS/Solutions.scss';
-import { solvedProblem } from './SelectMenu.jsx';
+import { solvedProblem } from './propTypes';
+import Grid from './Grid.jsx';
+
+export function bin(array) {
+    let bins = {};
+    for (const solvedProblem of array) {
+        let subproblem = solvedProblem.problem.subproblem;
+        let type = subproblem ? subproblem.type : 'none';
+
+        if (bins[type]) {
+            bins[type].push(solvedProblem);
+        } else {
+            bins[type] = [solvedProblem];
+        }
+    }
+    return bins;
+}
 
 export default class Problem extends React.Component {
-    render() {
-        let subproblems = {};
-        for (const solvedProblem of this.props.solvedProblems) {
-            let subproblem = solvedProblem.problem.subproblem;
-            if (!subproblem) subproblem = 'none';
-            if (subproblems[subproblem])
-                subproblems[subproblem].push(subproblem);
-            else subproblems[subproblem] = [subproblem];
+    constructor(props) {
+        super(props);
+
+        this.checkIfSelected = this.checkIfSelected.bind(this);
+
+        this.state = Problem.getDerivedStateFromProps(props, {});
+    }
+
+    static getDerivedStateFromProps(props, state) {
+        let subproblems = bin(props.solvedProblems);
+        let keys = Object.keys(subproblems);
+
+        if (state.selected != undefined && keys.includes(state.selected)) {
+            var selected = state.selected;
+        } else {
+            var selected = keys.length > 0 ? keys[0] : undefined;
         }
-        console.log(subproblems);
+
+        return {
+            selected: selected,
+            subproblems: subproblems
+        };
+    }
+
+    render() {
         return (
-            <div className="bootstrap-styles">
-                {this.props.solvedProblems.every(
-                    (solvedProblem) => solvedProblem.problem.subproblem
+            <div className="solutions-container bootstrap-styles">
+                {!this.props.solvedProblems.every(
+                    (solvedProblem) =>
+                        solvedProblem.problem.subproblem == undefined
                 ) && (
                     <DropdownButton
                         bsStyle="default"
                         bsSize="large"
-                        title="hello"
+                        title={`Subproblem: ${this.state.selected}`}
                         id="dropdown-size-large"
                     >
-                        {Object.keys(subproblems).map((subproblem) => (
-                            <MenuItem eventKey="1" key={subproblem}>
-                                {subproblem}
-                            </MenuItem>
-                        ))}
+                        {Object.keys(this.state.subproblems).map(
+                            (subproblem) => (
+                                <MenuItem
+                                    onClick={() => {
+                                        this.setState({
+                                            selected: subproblem
+                                        });
+                                    }}
+                                    active={this.state.selected == subproblem}
+                                    key={subproblem}
+                                >
+                                    {subproblem}
+                                </MenuItem>
+                            )
+                        )}
                     </DropdownButton>
                 )}
+
+                <Grid
+                    solvedProblems={this.props.solvedProblems.filter(
+                        this.checkIfSelected
+                    )}
+                    openWindow={this.props.openWindow}
+                />
             </div>
         );
+    }
+
+    checkIfSelected(solved) {
+        let subproblem = solved.problem.subproblem;
+        if (this.state.selected == 'none') {
+            return undefined == subproblem;
+        } else {
+            if (subproblem == undefined) {
+                return false;
+            } else {
+                return this.state.selected == subproblem.type;
+            }
+        }
     }
 }
 
 Problem.propTypes = {
-    solvedProblems: PropTypes.arrayOf(solvedProblem).isRequired
+    solvedProblems: PropTypes.arrayOf(solvedProblem).isRequired,
+    openWindow: PropTypes.func.isRequired
 };

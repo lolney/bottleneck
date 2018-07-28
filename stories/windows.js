@@ -1,10 +1,14 @@
 import React from 'react';
 
 import { storiesOf } from '@storybook/react';
-import Window from '../src/react-app/Window.jsx';
 import Windows from '../src/react-app/Windows.jsx';
+import EditorModal from '../src/react-app/EditorModal.jsx';
 
-class WindowsContainer extends React.Component {
+import { solvedProblems } from './fixtures';
+import SelectMenu from '../src/react-app/solution-history/SelectMenu.jsx';
+import { getSupportedCodeFixes } from 'typescript';
+
+export class WindowsContainer extends React.Component {
     constructor(props) {
         super(props);
         this.windows = React.createRef();
@@ -18,21 +22,51 @@ class WindowsContainer extends React.Component {
                     }
                     style={{ float: 'right' }}
                 >
-                    {' '}
-                    Add Window{' '}
+                    Add Window
                 </button>
                 <Windows ref={this.windows}>{this.props.children}</Windows>
             </div>
         );
     }
 }
-storiesOf('Windows', module).add('Windows', () => (
-    <WindowsContainer>
-        <p>Window 1</p>
-        <p>Window 2</p>
-        <div>
-            <input placeholder="Window 3" style={{ display: 'block' }} />
-            <input placeholder="Window 3" />
-        </div>
-    </WindowsContainer>
-));
+
+export class WindowsContainer2 extends React.Component {
+    constructor(props) {
+        super(props);
+        this.windows = React.createRef();
+    }
+    render() {
+        return (
+            <div>
+                <Windows ref={this.windows}>
+                    <SelectMenu
+                        solvedProblems={solvedProblems}
+                        openWindow={(code, problem) => {
+                            console.log('opened');
+                            this.windows.current.addWindow(
+                                <EditorModal
+                                    onSolution={() => {}}
+                                    problem={problem}
+                                    code={code}
+                                />
+                            );
+                        }}
+                    />
+                </Windows>
+            </div>
+        );
+    }
+}
+
+storiesOf('Windows', module)
+    .add('Windows', () => (
+        <WindowsContainer>
+            <p>Window 1</p>
+            <p>Window 2</p>
+            <div>
+                <input placeholder="Window 3" style={{ display: 'block' }} />
+                <input placeholder="Window 3" />
+            </div>
+        </WindowsContainer>
+    ))
+    .add('Solution History', () => <WindowsContainer2 />);

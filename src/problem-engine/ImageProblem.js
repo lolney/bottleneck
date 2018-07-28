@@ -23,15 +23,20 @@ export default class ImageProblem extends Problem {
         this.image = new Image(base64);
     }
 
-    static async create(generator, subproblem, name) {
+    static async create(generator, id, subproblem, name) {
         let gen = generator == null ? ImageProblem.generate() : generator;
         let image = await Image.create(gen);
-        return new ImageProblem(image.getBase64(), subproblem, name);
+        return new ImageProblem(image.getBase64(), id, subproblem, name);
     }
 
     static createProblemFromGenerator(id) {
         let item = ImageProblem.getGenerators()[id];
-        return ImageProblem.create(item.generator, item.subproblem, item.name);
+        return ImageProblem.create(
+            item.generator,
+            id,
+            item.subproblem,
+            item.name
+        );
     }
 
     getTitle() {

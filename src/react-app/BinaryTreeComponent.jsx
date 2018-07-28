@@ -1,6 +1,7 @@
 import React from 'react';
 import VisualTree from './VisualTree';
 import { BinaryTree } from './VisualTree';
+import { Button } from 'react-bootstrap';
 import './CSS/BinaryTree.scss';
 import '@fortawesome/fontawesome-free/css/all.css';
 
@@ -100,11 +101,7 @@ export class VisualTreeComponent extends React.Component {
 
     componentDidMount() {
         const tree = BinaryTree.createTree(this.props.nodes);
-        new VisualTree(
-            tree,
-            document.getElementById(this.id),
-            false
-        );
+        new VisualTree(tree, document.getElementById(this.id), false);
     }
     render() {
         return <canvas className="treeCanvas" id={this.id} />;
@@ -121,11 +118,11 @@ class TestIndicator extends React.Component {
 
     render() {
         return (
-            <div className="buttonContainer">
+            <div className="buttonContainer bootstrap-styles">
                 {this.props.solvedArray.map((solved, i) => (
-                    <button
+                    <Button
                         className={solved ? 'passing' : 'failing'}
-                        active={(this.state.selected == i).toString()}
+                        active={this.state.selected == i}
                         onClick={() => {
                             this.props.onSelect(i);
                             this.setState({ selected: i });
@@ -138,7 +135,7 @@ class TestIndicator extends React.Component {
                             }
                         />
                         {i}
-                    </button>
+                    </Button>
                 ))}
             </div>
         );

@@ -9,6 +9,11 @@ import HUD from './HUD.jsx';
 import Game from './Game.jsx';
 import Windows from './Windows.jsx';
 
+import DefencesBrowser from './defences/DefencesBrowser.jsx';
+import './CSS/Defences.scss';
+import SolutionHistory from './solution-history/SolutionHistory.jsx';
+import EditorModal from './EditorModal.jsx';
+
 /*
 \ App
     \                            ^ Session token
@@ -32,7 +37,7 @@ import Windows from './Windows.jsx';
         - Might help with re-authenticating after disconnect
 */
 
-class App extends React.Component {
+export class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -51,6 +56,26 @@ class App extends React.Component {
 
     onReceiveSocket(socket) {
         new EditorSocketWatcher(socket, this.windows.current.addWindow);
+
+        socket.addEventListener('authenticated', (event) => {
+            this.windows.current.addWindow(
+                <SolutionHistory
+                    socket={socket}
+                    openWindow={(code, id) => {
+                        socket.emit('solvedProblem', { id: id });
+                        socket.once('solvedProblem', (data) => {
+                            this.windows.current.addWindow(
+                                <EditorModal
+                                    onSolution={() => {}}
+                                    problem={data.problem}
+                                    code={data.code}
+                                />
+                            );
+                        });
+                    }}
+                />
+            );
+        });
         this.setState({ socket: socket });
     }
 
@@ -67,7 +92,9 @@ class App extends React.Component {
                     />
                 )}
                 {this.state.socket && <HUD socket={this.state.socket} />}
-                <Windows ref={this.windows} />
+                <Windows ref={this.windows}>
+                    <DefencesBrowser imageSrcs={['assets/sprites/tree1.png']} />
+                </Windows>
                 {this.state.token && (
                     <Game
                         onReceiveSocket={this.onReceiveSocket}
