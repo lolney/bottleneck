@@ -20,9 +20,19 @@ export function bin(array) {
 }
 
 export default class Problem extends React.Component {
-    render() {
-        let subproblems = bin(this.props.solvedProblems);
+    constructor(props) {
+        super(props);
 
+        this.checkIfSelected = this.checkIfSelected.bind(this);
+
+        let subproblems = bin(this.props.solvedProblems);
+        let array = Object.keys(subproblems);
+        let solved = (this.state = {
+            selected: array.length == 0 ? undefined : array[0],
+            subproblems: subproblems
+        });
+    }
+    render() {
         return (
             <div className="solutions-container bootstrap-styles">
                 {!this.props.solvedProblems.every(
@@ -35,17 +45,45 @@ export default class Problem extends React.Component {
                         title="hello"
                         id="dropdown-size-large"
                     >
-                        {Object.keys(subproblems).map((subproblem) => (
-                            <MenuItem eventKey="1" key={subproblem}>
-                                {subproblem}
-                            </MenuItem>
-                        ))}
+                        {Object.keys(this.state.subproblems).map(
+                            (subproblem) => (
+                                <MenuItem
+                                    eventKey="1"
+                                    onClick={() => {
+                                        this.setState({
+                                            selected: subproblem
+                                        });
+                                    }}
+                                    active={this.state.selected == subproblem}
+                                    key={subproblem}
+                                    type={subproblem}
+                                >
+                                    {subproblem}
+                                </MenuItem>
+                            )
+                        )}
                     </DropdownButton>
                 )}
 
-                <Grid solvedProblems={this.props.solvedProblems} />
+                <Grid
+                    solvedProblems={this.props.solvedProblems.filter(
+                        this.checkIfSelected
+                    )}
+                />
             </div>
         );
+    }
+    checkIfSelected(solved) {
+        let subproblem = solved.problem.subproblem;
+        if (this.state.selected == 'none') {
+            return undefined == subproblem;
+        } else {
+            if (subproblem == undefined) {
+                return false;
+            } else {
+                return this.state.selected == subproblem.type;
+            }
+        }
     }
 }
 
