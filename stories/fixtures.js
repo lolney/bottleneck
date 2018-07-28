@@ -1,7 +1,7 @@
 export const solvedProblems = [
     { problem: { name: 'image0', type: 'image' }, code: 'code' },
     { problem: { name: 'image1', type: 'image' }, code: 'code' },
-    { problem: { name: 'btree0', type: 'btree' }, code: 'code' },
+    { problem: { name: 'This is a long name', type: 'btree' }, code: 'code' },
     {
         problem: {
             name: 'image2',

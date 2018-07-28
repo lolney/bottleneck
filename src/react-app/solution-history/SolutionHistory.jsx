@@ -20,11 +20,13 @@ export default class SolutionHistory extends React.Component {
             <SelectMenu
                 key={this.state.solvedProblems.length}
                 solvedProblems={this.state.solvedProblems}
+                openWindow={this.props.openWindow}
             />
         );
     }
 }
 
 SolutionHistory.propTypes = {
-    socket: PropTypes.object.isRequired
+    socket: PropTypes.object.isRequired,
+    openWindow: PropTypes.func.isRequired
 };

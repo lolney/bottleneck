@@ -10,6 +10,7 @@ export default class EditorSocketWatcher {
     constructor(socket, addWindow) {
         this.socket = socket;
 
+        this.onSolution = this.onSolution.bind(this);
         socket.on('problem', (data) => {
             addWindow(
                 <EditorModal

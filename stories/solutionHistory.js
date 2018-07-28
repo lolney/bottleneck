@@ -13,7 +13,7 @@ const socket = {
     on: (event, callback) => {
         window.setTimeout(() => {
             callback(solvedProblems);
-        }, 1);
+        }, 50);
     },
     emit: () => {}
 };

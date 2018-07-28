@@ -9,7 +9,12 @@ export default class Grid extends React.Component {
             <div className="bootstrap-styles">
                 <div className="solution-grid">
                     {this.props.solvedProblems.map((solved) => (
-                        <Button key={solved.problem.name}>
+                        <Button
+                            key={solved.problem.name}
+                            onClick={() =>
+                                this.props.openWindow(solved.code, solved.id)
+                            }
+                        >
                             {solved.problem.name}
                         </Button>
                     ))}
@@ -20,5 +25,6 @@ export default class Grid extends React.Component {
 }
 
 Grid.propTypes = {
-    solvedProblems: PropTypes.arrayOf(solvedProblem).isRequired
+    solvedProblems: PropTypes.arrayOf(solvedProblem).isRequired,
+    openWindow: PropTypes.func.isRequired
 };

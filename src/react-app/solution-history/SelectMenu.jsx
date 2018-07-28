@@ -57,6 +57,7 @@ export default class SelectMenu extends React.Component {
                         solvedProblems={this.props.solvedProblems.filter(
                             this.checkIfSelected
                         )}
+                        openWindow={this.props.openWindow}
                     />
 
                     <p className="instructions" />
@@ -115,5 +116,6 @@ class SelectItem extends React.Component {
 }
 
 SelectMenu.propTypes = {
-    solvedProblems: PropTypes.arrayOf(solvedProblem).isRequired
+    solvedProblems: PropTypes.arrayOf(solvedProblem).isRequired,
+    openWindow: PropTypes.func.isRequired
 };

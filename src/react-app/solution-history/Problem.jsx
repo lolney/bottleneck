@@ -79,6 +79,7 @@ export default class Problem extends React.Component {
                     solvedProblems={this.props.solvedProblems.filter(
                         this.checkIfSelected
                     )}
+                    openWindow={this.props.openWindow}
                 />
             </div>
         );
@@ -99,5 +100,6 @@ export default class Problem extends React.Component {
 }
 
 Problem.propTypes = {
-    solvedProblems: PropTypes.arrayOf(solvedProblem).isRequired
+    solvedProblems: PropTypes.arrayOf(solvedProblem).isRequired,
+    openWindow: PropTypes.func.isRequired
 };

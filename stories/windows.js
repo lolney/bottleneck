@@ -2,8 +2,11 @@ import React from 'react';
 
 import { storiesOf } from '@storybook/react';
 import Windows from '../src/react-app/Windows.jsx';
+import EditorModal from '../src/react-app/EditorModal.jsx';
+
 import { solvedProblems } from './fixtures';
 import SelectMenu from '../src/react-app/solution-history/SelectMenu.jsx';
+import { getSupportedCodeFixes } from 'typescript';
 
 export class WindowsContainer extends React.Component {
     constructor(props) {
@@ -26,6 +29,35 @@ export class WindowsContainer extends React.Component {
         );
     }
 }
+
+export class WindowsContainer2 extends React.Component {
+    constructor(props) {
+        super(props);
+        this.windows = React.createRef();
+    }
+    render() {
+        return (
+            <div>
+                <Windows ref={this.windows}>
+                    <SelectMenu
+                        solvedProblems={solvedProblems}
+                        openWindow={(code, problem) => {
+                            console.log('opened');
+                            this.windows.current.addWindow(
+                                <EditorModal
+                                    onSolution={() => {}}
+                                    problem={problem}
+                                    code={code}
+                                />
+                            );
+                        }}
+                    />
+                </Windows>
+            </div>
+        );
+    }
+}
+
 storiesOf('Windows', module)
     .add('Windows', () => (
         <WindowsContainer>
@@ -37,8 +69,4 @@ storiesOf('Windows', module)
             </div>
         </WindowsContainer>
     ))
-    .add('Solution History', () => (
-        <WindowsContainer>
-            <SelectMenu solvedProblems={solvedProblems} />
-        </WindowsContainer>
-    ));
+    .add('Solution History', () => <WindowsContainer2 />);

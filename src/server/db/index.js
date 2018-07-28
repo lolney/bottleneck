@@ -104,6 +104,16 @@ export async function getSolutions(userId) {
     );
 }
 
+export async function solvedProblem(id) {
+    let obj = await models.solvedProblem.find({
+        where: { id: id },
+        include: [models.problem]
+    });
+    let solved = getDataValues(obj);
+    let problem = await getProblemSubTypes(solved.problem);
+    return { ...solved, problem: problem };
+}
+
 export async function getUserId(username) {
     let obj = await models.user.find({
         where: { username: username },

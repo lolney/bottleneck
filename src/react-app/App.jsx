@@ -11,6 +11,8 @@ import Windows from './Windows.jsx';
 
 import DefencesBrowser from './defences/DefencesBrowser.jsx';
 import './CSS/Defences.scss';
+import SolutionHistory from './solution-history/SolutionHistory.jsx';
+import EditorModal from './EditorModal.jsx';
 
 /*
 \ App
@@ -54,6 +56,26 @@ export class App extends React.Component {
 
     onReceiveSocket(socket) {
         new EditorSocketWatcher(socket, this.windows.current.addWindow);
+
+        socket.addEventListener('authenticated', (event) => {
+            this.windows.current.addWindow(
+                <SolutionHistory
+                    socket={socket}
+                    openWindow={(code, id) => {
+                        socket.emit('solvedProblem', { id: id });
+                        socket.once('solvedProblem', (data) => {
+                            this.windows.current.addWindow(
+                                <EditorModal
+                                    onSolution={() => {}}
+                                    problem={data.problem}
+                                    code={data.code}
+                                />
+                            );
+                        });
+                    }}
+                />
+            );
+        });
         this.setState({ socket: socket });
     }
 

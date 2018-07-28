@@ -18,6 +18,7 @@ const subtypes = ['none', 'gradient', 'sin'];
 describe('SelectMenu', () => {
     it('When type x selected, items show up iff they\'re type x', () => {
         let selectMenu = mount(<SelectMenu solvedProblems={solvedProblems} />);
+        selectMenu.setState({ selected: 'image' });
         let selected = selectMenu.state('selected');
         let grid = selectMenu.find(Grid);
 
