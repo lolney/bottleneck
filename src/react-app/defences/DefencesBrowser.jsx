@@ -5,14 +5,11 @@ import DraggableDefence from './DraggableDefence.jsx';
 export default class DefencesBrowser extends React.Component {
     render() {
         return (
-            <div>
+            <div className="defences">
+                <h1> Drag and drop a defence to add it to the game </h1>
                 {this.props.imageSrcs.map((src) => (
                     <div key={src}>
-                        <DraggableDefence
-                            src={src}
-                            onDragEnd={this.props.onDragEnd}
-                            onDragOver={this.props.onDragOver}
-                        />
+                        <DraggableDefence src={src} />
                     </div>
                 ))}
             </div>
@@ -21,7 +18,5 @@ export default class DefencesBrowser extends React.Component {
 }
 
 DefencesBrowser.propTypes = {
-    imageSrcs: PropTypes.arrayOf(PropTypes.string).isRequired,
-    onDragEnd: PropTypes.func.isRequired,
-    onDragOver: PropTypes.func.isRequired
+    imageSrcs: PropTypes.arrayOf(PropTypes.string).isRequired
 };

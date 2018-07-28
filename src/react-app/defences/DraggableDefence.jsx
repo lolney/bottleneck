@@ -8,15 +8,14 @@ export default class DraggableDefence extends React.Component {
             <img
                 draggable="true"
                 src={this.props.src}
-                onDragEnd={this.props.onDragEnd}
-                onDragOver={this.props.onDragOver}
+                onDragStart={(event) => {
+                    event.dataTransfer.setData('text/plain', this.props.src);
+                }}
             />
         );
     }
 }
 
 DraggableDefence.propTypes = {
-    src: PropTypes.string.isRequired,
-    onDragEnd: PropTypes.func.isRequired,
-    onDragOver: PropTypes.func.isRequired
+    src: PropTypes.string.isRequired
 };

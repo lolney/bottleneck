@@ -9,6 +9,9 @@ import HUD from './HUD.jsx';
 import Game from './Game.jsx';
 import Windows from './Windows.jsx';
 
+import DefencesBrowser from './defences/DefencesBrowser.jsx';
+import './CSS/Defences.scss';
+
 /*
 \ App
     \                            ^ Session token
@@ -32,7 +35,7 @@ import Windows from './Windows.jsx';
         - Might help with re-authenticating after disconnect
 */
 
-class App extends React.Component {
+export class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -67,7 +70,9 @@ class App extends React.Component {
                     />
                 )}
                 {this.state.socket && <HUD socket={this.state.socket} />}
-                <Windows ref={this.windows} />
+                <Windows ref={this.windows}>
+                    <DefencesBrowser imageSrcs={['assets/sprites/tree1.png']} />
+                </Windows>
                 {this.state.token && (
                     <Game
                         onReceiveSocket={this.onReceiveSocket}

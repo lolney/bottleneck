@@ -1,8 +1,10 @@
 import React from 'react';
 
+import StorybookConsole from 'react-storybook-console';
 import { storiesOf } from '@storybook/react';
 import DefencesBrowser from '../src/react-app/defences/DefencesBrowser.jsx';
 import { WindowsContainer } from './windows';
+import '../src/react-app/CSS/Defences.scss';
 
 class DefencesReporter extends React.Component {
     constructor(props) {
@@ -26,7 +28,10 @@ class DefencesReporter extends React.Component {
                             ev.preventDefault();
                             this.setState({ dragover: ev.pageX });
                         }}
-                        onDragEnd={(ev) => this.setState({ drop: ev.pageX })}
+                        onDrop={(ev) => {
+                            let data = ev.dataTransfer.getData('text');
+                            this.setState({ drop: data });
+                        }}
                         width="500"
                         Height="500"
                     />
@@ -35,6 +40,6 @@ class DefencesReporter extends React.Component {
         );
     }
 }
-storiesOf('Adding defences', module).add('Dragging demo', () => (
-    <DefencesReporter />
-));
+storiesOf('Adding defences', module)
+    .addDecorator(StorybookConsole)
+    .add('Dragging demo', () => <DefencesReporter />);
