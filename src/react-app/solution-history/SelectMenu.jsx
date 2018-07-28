@@ -64,16 +64,7 @@ export default class SelectMenu extends React.Component {
     }
 
     checkIfSelected(solved) {
-        let problem = solved.problem;
-        if (this.state.selected == 'none') {
-            return undefined == problem;
-        } else {
-            if (problem == undefined) {
-                return false;
-            } else {
-                return this.state.selected == problem.type;
-            }
-        }
+        return solved.problem.type == this.state.selected;
     }
 }
 

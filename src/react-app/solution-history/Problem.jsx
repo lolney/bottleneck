@@ -42,13 +42,12 @@ export default class Problem extends React.Component {
                     <DropdownButton
                         bsStyle="default"
                         bsSize="large"
-                        title="hello"
+                        title={`Subproblem: ${this.state.selected}`}
                         id="dropdown-size-large"
                     >
                         {Object.keys(this.state.subproblems).map(
                             (subproblem) => (
                                 <MenuItem
-                                    eventKey="1"
                                     onClick={() => {
                                         this.setState({
                                             selected: subproblem
@@ -56,7 +55,6 @@ export default class Problem extends React.Component {
                                     }}
                                     active={this.state.selected == subproblem}
                                     key={subproblem}
-                                    type={subproblem}
                                 >
                                     {subproblem}
                                 </MenuItem>
