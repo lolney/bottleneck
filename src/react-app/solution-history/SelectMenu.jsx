@@ -14,7 +14,7 @@ export default class SelectMenu extends React.Component {
             new Set(props.solvedProblems.map((solved) => solved.problem.type))
         );
         this.state = {
-            selected: types.length == 0 ? undefined : types[0],
+            selected: undefined,
             types: types
         };
     }
@@ -38,7 +38,10 @@ export default class SelectMenu extends React.Component {
                                     <SelectItem
                                         onClick={() => {
                                             this.setState({
-                                                selected: type
+                                                selected:
+                                                    this.state.selected == type
+                                                        ? undefined
+                                                        : type
                                             });
                                         }}
                                         active={this.state.selected == type}
@@ -54,7 +57,6 @@ export default class SelectMenu extends React.Component {
                         solvedProblems={this.props.solvedProblems.filter(
                             this.checkIfSelected
                         )}
-                        key={this.state.selected}
                     />
 
                     <p className="instructions" />
@@ -64,7 +66,9 @@ export default class SelectMenu extends React.Component {
     }
 
     checkIfSelected(solved) {
-        return solved.problem.type == this.state.selected;
+        return this.state.selected == undefined
+            ? solved
+            : solved.problem.type == this.state.selected;
     }
 }
 

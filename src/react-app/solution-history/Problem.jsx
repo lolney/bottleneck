@@ -25,13 +25,25 @@ export default class Problem extends React.Component {
 
         this.checkIfSelected = this.checkIfSelected.bind(this);
 
-        let subproblems = bin(this.props.solvedProblems);
-        let array = Object.keys(subproblems);
-        let solved = (this.state = {
-            selected: array.length == 0 ? undefined : array[0],
-            subproblems: subproblems
-        });
+        this.state = Problem.getDerivedStateFromProps(props, {});
     }
+
+    static getDerivedStateFromProps(props, state) {
+        let subproblems = bin(props.solvedProblems);
+        let keys = Object.keys(subproblems);
+
+        if (state.selected != undefined && keys.includes(state.selected)) {
+            var selected = state.selected;
+        } else {
+            var selected = keys.length > 0 ? keys[0] : undefined;
+        }
+
+        return {
+            selected: selected,
+            subproblems: subproblems
+        };
+    }
+
     render() {
         return (
             <div className="solutions-container bootstrap-styles">
@@ -71,6 +83,7 @@ export default class Problem extends React.Component {
             </div>
         );
     }
+
     checkIfSelected(solved) {
         let subproblem = solved.problem.subproblem;
         if (this.state.selected == 'none') {

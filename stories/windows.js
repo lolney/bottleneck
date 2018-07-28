@@ -2,6 +2,8 @@ import React from 'react';
 
 import { storiesOf } from '@storybook/react';
 import Windows from '../src/react-app/Windows.jsx';
+import { solvedProblems } from './fixtures';
+import SelectMenu from '../src/react-app/solution-history/SelectMenu.jsx';
 
 export class WindowsContainer extends React.Component {
     constructor(props) {
@@ -24,13 +26,19 @@ export class WindowsContainer extends React.Component {
         );
     }
 }
-storiesOf('Windows', module).add('Windows', () => (
-    <WindowsContainer>
-        <p>Window 1</p>
-        <p>Window 2</p>
-        <div>
-            <input placeholder="Window 3" style={{ display: 'block' }} />
-            <input placeholder="Window 3" />
-        </div>
-    </WindowsContainer>
-));
+storiesOf('Windows', module)
+    .add('Windows', () => (
+        <WindowsContainer>
+            <p>Window 1</p>
+            <p>Window 2</p>
+            <div>
+                <input placeholder="Window 3" style={{ display: 'block' }} />
+                <input placeholder="Window 3" />
+            </div>
+        </WindowsContainer>
+    ))
+    .add('Solution History', () => (
+        <WindowsContainer>
+            <SelectMenu solvedProblems={solvedProblems} />
+        </WindowsContainer>
+    ));
