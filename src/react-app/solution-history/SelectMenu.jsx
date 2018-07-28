@@ -8,6 +8,8 @@ export default class SelectMenu extends React.Component {
     constructor(props) {
         super(props);
 
+        this.checkIfSelected = this.checkIfSelected.bind(this);
+
         let types = Array.from(
             new Set(props.solvedProblems.map((solved) => solved.problem.type))
         );
@@ -48,12 +50,30 @@ export default class SelectMenu extends React.Component {
                         </div>
                     </div>
 
-                    <Problem solvedProblems={this.props.solvedProblems} />
+                    <Problem
+                        solvedProblems={this.props.solvedProblems.filter(
+                            this.checkIfSelected
+                        )}
+                        key={this.state.selected}
+                    />
 
                     <p className="instructions" />
                 </div>
             </div>
         );
+    }
+
+    checkIfSelected(solved) {
+        let problem = solved.problem;
+        if (this.state.selected == 'none') {
+            return undefined == problem;
+        } else {
+            if (problem == undefined) {
+                return false;
+            } else {
+                return this.state.selected == problem.type;
+            }
+        }
     }
 }
 
