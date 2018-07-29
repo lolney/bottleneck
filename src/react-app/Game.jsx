@@ -18,6 +18,11 @@ const defaults = {
     auth: {
         username: 'test',
         password: 'secret'
+    },
+    collisionOptions: {
+        collisions: {
+            type: 'HSHG'
+        }
     }
 };
 

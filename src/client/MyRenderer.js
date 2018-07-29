@@ -120,8 +120,7 @@ export default class MyRenderer extends Renderer {
                     sprite.y = objData.position.y;
                 }
             }
-
-            this.renderer.render(this.layer1);
         }
+        this.renderer.render(this.layer1);
     }
 }

@@ -13,7 +13,10 @@ export const HEIGHT = 1200;
 export default class MyGameEngine extends GameEngine {
     constructor(options) {
         super(options);
-        this.physicsEngine = new SimplePhysicsEngine({ gameEngine: this });
+        this.physicsEngine = new SimplePhysicsEngine({
+            ...options.collisionOptions,
+            gameEngine: this
+        });
     }
 
     registerClasses(serializer) {
