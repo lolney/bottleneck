@@ -49,7 +49,14 @@ import MyServerEngine from './src/server/MyServerEngine';
 import MyGameEngine from './src/common/MyGameEngine';
 
 // Game Instances
-const gameEngine = new MyGameEngine({ traceLevel: Trace.TRACE_NONE });
+const gameEngine = new MyGameEngine({
+    traceLevel: Trace.TRACE_NONE,
+    collisionOptions: {
+        collisions: {
+            type: 'HSHG'
+        }
+    }
+});
 const serverEngine = new MyServerEngine(io, gameEngine, {
     debug: {},
     updateRate: 6,

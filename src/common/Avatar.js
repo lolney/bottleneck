@@ -22,6 +22,9 @@ export default class Avatar extends DynamicObject {
             this.dbId = props.dbId;
         }
         this.class = Avatar;
+        // TODO: add this to a config
+        this.width = 100;
+        this.height = 25;
     }
 
     onAddToWorld(gameEngine) {
