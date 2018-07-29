@@ -77,6 +77,9 @@ export default class MyRenderer extends Renderer {
         });
 
         this.renderer.view.addEventListener('drop', (ev) => {
+            // Prevent opening a new tab on Firefox
+            ev.preventDefault();
+
             let id = ev.dataTransfer.getData('text');
             let position = this.canvasToWorldCoordinates(
                 ev.clientX,
