@@ -21,6 +21,7 @@ export default class DragHandler {
             ev.preventDefault();
 
             this.updateTempObject(ev);
+            this.dragObject.actor.sprite.filters = [];
             this.dragObject = null;
         });
     }
@@ -33,6 +34,9 @@ export default class DragHandler {
         );
         if (this.dragObject == null) {
             this.dragObject = this.gameEngine.makeDefence(id, position);
+            let filter = new PIXI.filters.ColorMatrixFilter();
+            this.dragObject.actor.sprite.filters = [filter];
+            filter.negative();
         } else {
             this.dragObject.position = position;
         }

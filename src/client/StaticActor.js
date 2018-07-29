@@ -9,9 +9,11 @@ export default class StaticActor {
         // Create the sprite
         this.sprite = new PIXI.Container();
         this.sprite.position.set(avatar.position.x, avatar.position.y);
+
         let mySprite = new PIXI.Sprite(
             PIXI.loader.resources[resourceName].texture
         );
+        mySprite.anchor.set(0.5, 0.5);
         this.sprite.addChild(mySprite);
 
         // Store in the renderer and in PIXI's renderer

@@ -69,6 +69,7 @@ export default class MyRenderer extends Renderer {
             this.viewportWidth,
             this.viewportHeight
         );
+
         document.body
             .querySelector('.pixiContainer')
             .appendChild(this.renderer.view);
@@ -87,6 +88,7 @@ export default class MyRenderer extends Renderer {
         let texture = PIXI.loader.resources.background.texture;
 
         let tilingSprite = new PIXI.extras.TilingSprite(texture, WIDTH, HEIGHT);
+
         this.camera.addChild(tilingSprite);
         this.layer1.addChild(this.camera);
     }
