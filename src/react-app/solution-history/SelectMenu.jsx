@@ -90,7 +90,7 @@ class SelectItem extends React.Component {
         case 'image':
             return {
                 alt: 'image icon',
-                text: 'Image Matching',
+                text: 'Image Match',
                 src: 'assets/image-icon.png'
             };
         default:

@@ -1,7 +1,8 @@
 import React from 'react';
+import '.././CSS/HUD.scss';
 
 export default class HUD extends React.Component {
     render() {
-        return null;
+        return <div className="hudButton" />;
     }
 }
