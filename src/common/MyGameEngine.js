@@ -40,7 +40,7 @@ export default class MyGameEngine extends GameEngine {
 
     makePlayer(playerId) {
         console.log(`adding player ${playerId}`);
-        this.addObjectToWorld(
+        return this.addObjectToWorld(
             new PlayerAvatar(this, null, {
                 position: new TwoVector(WIDTH / 2, HEIGHT / 2),
                 playerId: playerId
@@ -49,7 +49,7 @@ export default class MyGameEngine extends GameEngine {
     }
 
     makeDefence(defenceId, position) {
-        this.addObjectToWorld(
+        return this.addObjectToWorld(
             new Avatar(this, null, {
                 position: position,
                 objectType: 'google',

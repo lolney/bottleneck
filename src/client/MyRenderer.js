@@ -3,6 +3,7 @@
 import Renderer from 'lance/render/Renderer';
 import { WIDTH, HEIGHT } from '../common/MyGameEngine';
 import TwoVector from 'lance/serialize/TwoVector';
+import DragHandler from './DragHandler';
 
 let PIXI = null;
 
@@ -72,21 +73,11 @@ export default class MyRenderer extends Renderer {
             .querySelector('.pixiContainer')
             .appendChild(this.renderer.view);
 
-        this.renderer.view.addEventListener('dragover', (ev) => {
-            ev.preventDefault();
-        });
-
-        this.renderer.view.addEventListener('drop', (ev) => {
-            // Prevent opening a new tab on Firefox
-            ev.preventDefault();
-
-            let id = ev.dataTransfer.getData('text');
-            let position = this.canvasToWorldCoordinates(
-                ev.clientX,
-                ev.clientY
-            );
-            this.gameEngine.makeDefence(id, position);
-        });
+        this.dragHandler = new DragHandler(
+            this.renderer.view,
+            this.gameEngine,
+            this
+        );
     }
 
     setupStage() {
