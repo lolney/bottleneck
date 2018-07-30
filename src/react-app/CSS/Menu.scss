@@ -1,0 +1,45 @@
+.menu {
+  height: 100vh;
+  .fieldset {
+    background: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 1em 1em 1.5em;
+    width: 100%;
+    min-height: 20px;
+    text-align: center;
+    h1 {
+      margin-left: 1%;
+      margin-top: 1%;
+      color: black;
+      display: block;
+      font: 300 1em/1.5em "Lato", sans-serif;
+      font-size: 3em;
+    }
+    .menuElements {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      .btn {
+        font: 300 1em/1.5em "Lato", sans-serif;
+        border: 1px solid #ddd;
+        min-width: 40px;
+        min-height: 80px;
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+        padding: 0.25em;
+        width: 100%;
+      }
+    }
+  }
+}
+
+.bootstrap-styles {
+  @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap.scss";
+}
