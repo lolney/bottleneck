@@ -1,17 +1,18 @@
 .hud-buttons {
-  float: right;
-  width: 20vw;
+  right: 0;
+  position: absolute;
+  width: 15%;
   .bootstrap-styles {
     .btn {
       position: "absolute";
-      border: "1px solid rgba(0,0,0,.2)";
-      border-radius: "6px";
+      border: none;
+      border-radius: 1px;
       margin-bottom: 5%;
       margin-top: 5%;
-      margin-right: 15%;
-      width: 85%;
-      height: 10vh;
-      background-color: rgba(241, 241, 241, 0.5);
+      margin-right: 10%;
+      width: 90%;
+      height: 10%;
+      background-color: rgba(241, 241, 241, 0.7);
       display: flex;
       .hud-column {
         margin-left: 1%;
@@ -29,7 +30,8 @@
       margin-top: 10%;
     }
     .btm-btn {
-      margin-top: 90%;
+      margin-top: 170%;
+      margin-bottom: 10%;
       font: 300 1em/1.5em "Lato", sans-serif;
       font-size: 1em;
       text-align: center;
