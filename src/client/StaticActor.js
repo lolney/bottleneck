@@ -4,7 +4,7 @@ let PIXI = null;
  * Handles renderer-specific details for non-animated sprites
  */
 export default class StaticActor {
-    constructor(avatar, renderer, resourceName) {
+    constructor(avatar, renderer, resourceName, shouldAttach = true) {
         PIXI = require('pixi.js');
         // Create the sprite
         this.sprite = new PIXI.Container();
@@ -17,8 +17,10 @@ export default class StaticActor {
         this.sprite.addChild(mySprite);
 
         // Store in the renderer and in PIXI's renderer
-        renderer.sprites[avatar.id] = this.sprite;
-        renderer.camera.addChild(this.sprite);
+        if (shouldAttach === true) {
+            renderer.sprites[avatar.id] = this.sprite;
+            renderer.camera.addChild(this.sprite);
+        }
     }
 
     destroy(id, renderer) {
@@ -26,5 +28,9 @@ export default class StaticActor {
             this.sprite.destroy();
             delete renderer.sprites[id];
         }
+    }
+
+    getSprite() {
+        return this.sprite;
     }
 }

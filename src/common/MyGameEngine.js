@@ -17,6 +17,7 @@ export default class MyGameEngine extends GameEngine {
             ...options.collisionOptions,
             gameEngine: this
         });
+        this.problemIdIndex = {};
     }
 
     registerClasses(serializer) {
@@ -37,8 +38,16 @@ export default class MyGameEngine extends GameEngine {
     makeTrees(objects) {
         for (let obj of objects) {
             obj.position = new TwoVector(obj.position[0], obj.position[1]);
-            this.addObjectToWorld(new Avatar(this, null, obj));
+            let avatar = new Avatar(this, null, obj);
+            this.addObjectToWorld(avatar);
+            this.addObjToProblemIdIndex(avatar);
         }
+    }
+
+    addObjToProblemIdIndex(obj) {
+        if (this.problemIdIndex[obj.problemId])
+            this.problemIdIndex[obj.problemId].push(obj);
+        else this.problemIdIndex[obj.problemId] = [obj];
     }
 
     makePlayer(playerId) {
@@ -56,9 +65,19 @@ export default class MyGameEngine extends GameEngine {
             new Avatar(this, null, {
                 position: position,
                 objectType: 'google',
-                dbId: defenceId
+                dbId: defenceId,
+                solvedBy: null
             })
         );
+    }
+
+    markAsSolved(problemId, playerId) {
+        let objs = this.problemIdIndex[problemId];
+        if (objs != undefined) {
+            for (const obj of objs) {
+                obj.solvedBy = playerId.toString();
+            }
+        }
     }
 
     processInput(inputData, playerId) {

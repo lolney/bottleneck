@@ -12,9 +12,8 @@ module.exports = (sequelize, DataTypes) => {
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE
     });
-    // TODO: belongsToMany?
     Problem.associate = function(models) {
-        Problem.belongsTo(models.gameObject);
+        Problem.hasMany(models.solvedProblem);
     };
     return Problem;
 };

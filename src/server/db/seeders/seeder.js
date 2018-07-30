@@ -1,11 +1,15 @@
-// import { WIDTH, HEIGHT } from '../../../common/MyGameEngine';
+//import { WIDTH, HEIGHT } from '../../../common/MyGameEngine';
 import ImageProblem from '../../../problem-engine/ImageProblem';
 import uuidv4 from 'uuid/v4';
 import { date } from '../../db';
 import BinaryTreeProblem from '../../../problem-engine/BinaryTreeProblem';
 
+let randomInt = (minimum, maximum) =>
+    Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
+
 const WIDTH = 2000;
 const HEIGHT = 1200;
+const NUM_OBJECTS = 50;
 
 function createPoint() {
     let x = Math.random() * WIDTH;
@@ -21,7 +25,7 @@ export async function up(queryInterface, Sequelize) {
         })
     );
     // Add BinaryTree Problems
-    problems = problems.concat(base.map(() => new BinaryTreeProblem()));
+    problems = problems.concat([new BinaryTreeProblem()]);
     let ids = problems.map(() => uuidv4());
 
     await queryInterface.bulkInsert(
@@ -34,8 +38,7 @@ export async function up(queryInterface, Sequelize) {
                 name: problem.getName(),
                 type: problem.getTypeString(),
                 createdAt: date(),
-                updatedAt: date(),
-                gameObjectId: uuidv4()
+                updatedAt: date()
             };
         }),
         {}
@@ -57,16 +60,18 @@ export async function up(queryInterface, Sequelize) {
     );
 
     const inserted_problems = await queryInterface.sequelize.query(
-        'SELECT id, "gameObjectId" FROM "problems";'
+        'SELECT id FROM "problems";'
     );
+    const rows = inserted_problems[0];
     return await queryInterface.bulkInsert(
         'gameObjects',
-        inserted_problems[0].map((row, i) => {
+        [...Array(NUM_OBJECTS).keys()].map((i) => {
             return {
-                id: row.gameObjectId,
+                id: uuidv4(),
                 location: Sequelize.fn('ST_GeomFromText', createPoint()),
                 objectType: 'tree',
-                problemId: row.id,
+                behaviorType: 'resource',
+                problemId: rows[randomInt(0, rows.length - 1)].id,
                 createdAt: date(),
                 updatedAt: date()
             };

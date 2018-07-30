@@ -141,5 +141,8 @@ export default class Windows extends React.Component {
 }
 
 Windows.propTypes = {
-    children: PropTypes.array
+    children: PropTypes.oneOfType([
+        PropTypes.arrayOf(PropTypes.element),
+        PropTypes.element
+    ])
 };

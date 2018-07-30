@@ -19,7 +19,15 @@ export default class MyRenderer extends Renderer {
 
     constructor(gameEngine, clientEngine) {
         super(gameEngine, clientEngine);
+        /**
+         * Map of object ids -> sprites. Actors control adding to this.
+         */
         this.sprites = {};
+        /**
+         * Map of problem ids -> lists of GameObjectActors.
+         * GameObjectActors control adding to this.
+         */
+        this.gameObjectActors = {};
         this.isReady = false;
         PIXI = require('pixi.js');
     }
@@ -103,6 +111,21 @@ export default class MyRenderer extends Renderer {
             this.camera.y += this.viewportHeight / 2 - position.y;
             this.prev = position.clone();
         }
+    }
+
+    /**
+     *  Make the renderer reflect a new solution by player `playerId`.
+     */
+    onReceiveSolution(problemId, playerId) {
+        for (const actor of this.gameObjectActors[problemId]) {
+            actor.handleSolutionFromPlayer(playerId);
+        }
+    }
+
+    addGameObjectActor(problemId, actor) {
+        if (this.gameObjectActors[problemId])
+            this.gameObjectActors[problemId].push(actor);
+        else this.gameObjectActors[problemId] = [actor];
     }
 
     draw(t, dt) {

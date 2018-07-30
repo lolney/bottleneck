@@ -6,12 +6,13 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true
         },
         location: DataTypes.GEOMETRY('POINT'),
+        behaviorType: DataTypes.ENUM('resource', 'defence'),
         objectType: DataTypes.TEXT,
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE
     });
     GameObject.associate = function(models) {
-        GameObject.hasOne(models.problem);
+        GameObject.belongsTo(models.problem);
     };
     return GameObject;
 };
