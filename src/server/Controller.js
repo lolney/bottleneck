@@ -77,18 +77,15 @@ class Controller {
         this.socketsMap[playerId] = socket;
     }
 
-    pushProblem(playerId, dbId) {
+    async pushProblem(playerId, dbId) {
         let socket = this.socketsMap[playerId];
         if (!socket.auth) throw new Error('User is not authenticated');
 
-        problem(dbId)
-            .then((problem) => {
-                return serialize(problem);
-            })
-            .then((serialized) => {
-                console.log('Authenticated: ', socket.auth);
-                socket.emit('problem', serialized);
-            });
+        let prob = await problem(dbId, socket.client.userId);
+        let serialized = await serialize(prob.problem);
+
+        console.log('Authenticated: ', socket.auth);
+        socket.emit('problem', { ...prob, problem: serialized });
     }
 
     removePlayer(playerId) {

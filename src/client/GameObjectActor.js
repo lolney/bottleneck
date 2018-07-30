@@ -15,7 +15,7 @@ export default class GameObjectActor {
     }
 
     handleSolutionFromPlayer(playerId) {
-        if (playerId == null) {
+        if (playerId == undefined || playerId == null) {
             this.actor.sprite.filters = [];
         } else if (playerId == this.myPlayerId) {
             let filter = new PIXI.filters.ColorMatrixFilter();

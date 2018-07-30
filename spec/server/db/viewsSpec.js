@@ -45,30 +45,50 @@ describe('objects', () => {
 });
 
 describe('problem', () => {
-    it('finds a problem for each object', (done) => {
-        objects()
-            .then((objs) => {
-                let promises = objs.map((obj) => {
-                    problem(obj.dbId);
-                });
-                Promise.all(promises)
-                    .then((vals) => {
-                        expect(vals.length).toEqual(objs.length);
-                        done();
-                    })
-                    .catch(done.fail);
-            })
-            .catch(done.fail);
+    let objs;
+
+    beforeAll(async () => {
+        objs = await objects();
+    });
+
+    it('finds a problem for each object', async () => {
+        let problems = await Promise.all(objs.map((obj) => problem(obj.dbId)));
+
+        expect(problems.length).toEqual(objs.length);
     });
 
     it('finds a subproblem for each image problem', async () => {
-        let objs = await objects();
         let problems = await Promise.all(objs.map((obj) => problem(obj.dbId)));
-        for (const problem of problems) {
+        for (const prob of problems) {
+            let problem = prob.problem;
             if (problem.type == 'image') {
                 expect(typeof problem.subproblem.original).toEqual('string');
             }
         }
+    });
+
+    it('marks unsolved problems as unsolved', async () => {
+        let problems = await Promise.all(objs.map((obj) => problem(obj.dbId)));
+        for (const prob of problems) {
+            if (prob.problem.type == 'image') {
+                expect(prob.isSolved).toBe(false);
+            }
+        }
+    });
+
+    it('marks solved problems as solved', async () => {
+        let user = await models.user.findOne();
+        let obj = await models.gameObject.findOne();
+        let prob = await problem(obj.id);
+        const code = '() => 1;';
+
+        let solution = await addSolution(user.id, prob.problem.id, code);
+
+        prob = await problem(obj.id, user.id);
+
+        expect(prob.isSolved).toBe(true);
+        expect(prob.code).toBeDefined();
+        await solution.destroy();
     });
 });
 

@@ -73,14 +73,35 @@ export async function objects() {
 
 /**
  * @param {string} objId
- * @returns {object} The problem associated with object `objId`
+ * @param {string} userId - optional: includes
+ * @returns {object} - Problem and metadata
+ * @property {object.problem} - The problem associated with object `objId`
  */
-export async function problem(objId) {
+export async function problem(objId, userId) {
     let obj = await models.gameObject.find({
         where: { id: objId },
-        include: [models.problem]
+        include: [
+            {
+                model: models.problem,
+                include: [
+                    {
+                        model: models.solvedProblem,
+                        where: { userId: userId },
+                        required: false
+                    }
+                ]
+            }
+        ]
     });
-    return await getProblemSubTypes(obj.problem.dataValues);
+
+    let problem = await getProblemSubTypes(obj.problem.dataValues);
+    let solvedProblems = obj.problem.dataValues.solvedProblems;
+    let isSolved = solvedProblems.length > 0 ? true : false;
+    let base = { problem: problem, isSolved: isSolved };
+
+    return isSolved
+        ? { ...base, code: solvedProblems[0].dataValues.code }
+        : base;
 }
 
 /**
