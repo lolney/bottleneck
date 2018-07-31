@@ -4,15 +4,6 @@ import './CSS/HUD.scss';
 import PropTypes from 'prop-types';
 
 export default class HUD extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.onClick = this.onClick.bind(this);
-    }
-    onClick() {
-        this.props.onClick();
-    }
-
     render() {
         return (
             <div className="hud-buttons bootstrap-styles">
@@ -43,7 +34,7 @@ export default class HUD extends React.Component {
                         <div className="hud-column">img</div>
                         <div className="hud-column">txt</div>
                     </Button>
-                    <Button className="btm-btn" onClick={this.onClick}>
+                    <Button className="btm-btn" onClick={this.props.onClick}>
                         Menu
                     </Button>
                 </ButtonToolbar>

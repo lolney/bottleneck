@@ -1,6 +1,6 @@
 import React from 'react';
-import HUD from './HUD';
-import Menu from './Menu';
+import HUD from './HUD.jsx';
+import Menu from './Menu.jsx';
 //import PropTypes from 'prop-types';
 
 export default class MenuContainer extends React.Component {
@@ -20,7 +20,7 @@ export default class MenuContainer extends React.Component {
     render() {
         return (
             <div>
-                <Menu isOpen={this.state.isOpen} />
+                {this.state.isOpen && <Menu isOpen={this.state.isOpen} />}
                 <HUD onClick={this.openWindow} />
             </div>
         );
