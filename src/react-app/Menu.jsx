@@ -18,7 +18,7 @@ class Menu extends React.Component {
         return (
             <div className="menu">
                 <div className="fieldset">
-                    <h1>Main Menu</h1>
+                    <h1 className="fieldset">Main Menu</h1>
                 </div>
                 <div className="menuElements bootstrap-styles">
                     <ButtonToolbar>
