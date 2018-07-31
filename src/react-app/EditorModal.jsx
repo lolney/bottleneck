@@ -12,9 +12,7 @@ export default class EditorModal extends React.Component {
         this.state = {
             generatorError: null,
             code: this.props.code,
-            generator: function(x, y) {
-                return 0;
-            }
+            generator: eval(this.props.code)
         };
         this.setGenerator = this.setGenerator.bind(this);
         this.reportError = this.reportError.bind(this);

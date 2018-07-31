@@ -49,15 +49,43 @@ for (const i in trees) {
     treeStories.add('Tree' + i, () => <VisualTreeComponent nodes={tree} />);
 }
 
-storiesOf('BinaryTreeComponent', module).add('inorder traversal', () => {
-    let fetchProps = async () => {
-        let problem = new BinaryTreeProblem();
-        let serialized = await problem.serialize();
-        console.log(serialized);
-        return { socket: mockEngine(serialized).socket };
-    };
-    return <AsyncComponent fetchProps={fetchProps} />;
-});
+storiesOf('BinaryTreeComponent', module)
+    .add('inorder traversal', () => {
+        let fetchProps = async () => {
+            let problem = new BinaryTreeProblem();
+            let serialized = await problem.serialize();
+            console.log(serialized);
+            return { socket: mockEngine({ problem: serialized }).socket };
+        };
+        return <AsyncComponent fetchProps={fetchProps} />;
+    })
+    .add('inorder traversal solved', () => {
+        let fetchProps = async () => {
+            let problem = new BinaryTreeProblem();
+            let serialized = await problem.serialize();
+            let code = `
+                (node) => {
+                    let result = [];
+                    let _traverse = (node) => {
+                        if (Array.isArray(node)) {
+                            _traverse(node[1]);
+                            result.push(node[0]);
+                            _traverse(node[2]);
+                        } else if (typeof node == 'number') result.push(node);
+                    };
+                    _traverse(node);
+                    return result;
+            };`;
+            return {
+                socket: mockEngine({
+                    isSolved: true,
+                    code: code,
+                    problem: serialized
+                }).socket
+            };
+        };
+        return <AsyncComponent fetchProps={fetchProps} />;
+    });
 
 let stories = storiesOf('ImageComponent', module);
 
@@ -68,7 +96,7 @@ for (const i in generators) {
         let fetchProps = async () => {
             let problem = await ImageProblem.create(generator);
             let serialized = await problem.serialize();
-            return { socket: mockEngine(serialized).socket };
+            return { socket: mockEngine({ problem: serialized }).socket };
         };
         return <AsyncComponent fetchProps={fetchProps} />;
     });

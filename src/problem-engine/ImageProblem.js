@@ -48,7 +48,7 @@ export default class ImageProblem extends Problem {
     }
 
     getStartingCode() {
-        return '(x,y) => {return 255};';
+        return '(x,y) => {return 0};';
     }
 
     getTypeString() {

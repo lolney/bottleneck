@@ -2,6 +2,7 @@ import React from 'react';
 import VisualTree from './VisualTree';
 import { BinaryTree } from './VisualTree';
 import { Button } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 import './CSS/BinaryTree.scss';
 import '@fortawesome/fontawesome-free/css/all.css';
 
@@ -9,12 +10,13 @@ export default class BinaryTreeComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            testCase: 0,
-            mySolutions: this.props.problem.testCases.map(() => []),
-            solved: this.props.problem.testCases.map(() => false)
+            ...BinaryTreeComponent.getDerivedStateFromProps(props, {
+                mySolutions: [],
+                solved: []
+            }),
+            testCase: 0
         };
         this.getTestCase = this.getTestCase.bind(this);
-        this.checkSolutions = this.checkSolutions.bind(this);
     }
 
     getTestCase(index) {
@@ -25,9 +27,16 @@ export default class BinaryTreeComponent extends React.Component {
         };
     }
 
-    checkSolutions(mySolutions) {
+    shouldComponentUpdate(props, state) {
+        return (
+            this.props.generator != props.generator ||
+            this.state.testCase != state.testCase
+        );
+    }
+
+    static checkSolutions(mySolutions, props) {
         return mySolutions.map((mySolution, i) => {
-            let solution = this.getTestCase(i).solution;
+            let solution = props.problem.testCases[i].solution;
             return (
                 solution.length == mySolution.length &&
                 solution
@@ -37,30 +46,41 @@ export default class BinaryTreeComponent extends React.Component {
         });
     }
 
-    runGenerator(generator) {
-        let wrapped = BinaryTree.wrapGenerator(this.props.generator);
-        return this.props.problem.testCases.map((testCase) =>
+    static runGenerator(props) {
+        let wrapped = BinaryTree.wrapGenerator(props.generator);
+        return props.problem.testCases.map((testCase) =>
             wrapped(testCase.tree)
         );
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        if (this.props.generator != prevProps.generator) {
-            try {
-                let mySolutions = this.runGenerator(this.props.generator);
-                let solvedArray = this.checkSolutions(mySolutions);
+    componentDidMount() {
+        this.componentDidUpdate();
+    }
 
-                if (solvedArray.every((v) => v)) this.props.setDone(true);
-                else this.props.setDone(false);
+    componentDidUpdate() {
+        if (this.state.solved.every((v) => v)) {
+            this.props.setDone(true);
+        } else this.props.setDone(false);
 
-                this.setState({
-                    mySolutions: mySolutions,
-                    solved: solvedArray
-                });
-                this.props.reportError(null);
-            } catch (error) {
-                this.props.reportError(error);
-            }
+        if (!this.state.error) this.props.reportError(null);
+        else this.props.reportError(this.state.error);
+    }
+
+    static getDerivedStateFromProps(props, state) {
+        try {
+            let mySolutions = BinaryTreeComponent.runGenerator(props);
+            let solvedArray = BinaryTreeComponent.checkSolutions(
+                mySolutions,
+                props
+            );
+
+            return {
+                ...state,
+                mySolutions: mySolutions,
+                solved: solvedArray
+            };
+        } catch (error) {
+            return { error: error, ...state };
         }
     }
 
@@ -92,6 +112,17 @@ export default class BinaryTreeComponent extends React.Component {
         );
     }
 }
+
+BinaryTreeComponent.propTypes = {
+    generator: PropTypes.func.isRequired,
+    setDone: PropTypes.func.isRequired,
+    reportError: PropTypes.func.isRequired,
+    problem: PropTypes.shape({
+        title: PropTypes.string,
+        description: PropTypes.string,
+        testCases: PropTypes.arrayOf(PropTypes.object)
+    }).isRequired
+};
 
 export class VisualTreeComponent extends React.Component {
     constructor(props) {

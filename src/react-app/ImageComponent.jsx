@@ -15,7 +15,11 @@ export default class ImageComponent extends React.Component {
         this.componentDidUpdate = this.componentDidUpdate.bind(this);
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidMount() {
+        this.componentDidUpdate({ generator: null });
+    }
+
+    componentDidUpdate(prevProps) {
         if (this.props.generator != prevProps.generator) {
             let wrapped = Image.wrapGenerator(this.props.generator);
             Image.create(wrapped)
