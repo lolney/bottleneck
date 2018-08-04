@@ -78,4 +78,11 @@ describe('Windows', () => {
 
         expect(windows.state('order')).toEqual([key, 101, 102, 100]);
     });
+
+    it('attempting to remove a removed window throws an error', () => {
+        remove(key);
+
+        expect(windows.state('order').length).toEqual(0);
+        expect(() => remove(key)).toThrow();
+    });
 });

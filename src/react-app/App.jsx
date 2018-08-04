@@ -63,15 +63,6 @@ export class App extends React.Component {
                     socket={socket}
                     openWindow={(code, id) => {
                         socket.emit('solvedProblem', { id: id });
-                        socket.once('solvedProblem', (data) => {
-                            this.windows.current.addWindow(
-                                <EditorModal
-                                    onSolution={() => {}}
-                                    problem={data.problem}
-                                    code={data.code}
-                                />
-                            );
-                        });
                     }}
                 />
             );

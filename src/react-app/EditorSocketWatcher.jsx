@@ -23,6 +23,16 @@ export default class EditorSocketWatcher {
                 data.id
             );
         });
+
+        socket.on('solvedProblem', (data) => {
+            this.windows.current.addWindow(
+                <EditorModal
+                    onSolution={() => {}}
+                    problem={data.problem}
+                    code={data.code}
+                />
+            );
+        });
     }
 
     onSolution(problemId, generator) {
