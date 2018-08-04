@@ -1,7 +1,8 @@
 import React from 'react';
 import HUD from './HUD.jsx';
 import Menu from './Menu.jsx';
-//import PropTypes from 'prop-types';
+//import DefencesBrowser from './DefencesBrowser.jsx';
+import PropTypes from 'prop-types';
 
 export default class MenuContainer extends React.Component {
     constructor(props) {
@@ -10,19 +11,29 @@ export default class MenuContainer extends React.Component {
         this.state = {
             isOpen: false
         };
-        this.openWindow = this.openWindow.bind(this);
+        this.openMenu = this.openMenu.bind(this);
     }
 
-    openWindow() {
+    openMenu() {
         this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
     }
 
     render() {
+        console.log(this.props);
         return (
             <div>
-                {this.state.isOpen && <Menu isOpen={this.state.isOpen} />}
-                <HUD onClick={this.openWindow} />
+                {this.state.isOpen && <Menu />}
+                <HUD
+                    openWindow={this.openMenu}
+                    addWindow={this.props.addWindow}
+                    removeWindow={this.props.removeWindow}
+                />
             </div>
         );
     }
 }
+
+MenuContainer.propTypes = {
+    addWindow: PropTypes.func.isRequired,
+    removeWindow: PropTypes.func.isRequired
+};
