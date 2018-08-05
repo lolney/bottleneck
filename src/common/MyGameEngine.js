@@ -143,7 +143,7 @@ export default class MyGameEngine extends GameEngine {
 
             let shouldRevert = this.causesCollision();
             if (shouldRevert) {
-                this.trace.info(
+                this.trace.info( () =>
                     `reverting position: ${player.position.x},${
                         player.position.y
                     }
