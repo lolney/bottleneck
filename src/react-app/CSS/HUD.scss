@@ -3,6 +3,7 @@
   position: absolute;
   width: 15%;
   height: 100%;
+  pointer-events: none;
   .btn-toolbar {
     height: 100%;
     .btn {
@@ -17,6 +18,7 @@
       background-color: rgba(241, 241, 241, 0.7);
       display: flex;
       padding: 0px;
+      pointer-events: all;
       .hud-column {
         min-height: 100%;
         text-align: center;

@@ -4,6 +4,7 @@ import StorybookConsole from 'react-storybook-console';
 import { storiesOf } from '@storybook/react';
 import MenuContainer from '../src/react-app/MenuContainer.jsx';
 import Windows from '../src/react-app/Windows.jsx';
+import { socket } from './solutionHistory.js';
 
 export class MenuWindows extends React.Component {
     constructor(props) {
@@ -28,6 +29,7 @@ export class MenuWindows extends React.Component {
                 <MenuContainer
                     addWindow={this.addWindow}
                     removeWindow={this.removeWindow}
+                    socket={socket}
                 />
             </div>
         );

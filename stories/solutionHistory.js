@@ -9,7 +9,7 @@ import { solvedProblems } from './fixtures';
 
 import '../src/react-app/CSS/Solutions.scss';
 
-const socket = {
+export const socket = {
     on: (event, callback) => {
         window.setTimeout(() => {
             callback(solvedProblems);
