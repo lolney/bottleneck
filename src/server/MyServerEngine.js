@@ -16,10 +16,8 @@ export default class MyServerEngine extends ServerEngine {
         super.start();
         let objs = await objects();
         this.gameEngine.makeTrees(objs);
-        this.gameEngine.on(
-            'collisionStart',
-            MyServerEngine.collision.bind(this)
-        );
+        this.gameEngine.makeWalls();
+        this.gameEngine.on('collisionStart', MyServerEngine.collision);
     }
 
     static collision(e) {

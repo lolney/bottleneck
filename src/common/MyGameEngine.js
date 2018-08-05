@@ -4,7 +4,9 @@ import GameEngine from 'lance/GameEngine';
 import SimplePhysicsEngine from 'lance/physics/SimplePhysicsEngine';
 import PlayerAvatar from './PlayerAvatar';
 import Avatar from './Avatar';
+import Blockable from './Blockable';
 import TwoVector from 'lance/serialize/TwoVector';
+import { resolve } from 'url';
 
 const STEP = 5;
 export const WIDTH = 2000;
@@ -23,6 +25,7 @@ export default class MyGameEngine extends GameEngine {
     registerClasses(serializer) {
         serializer.registerClass(PlayerAvatar);
         serializer.registerClass(Avatar);
+        serializer.registerClass(Blockable);
     }
 
     start() {
@@ -44,6 +47,24 @@ export default class MyGameEngine extends GameEngine {
         }
     }
 
+    makeWalls() {
+        for (let i = 0; i < 10; i++) {
+            this.addObjectToWorld(
+                new Blockable(this, null, {
+                    position: new TwoVector(
+                        Math.random() * WIDTH,
+                        Math.random() * HEIGHT
+                    )
+                })
+            );
+        }
+    }
+
+    /**
+     * Maps problem ids to objects to efficiently update objects that correspond
+     * to a given problem
+     * @param {Avatar} obj
+     */
     addObjToProblemIdIndex(obj) {
         if (this.problemIdIndex[obj.problemId])
             this.problemIdIndex[obj.problemId].push(obj);
@@ -80,6 +101,19 @@ export default class MyGameEngine extends GameEngine {
         }
     }
 
+    causesCollision() {
+        let collisionObjects = this.physicsEngine.collisionDetection.detect();
+        for (const pair of collisionObjects) {
+            let objects = Object.values(pair);
+            let object = objects.find((o) => o instanceof Blockable);
+            let player = objects.find((o) => o instanceof PlayerAvatar);
+
+            if (!object || !player) continue;
+            return true;
+        }
+        return false;
+    }
+
     processInput(inputData, playerId) {
         super.processInput(inputData, playerId);
 
@@ -89,6 +123,8 @@ export default class MyGameEngine extends GameEngine {
             this.trace.info(
                 () => `player ${playerId} pressed ${inputData.input}`
             );
+            let { x, y } = player.position;
+
             if (inputData.input === 'up') {
                 player.position.y -= STEP;
             } else if (inputData.input === 'down') {
@@ -103,6 +139,18 @@ export default class MyGameEngine extends GameEngine {
                     player.actor.sprite.scale.set(-1, 1);
                 }
                 player.position.x -= STEP;
+            }
+
+            let shouldRevert = this.causesCollision();
+            if (shouldRevert) {
+                this.trace.info(
+                    `reverting position: ${player.position.x},${
+                        player.position.y
+                    }
+                    } => ${x},${y}`
+                );
+                player.position.x = x;
+                player.position.y = y;
             }
         }
     }
