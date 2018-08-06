@@ -15,3 +15,28 @@ export const solvedProblems = [
         code: 'code'
     }
 ];
+
+export const siegeItems = [
+    {
+        name: 'Gate',
+        image: 'assets/sprites/tree1.png',
+        type: 'offensive'
+    },
+    {
+        name: 'Bridge',
+        image: 'assets/sprites/tree1.png',
+        type: 'offensive'
+    },
+    {
+        name: 'Ladder',
+        image: 'assets/sprites/Rock1.png',
+        type: 'offensive'
+    },
+    {
+        name: 'Slowfield',
+        image: 'assets/sprites/Rock2.png',
+        type: 'defensive'
+    },
+    { name: 'Pit', image: 'assets/sprites/tree2.png', type: 'defensive' },
+    { name: 'Fence', image: 'assets/sprites/tree2.png', type: 'defensive' }
+];
