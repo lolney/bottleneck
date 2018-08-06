@@ -19,7 +19,7 @@ export default class HUD extends React.Component {
                                 width="20px"
                             />
                         </div>
-                        <div className="hud-column">txt</div>
+                        <div className="hud-column-2">txt</div>
                     </Button>
                     <Button>
                         <div className="hud-column">
@@ -30,7 +30,7 @@ export default class HUD extends React.Component {
                                 width="20px"
                             />
                         </div>
-                        <div className="hud-column">txt</div>
+                        <div className="hud-column-2">txt</div>
                     </Button>
                     <ControlledButton
                         addWindow={() =>
@@ -53,7 +53,7 @@ export default class HUD extends React.Component {
                                 width="20px"
                             />
                         </div>
-                        <div className="hud-column">Defences</div>
+                        <div className="hud-column-2">Siege Tools</div>
                     </ControlledButton>
                     <Button className="btm-btn" onClick={this.props.openWindow}>
                         Menu

@@ -1,39 +1,41 @@
-body {
-  margin: 0;
-}
+.modal {
+  body {
+    margin: 0;
+  }
 
-.ReactModal__Content--after-open {
-  max-height: 90vh;
-}
+  .ReactModal__Content--after-open {
+    max-height: 90vh;
+  }
 
-.ace_editor {
-  width: 100% !important;
-}
+  .ace_editor {
+    width: 100% !important;
+  }
 
-.header {
-  min-height: 20px;
-  background: #666;
-  color: #fff;
-  text-align: center;
-  border-top-right-radius: 3px;
-  border-top-left-radius: 3px;
-  font-family: "Lato", sans-serif;
-  font-weight: 300;
-  font-size: 2em;
-  padding-bottom: 3px;
-  padding-top: 3px;
-}
+  .header {
+    min-height: 20px;
+    background: #666;
+    color: #fff;
+    text-align: center;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+    font-family: "Lato", sans-serif;
+    font-weight: 300;
+    font-size: 2em;
+    padding-bottom: 3px;
+    padding-top: 3px;
+  }
 
-.footer {
-  min-height: 20px;
-  background: #666;
-  color: #fff;
-  text-align: center;
-  border-bottom-right-radius: 3px;
-  border-bottom-left-radius: 3px;
-  font-family: "Lato", sans-serif;
-  font-weight: 300;
-  font-size: 1em;
-  padding-bottom: 3px;
-  padding-top: 3px;
+  .footer {
+    min-height: 20px;
+    background: #666;
+    color: #fff;
+    text-align: center;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    font-family: "Lato", sans-serif;
+    font-weight: 300;
+    font-size: 1em;
+    padding-bottom: 3px;
+    padding-top: 3px;
+  }
 }

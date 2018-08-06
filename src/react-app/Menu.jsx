@@ -25,8 +25,8 @@ class Menu extends React.Component {
     render() {
         return (
             <div className="menu">
-                <div className="fieldset">
-                    <h1 className="fieldset">Main Menu</h1>
+                <div className="header">
+                    <h1>Main Menu</h1>
                 </div>
                 <div className="menuElements bootstrap-styles">
                     <ButtonToolbar>

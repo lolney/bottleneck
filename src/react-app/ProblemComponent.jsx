@@ -15,18 +15,18 @@ export default class ProblemComponent extends React.Component {
 
     getChild(typeString) {
         switch (typeString) {
-            case 'btree':
-                return BinaryTreeComponent;
-            case 'image':
-                return ImageComponent;
-            default:
-                throw new TypeError('unexpected typeString');
+        case 'btree':
+            return BinaryTreeComponent;
+        case 'image':
+            return ImageComponent;
+        default:
+            throw new TypeError('unexpected typeString');
         }
     }
 
     render() {
         const description = this.state.done
-            ? "You're done!"
+            ? 'You\'re done!'
             : this.props.problem.description;
 
         const child = React.createElement(
@@ -46,10 +46,14 @@ export default class ProblemComponent extends React.Component {
             }
         );
         return (
-            <div className="wrapper">
-                <header className="header">{this.props.problem.title}</header>
-                {child}
-                <footer className="footer">{description}</footer>
+            <div className="modal">
+                <div className="wrapper">
+                    <header className="header">
+                        {this.props.problem.title}
+                    </header>
+                    {child}
+                    <footer className="footer">{description}</footer>
+                </div>
             </div>
         );
     }

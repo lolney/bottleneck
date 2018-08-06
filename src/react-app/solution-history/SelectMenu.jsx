@@ -22,7 +22,7 @@ export default class SelectMenu extends React.Component {
     render() {
         return (
             <div className="solutions">
-                <div className="fieldset">
+                <div className="header">
                     <h1>Solution History</h1>
                     <input
                         type="search"

@@ -22,7 +22,17 @@
       .hud-column {
         min-height: 100%;
         text-align: center;
-        flex: 50%;
+        flex: 30%;
+        color: black;
+        display: block;
+        font: 300 1em/1.5em "Lato", sans-serif;
+        font-size: 1em;
+        flex-wrap: wrap;
+      }
+      .hud-column-2 {
+        min-height: 100%;
+        text-align: center;
+        flex: 70%;
         color: black;
         display: block;
         font: 300 1em/1.5em "Lato", sans-serif;
