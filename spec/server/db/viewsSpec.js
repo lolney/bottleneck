@@ -4,9 +4,27 @@ import {
     checkPassword,
     createUser,
     addSolution,
-    getSolutions
+    getSolutions,
+    chainIncludes,
+    setPlayerId,
+    getUserId
 } from '../../../src/server/db';
 import models from '../../../src/server/db/models';
+
+describe('chainIncludes', () => {
+    it('returns the correct answer for a single include', () => {
+        expect(chainIncludes(1)).toEqual([1]);
+    });
+
+    it('returns the correct answer for multiple nested includes', () => {
+        expect(chainIncludes(1, 2, 3)).toEqual([
+            {
+                model: 1,
+                include: [{ model: 2, include: [3] }]
+            }
+        ]);
+    });
+});
 
 describe('objects', () => {
     it('returns a list of objects with the correct fields', (done) => {
@@ -17,6 +35,8 @@ describe('objects', () => {
                     expect(obj.dbId).toEqual(jasmine.any(String));
                     expect(obj.position.length).toEqual(2);
                     expect(obj.objectType).toEqual('tree');
+                    expect(obj.problemId).toEqual(jasmine.any(String));
+                    expect(obj.solvedBy).toBeDefined();
                 }
                 done();
             })
@@ -25,30 +45,50 @@ describe('objects', () => {
 });
 
 describe('problem', () => {
-    it('finds a problem for each object', (done) => {
-        objects()
-            .then((objs) => {
-                let promises = objs.map((obj) => {
-                    problem(obj.dbId);
-                });
-                Promise.all(promises)
-                    .then((vals) => {
-                        expect(vals.length).toEqual(objs.length);
-                        done();
-                    })
-                    .catch(done.fail);
-            })
-            .catch(done.fail);
+    let objs;
+
+    beforeAll(async () => {
+        objs = await objects();
+    });
+
+    it('finds a problem for each object', async () => {
+        let problems = await Promise.all(objs.map((obj) => problem(obj.dbId)));
+
+        expect(problems.length).toEqual(objs.length);
     });
 
     it('finds a subproblem for each image problem', async () => {
-        let objs = await objects();
         let problems = await Promise.all(objs.map((obj) => problem(obj.dbId)));
-        for (const problem of problems) {
+        for (const prob of problems) {
+            let problem = prob.problem;
             if (problem.type == 'image') {
                 expect(typeof problem.subproblem.original).toEqual('string');
             }
         }
+    });
+
+    it('marks unsolved problems as unsolved', async () => {
+        let problems = await Promise.all(objs.map((obj) => problem(obj.dbId)));
+        for (const prob of problems) {
+            if (prob.problem.type == 'image') {
+                expect(prob.isSolved).toBe(false);
+            }
+        }
+    });
+
+    it('marks solved problems as solved', async () => {
+        let user = await models.user.findOne();
+        let obj = await models.gameObject.findOne();
+        let prob = await problem(obj.id);
+        const code = '() => 1;';
+
+        let solution = await addSolution(user.id, prob.problem.id, code);
+
+        prob = await problem(obj.id, user.id);
+
+        expect(prob.isSolved).toBe(true);
+        expect(prob.code).toBeDefined();
+        await solution.destroy();
     });
 });
 
@@ -155,11 +195,16 @@ describe('addSolution', () => {
     let solutions = [];
     const code = '() => \'test\'';
     const limit = 2;
+    let base;
     let user;
 
     beforeAll(async (done) => {
         user = await models.user.findOne();
         let problems = await models.problem.findAll({ limit: limit });
+
+        let solvedProblems = await getSolutions(user.id);
+        base = solvedProblems.length;
+
         for (const problem of problems) {
             await addSolution(user.id, problem.id, code).then((s) => {
                 solutions.push(s);
@@ -185,7 +230,7 @@ describe('addSolution', () => {
     it('correctly associates with the problem', async () => {
         let solvedProblems = await getSolutions(user.id);
 
-        expect(solvedProblems.length).toEqual(limit);
+        expect(solvedProblems.length).toEqual(base + limit);
         for (const solved of solvedProblems) {
             expect(solved.problem).toBeDefined();
             expect(solved.problem.name).toBeDefined();
@@ -198,5 +243,19 @@ describe('addSolution', () => {
                 expect(solved.problem.subproblem).not.toBeDefined();
             }
         }
+    });
+});
+
+describe('setPlayerId', () => {
+    it('correctly sets the user id', async () => {
+        let user = await models.user.findOne();
+
+        expect(user.playerId).toEqual(null);
+
+        await setPlayerId(user.id, '1');
+        user = await models.user.findOne({ where: { id: user.id } });
+
+        expect(user.playerId).toEqual('1');
+        await setPlayerId(user.id, null);
     });
 });

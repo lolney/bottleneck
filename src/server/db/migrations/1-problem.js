@@ -70,6 +70,7 @@ let migrationCommands = [
                 objectType: {
                     type: Sequelize.TEXT
                 },
+                behaviorType: { type: Sequelize.ENUM('resource', 'defence') },
                 problemId: {
                     type: Sequelize.UUID,
                     references: {
@@ -90,10 +91,6 @@ let migrationCommands = [
             },
             {}
         ]
-    },
-    {
-        fn: 'addColumn',
-        params: ['problems', 'gameObjectId', Sequelize.UUID]
     },
     {
         fn: 'createTable',
@@ -118,6 +115,10 @@ let migrationCommands = [
                 password: {
                     type: Sequelize.STRING,
                     allowNull: false
+                },
+                playerId: {
+                    type: Sequelize.STRING,
+                    allowNull: true
                 },
                 createdAt: {
                     allowNull: false,

@@ -22,3 +22,4 @@ dist/bundle\.js\.map
 dist/main.js
 
 src/index.js
+dist/*

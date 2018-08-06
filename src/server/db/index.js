@@ -7,6 +7,17 @@ export function date() {
     return moment().format('YYYY-MM-DD HH:mm:ss');
 }
 
+export function chainIncludes(...args) {
+    if (args.length == 1) {
+        return [args[0]];
+    } else if (args.length == 0) {
+        return [];
+    } else {
+        let child = chainIncludes(...args.slice(1));
+        return [{ include: child, model: args[0] }];
+    }
+}
+
 function getDataValues(obj) {
     let out = {};
     for (const [key, value] of Object.entries(obj.dataValues)) {
@@ -17,12 +28,16 @@ function getDataValues(obj) {
     return out;
 }
 
-function destructure(obj) {
-    let dv = obj.dataValues;
+function formatObject(obj) {
+    let dv = getDataValues(obj);
     return {
         position: [dv.location.coordinates[0], dv.location.coordinates[1]],
         dbId: dv.id,
-        objectType: dv.objectType
+        objectType: dv.objectType,
+        problemId: dv.problem.id,
+        solvedBy: dv.problem.solvedProblem
+            ? dv.problem.solvedProblem.user.playerId
+            : null
     };
 }
 
@@ -43,23 +58,50 @@ async function getProblemSubTypes(problem) {
 }
 
 /**
- * @returns all game objects
+ * @returns all game objects, including the user ID of any user that has solved it
  */
 export async function objects() {
-    let raw = await models.gameObject.findAll();
-    return raw.map((raw_elem) => destructure(raw_elem));
+    let raw = await models.gameObject.findAll({
+        include: chainIncludes(
+            models.problem,
+            models.solvedProblem,
+            models.user
+        )
+    });
+    return raw.map((raw_elem) => formatObject(raw_elem));
 }
 
 /**
  * @param {string} objId
- * @returns {object} The problem associated with object `objId`
+ * @param {string} userId - optional: includes
+ * @returns {object} - Problem and metadata
+ * @property {object.problem} - The problem associated with object `objId`
  */
-export async function problem(objId) {
+export async function problem(objId, userId) {
     let obj = await models.gameObject.find({
         where: { id: objId },
-        include: [models.problem]
+        include: [
+            {
+                model: models.problem,
+                include: [
+                    {
+                        model: models.solvedProblem,
+                        where: { userId: userId },
+                        required: false
+                    }
+                ]
+            }
+        ]
     });
-    return await getProblemSubTypes(obj.problem.dataValues);
+
+    let problem = await getProblemSubTypes(obj.problem.dataValues);
+    let solvedProblems = obj.problem.dataValues.solvedProblems;
+    let isSolved = solvedProblems.length > 0 ? true : false;
+    let base = { problem: problem, isSolved: isSolved };
+
+    return isSolved
+        ? { ...base, code: solvedProblems[0].dataValues.code }
+        : base;
 }
 
 /**
@@ -93,7 +135,7 @@ export function addSolution(userId, problemId, code) {
 export async function getSolutions(userId) {
     let obj = await models.user.find({
         where: { id: userId },
-        include: [{ model: models.solvedProblem, include: [models.problem] }]
+        include: chainIncludes(models.solvedProblem, models.problem)
     });
     let solvedProblems = obj.solvedProblems.map((s) => getDataValues(s));
     return await Promise.all(
@@ -120,4 +162,11 @@ export async function getUserId(username) {
         attributes: ['id']
     });
     return obj.dataValues.id;
+}
+
+export function setPlayerId(userId, playerId) {
+    return models.user.update(
+        { playerId: playerId },
+        { where: { id: userId } }
+    );
 }

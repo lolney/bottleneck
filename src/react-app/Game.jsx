@@ -18,6 +18,11 @@ const defaults = {
     auth: {
         username: 'test',
         password: 'secret'
+    },
+    collisionOptions: {
+        collisions: {
+            type: 'HSHG'
+        }
     }
 };
 
@@ -33,6 +38,12 @@ export default class Game extends React.Component {
 
         clientEngine.start().then(() => {
             this.props.onReceiveSocket(clientEngine.socket);
+            clientEngine.socket.on('solution', (data) => {
+                gameEngine.renderer.onReceiveSolution(
+                    data.problemId,
+                    data.playerId
+                );
+            });
         });
     }
 

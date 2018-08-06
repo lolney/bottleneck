@@ -11,8 +11,7 @@ import Windows from './Windows.jsx';
 
 import DefencesBrowser from './defences/DefencesBrowser.jsx';
 import './CSS/Defences.scss';
-import SolutionHistory from './solution-history/SolutionHistory.jsx';
-import EditorModal from './EditorModal.jsx';
+import MenuContainer from './MenuContainer.jsx';
 
 /*
 \ App
@@ -48,6 +47,16 @@ export class App extends React.Component {
         this.onReceiveSocket = this.onReceiveSocket.bind(this);
 
         this.windows = React.createRef();
+        this.addWindow = this.addWindow.bind(this);
+        this.removeWindow = this.removeWindow.bind(this);
+    }
+
+    addWindow(elem, key) {
+        this.windows.current.addWindow(elem, key);
+    }
+
+    removeWindow(key) {
+        this.windows.current.removeWindow(key);
     }
 
     onReceiveToken(token) {
@@ -58,25 +67,8 @@ export class App extends React.Component {
         new EditorSocketWatcher(socket, this.windows.current.addWindow);
 
         socket.addEventListener('authenticated', (event) => {
-            this.windows.current.addWindow(
-                <SolutionHistory
-                    socket={socket}
-                    openWindow={(code, id) => {
-                        socket.emit('solvedProblem', { id: id });
-                        socket.once('solvedProblem', (data) => {
-                            this.windows.current.addWindow(
-                                <EditorModal
-                                    onSolution={() => {}}
-                                    problem={data.problem}
-                                    code={data.code}
-                                />
-                            );
-                        });
-                    }}
-                />
-            );
+            this.setState({ socket: socket });
         });
-        this.setState({ socket: socket });
     }
 
     render() {
@@ -91,10 +83,16 @@ export class App extends React.Component {
                         socket={this.state.socket}
                     />
                 )}
-                {this.state.socket && <HUD socket={this.state.socket} />}
                 <Windows ref={this.windows}>
                     <DefencesBrowser imageSrcs={['assets/sprites/tree1.png']} />
                 </Windows>
+                {this.state.socket && (
+                    <MenuContainer
+                        addWindow={this.addWindow}
+                        removeWindow={this.removeWindow}
+                        socket={this.state.socket}
+                    />
+                )}
                 {this.state.token && (
                     <Game
                         onReceiveSocket={this.onReceiveSocket}

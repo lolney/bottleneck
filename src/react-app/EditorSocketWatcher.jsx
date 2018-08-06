@@ -12,14 +12,25 @@ export default class EditorSocketWatcher {
 
         this.onSolution = this.onSolution.bind(this);
         socket.on('problem', (data) => {
+            let solved = data.isSolved;
+            let problem = data.problem;
             addWindow(
                 <EditorModal
-                    key={data.code} // re-render on change
-                    onSolution={this.onSolution}
-                    problem={data}
-                    code={data.code}
+                    onSolution={solved ? () => {} : this.onSolution}
+                    problem={problem}
+                    code={solved ? data.code : problem.code}
                 />,
                 data.id
+            );
+        });
+
+        socket.on('solvedProblem', (data) => {
+            this.windows.current.addWindow(
+                <EditorModal
+                    onSolution={() => {}}
+                    problem={data.problem}
+                    code={data.code}
+                />
             );
         });
     }

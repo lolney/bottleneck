@@ -9,17 +9,15 @@ import { objects } from './db';
 export default class MyServerEngine extends ServerEngine {
     constructor(io, gameEngine, inputOptions) {
         super(io, gameEngine, inputOptions);
+        Controller.attachGameEngine(gameEngine);
     }
 
     async start() {
         super.start();
         let objs = await objects();
         this.gameEngine.makeTrees(objs);
-        this.gameEngine.on(
-            'collisionStart',
-            MyServerEngine.collision.bind(this)
-        );
-        this.socketsMap = {};
+        this.gameEngine.makeWalls();
+        this.gameEngine.on('collisionStart', MyServerEngine.collision);
     }
 
     static collision(e) {
@@ -32,17 +30,12 @@ export default class MyServerEngine extends ServerEngine {
         console.log('Emitting problem:display event: ', player.playerId);
         console.log('Object id: ', object.dbId);
 
-        Controller.pushProblem(
-            this.socketsMap[player.playerId],
-            player.playerId,
-            object.dbId
-        );
+        Controller.pushProblem(player.playerId, object.dbId);
     }
 
     onPlayerConnected(socket) {
         super.onPlayerConnected(socket);
-        this.socketsMap[socket.playerId] = socket;
-        Controller.register(socket);
+        Controller.addPlayer(socket.playerId, socket);
         this.gameEngine.makePlayer(socket.playerId);
     }
 
@@ -55,6 +48,6 @@ export default class MyServerEngine extends ServerEngine {
         playerObjects.forEach((obj) => {
             this.gameEngine.removeObjectFromWorld(obj.id);
         });
-        delete this.socketsMap[playerId];
+        Controller.removePlayer(playerId);
     }
 }

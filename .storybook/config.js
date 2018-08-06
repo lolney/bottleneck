@@ -7,6 +7,10 @@ function loadStories() {
     require('../stories/solutionHistory.js');
     require('../stories/windows.js');
     require('../stories/defences.js');
+    require('../stories/hud.js');
+    require('../stories/menu.js');
+    require('../stories/menucontainer.js');
+
     // You can require as many stories as you need.
 }
 

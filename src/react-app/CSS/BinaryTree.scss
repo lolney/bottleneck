@@ -23,7 +23,7 @@
   }
 
   .treeCanvas {
-    width: 100%;
+    width: 90%;
     order: 2;
     background-size: contain;
     border-radius: 3px;
@@ -37,6 +37,7 @@
   }
 
   .buttonContainer {
+    width: 10%;
     .btn {
       display: block;
       padding: 10px;

@@ -3,7 +3,7 @@
 import express from 'express';
 import socketIO from 'socket.io';
 import path from 'path';
-import { checkPassword, getUserId } from './src/server/db';
+import { checkPassword, getUserId, setPlayerId } from './src/server/db';
 
 const PORT = process.env.PORT || 3000;
 const INDEX = path.join(__dirname, './index.html');
@@ -39,6 +39,8 @@ require('socketio-auth')(io, {
         let userId = await getUserId(username);
         socket.client.userId = userId;
         callback(null, succeeded);
+
+        await setPlayerId(userId, socket.playerId);
     },
     timeout: 'none'
 });
@@ -49,7 +51,14 @@ import MyServerEngine from './src/server/MyServerEngine';
 import MyGameEngine from './src/common/MyGameEngine';
 
 // Game Instances
-const gameEngine = new MyGameEngine({ traceLevel: Trace.TRACE_NONE });
+const gameEngine = new MyGameEngine({
+    traceLevel: Trace.TRACE_NONE,
+    collisionOptions: {
+        collisions: {
+            type: 'HSHG'
+        }
+    }
+});
 const serverEngine = new MyServerEngine(io, gameEngine, {
     debug: {},
     updateRate: 6,

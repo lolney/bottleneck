@@ -3,6 +3,7 @@
 import Renderer from 'lance/render/Renderer';
 import { WIDTH, HEIGHT } from '../common/MyGameEngine';
 import TwoVector from 'lance/serialize/TwoVector';
+import DragHandler from './DragHandler';
 
 let PIXI = null;
 
@@ -18,7 +19,15 @@ export default class MyRenderer extends Renderer {
 
     constructor(gameEngine, clientEngine) {
         super(gameEngine, clientEngine);
+        /**
+         * Map of object ids -> sprites. Actors control adding to this.
+         */
         this.sprites = {};
+        /**
+         * Map of problem ids -> lists of GameObjectActors.
+         * GameObjectActors control adding to this.
+         */
+        this.gameObjectActors = {};
         this.isReady = false;
         PIXI = require('pixi.js');
     }
@@ -68,22 +77,16 @@ export default class MyRenderer extends Renderer {
             this.viewportWidth,
             this.viewportHeight
         );
+
         document.body
             .querySelector('.pixiContainer')
             .appendChild(this.renderer.view);
 
-        this.renderer.view.addEventListener('dragover', (ev) => {
-            ev.preventDefault();
-        });
-
-        this.renderer.view.addEventListener('drop', (ev) => {
-            let id = ev.dataTransfer.getData('text');
-            let position = this.canvasToWorldCoordinates(
-                ev.clientX,
-                ev.clientY
-            );
-            this.gameEngine.makeDefence(id, position);
-        });
+        this.dragHandler = new DragHandler(
+            this.renderer.view,
+            this.gameEngine,
+            this
+        );
     }
 
     setupStage() {
@@ -93,6 +96,7 @@ export default class MyRenderer extends Renderer {
         let texture = PIXI.loader.resources.background.texture;
 
         let tilingSprite = new PIXI.extras.TilingSprite(texture, WIDTH, HEIGHT);
+
         this.camera.addChild(tilingSprite);
         this.layer1.addChild(this.camera);
     }
@@ -107,6 +111,21 @@ export default class MyRenderer extends Renderer {
             this.camera.y += this.viewportHeight / 2 - position.y;
             this.prev = position.clone();
         }
+    }
+
+    /**
+     *  Make the renderer reflect a new solution by player `playerId`.
+     */
+    onReceiveSolution(problemId, playerId) {
+        for (const actor of this.gameObjectActors[problemId]) {
+            actor.handleSolutionFromPlayer(playerId);
+        }
+    }
+
+    addGameObjectActor(problemId, actor) {
+        if (this.gameObjectActors[problemId])
+            this.gameObjectActors[problemId].push(actor);
+        else this.gameObjectActors[problemId] = [actor];
     }
 
     draw(t, dt) {
@@ -126,8 +145,7 @@ export default class MyRenderer extends Renderer {
                     sprite.y = objData.position.y;
                 }
             }
-
-            this.renderer.render(this.layer1);
         }
+        this.renderer.render(this.layer1);
     }
 }

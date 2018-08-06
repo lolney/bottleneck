@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from 'react-bootstrap';
 import Draggable from 'react-draggable';
 import PropTypes from 'prop-types';
 
@@ -57,12 +58,26 @@ export default class Window extends React.Component {
             >
                 <div style={windowStyle}>
                     <div className="bar" style={barStyle}>
-                        <div
+                        <Button
                             onClick={this.props.close}
-                            style={{ float: 'right', padding: '1px' }}
+                            style={{
+                                position: 'absolute',
+                                right: '1px',
+                                top: '1px',
+                                padding: '1px',
+                                background: 'rgba(241, 241, 241, 0.0)',
+                                border: 'none'
+                            }}
                         >
-                            X
-                        </div>
+                            <div>
+                                <img
+                                    src="assets/x.svg"
+                                    alt="close-button"
+                                    height="15px"
+                                    width="15px"
+                                />
+                            </div>
+                        </Button>
                     </div>
                     <div style={bodyStyle}>{this.props.children}</div>
                 </div>

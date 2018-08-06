@@ -53,7 +53,7 @@ export default class Windows extends React.Component {
 
     findKey(key) {
         let i = this.state.order.findIndex((elem) => elem == key);
-        if (i == undefined) {
+        if (i == -1) {
             throw new Error(`Could not find window key '${key}'`);
         }
         return i;
@@ -141,5 +141,8 @@ export default class Windows extends React.Component {
 }
 
 Windows.propTypes = {
-    children: PropTypes.array
+    children: PropTypes.oneOfType([
+        PropTypes.arrayOf(PropTypes.element),
+        PropTypes.element
+    ])
 };

@@ -19,6 +19,8 @@ export default class PlayerAvatar extends DynamicObject {
             this.playerId = props.playerId;
         }
         this.class = PlayerAvatar;
+        this.width = 25;
+        this.height = 25;
     }
 
     onAddToWorld(gameEngine) {

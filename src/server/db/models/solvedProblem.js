@@ -10,9 +10,10 @@ module.exports = (sequelize, DataTypes) => {
         updatedAt: DataTypes.DATE
     });
     SolvedProblem.associate = function(models) {
-        SolvedProblem.belongsTo(models.user);
-    };
-    SolvedProblem.associate = function(models) {
+        SolvedProblem.belongsTo(models.user, {
+            foreignKey: 'userId',
+            constraints: false
+        });
         SolvedProblem.belongsTo(models.problem, {
             foreignKey: 'problemId',
             constraints: false
