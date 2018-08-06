@@ -22,14 +22,13 @@ export function bin(array) {
 export default class Problem extends React.Component {
     constructor(props) {
         super(props);
-
         this.checkIfSelected = this.checkIfSelected.bind(this);
 
         this.state = Problem.getDerivedStateFromProps(props, {});
     }
 
     static getDerivedStateFromProps(props, state) {
-        let subproblems = bin(props.solvedProblems);
+        let subproblems = bin(props.data);
         let keys = Object.keys(subproblems);
 
         if (state.selected != undefined && keys.includes(state.selected)) {
@@ -47,7 +46,7 @@ export default class Problem extends React.Component {
     render() {
         return (
             <div className="solutions-container bootstrap-styles">
-                {!this.props.solvedProblems.every(
+                {!this.props.data.every(
                     (solvedProblem) =>
                         solvedProblem.problem.subproblem == undefined
                 ) && (
@@ -76,7 +75,7 @@ export default class Problem extends React.Component {
                 )}
 
                 <Grid
-                    solvedProblems={this.props.solvedProblems.filter(
+                    solvedProblems={this.props.data.filter(
                         this.checkIfSelected
                     )}
                     openWindow={this.props.openWindow}
@@ -100,6 +99,6 @@ export default class Problem extends React.Component {
 }
 
 Problem.propTypes = {
-    solvedProblems: PropTypes.arrayOf(solvedProblem).isRequired,
+    data: PropTypes.arrayOf(solvedProblem).isRequired,
     openWindow: PropTypes.func.isRequired
 };

@@ -1,6 +1,8 @@
 import React from 'react';
 import '.././CSS/Solutions.scss';
-import SelectMenu from './SelectMenu.jsx';
+import SelectMenu from '../common/SelectMenu.jsx';
+import Problem from './Problem.jsx';
+import buttonConfig from './buttonConfig';
 import PropTypes from 'prop-types';
 
 export default class SolutionHistory extends React.Component {
@@ -17,11 +19,25 @@ export default class SolutionHistory extends React.Component {
 
     render() {
         return (
-            <SelectMenu
-                key={this.state.solvedProblems.length}
-                solvedProblems={this.state.solvedProblems}
-                openWindow={this.props.openWindow}
-            />
+            <div className="solutions">
+                <div className="header">
+                    <h1>Solution History</h1>
+                    <input
+                        type="search"
+                        id="solutionSearch"
+                        placeholder="Search for solutions.."
+                    />
+                </div>
+
+                <SelectMenu
+                    key={this.state.solvedProblems.length}
+                    data={this.state.solvedProblems}
+                    getType={(solved) => solved.problem.type}
+                    buttonConfig={buttonConfig}
+                >
+                    <Problem openWindow={this.props.openWindow} />
+                </SelectMenu>
+            </div>
         );
     }
 }

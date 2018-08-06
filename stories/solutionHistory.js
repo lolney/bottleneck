@@ -20,5 +20,7 @@ export const socket = {
 
 storiesOf('SolutionHistory', module)
     .addDecorator(StorybookConsole)
-    .add('Solution History', () => <SolutionHistory socket={socket} />)
+    .add('Solution History', () => (
+        <SolutionHistory openWindow={(code) => alert(code)} socket={socket} />
+    ))
     .add('Grid', () => <Grid solvedProblems={solvedProblems} />);
