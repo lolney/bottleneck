@@ -1,3 +1,332 @@
+import jsgraphs from 'js-graph-algorithms';
+import TwoVector from 'lance/serialize/TwoVector';
+
+export const WIDTH = 2000;
+export const HEIGHT = 1200;
+
+/**
+ * Can be generated or loaded from the database
+ */
 export default class GameWorld {
-    static generate() {}
+    constructor(objects) {
+        this.grid = new Grid();
+        /**
+         * Maps ids to objects
+         */
+        this.objects = {};
+
+        for (const obj of objects) {
+            this.update(obj);
+        }
+    }
+
+    static generate() {
+        let gameBounds = Bounds.fromDimensions(WIDTH, HEIGHT);
+        let halfBounds = gameBounds.scale(0.5, 1);
+        let mazeBounds = halfBounds.crop(0.25, 1, 0.4, 0.6);
+
+        let maze = new Maze(mazeBounds, 50, 10);
+        let objects = maze.createWalls();
+
+        // TODO: generate other connecting walls, objects
+        return new GameWorld(objects);
+    }
+
+    /**
+     *
+     * @param {TwoVector} start
+     * @param {TwoVector} end
+     */
+    pathfind(start, end) {
+        // TODO
+    }
+
+    /**
+     * Update the collision map for this object, or add it if it's not already added
+     * @param {*} obj
+     * @param {TwoVector} obj.position
+     * @param {number} obj.width
+     * @param {number} obj.height
+     * @param {number} obj.id
+     */
+    update(obj) {
+        let prev = this.objects[obj.id];
+        if (prev) {
+            this.grid.remove(prev);
+        }
+        this.objects[obj.id] = obj;
+        this.grid.add(obj);
+    }
+
+    remove(obj) {
+        this.grid.remove(obj);
+        delete this.objects[obj.id];
+    }
+}
+
+/**
+ * Assumes origin (x,y) = (0,0) is in the lower left
+ */
+export class Grid {
+    constructor(resolution = 1000) {
+        this.resolution = resolution;
+        this.grid = new Array(this.resolution * this.resolution);
+        for (let i = 0; i < this.grid.length; i++) {
+            this.grid[i] = 0;
+        }
+    }
+
+    /**
+     * Translate `obj` to grid coordinates
+     * @param {*} obj
+     * @param {TwoVector} obj.position
+     * @param {number} obj.width
+     * @param {number} obj.height
+     */
+    *getIndices(obj) {
+        let getX = (x) => Math.round(this.resolution * (x / WIDTH));
+        let getY = (y) => Math.round(this.resolution * (y / HEIGHT));
+
+        let width = getX(obj.width);
+        let height = getY(obj.height);
+        let left = getX(obj.position.x - obj.width / 2);
+        let bottom = getY(obj.position.y - obj.height / 2);
+
+        for (let x = 0; x < width; x++) {
+            for (let y = 0; y < height; y++) {
+                yield this.resolution * (left + x) + (bottom + y);
+            }
+        }
+    }
+
+    add(obj) {
+        for (const index of this.getIndices(obj)) {
+            this.grid[index]++;
+        }
+    }
+
+    remove(obj) {
+        for (const index of this.getIndices(obj)) {
+            this.grid[index]--;
+        }
+    }
+}
+
+class Bounds {
+    constructor(xLo, xHi, yLo, yHi) {
+        this.xLo = xLo;
+        this.xHi = xHi;
+        this.yLo = yLo;
+        this.yHi = yHi;
+    }
+
+    static fromDimensions(x, y) {
+        return new Bounds(0, x, 0, y);
+    }
+
+    getWidth() {
+        return this.xHi - this.xLo;
+    }
+
+    getHeight() {
+        return this.yHi - this.yLo;
+    }
+
+    scale(xScale, yScale) {
+        return Bounds.fromDimensions(this.xHi * xScale, this.yHi * yScale);
+    }
+
+    asArray() {
+        return [this.xLo, this.xHi, this.yLo, this.yHi];
+    }
+
+    crop(xLo, xHi, yLo, yHi) {
+        return new Bounds(
+            xLo * this.xHi + this.xLo,
+            xHi * this.xHi + this.xLo,
+            yLo * this.yHi + this.yLo,
+            yHi * this.yHi + this.yLo
+        );
+    }
+}
+
+class Maze {
+    constructor(bounds, corridorWidth, wallWidth) {
+        this.bounds = bounds;
+        this.corridorWidth = corridorWidth;
+        this.wallWidth = wallWidth;
+
+        this.graph = new MazeGraph(bounds, corridorWidth, wallWidth);
+    }
+
+    /**
+     * Map the abstract maze representation into game objects
+     */
+    createWalls() {
+        return this.graph.getWallObjects();
+    }
+}
+
+class MazeGraph {
+    constructor(maze) {
+        this.maze = maze;
+        let { bounds, corridorWidth, wallWidth } = maze;
+        let w = corridorWidth + wallWidth;
+
+        let nCorridors = (dim) => Math.round((dim - wallWidth) / w);
+        /**
+         * Number of columns (counting walls, not corridors)
+         */
+        this.nCols = 1 + nCorridors(bounds.getWidth());
+        this.nRows = 1 + nCorridors(bounds.getHeight());
+
+        this.graph = new jsgraphs.WeightedGraph(this.nCols * this.nRows);
+        for (const node of this.getNodes()) {
+            node.add();
+        }
+    }
+
+    *getNodes() {
+        for (let i = 0; i < this.nRows; i++) {
+            for (let j = 0; j < this.nCols; j++) {
+                yield new MazeNode(this, i, j);
+            }
+        }
+    }
+
+    *getOuterWalls() {
+        for (let i of [0, this.nRows - 1]) {
+            for (let j = 0; j < this.nCols; j++) {
+                yield new MazeNode(this, i, j);
+            }
+        }
+
+        for (let j of [0, this.nCols - 1]) {
+            for (let i = 0; i < this.nRows; i++) {
+                yield new MazeNode(this, i, j);
+            }
+        }
+    }
+
+    getMazeNode(index) {
+        let i = Math.floor(index / this.nCols);
+        let j = index % this.nCols;
+        return new MazeNode(this, i, j);
+    }
+
+    getWalls() {
+        let kruskal = new jsgraphs.KruskalMST();
+        return kruskal.mst.map(
+            (edge) =>
+                new MazeWall(
+                    this.maze,
+                    this.getMazeNode(edge.v),
+                    this.getMazeNode(edge.w)
+                )
+        );
+    }
+
+    getWallObjects() {
+        return this.getWalls().map((wall) => {
+            return {
+                position: wall.getPosition(),
+                width: wall.width,
+                height: wall.height
+            };
+        });
+    }
+}
+
+class MazeWall {
+    /**
+     *
+     * @param {Maze} maze
+     * @param {MazeNode} start
+     * @param {MazeNode} end
+     */
+    constructor(maze, start, end) {
+        let width = end.i - start.i;
+        let height = end.j - start.j;
+        let scale = maze.wallWidth + maze.corridorWidth;
+
+        let isHorizonal = width != 0;
+
+        this.width = isHorizonal ? maze.wallWidth : width * scale;
+        this.height = isHorizonal ? height * scale : maze.wallWidth;
+
+        let xPadding = isHorizonal ? 0 : maze.wallWidth / 2;
+        let yPadding = isHorizonal ? maze.wallWidth / 2 : 0;
+
+        this.start = new TwoVector(
+            xPadding + maze.bounds.xLo + start.i * scale,
+            yPadding + maze.bounds.yHi - start.j * scale
+        );
+        this.end = new TwoVector();
+    }
+
+    getPosition() {
+        return this.getStart().add(new TwoVector(this.width / 2, 0));
+    }
+
+    getStart() {
+        return this.start.clone();
+    }
+
+    getEnd() {
+        return this.end.clone();
+    }
+}
+
+class MazeNode {
+    constructor(mazeGraph, i, j) {
+        this.mazeGraph = mazeGraph;
+        this.i = i;
+        this.j = j;
+    }
+
+    getIndex(i = 0, j = 0) {
+        return (this.i + i) * this.mazeGraph.nCols + (this.j + j);
+    }
+
+    /**
+     * Add randomly-weighted edges to bottom and right neighbors, if they exist
+     */
+    add() {
+        if (!this.isRightWall()) {
+            let weight = this.isHorizontalWall() ? 0 : Math.random();
+            this.addRight(weight);
+        }
+        if (!this.isBottomWall()) {
+            let weight = this.isVerticalWall() ? 0 : Math.random();
+            this.addBottom(weight);
+        }
+    }
+
+    isVerticalWall() {
+        return this.i == 0 || this.isBottomWall();
+    }
+
+    isBottomWall() {
+        return this.i < this.mazeGraph.nRows - 1;
+    }
+
+    isRightWall() {
+        return this.j == this.mazeGraph.nCols - 1;
+    }
+
+    isHorizontalWall() {
+        return this.j == 0 || this.isRightWall();
+    }
+
+    addRight(weight) {
+        this.mazeGraph.addEdge(
+            new jsgraphs.Edge(this.getIndex(), this.getIndex(0, 1), weight)
+        );
+    }
+
+    addBottom(weight) {
+        this.mazeGraph.addEdge(
+            new jsgraphs.Edge(this.getIndex(), this.getIndex(1), weight)
+        );
+    }
 }

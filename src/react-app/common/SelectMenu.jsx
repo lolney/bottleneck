@@ -2,6 +2,11 @@ import React from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
+/**
+ * Represents a two-paned interface that filters the prop `data`
+ * by the type that the user selects in the button pane. The filtered
+ * data is then passed to the supplied children, appearing in the second pane.
+ */
 export default class SelectMenu extends React.Component {
     constructor(props) {
         super(props);
@@ -20,26 +25,24 @@ export default class SelectMenu extends React.Component {
     render() {
         return (
             <div className="searchResults">
-                <div className="sidebar">
-                    <div className="bootstrap-styles">
-                        <ButtonToolbar>
-                            {this.state.types.map((type) => (
-                                <SelectItem
-                                    onClick={() => {
-                                        this.setState({
-                                            selected:
-                                                this.state.selected == type
-                                                    ? undefined
-                                                    : type
-                                        });
-                                    }}
-                                    active={this.state.selected == type}
-                                    key={type}
-                                    {...this.props.buttonConfig[type]}
-                                />
-                            ))}
-                        </ButtonToolbar>
-                    </div>
+                <div className="sidebar bootstrap-styles">
+                    <ButtonToolbar>
+                        {this.state.types.map((type) => (
+                            <SelectItem
+                                onClick={() => {
+                                    this.setState({
+                                        selected:
+                                            this.state.selected == type
+                                                ? undefined
+                                                : type
+                                    });
+                                }}
+                                active={this.state.selected == type}
+                                key={type}
+                                {...this.props.buttonConfig[type]}
+                            />
+                        ))}
+                    </ButtonToolbar>
                 </div>
 
                 {React.Children.map(this.props.children, (child) =>
@@ -91,5 +94,9 @@ SelectItem.propTypes = {
 SelectMenu.propTypes = {
     data: PropTypes.arrayOf(PropTypes.object).isRequired,
     getType: PropTypes.func.isRequired,
-    buttonConfig: PropTypes.object.isRequired
+    buttonConfig: PropTypes.object.isRequired,
+    children: PropTypes.oneOfType([
+        PropTypes.arrayOf(PropTypes.element),
+        PropTypes.element
+    ])
 };
