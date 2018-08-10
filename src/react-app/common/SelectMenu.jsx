@@ -92,9 +92,24 @@ SelectItem.propTypes = {
 };
 
 SelectMenu.propTypes = {
+    /** Array to be filtered */
     data: PropTypes.arrayOf(PropTypes.object).isRequired,
+    /**
+     * Determines the types that the component filters by.
+     * Function that takes an element of `data` and returns
+     * the type of that object.
+     */
     getType: PropTypes.func.isRequired,
+    /**
+     * Determines how the button for each type appears.
+     * Expects a dictionary that maps each type to an object with
+     * keys `src`, `alt`, and `text`.
+     */
     buttonConfig: PropTypes.object.isRequired,
+    /**
+     * Elements to which the component passes the filtered list,
+     * as the prop `data`.
+     */
     children: PropTypes.oneOfType([
         PropTypes.arrayOf(PropTypes.element),
         PropTypes.element
