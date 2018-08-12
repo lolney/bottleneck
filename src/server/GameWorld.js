@@ -65,7 +65,7 @@ export default class GameWorld {
 }
 
 /**
- * Assumes origin (x,y) = (0,0) is in the lower left
+ * Assumes origin (x,y) = (0,0) is in the upper left
  */
 export class Grid {
     constructor(resolution = 1000) {
@@ -112,7 +112,7 @@ export class Grid {
     }
 }
 
-class Bounds {
+export class Bounds {
     constructor(xLo, xHi, yLo, yHi) {
         this.xLo = xLo;
         this.xHi = xHi;
@@ -140,6 +140,16 @@ class Bounds {
         return [this.xLo, this.xHi, this.yLo, this.yHi];
     }
 
+    subtractLeft(x) {
+        this.xLo += x;
+        return this;
+    }
+
+    subtractRight(x) {
+        this.xHi -= x;
+        return this;
+    }
+
     crop(xLo, xHi, yLo, yHi) {
         return new Bounds(
             xLo * this.xHi + this.xLo,
@@ -150,13 +160,31 @@ class Bounds {
     }
 }
 
-class Maze {
+export class Maze {
     constructor(bounds, corridorWidth, wallWidth) {
         this.bounds = bounds;
         this.corridorWidth = corridorWidth;
         this.wallWidth = wallWidth;
 
-        this.graph = new MazeGraph(bounds, corridorWidth, wallWidth);
+        let w = corridorWidth + wallWidth;
+        let nCorridors = (dim) => Math.floor((dim - wallWidth) / w);
+
+        /**
+         * Number of columns (counting walls, not corridors)
+         */
+        let nCols = 1 + nCorridors(bounds.getWidth());
+        let nRows = 1 + nCorridors(bounds.getHeight());
+
+        // Scale corridor width so that it fits the vertical space
+        this.corridorWidth =
+            (bounds.getHeight() - wallWidth) / (nRows - 1) - wallWidth;
+
+        // Adjust width to put extra space on the left
+        let effectiveWidth =
+            (this.corridorWidth + wallWidth) * (nCols - 1) + wallWidth;
+        this.bounds.subtractLeft(this.bounds.getWidth() - effectiveWidth);
+
+        this.graph = new MazeGraph(this, nCols, nRows);
     }
 
     /**
@@ -167,23 +195,16 @@ class Maze {
     }
 }
 
-class MazeGraph {
-    constructor(maze) {
+export class MazeGraph {
+    constructor(maze, nCols, nRows) {
         this.maze = maze;
-        let { bounds, corridorWidth, wallWidth } = maze;
-        let w = corridorWidth + wallWidth;
-
-        let nCorridors = (dim) => Math.round((dim - wallWidth) / w);
         /**
          * Number of columns (counting walls, not corridors)
          */
-        this.nCols = 1 + nCorridors(bounds.getWidth());
-        this.nRows = 1 + nCorridors(bounds.getHeight());
+        this.nCols = nCols;
+        this.nRows = nRows;
 
         this.graph = new jsgraphs.WeightedGraph(this.nCols * this.nRows);
-        for (const node of this.getNodes()) {
-            node.add();
-        }
     }
 
     *getNodes() {
@@ -214,7 +235,10 @@ class MazeGraph {
         return new MazeNode(this, i, j);
     }
 
-    getWalls() {
+    createWalls() {
+        for (const node of this.getNodes()) {
+            node.add();
+        }
         let kruskal = new jsgraphs.KruskalMST();
         return kruskal.mst.map(
             (edge) =>
@@ -227,7 +251,7 @@ class MazeGraph {
     }
 
     getWallObjects() {
-        return this.getWalls().map((wall) => {
+        return this.createWalls().map((wall) => {
             return {
                 position: wall.getPosition(),
                 width: wall.width,
@@ -237,7 +261,7 @@ class MazeGraph {
     }
 }
 
-class MazeWall {
+export class MazeWall {
     /**
      *
      * @param {Maze} maze
@@ -246,22 +270,23 @@ class MazeWall {
      */
     constructor(maze, start, end) {
         let width = end.i - start.i;
-        let height = end.j - start.j;
         let scale = maze.wallWidth + maze.corridorWidth;
 
-        let isHorizonal = width != 0;
+        let isHorizonal = width == 0;
 
-        this.width = isHorizonal ? maze.wallWidth : width * scale;
-        this.height = isHorizonal ? height * scale : maze.wallWidth;
+        this.width = isHorizonal ? scale : maze.wallWidth;
+        this.height = isHorizonal ? maze.wallWidth : maze.corridorWidth;
 
-        let xPadding = isHorizonal ? 0 : maze.wallWidth / 2;
-        let yPadding = isHorizonal ? maze.wallWidth / 2 : 0;
+        let xPadding = 0;
+        let yPadding = isHorizonal
+            ? maze.wallWidth / 2
+            : maze.wallWidth + maze.corridorWidth / 2;
 
         this.start = new TwoVector(
             xPadding + maze.bounds.xLo + start.i * scale,
-            yPadding + maze.bounds.yHi - start.j * scale
+            yPadding + maze.bounds.yLo + start.j * scale
         );
-        this.end = new TwoVector();
+        this.end = new TwoVector(this.start.x + this.width, this.start.y);
     }
 
     getPosition() {
@@ -277,7 +302,7 @@ class MazeWall {
     }
 }
 
-class MazeNode {
+export class MazeNode {
     constructor(mazeGraph, i, j) {
         this.mazeGraph = mazeGraph;
         this.i = i;
@@ -292,6 +317,7 @@ class MazeNode {
      * Add randomly-weighted edges to bottom and right neighbors, if they exist
      */
     add() {
+        console.log('adding');
         if (!this.isRightWall()) {
             let weight = this.isHorizontalWall() ? 0 : Math.random();
             this.addRight(weight);
@@ -307,7 +333,7 @@ class MazeNode {
     }
 
     isBottomWall() {
-        return this.i < this.mazeGraph.nRows - 1;
+        return this.i == this.mazeGraph.nRows - 1;
     }
 
     isRightWall() {
@@ -319,13 +345,13 @@ class MazeNode {
     }
 
     addRight(weight) {
-        this.mazeGraph.addEdge(
+        this.mazeGraph.graph.addEdge(
             new jsgraphs.Edge(this.getIndex(), this.getIndex(0, 1), weight)
         );
     }
 
     addBottom(weight) {
-        this.mazeGraph.addEdge(
+        this.mazeGraph.graph.addEdge(
             new jsgraphs.Edge(this.getIndex(), this.getIndex(1), weight)
         );
     }
