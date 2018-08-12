@@ -32,6 +32,10 @@ export default class GameWorld {
         return new GameWorld(objects);
     }
 
+    getObjects() {
+        return Object.values(this.objects);
+    }
+
     /**
      *
      * @param {TwoVector} start
@@ -239,7 +243,7 @@ export class MazeGraph {
         for (const node of this.getNodes()) {
             node.add();
         }
-        let kruskal = new jsgraphs.KruskalMST();
+        let kruskal = new jsgraphs.KruskalMST(this.graph);
         return kruskal.mst.map(
             (edge) =>
                 new MazeWall(
@@ -251,13 +255,12 @@ export class MazeGraph {
     }
 
     getWallObjects() {
-        return this.createWalls().map((wall) => {
-            return {
-                position: wall.getPosition(),
-                width: wall.width,
-                height: wall.height
-            };
-        });
+        return this.createWalls().map((wall) => ({
+            id: Math.random(),
+            position: wall.getPosition(),
+            width: wall.width,
+            height: wall.height
+        }));
     }
 }
 
@@ -317,7 +320,6 @@ export class MazeNode {
      * Add randomly-weighted edges to bottom and right neighbors, if they exist
      */
     add() {
-        console.log('adding');
         if (!this.isRightWall()) {
             let weight = this.isHorizontalWall() ? 0 : Math.random();
             this.addRight(weight);

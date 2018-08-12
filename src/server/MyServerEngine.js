@@ -5,6 +5,7 @@ import Avatar from '../common/Avatar';
 import PlayerAvatar from '../common/PlayerAvatar';
 import Controller from './Controller';
 import { objects } from './db';
+import GameWorld from './GameWorld';
 
 export default class MyServerEngine extends ServerEngine {
     constructor(io, gameEngine, inputOptions) {
@@ -16,7 +17,7 @@ export default class MyServerEngine extends ServerEngine {
         super.start();
         let objs = await objects();
         this.gameEngine.makeTrees(objs);
-        this.gameEngine.makeWalls();
+        this.gameEngine.addObjects(GameWorld.generate().getObjects());
         this.gameEngine.on('collisionStart', MyServerEngine.collision);
     }
 

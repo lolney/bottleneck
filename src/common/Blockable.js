@@ -10,9 +10,6 @@ export default class Blockable extends DynamicObject {
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
         this.class = Blockable;
-        // TODO: add this to a config
-        this.width = 200;
-        this.height = 50;
     }
 
     onAddToWorld(gameEngine) {

@@ -47,6 +47,12 @@ export default class MyGameEngine extends GameEngine {
         }
     }
 
+    addObjects(objects) {
+        for (const obj of objects) {
+            this.addObjectToWorld(new Blockable(this, null, obj));
+        }
+    }
+
     makeWalls() {
         for (let i = 0; i < 10; i++) {
             this.addObjectToWorld(
@@ -54,7 +60,9 @@ export default class MyGameEngine extends GameEngine {
                     position: new TwoVector(
                         Math.random() * WIDTH,
                         Math.random() * HEIGHT
-                    )
+                    ),
+                    width: 200,
+                    height: 50
                 })
             );
         }
@@ -143,10 +151,11 @@ export default class MyGameEngine extends GameEngine {
 
             let shouldRevert = this.causesCollision();
             if (shouldRevert) {
-                this.trace.info( () =>
-                    `reverting position: ${player.position.x},${
-                        player.position.y
-                    }
+                this.trace.info(
+                    () =>
+                        `reverting position: ${player.position.x},${
+                            player.position.y
+                        }
                     } => ${x},${y}`
                 );
                 player.position.x = x;
