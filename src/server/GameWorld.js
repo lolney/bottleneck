@@ -23,6 +23,8 @@ export default class GameWorld {
     static generate() {
         let gameBounds = Bounds.fromDimensions(WIDTH, HEIGHT);
         let halfBounds = gameBounds.scale(0.48, 1);
+        let objects = [];
+
         let { left, top, bottom, center: mazeBounds } = halfBounds.crop(
             0.25,
             1,
@@ -34,11 +36,18 @@ export default class GameWorld {
         const corridorWidth = 60;
 
         let maze = new Maze(mazeBounds, corridorWidth, wallWidth);
-        let objects = maze.createWalls();
+        objects = objects.concat(maze.createWalls());
         objects.push(left.topWall(wallWidth));
         objects.push(left.bottomWall(wallWidth));
         objects.push(top.rightWall(wallWidth));
         objects.push(bottom.rightWall(wallWidth));
+
+        let mirrored = objects.map((obj) => ({
+            ...obj,
+            id: Math.random(),
+            position: new TwoVector(2 * WIDTH - obj.position.x, obj.position.y)
+        }));
+        objects = objects.concat(mirrored);
 
         // TODO: generate other connecting walls, objects
         return new GameWorld(objects);
@@ -146,6 +155,15 @@ export class Bounds {
 
     getHeight() {
         return this.yHi - this.yLo;
+    }
+
+    mirror(x) {
+        return new Bounds(
+            2 * x - this.xHi,
+            2 * x - this.xLo,
+            this.yLo,
+            this.yHi
+        );
     }
 
     scale(xScale, yScale) {
