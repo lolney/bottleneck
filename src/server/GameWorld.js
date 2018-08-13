@@ -23,7 +23,7 @@ export default class GameWorld {
     static generate() {
         let gameBounds = Bounds.fromDimensions(WIDTH, HEIGHT);
         let halfBounds = gameBounds.scale(0.5, 1);
-        let mazeBounds = halfBounds.crop(0.25, 1, 0.4, 0.6);
+        let mazeBounds = halfBounds.crop(0.25, 0.95, 0.3, 0.7);
 
         let maze = new Maze(mazeBounds, 50, 10);
         let objects = maze.createWalls();
@@ -243,15 +243,42 @@ export class MazeGraph {
         for (const node of this.getNodes()) {
             node.add();
         }
+        this.addOpening(this.nRows / 2, this.nCols - 1);
+
         let kruskal = new jsgraphs.KruskalMST(this.graph);
-        return kruskal.mst.map(
-            (edge) =>
-                new MazeWall(
-                    this.maze,
-                    this.getMazeNode(edge.v),
-                    this.getMazeNode(edge.w)
-                )
-        );
+        return kruskal.mst
+            .filter(this.isEntrance())
+            .map(
+                (edge) =>
+                    new MazeWall(
+                        this.maze,
+                        this.getMazeNode(edge.v),
+                        this.getMazeNode(edge.w)
+                    )
+            );
+    }
+
+    getIndex(i, j) {
+        return i * this.nCols + j;
+    }
+
+    isEntrance() {
+        let upper = this.getIndex(this.nRows / 2, 0);
+        let lower = this.getIndex(this.nRows / 2 + 1, 0);
+        return (edge) => !(edge.v == upper && edge.w == lower);
+    }
+
+    getEdge(i, j, vertical = true) {
+        let firstIndex = this.getIndex(i, j);
+        let secondIndex = vertical
+            ? this.getIndex(i + 1, j)
+            : this.getIndex(i, j + 1);
+        return this.graph.edge(firstIndex, secondIndex);
+    }
+
+    addOpening(i, j, vertical = true) {
+        let edge = this.getEdge(i, j, vertical);
+        edge.weight = 1000;
     }
 
     getWallObjects() {
@@ -272,10 +299,10 @@ export class MazeWall {
      * @param {MazeNode} end
      */
     constructor(maze, start, end) {
-        let width = end.i - start.i;
+        let width = end.j - start.j;
         let scale = maze.wallWidth + maze.corridorWidth;
 
-        let isHorizonal = width == 0;
+        let isHorizonal = width == 1;
 
         this.width = isHorizonal ? scale : maze.wallWidth;
         this.height = isHorizonal ? maze.wallWidth : maze.corridorWidth;
@@ -286,8 +313,8 @@ export class MazeWall {
             : maze.wallWidth + maze.corridorWidth / 2;
 
         this.start = new TwoVector(
-            xPadding + maze.bounds.xLo + start.i * scale,
-            yPadding + maze.bounds.yLo + start.j * scale
+            xPadding + maze.bounds.xLo + start.j * scale,
+            yPadding + maze.bounds.yLo + start.i * scale
         );
         this.end = new TwoVector(this.start.x + this.width, this.start.y);
     }
@@ -321,17 +348,17 @@ export class MazeNode {
      */
     add() {
         if (!this.isRightWall()) {
-            let weight = this.isHorizontalWall() ? 0 : Math.random();
+            let weight = this.isHorizontalWall() ? 0 : Math.random() + 100;
             this.addRight(weight);
         }
         if (!this.isBottomWall()) {
-            let weight = this.isVerticalWall() ? 0 : Math.random();
+            let weight = this.isVerticalWall() ? 0 : Math.random() + 100;
             this.addBottom(weight);
         }
     }
 
     isVerticalWall() {
-        return this.i == 0 || this.isBottomWall();
+        return this.j == 0 || this.isRightWall();
     }
 
     isBottomWall() {
@@ -343,7 +370,7 @@ export class MazeNode {
     }
 
     isHorizontalWall() {
-        return this.j == 0 || this.isRightWall();
+        return this.i == 0 || this.isBottomWall();
     }
 
     addRight(weight) {
