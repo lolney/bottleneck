@@ -22,11 +22,23 @@ export default class GameWorld {
 
     static generate() {
         let gameBounds = Bounds.fromDimensions(WIDTH, HEIGHT);
-        let halfBounds = gameBounds.scale(0.5, 1);
-        let mazeBounds = halfBounds.crop(0.25, 0.95, 0.3, 0.7);
+        let halfBounds = gameBounds.scale(0.48, 1);
+        let { left, top, bottom, center: mazeBounds } = halfBounds.crop(
+            0.25,
+            1,
+            0.3,
+            0.7
+        );
 
-        let maze = new Maze(mazeBounds, 50, 10);
+        const wallWidth = 20;
+        const corridorWidth = 60;
+
+        let maze = new Maze(mazeBounds, corridorWidth, wallWidth);
         let objects = maze.createWalls();
+        objects.push(left.topWall(wallWidth));
+        objects.push(left.bottomWall(wallWidth));
+        objects.push(top.rightWall(wallWidth));
+        objects.push(bottom.rightWall(wallWidth));
 
         // TODO: generate other connecting walls, objects
         return new GameWorld(objects);
@@ -137,7 +149,10 @@ export class Bounds {
     }
 
     scale(xScale, yScale) {
-        return Bounds.fromDimensions(this.xHi * xScale, this.yHi * yScale);
+        return Bounds.fromDimensions(
+            this.xLo + this.xHi * xScale,
+            this.yLo + this.yHi * yScale
+        );
     }
 
     asArray() {
@@ -154,13 +169,56 @@ export class Bounds {
         return this;
     }
 
-    crop(xLo, xHi, yLo, yHi) {
-        return new Bounds(
-            xLo * this.xHi + this.xLo,
-            xHi * this.xHi + this.xLo,
-            yLo * this.yHi + this.yLo,
-            yHi * this.yHi + this.yLo
+    topWall(wallWidth) {
+        let center = new TwoVector(
+            this.xLo + this.getWidth() / 2,
+            this.yLo + wallWidth / 2
         );
+        return {
+            id: Math.random(),
+            position: center,
+            width: this.getWidth(),
+            height: wallWidth
+        };
+    }
+
+    rightWall(wallWidth) {
+        let center = new TwoVector(
+            this.xHi - wallWidth / 2,
+            this.yLo + this.getHeight() / 2
+        );
+        return {
+            id: Math.random(),
+            position: center,
+            width: wallWidth,
+            height: this.getHeight()
+        };
+    }
+
+    bottomWall(wallWidth) {
+        let center = new TwoVector(
+            this.xLo + this.getWidth() / 2,
+            this.yHi - wallWidth / 2
+        );
+        return {
+            id: Math.random(),
+            position: center,
+            width: this.getWidth(),
+            height: wallWidth
+        };
+    }
+
+    crop(xLo, xHi, yLo, yHi) {
+        let left = xLo * this.xHi + this.xLo;
+        let right = xHi * this.xHi + this.xLo;
+        let bottom = yHi * this.yHi + this.yLo;
+        let top = yLo * this.yHi + this.yLo;
+        return {
+            left: new Bounds(this.xLo, left, top, bottom),
+            top: new Bounds(this.xLo, this.xHi, this.yLo, top),
+            bottom: new Bounds(this.xLo, this.xHi, bottom, this.yHi),
+            center: new Bounds(left, right, top, bottom)
+        };
     }
 }
 
@@ -243,7 +301,7 @@ export class MazeGraph {
         for (const node of this.getNodes()) {
             node.add();
         }
-        this.addOpening(this.nRows / 2, this.nCols - 1);
+        this.addOpening(Math.floor(this.nRows / 2), this.nCols - 1);
 
         let kruskal = new jsgraphs.KruskalMST(this.graph);
         return kruskal.mst
