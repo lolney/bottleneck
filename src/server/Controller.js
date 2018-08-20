@@ -2,6 +2,7 @@ import ImageProblem from '../problem-engine/ImageProblem';
 import BinaryTreeProblem from '../problem-engine/BinaryTreeProblem';
 import { problem, addSolution } from './db';
 import { getSolutions, solvedProblem, setPlayerId } from './db/index';
+import { siegeItems } from '../../stories/fixtures';
 
 function serialize(problem) {
     switch (problem.type) {
@@ -71,10 +72,21 @@ class Controller {
             });
         };
 
+        socket.on('siegeItems', () => {
+            socket.emit('siegeItems', siegeItems);
+        });
+
         solutionHandler();
         solvedProblemsHandler();
         problemHandler();
         this.socketsMap[playerId] = socket;
+    }
+
+    addBot(socket, data) {
+        this.gameEngine.addBot(socket.playerId, {
+            type: 'collector',
+            problemId: data.problemId
+        });
     }
 
     async pushProblem(playerId, dbId) {
