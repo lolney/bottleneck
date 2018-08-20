@@ -34,6 +34,7 @@ export default class MenuContainer extends React.Component {
                     openWindow={this.openMenu}
                     addWindow={this.props.addWindow}
                     removeWindow={this.props.removeWindow}
+                    socket={this.props.socket}
                 />
             </div>
         );

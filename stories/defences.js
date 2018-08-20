@@ -6,40 +6,26 @@ import DefencesBrowser from '../src/react-app/defences/DefencesBrowser.jsx';
 import { WindowsContainer } from './windows';
 import '../src/react-app/CSS/Defences.scss';
 
-class DefencesReporter extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { drop: 'none yet', dragover: 'none yet' };
-    }
+import { siegeItems } from './fixtures';
+import { solvedProblems } from './fixtures';
 
-    render() {
-        return (
-            <div>
-                <div>{JSON.stringify(this.state.drop)}</div>
-                <div>{JSON.stringify(this.state.dragover)}</div>
-                <WindowsContainer>
-                    <DefencesBrowser
-                        imageSrcs={[
-                            'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png'
-                        ]}
-                    />
-                    <canvas
-                        onDragOver={(ev) => {
-                            ev.preventDefault();
-                            this.setState({ dragover: ev.pageX });
-                        }}
-                        onDrop={(ev) => {
-                            let data = ev.dataTransfer.getData('text');
-                            this.setState({ drop: data });
-                        }}
-                        width="500"
-                        Height="500"
-                    />
-                </WindowsContainer>
-            </div>
-        );
-    }
-}
+export const socket = {
+    on: (event, callback) => {
+        let data;
+        if (event == 'siegeItems') {
+            data = siegeItems;
+        } else if (event == 'solvedProblems') {
+            data = solvedProblems;
+        }
+        window.setTimeout(() => {
+            callback(siegeItems);
+        }, 50);
+    },
+    emit: () => {}
+};
+
 storiesOf('Adding defences', module)
     .addDecorator(StorybookConsole)
-    .add('Dragging demo', () => <DefencesReporter />);
+    .add('Defences Browser', () => (
+        <DefencesBrowser openWindow={(code) => alert(code)} socket={socket} />
+    ));

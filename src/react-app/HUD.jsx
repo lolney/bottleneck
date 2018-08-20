@@ -37,6 +37,7 @@ export default class HUD extends React.Component {
                             this.props.addWindow(
                                 <DefencesBrowser
                                     imageSrcs={['assets/sprites/tree1.png']}
+                                    socket={this.props.socket}
                                 />,
                                 'defencesBrowser'
                             )
@@ -67,5 +68,6 @@ export default class HUD extends React.Component {
 HUD.propTypes = {
     openWindow: PropTypes.func.isRequired,
     addWindow: PropTypes.func.isRequired,
-    removeWindow: PropTypes.func.isRequired
+    removeWindow: PropTypes.func.isRequired,
+    socket: PropTypes.object.isRequired
 };
