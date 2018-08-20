@@ -83,9 +83,7 @@ export class App extends React.Component {
                         socket={this.state.socket}
                     />
                 )}
-                <Windows ref={this.windows}>
-                    <DefencesBrowser imageSrcs={['assets/sprites/tree1.png']} />
-                </Windows>
+                <Windows ref={this.windows} />
                 {this.state.socket && (
                     <MenuContainer
                         addWindow={this.addWindow}

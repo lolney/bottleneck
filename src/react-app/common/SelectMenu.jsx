@@ -1,6 +1,9 @@
 import React from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
+//import '.././CSS/Defences.scss';
+//import '.././CSS/GeneralClasses.scss';
+//import '.././CSS/SelectMenu.scss';
 
 /**
  * Represents a two-paned interface that filters the prop `data`
@@ -24,7 +27,7 @@ export default class SelectMenu extends React.Component {
 
     render() {
         return (
-            <div className="searchResults">
+            <div className="selectMenu">
                 <div className="sidebar bootstrap-styles">
                     <ButtonToolbar>
                         {this.state.types.map((type) => (
@@ -55,6 +58,7 @@ export default class SelectMenu extends React.Component {
     }
 
     checkIfSelected(item) {
+        console.log(this.props.getType(item) == this.state.selected);
         return this.state.selected == undefined
             ? item
             : this.props.getType(item) == this.state.selected;

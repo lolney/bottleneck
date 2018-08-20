@@ -1,11 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import SelectMenu from '../common/SelectMenu.jsx';
 import DraggableDefence from './DraggableDefence.jsx';
 import { ButtonToolbar, Button } from 'react-bootstrap';
+import buttonConfig from './buttonConfig';
 import '.././CSS/Defences.scss';
 import '.././CSS/GeneralClasses.scss';
+import SiegeItemResults from './SiegeItemResults.jsx';
 
 export default class DefencesBrowser extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            siegeItems: []
+        };
+        this.props.socket.emit('siegeItems');
+        this.props.socket.on('siegeItems', (data) => {
+            this.setState({ siegeItems: data });
+        });
+    }
     render() {
         return (
             <div className="defences">
@@ -13,47 +26,17 @@ export default class DefencesBrowser extends React.Component {
                     <h1>Siege Tools</h1>
                 </div>
                 <div className="body">
-                    <div className="sidebar">
-                        <div className="bootstrap-styles">
-                            <ButtonToolbar>
-                                <Button>
-                                    <div className="column">
-                                        <img
-                                            src="assets/noun_Sword.png"
-                                            alt="sword"
-                                            height="50"
-                                            width="50"
-                                        />
-                                    </div>
-                                    <h2 className="column">Offensive</h2>
-                                </Button>
-                                <Button>
-                                    <div className="column">
-                                        <img
-                                            src="assets/Shield.png"
-                                            alt="shield"
-                                            height="50"
-                                            width="50"
-                                        />
-                                    </div>
-                                    <h2 className="column">Defensive</h2>
-                                </Button>
-                            </ButtonToolbar>
-                        </div>
-                    </div>
-                    <div className="defences">
-                        <p> Drag and drop a defence to add it to the game </p>
-                        <div className="defences-grid">
-                            {this.props.imageSrcs.map((src) => (
-                                <div key={src}>
-                                    <DraggableDefence
-                                        src={src}
-                                        className="defence"
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                    <SelectMenu
+                        key={this.state.siegeItems.length}
+                        data={this.state.siegeItems}
+                        getType={(siege) => siege.type}
+                        buttonConfig={buttonConfig}
+                    >
+                        <SiegeItemResults
+                            data={this.state.siegeItems}
+                            key={this.state.siegeItems.length}
+                        />
+                    </SelectMenu>
                 </div>
             </div>
         );
@@ -61,5 +44,5 @@ export default class DefencesBrowser extends React.Component {
 }
 
 DefencesBrowser.propTypes = {
-    imageSrcs: PropTypes.arrayOf(PropTypes.string).isRequired
+    socket: PropTypes.object.isRequired
 };
