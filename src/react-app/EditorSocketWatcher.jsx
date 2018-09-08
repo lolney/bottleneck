@@ -25,7 +25,7 @@ export default class EditorSocketWatcher {
         });
 
         socket.on('solvedProblem', (data) => {
-            this.windows.current.addWindow(
+            addWindow(
                 <EditorModal
                     onSolution={() => {}}
                     problem={data.problem}
