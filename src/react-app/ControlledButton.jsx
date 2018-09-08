@@ -20,6 +20,7 @@ export default class ControlledButton extends React.Component {
     render() {
         return (
             <Button
+                className={this.props.className}
                 onClick={() => {
                     if (this.state.selected == false) {
                         this.props.addWindow();
@@ -34,6 +35,7 @@ export default class ControlledButton extends React.Component {
                         }
                     }
                 }}
+                active={this.state.selected}
             >
                 {this.props.children}
             </Button>

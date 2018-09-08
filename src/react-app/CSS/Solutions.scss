@@ -20,6 +20,8 @@
       flex-wrap: wrap;
       justify-content: center;
       margin: 5vh;
+      @import "./GeneralClasses.scss";
+
       .btn {
         white-space: normal;
         margin: 0.5vw;
@@ -31,6 +33,7 @@
         color: black;
         float: right;
         flex: 50%;
+        box-shadow: none;
       }
     }
   }

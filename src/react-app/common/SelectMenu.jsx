@@ -1,5 +1,5 @@
 import React from 'react';
-import { ButtonToolbar, Button } from 'react-bootstrap';
+import { ButtonToolbar, Button, ToggleButton } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 //import '.././CSS/Defences.scss';
 //import '.././CSS/GeneralClasses.scss';
@@ -68,7 +68,11 @@ export default class SelectMenu extends React.Component {
 class SelectItem extends React.Component {
     render() {
         return (
-            <Button onClick={this.props.onClick} active={this.props.active}>
+            <Button
+                className="menu-button"
+                onClick={this.props.onClick}
+                active={this.props.active}
+            >
                 <div className="column">
                     <img
                         src={this.props.src}

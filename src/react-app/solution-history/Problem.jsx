@@ -51,6 +51,7 @@ export default class Problem extends React.Component {
                         solvedProblem.problem.subproblem == undefined
                 ) && (
                     <DropdownButton
+                        className="menu-button"
                         bsStyle="default"
                         bsSize="large"
                         title={`Subproblem: ${this.state.selected}`}

@@ -10,7 +10,7 @@ export default class HUD extends React.Component {
         return (
             <div className="hud-buttons bootstrap-styles">
                 <ButtonToolbar>
-                    <Button className="top-btn">
+                    <Button className="top-btn hud-button">
                         <div className="hud-column">
                             <img
                                 alt="log icon"
@@ -21,7 +21,7 @@ export default class HUD extends React.Component {
                         </div>
                         <div className="hud-column-2">txt</div>
                     </Button>
-                    <Button>
+                    <Button className="hud-button">
                         <div className="hud-column">
                             <img
                                 alt="rock icon"
@@ -33,6 +33,7 @@ export default class HUD extends React.Component {
                         <div className="hud-column-2">txt</div>
                     </Button>
                     <ControlledButton
+                        className="hud-button"
                         addWindow={() =>
                             this.props.addWindow(
                                 <DefencesBrowser
@@ -56,9 +57,13 @@ export default class HUD extends React.Component {
                         </div>
                         <div className="hud-column-2">Siege Tools</div>
                     </ControlledButton>
-                    <Button className="btm-btn" onClick={this.props.openWindow}>
+                    <ControlledButton
+                        className="btm-btn hud-button"
+                        addWindow={this.props.openWindow}
+                        removeWindow={this.props.openWindow}
+                    >
                         Menu
-                    </Button>
+                    </ControlledButton>
                 </ButtonToolbar>
             </div>
         );

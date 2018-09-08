@@ -31,6 +31,7 @@ class Menu extends React.Component {
                 <div className="menuElements bootstrap-styles">
                     <ButtonToolbar>
                         <ControlledButton
+                            className="menu-button"
                             addWindow={() =>
                                 this.props.addWindow(
                                     <SolutionHistory
@@ -53,8 +54,8 @@ class Menu extends React.Component {
                         >
                             Solution History
                         </ControlledButton>
-                        <Button>Settings</Button>
-                        <Button>Exit Game</Button>
+                        <Button className="menu-button">Settings</Button>
+                        <Button className="menu-button">Exit Game</Button>
                     </ButtonToolbar>
                 </div>
             </div>

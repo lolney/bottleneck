@@ -10,6 +10,7 @@ export default class Grid extends React.Component {
                 <div className="solution-grid">
                     {this.props.solvedProblems.map((solved) => (
                         <Button
+                            className="menu-button"
                             key={solved.problem.name}
                             onClick={() =>
                                 this.props.openWindow(solved.code, solved.id)

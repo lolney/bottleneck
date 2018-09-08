@@ -17,3 +17,49 @@ h1 {
 input {
   width: 50%;
 }
+
+@mixin selected-button {
+  &:hover,
+  &.hover {
+    outline: none;
+    box-shadow: none;
+    background-color: #d8d8d8;
+    &:focus,
+    &.focus {
+      outline: none;
+      background-color: #d8d8d8;
+    }
+  }
+  &:active,
+  &.active {
+    outline: none;
+    background-color: #c0c0c0;
+    &:focus,
+    &.focus {
+      outline: none;
+      background-color: #c0c0c0;
+    }
+  }
+}
+
+.menu-button {
+  @include selected-button;
+  background-color: white;
+  &:focus,
+  &.focus {
+    outline: none;
+    box-shadow: none;
+    background-color: white;
+  }
+}
+
+.hud-button {
+  @include selected-button;
+  background-color: rgba(255, 255, 255, 0.7);
+  &:focus,
+  &.focus {
+    outline: none;
+    box-shadow: none;
+    background-color: rgba(255, 255, 255, 0.7);
+  }
+}
