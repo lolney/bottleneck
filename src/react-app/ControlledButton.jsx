@@ -26,13 +26,7 @@ export default class ControlledButton extends React.Component {
                         this.props.addWindow(() => this.toggleSelect());
                         this.toggleSelect();
                     } else {
-                        try {
-                            this.props.removeWindow();
-                            this.toggleSelect();
-                        } catch (error) {
-                            console.log(error);
-                            this.props.addWindow();
-                        }
+                        this.props.removeWindow();
                     }
                 }}
                 active={this.state.selected}
