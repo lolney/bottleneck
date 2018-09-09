@@ -20,7 +20,6 @@ export default class MenuContainer extends React.Component {
     }
 
     render() {
-        console.log(this.props);
         return (
             <div>
                 {this.state.isOpen && (

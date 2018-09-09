@@ -34,13 +34,14 @@ export default class HUD extends React.Component {
                     </Button>
                     <ControlledButton
                         className="hud-button"
-                        addWindow={() =>
+                        addWindow={(callback) =>
                             this.props.addWindow(
                                 <DefencesBrowser
                                     imageSrcs={['assets/sprites/tree1.png']}
                                     socket={this.props.socket}
                                 />,
-                                'defencesBrowser'
+                                'defencesBrowser',
+                                callback
                             )
                         }
                         removeWindow={() =>

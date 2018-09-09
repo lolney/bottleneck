@@ -51,8 +51,8 @@ export class App extends React.Component {
         this.removeWindow = this.removeWindow.bind(this);
     }
 
-    addWindow(elem, key) {
-        this.windows.current.addWindow(elem, key);
+    addWindow(elem, key, callback) {
+        this.windows.current.addWindow(elem, key, callback);
     }
 
     removeWindow(key) {

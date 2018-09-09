@@ -30,7 +30,8 @@ export default class Windows extends React.Component {
 
         this.state = {
             windows: windows,
-            order: Object.keys(windows)
+            order: Object.keys(windows),
+            callbacks: {}
         };
     }
 
@@ -105,16 +106,22 @@ export default class Windows extends React.Component {
         return { key: key, window: window, ref: ref };
     }
 
-    addWindow(child, userKey) {
+    addWindow(child, userKey, callback) {
         if (userKey in this.state.windows) return false;
 
         let { key, window } = this.createWindow(child, userKey);
         let windows = { ...this.state.windows };
         windows[key] = window;
 
+        let callbacks = { ...this.state.callbacks };
+        if (callback) {
+            callbacks[key] = callback;
+        }
+
         this.setState({
             windows: windows,
-            order: [...this.state.order, key]
+            order: [...this.state.order, key],
+            callbacks: callbacks
         });
         return true;
     }
@@ -124,12 +131,19 @@ export default class Windows extends React.Component {
         let windows = { ...this.state.windows };
         delete windows[key];
 
+        let callbacks = { ...this.state.callbacks };
+        if (callbacks[key]) {
+            callbacks[key]();
+            delete callbacks[key];
+        }
+
         this.setState({
             windows: windows,
             order: [
                 ...this.state.order.slice(0, i),
                 ...this.state.order.slice(i + 1)
-            ]
+            ],
+            callbacks: callbacks
         });
     }
 
