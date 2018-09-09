@@ -1,5 +1,6 @@
 import jsgraphs from 'js-graph-algorithms';
 import TwoVector from 'lance/serialize/TwoVector';
+import PF from 'pathfinding';
 
 export const WIDTH = 2000;
 export const HEIGHT = 1200;
@@ -8,8 +9,9 @@ export const HEIGHT = 1200;
  * Can be generated or loaded from the database
  */
 export default class GameWorld {
-    constructor(objects) {
+    constructor(objects, starts) {
         this.grid = new Grid();
+        this.starts = starts;
         /**
          * Maps ids to objects
          */
@@ -18,6 +20,8 @@ export default class GameWorld {
         for (const obj of objects) {
             this.update(obj);
         }
+
+        this.pathFinder = new PF.AStarFinder();
     }
 
     static generate() {
@@ -42,15 +46,22 @@ export default class GameWorld {
         objects.push(top.rightWall(wallWidth));
         objects.push(bottom.rightWall(wallWidth));
 
+        let mirror = (pos) => new TwoVector(2 * WIDTH - pos.x, pos.y);
+        let start = left.getCenter();
+
         let mirrored = objects.map((obj) => ({
             ...obj,
             id: Math.random(),
-            position: new TwoVector(2 * WIDTH - obj.position.x, obj.position.y)
+            position: mirror(obj.position)
         }));
         objects = objects.concat(mirrored);
 
         // TODO: generate other connecting walls, objects
-        return new GameWorld(objects);
+        return new GameWorld(objects, [start, mirror(start)]);
+    }
+
+    getStartingPosition(playerId) {
+        return this.starts[playerId % this.starts.length];
     }
 
     getObjects() {
@@ -63,7 +74,22 @@ export default class GameWorld {
      * @param {TwoVector} end
      */
     pathfind(start, end) {
-        // TODO
+        console.log(start.x, start.y, end.x, end.y);
+        start = this.grid.worldCoordsToCell(start);
+        end = this.grid.worldCoordsToCell(end);
+
+        let grid = new PF.Grid(this.grid.to2DArray());
+        console.log(start.x, start.y, end.x, end.y);
+        let path = this.pathFinder.findPath(
+            start.x,
+            start.y,
+            end.x,
+            end.y,
+            grid
+        );
+        return path
+            .map((coords) => this.grid.cellToWorldCoords(coords))
+            .map((coords) => `${coords[0]},${coords[1]}`);
     }
 
     /**
@@ -124,6 +150,34 @@ export class Grid {
         }
     }
 
+    worldCoordsToCell(worldCoords) {
+        let x = worldCoords.x % WIDTH;
+        let y = worldCoords.y % HEIGHT;
+        return new TwoVector(
+            Math.round(this.resolution * (x / WIDTH)),
+            Math.round(this.resolution * (y / HEIGHT))
+        );
+    }
+
+    cellToWorldCoords(cell) {
+        return [
+            (cell[0] * WIDTH) / this.resolution,
+            (cell[1] * HEIGHT) / this.resolution
+        ];
+    }
+
+    /**
+     * Return an array of columns as arrays
+     */
+    to2DArray() {
+        let outArray = new Array(this.resolution);
+        for (let x = 0; x < this.resolution; x++) {
+            let start = x * this.resolution;
+            outArray[x] = this.grid.slice(start, start + this.resolution);
+        }
+        return outArray;
+    }
+
     add(obj) {
         for (const index of this.getIndices(obj)) {
             this.grid[index]++;
@@ -155,6 +209,14 @@ export class Bounds {
 
     getHeight() {
         return this.yHi - this.yLo;
+    }
+
+    getCenter() {
+        let center = (lo, hi) => lo + (hi - lo) / 2;
+        return new TwoVector(
+            center(this.xLo, this.xHi),
+            center(this.yLo, this.yHi)
+        );
     }
 
     mirror(x) {

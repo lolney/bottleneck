@@ -4,6 +4,7 @@ import GameEngine from 'lance/GameEngine';
 import SimplePhysicsEngine from 'lance/physics/SimplePhysicsEngine';
 import PlayerAvatar from './PlayerAvatar';
 import Avatar from './Avatar';
+import BotAvatar from './BotAvatar';
 import Blockable from './Blockable';
 import TwoVector from 'lance/serialize/TwoVector';
 import { resolve } from 'url';
@@ -26,6 +27,7 @@ export default class MyGameEngine extends GameEngine {
         serializer.registerClass(PlayerAvatar);
         serializer.registerClass(Avatar);
         serializer.registerClass(Blockable);
+        serializer.registerClass(BotAvatar);
     }
 
     start() {
@@ -51,6 +53,10 @@ export default class MyGameEngine extends GameEngine {
         for (const obj of objects) {
             this.addObjectToWorld(new Blockable(this, null, obj));
         }
+    }
+
+    addBot(options) {
+        return this.addObjectToWorld(new BotAvatar(this, null, options));
     }
 
     makeWalls() {
@@ -120,6 +126,10 @@ export default class MyGameEngine extends GameEngine {
             return true;
         }
         return false;
+    }
+
+    closestResource(problemId) {
+        return this.world.queryObject({ problemId: problemId });
     }
 
     processInput(inputData, playerId) {

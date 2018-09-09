@@ -10,14 +10,15 @@ import GameWorld from './GameWorld';
 export default class MyServerEngine extends ServerEngine {
     constructor(io, gameEngine, inputOptions) {
         super(io, gameEngine, inputOptions);
-        Controller.attachGameEngine(gameEngine);
+        this.gameWorld = GameWorld.generate();
+        Controller.attachGameEngine(gameEngine, this.gameWorld);
     }
 
     async start() {
         super.start();
         let objs = await objects();
         this.gameEngine.makeTrees(objs);
-        this.gameEngine.addObjects(GameWorld.generate().getObjects());
+        this.gameEngine.addObjects(this.gameWorld.getObjects());
         this.gameEngine.on('collisionStart', MyServerEngine.collision);
     }
 

@@ -23,70 +23,68 @@ class Controller {
         this.socketsMap = {};
     }
 
-    attachGameEngine(gameEngine) {
+    attachGameEngine(gameEngine, gameWorld) {
         this.gameEngine = gameEngine;
+        this.gameWorld = gameWorld;
     }
     /**
      * Register the routes for `socket`
      * @param {socketIO} socket
      */
     addPlayer(playerId, socket) {
-        let solutionHandler = () => {
-            socket.on('solution', async (data) => {
-                if (!socket.auth) throw new Error('User is not authenticated');
+        socket.on('solution', async (data) => {
+            if (!socket.auth) throw new Error('User is not authenticated');
 
-                let userId = socket.client.userId;
-                await addSolution(userId, data.problemId, data.code);
+            let userId = socket.client.userId;
+            await addSolution(userId, data.problemId, data.code);
 
-                let solutions = await getSolutions(userId);
-                socket.emit('solvedProblems', solutions);
-                // Let all players know this problem has been solved
-                this.gameEngine.markAsSolved(data.problemId, socket.playerId);
-                for (const sock of Object.values(this.socketsMap)) {
-                    sock.emit('solution', {
-                        problemId: data.problemId,
-                        playerId: socket.playerId
-                    });
-                }
-            });
-        };
-
-        let solvedProblemsHandler = () => {
-            socket.on('solvedProblems', async () => {
-                if (!socket.auth) throw new Error('User is not authenticated');
-
-                let userId = socket.client.userId;
-                let solutions = await getSolutions(userId);
-                socket.emit('solvedProblems', solutions);
-            });
-        };
-
-        let problemHandler = () => {
-            socket.on('solvedProblem', async (data) => {
-                let solved = await solvedProblem(data.id);
-                let problem = await serialize(solved.problem);
-                socket.emit('solvedProblem', {
-                    ...solved,
-                    problem: problem
+            let solutions = await getSolutions(userId);
+            socket.emit('solvedProblems', solutions);
+            // Let all players know this problem has been solved
+            this.gameEngine.markAsSolved(data.problemId, socket.playerId);
+            for (const sock of Object.values(this.socketsMap)) {
+                sock.emit('solution', {
+                    problemId: data.problemId,
+                    playerId: socket.playerId
                 });
+            }
+
+            this.addBot(socket.playerId, data.problemId);
+        });
+
+        socket.on('solvedProblems', async () => {
+            if (!socket.auth) throw new Error('User is not authenticated');
+
+            let userId = socket.client.userId;
+            let solutions = await getSolutions(userId);
+            socket.emit('solvedProblems', solutions);
+        });
+
+        socket.on('solvedProblem', async (data) => {
+            let solved = await solvedProblem(data.id);
+            let problem = await serialize(solved.problem);
+            socket.emit('solvedProblem', {
+                ...solved,
+                problem: problem
             });
-        };
+        });
 
         socket.on('siegeItems', () => {
             socket.emit('siegeItems', siegeItems);
         });
 
-        solutionHandler();
-        solvedProblemsHandler();
-        problemHandler();
         this.socketsMap[playerId] = socket;
     }
 
-    addBot(socket, data) {
-        this.gameEngine.addBot(socket.playerId, {
+    addBot(playerId, problemId) {
+        let position = this.gameWorld.getStartingPosition(playerId);
+        let bot = this.gameEngine.addBot({
             type: 'collector',
-            problemId: data.problemId
+            playerId: playerId,
+            problemId: problemId,
+            position: position
         });
+        bot.attach(this.gameWorld, this.gameEngine);
     }
 
     async pushProblem(playerId, dbId) {

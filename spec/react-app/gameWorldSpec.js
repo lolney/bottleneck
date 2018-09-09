@@ -46,6 +46,11 @@ describe('Grid', () => {
         expect(i).toEqual(50 * 50);
     });
 
+    it('correctly converts worldCoordsToCell', () => {
+        let grid = new Grid(1000);
+        grid.worldCoordsToCell(new TwoVector(3880, 600));
+    });
+
     it('does okay with an object that is small compared to the grid', () => {
         let grid = new Grid(100);
         let obj = {
@@ -136,34 +141,34 @@ describe('MazeWall', () => {
 });
 
 describe('Maze', () => {
-    it('calculates ncols and nrows correctly', () => {
+    it('calculates nCols and nRows correctly', () => {
         let maze = new Maze(BOUNDS, CORRIDOR_WIDTH, WALL_WIDTH);
 
         let mg = maze.graph;
 
-        expect(mg.ncols).toEqual(11);
-        expect(mg.nrows).toEqual(11);
+        expect(mg.nCols).toEqual(11);
+        expect(mg.nRows).toEqual(11);
     });
 
-    it('calculates ncols and nrows correctly with uneven bounds', () => {
+    it('calculates nCols and nRows correctly with uneven bounds', () => {
         let maze = new Maze(Bounds.fromDimensions(20, 20), 8, 1);
 
         let mg = maze.graph;
 
-        expect(mg.ncols).toEqual(3);
-        expect(mg.nrows).toEqual(3);
+        expect(mg.nCols).toEqual(3);
+        expect(mg.nRows).toEqual(3);
 
         expect(maze.bounds.xLo).toEqual(0);
         expect(maze.corridorWidth).toEqual(8.5);
     });
 
-    it('calculates ncols and nrows correctly with uneven dimensions', () => {
+    it('calculates nCols and nRows correctly with uneven dimensions', () => {
         let maze = new Maze(Bounds.fromDimensions(20, 21), 8, 1);
 
         let mg = maze.graph;
 
-        expect(mg.ncols).toEqual(3);
-        expect(mg.nrows).toEqual(3);
+        expect(mg.nCols).toEqual(3);
+        expect(mg.nRows).toEqual(3);
 
         expect(maze.bounds.xLo).toEqual(-1);
         expect(maze.corridorWidth).toEqual(9);
@@ -181,11 +186,11 @@ describe('MazeNode', () => {
         for (const node of maze.graph.getNodes()) {
             node.add();
         }
-        for (let i = 0; i < maze.graph.ncols; i++) {
-            if (i == maze.graph.ncols - 1) {
+        for (let i = 0; i < maze.graph.nCols; i++) {
+            if (i == maze.graph.nCols - 1 || i == 0) {
                 expect(maze.graph.graph.adj(i).length).toEqual(2);
             } else {
-                expect(maze.graph.graph.adj(i).length).toEqual(1);
+                expect(maze.graph.graph.adj(i).length).toEqual(3);
             }
         }
     });
