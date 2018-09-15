@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import HUD from './HUD.jsx';
 import Menu from './Menu.jsx';
 import MenuWindow from './Menu.jsx';
@@ -17,11 +18,11 @@ export default class MenuContainer extends React.Component {
     }
 
     componentDidMount() {
-        window.addEventListener('keydown', this.escMenu);
+        ReactDOM.findDOMNode(this).addEventListener('keydown', this.escMenu);
     }
 
     componentWillUnmount() {
-        window.removeEventListener('keydown', this.escMenu);
+        ReactDOM.findDOMNode(this).removeEventListener('keydown', this.escMenu);
     }
 
     escMenu(event) {
