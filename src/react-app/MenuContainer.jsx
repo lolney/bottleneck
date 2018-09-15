@@ -13,9 +13,35 @@ export default class MenuContainer extends React.Component {
             isOpen: false
         };
         this.openMenu = this.openMenu.bind(this);
+        this.escMenu = this.escMenu.bind(this);
     }
 
-    openMenu() {
+    componentDidMount() {
+        window.addEventListener('keydown', this.escMenu);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('keydown', this.escMenu);
+    }
+
+    escMenu(event) {
+        if (event.code != 'Escape') return;
+
+        if (this.state.isOpen == true) {
+            this.openMenu(this.callback);
+            event.stopPropagation();
+        }
+    }
+
+    openMenu(callback) {
+        if (callback) {
+            this.callback = callback;
+        }
+        if (this.callback) {
+            if (this.state.isOpen == true) {
+                this.callback();
+            }
+        }
         this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
     }
 
