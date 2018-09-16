@@ -2,6 +2,8 @@
   display: flex;
   flex-flow: column;
 
+  @import "./GeneralClasses.scss";
+
   .body {
     background: white;
     border: 1px solid #ddd;

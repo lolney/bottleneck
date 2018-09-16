@@ -1,9 +1,6 @@
 import React from 'react';
 import { ButtonToolbar, Button, ToggleButton } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-//import '.././CSS/Defences.scss';
-//import '.././CSS/GeneralClasses.scss';
-//import '.././CSS/SelectMenu.scss';
 
 /**
  * Represents a two-paned interface that filters the prop `data`

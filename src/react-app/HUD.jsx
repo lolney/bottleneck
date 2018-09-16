@@ -1,6 +1,5 @@
 import React from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
-import './CSS/HUD.scss';
 import DefencesBrowser from './defences/DefencesBrowser.jsx';
 import PropTypes from 'prop-types';
 import ControlledButton from './ControlledButton.jsx';

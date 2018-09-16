@@ -6,6 +6,13 @@ import MenuContainer from '../src/react-app/MenuContainer.jsx';
 import Windows from '../src/react-app/Windows.jsx';
 import { socket } from './defences.js';
 
+import '../src/react-app/CSS/Defences.scss';
+import '../src/react-app/CSS/HUD.scss';
+import '../src/react-app/CSS/Defences.scss';
+import '../src/react-app/CSS/Solutions.scss';
+import '../src/react-app/CSS/Menu.scss';
+import '../src/react-app/CSS/MenuWindow.scss';
+
 export class MenuWindows extends React.Component {
     constructor(props) {
         super(props);

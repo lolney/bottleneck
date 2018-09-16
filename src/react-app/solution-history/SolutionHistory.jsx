@@ -1,5 +1,4 @@
 import React from 'react';
-import '.././CSS/Solutions.scss';
 import SelectMenu from '../common/SelectMenu.jsx';
 import Problem from './Problem.jsx';
 import buttonConfig from './buttonConfig';

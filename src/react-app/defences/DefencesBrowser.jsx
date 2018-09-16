@@ -4,8 +4,6 @@ import SelectMenu from '../common/SelectMenu.jsx';
 import DraggableDefence from './DraggableDefence.jsx';
 import { ButtonToolbar, Button } from 'react-bootstrap';
 import buttonConfig from './buttonConfig';
-import '.././CSS/Defences.scss';
-import '.././CSS/GeneralClasses.scss';
 import SiegeItemResults from './SiegeItemResults.jsx';
 
 export default class DefencesBrowser extends React.Component {
