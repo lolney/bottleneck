@@ -32,7 +32,7 @@ class Menu extends React.Component {
                     <ButtonToolbar>
                         <ControlledButton
                             className="menu-button"
-                            addWindow={() =>
+                            addWindow={(callback) =>
                                 this.props.addWindow(
                                     <SolutionHistory
                                         socket={this.props.socket}
@@ -45,7 +45,8 @@ class Menu extends React.Component {
                                             );
                                         }}
                                     />,
-                                    'solutionHistory'
+                                    'solutionHistory',
+                                    callback
                                 )
                             }
                             removeWindow={() =>
