@@ -94,6 +94,12 @@ class Controller {
         let prob = await problem(dbId, socket.client.userId);
         let serialized = await serialize(prob.problem);
 
+        // TODO: temporary
+        if (!socket.bot) {
+            this.addBot(playerId, prob.id);
+            socket.bot = true;
+        }
+
         console.log('Authenticated: ', socket.auth);
         socket.emit('problem', { ...prob, problem: serialized });
     }

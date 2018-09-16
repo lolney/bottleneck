@@ -21,20 +21,42 @@ export default class BotAvatar extends DynamicObject {
         return 1;
     }
 
+    syncTo(other) {
+        super.syncTo(other);
+        console.log(`syncing ${other}`);
+    }
+
+    bendToCurrent(original, percent, worldSettings, isLocal, increments) {
+        let position = this.position.clone();
+        let velocity = this.velocity.clone();
+        super.bendToCurrent(
+            original,
+            percent,
+            worldSettings,
+            isLocal,
+            increments
+        );
+        this.position = position;
+        this.velocity = velocity;
+        console.log(`after bending: ${this}`);
+    }
+
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
         if (props) {
             this.playerId = props.playerId;
             this.problemId = props.problemId;
             this.position = props.position;
+            this.velocity = new TwoVector(0, 0);
         }
         this.isCalculating = false;
-        this.velocity = new TwoVector(0, 0);
         this.state = State.AT_BASE;
         this.class = BotAvatar;
         this.width = 25;
         this.height = 25;
         this.path = [];
+
+        console.log(`position, velocity: ${this.position}, ${this.velocity}`);
     }
 
     attach(gameWorld, gameEngine) {
@@ -49,7 +71,7 @@ export default class BotAvatar extends DynamicObject {
         this.checkPath(gameWorld, gameEngine);
         if (this.path.length > 0) {
             let next = this.getNextPosition();
-            console.log(next, this.position, this.maxSpeed);
+            console.log(next, this.position);
             this.velocity = next
                 .subtract(this.position)
                 .normalize()
@@ -61,6 +83,7 @@ export default class BotAvatar extends DynamicObject {
     newPath(gameWorld, gameEngine) {
         if (this.state == State.COLLECTING) {
             this.state = State.RETURNING;
+            console.log('position: ', this.position);
             return gameWorld.pathfind(
                 this.positon,
                 gameWorld.getStartingPosition(this.playerId)

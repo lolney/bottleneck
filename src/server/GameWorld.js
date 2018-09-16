@@ -20,6 +20,7 @@ export default class GameWorld {
         for (const obj of objects) {
             this.update(obj);
         }
+        this.grid.print();
 
         this.pathFinder = new PF.AStarFinder();
     }
@@ -46,7 +47,7 @@ export default class GameWorld {
         objects.push(top.rightWall(wallWidth));
         objects.push(bottom.rightWall(wallWidth));
 
-        let mirror = (pos) => new TwoVector(2 * WIDTH - pos.x, pos.y);
+        let mirror = (pos) => new TwoVector(WIDTH - pos.x, pos.y);
         let start = left.getCenter();
 
         let mirrored = objects.map((obj) => ({
@@ -74,12 +75,17 @@ export default class GameWorld {
      * @param {TwoVector} end
      */
     pathfind(start, end) {
-        console.log(start.x, start.y, end.x, end.y);
+        console.log('start x,y, end x,y', start.x, start.y, end.x, end.y);
         start = this.grid.worldCoordsToCell(start);
         end = this.grid.worldCoordsToCell(end);
 
+        if (this.grid.isOccupied(end)) {
+            throw new Error('end tile is unreachable');
+        }
+        this.grid.print(start, end);
+
         let grid = new PF.Grid(this.grid.to2DArray());
-        console.log(start.x, start.y, end.x, end.y);
+        console.log('grid start x,y, end x,y', start.x, start.y, end.x, end.y);
         let path = this.pathFinder.findPath(
             start.x,
             start.y,
@@ -150,6 +156,26 @@ export class Grid {
         }
     }
 
+    print(...coords) {
+        console.log(this.resolution);
+        let strs = [];
+        for (let x = 0; x < this.resolution; x += this.resolution / 100) {
+            let str = [];
+            for (let y = 0; y < this.resolution; y += this.resolution / 100) {
+                str.push(this.grid[x * this.resolution + y] == 0 ? '.' : '-');
+            }
+            strs.push(str);
+        }
+
+        for (const coord of coords) {
+            strs[Math.floor(coord.x / 10)][Math.floor(coord.y / 10)] = 'x';
+        }
+
+        for (const str of strs) {
+            console.log(str.join(''));
+        }
+    }
+
     worldCoordsToCell(worldCoords) {
         let x = worldCoords.x % WIDTH;
         let y = worldCoords.y % HEIGHT;
@@ -182,6 +208,10 @@ export class Grid {
         for (const index of this.getIndices(obj)) {
             this.grid[index]++;
         }
+    }
+
+    isOccupied(coords) {
+        return this.grid[coords.x * this.resolution + coords.y] != 0;
     }
 
     remove(obj) {
@@ -385,7 +415,7 @@ export class MazeGraph {
 
         let kruskal = new jsgraphs.KruskalMST(this.graph);
         return kruskal.mst
-            .filter(this.isEntrance())
+            .filter(this.isNotEntrance())
             .map(
                 (edge) =>
                     new MazeWall(
@@ -400,10 +430,15 @@ export class MazeGraph {
         return i * this.nCols + j;
     }
 
-    isEntrance() {
-        let upper = this.getIndex(this.nRows / 2, 0);
-        let lower = this.getIndex(this.nRows / 2 + 1, 0);
-        return (edge) => !(edge.v == upper && edge.w == lower);
+    isNotEntrance() {
+        let left = this.getIndex(this.nRows / 2, 0);
+        let lower = this.getIndex(this.nRows - 1, Math.floor(this.nCols / 2));
+        let upper = this.getIndex(0, Math.floor(this.nCols / 2));
+        return (edge) =>
+            [left, lower, upper].reduce(
+                (accum, entrance) => accum && edge.v != entrance,
+                true
+            );
     }
 
     getEdge(i, j, vertical = true) {
