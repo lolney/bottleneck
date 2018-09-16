@@ -10,7 +10,7 @@ export const HEIGHT = 1200;
  */
 export default class GameWorld {
     constructor(objects, starts) {
-        this.grid = new Grid();
+        this.grid = new Grid(100);
         this.starts = starts;
         /**
          * Maps ids to objects
@@ -62,7 +62,8 @@ export default class GameWorld {
     }
 
     getStartingPosition(playerId) {
-        return this.starts[playerId % this.starts.length];
+        console.log('start: ', this.starts[playerId % this.starts.length]);
+        return this.starts[playerId % this.starts.length].clone();
     }
 
     getObjects() {
@@ -74,15 +75,20 @@ export default class GameWorld {
      * @param {TwoVector} start
      * @param {TwoVector} end
      */
-    pathfind(start, end) {
-        console.log('start x,y, end x,y', start.x, start.y, end.x, end.y);
-        start = this.grid.worldCoordsToCell(start);
-        end = this.grid.worldCoordsToCell(end);
+    pathfind(mapStart, mapEnd) {
+        console.log(
+            'start x,y, end x,y',
+            mapStart.x,
+            mapStart.y,
+            mapEnd.x,
+            mapEnd.y
+        );
+        let start = this.grid.worldCoordsToCell(mapStart);
+        let end = this.grid.worldCoordsToCell(mapEnd);
 
         if (this.grid.isOccupied(end)) {
             throw new Error('end tile is unreachable');
         }
-        this.grid.print(start, end);
 
         let grid = new PF.Grid(this.grid.to2DArray());
         console.log('grid start x,y, end x,y', start.x, start.y, end.x, end.y);
@@ -93,6 +99,7 @@ export default class GameWorld {
             end.y,
             grid
         );
+        this.grid.print([start, end], path);
         return path
             .map((coords) => this.grid.cellToWorldCoords(coords))
             .map((coords) => `${coords[0]},${coords[1]}`);
@@ -149,26 +156,32 @@ export class Grid {
         let left = getX(obj.position.x - obj.width / 2);
         let bottom = getY(obj.position.y - obj.height / 2);
 
-        for (let x = 0; x < width; x++) {
-            for (let y = 0; y < height; y++) {
-                yield this.resolution * (left + x) + (bottom + y);
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                yield this.resolution * (bottom + y) + (left + x);
             }
         }
     }
 
-    print(...coords) {
-        console.log(this.resolution);
+    print(coords = [], path = []) {
+        let step = this.resolution / 100;
+
         let strs = [];
-        for (let x = 0; x < this.resolution; x += this.resolution / 100) {
+        for (let x = 0; x < this.resolution; x += step) {
             let str = [];
-            for (let y = 0; y < this.resolution; y += this.resolution / 100) {
-                str.push(this.grid[x * this.resolution + y] == 0 ? '.' : '-');
+            for (let y = 0; y < this.resolution; y += step) {
+                str.push(this.grid[x * this.resolution + y].toString());
             }
             strs.push(str);
         }
 
+        for (const coord of path) {
+            strs[Math.floor(coord[1] / step)][Math.floor(coord[0] / step)] =
+                'o';
+        }
+
         for (const coord of coords) {
-            strs[Math.floor(coord.x / 10)][Math.floor(coord.y / 10)] = 'x';
+            strs[Math.floor(coord.y / step)][Math.floor(coord.x / step)] = 'x';
         }
 
         for (const str of strs) {
