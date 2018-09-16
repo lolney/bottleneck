@@ -1,6 +1,7 @@
 import React from 'react';
 import Window from './Window.jsx';
 import PropTypes from 'prop-types';
+import Menu from './Menu.jsx';
 
 export default class Windows extends React.Component {
     constructor(props) {
@@ -16,6 +17,11 @@ export default class Windows extends React.Component {
         this.removeTop = this.removeTop.bind(this);
         this.getTopKey = this.getTopKey.bind(this);
         this.getTopOffset = this.getTopOffset.bind(this);
+
+        this.addMenu = this.addMenu.bind(this);
+        this.removeMenu = this.removeMenu.bind(this);
+        this.addObject = this.addObject.bind(this);
+        this.createMenu = this.createMenu.bind(this);
 
         let windows = {};
         if (props.children) {
@@ -106,12 +112,31 @@ export default class Windows extends React.Component {
         return { key: key, window: window, ref: ref };
     }
 
+    createMenu() {
+        return <Menu />;
+    }
+
+    addMenu(callback) {
+        if ('menu' in this.state.windows) return false;
+
+        let menu = this.createMenu();
+        return this.addObject('menu', menu, callback);
+    }
+
+    removeMenu() {
+        this.removeWindow('menu');
+    }
+
     addWindow(child, userKey, callback) {
         if (userKey in this.state.windows) return false;
 
         let { key, window } = this.createWindow(child, userKey);
+        return this.addObject(key, window, callback);
+    }
+
+    addObject(key, object, callback) {
         let windows = { ...this.state.windows };
-        windows[key] = window;
+        windows[key] = object;
 
         let callbacks = { ...this.state.callbacks };
         if (callback) {
