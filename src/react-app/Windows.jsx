@@ -127,6 +127,12 @@ export default class Windows extends React.Component {
         this.removeWindow('menu');
     }
 
+    /**
+     * Add a window that contains the element `child`
+     * @param {React.Element} child
+     * @param {*} userKey - optional - unique key used to identify the window
+     * @param {*} callback  - optional - called when the window is removed
+     */
     addWindow(child, userKey, callback) {
         if (userKey in this.state.windows) return false;
 
