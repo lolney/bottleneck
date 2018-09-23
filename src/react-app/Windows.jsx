@@ -52,7 +52,7 @@ export default class Windows extends React.Component {
     removeTop(event) {
         if (event.code != 'Escape') return;
 
-        let topKey = this.getTopKey();
+        let topKey = this.getTopKey(true);
         if (topKey != undefined) {
             this.removeWindow(topKey);
         }
@@ -77,9 +77,14 @@ export default class Windows extends React.Component {
         });
     }
 
-    getTopKey() {
+    getTopKey(includeMenu = false) {
         let length = this.state.order.length;
-        return this.state.order[length - 1];
+        let top = this.state.order[length - 1];
+        if (top === 'menu' && !includeMenu) {
+            return this.state.order[length - 2];
+        } else {
+            return top;
+        }
     }
 
     getTopOffset() {
@@ -140,7 +145,7 @@ export default class Windows extends React.Component {
      * @param {*} callback  - optional - called when the window is removed
      */
     addWindow(child, userKey, callback) {
-        if (userKey in this.state.windows) return false;
+        if (userKey in this.state.windows || userKey === 'menu') return false;
 
         let { key, window } = this.createWindow(child, userKey);
         return this.addObject(key, window, callback);
