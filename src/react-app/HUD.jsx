@@ -3,6 +3,7 @@ import { ButtonToolbar, Button } from 'react-bootstrap';
 import DefencesBrowser from './defences/DefencesBrowser.jsx';
 import PropTypes from 'prop-types';
 import ControlledButton from './ControlledButton.jsx';
+import Menu from './Menu.jsx';
 
 export default class HUD extends React.Component {
     render() {
@@ -59,8 +60,10 @@ export default class HUD extends React.Component {
                     </ControlledButton>
                     <ControlledButton
                         className="btm-btn hud-button"
-                        addWindow={this.props.openWindow}
-                        removeWindow={this.props.openWindow}
+                        addWindow={(callback) =>
+                            this.props.addMenu(callback, this.props.socket)
+                        }
+                        removeWindow={(key) => this.props.removeMenu()}
                     >
                         Menu
                     </ControlledButton>
@@ -71,8 +74,9 @@ export default class HUD extends React.Component {
 }
 
 HUD.propTypes = {
-    openWindow: PropTypes.func.isRequired,
+    addMenu: PropTypes.func.isRequired,
     addWindow: PropTypes.func.isRequired,
     removeWindow: PropTypes.func.isRequired,
+    removeMenu: PropTypes.func.isRequired,
     socket: PropTypes.object.isRequired
 };

@@ -54,11 +54,21 @@ export class App extends React.Component {
 
         this.windows = React.createRef();
         this.addWindow = this.addWindow.bind(this);
+        this.addMenu = this.addMenu.bind(this);
+        this.removeMenu = this.removeMenu.bind(this);
         this.removeWindow = this.removeWindow.bind(this);
     }
 
     addWindow(elem, key, callback) {
         this.windows.current.addWindow(elem, key, callback);
+    }
+
+    addMenu(callback, socket) {
+        this.windows.current.addMenu(callback, socket);
+    }
+
+    removeMenu() {
+        this.windows.current.removeMenu();
     }
 
     removeWindow(key) {
@@ -91,7 +101,9 @@ export class App extends React.Component {
                 )}
                 <Windows ref={this.windows} />
                 {this.state.socket && (
-                    <MenuContainer
+                    <HUD
+                        addMenu={this.addMenu}
+                        removeMenu={this.removeMenu}
                         addWindow={this.addWindow}
                         removeWindow={this.removeWindow}
                         socket={this.state.socket}

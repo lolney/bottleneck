@@ -36,6 +36,8 @@ export default class ControlledButton extends React.Component {
 }
 
 ControlledButton.propTypes = {
+    //    addMenu: PropTypes.func.isRequired,
+    //    removeMenu: PropTypes.func.isRequired,
     addWindow: PropTypes.func.isRequired,
     removeWindow: PropTypes.func.isRequired,
     children: PropTypes.oneOfType([

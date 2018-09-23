@@ -112,14 +112,20 @@ export default class Windows extends React.Component {
         return { key: key, window: window, ref: ref };
     }
 
-    createMenu() {
-        return <Menu />;
+    createMenu(socket) {
+        return (
+            <Menu
+                socket={socket}
+                addWindow={this.addWindow}
+                removeWindow={this.removeWindow}
+            />
+        );
     }
 
-    addMenu(callback) {
+    addMenu(callback, socket) {
         if ('menu' in this.state.windows) return false;
 
-        let menu = this.createMenu();
+        let menu = this.createMenu(socket);
         return this.addObject('menu', menu, callback);
     }
 
