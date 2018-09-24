@@ -24,7 +24,7 @@ export default class Blockable extends DynamicObject {
 
     onAddToWorld(gameEngine) {
         if (gameEngine.renderer) {
-            this.actor = new TilingActor(this, gameEngine.renderer, 'google');
+            this.actor = new TilingActor(this, gameEngine.renderer, 'wall');
         }
     }
 

@@ -13,7 +13,8 @@ export default class MyRenderer extends Renderer {
             player: 'assets/sprites/walking.json',
             tree: 'assets/sprites/Rock1.png',
             background: '/assets/grass.jpg',
-            google: 'assets/sprites/tree1.png'
+            google: 'assets/sprites/tree1.png',
+            wall: 'assets/rock-wall-2.png'
         };
     }
 
