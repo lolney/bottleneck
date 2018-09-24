@@ -10,7 +10,6 @@ import Game from './Game.jsx';
 import Windows from './Windows.jsx';
 
 import DefencesBrowser from './defences/DefencesBrowser.jsx';
-import MenuContainer from './MenuContainer.jsx';
 
 import './CSS/Defences.scss';
 import './CSS/HUD.scss';
