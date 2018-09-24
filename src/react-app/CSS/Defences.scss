@@ -41,6 +41,18 @@
       float: right;
       flex: 50%;
     }
+    .column {
+      margin-left: 1%;
+      min-height: 20px;
+      max-height: 80px;
+      margin-top: 1%;
+      flex: 50%;
+      color: black;
+      display: block;
+      font: 300 1em/1.5em "Lato", sans-serif;
+      font-size: 0.75em;
+      flex-wrap: wrap;
+    }
   }
 
   @import "./SelectMenu.scss";

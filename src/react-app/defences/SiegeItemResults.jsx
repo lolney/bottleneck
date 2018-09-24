@@ -10,11 +10,29 @@ export default class SiegeItemResults extends React.Component {
                 <div className="defences-grid">
                     {this.props.data.map((siegeItem) => (
                         <div key={this.props.data.name}>
-                            <DraggableDefence
-                                key={this.props.data.name}
-                                src={siegeItem.image}
-                                //className="defence"
-                            />
+                            <div className="column">
+                                <DraggableDefence
+                                    key={this.props.data.name}
+                                    src={siegeItem.image}
+                                    className="defence"
+                                />
+                            </div>
+                            <div className="column">
+                                {siegeItem.costwood}
+                                <img
+                                    alt="log icon"
+                                    src="assets/low-log.png"
+                                    height="20px"
+                                    width="20px"
+                                />
+                                {siegeItem.coststone}
+                                <img
+                                    alt="rock icon"
+                                    src="assets/low-rock-particle.png"
+                                    height="20px"
+                                    width="20px"
+                                />
+                            </div>
                         </div>
                     ))}
                 </div>
