@@ -7,9 +7,11 @@ import {
     getSolutions,
     chainIncludes,
     setPlayerId,
-    getUserId
+    getUserId,
+    addToResourceCount
 } from '../../../src/server/db';
 import models from '../../../src/server/db/models';
+import TwoVector from 'lance/serialize/TwoVector';
 
 describe('chainIncludes', () => {
     it('returns the correct answer for a single include', () => {
@@ -258,4 +260,35 @@ describe('setPlayerId', () => {
         expect(user.playerId).toEqual('1');
         await setPlayerId(user.id, null);
     });
+});
+
+fdescribe('addToResourceCount', () => {
+    let user;
+    let player;
+
+    beforeAll(async () => {
+        user = await createUser('test2', 'test2', 'test2@test.com');
+        player = await setPlayerId(user.id, 0, new TwoVector(0, 0));
+    });
+
+    afterAll(async () => {
+        let resource = await player.getResource();
+        await resource.destroy();
+        await player.destroy();
+        await user.destroy();
+    });
+
+    it('correctly adds resource count to newly-initialized player', async () => {
+        let gameObjects = await objects(); // get a random gameObject
+        let resource = gameObjects[0].resource;
+        let count = resource.count; // find resource count of
+
+        expect(count).toEqual(0);
+
+        let newCount = await addToResourceCount(player.id, resource.name, 10);
+
+        expect(newCount).toEqual(10);
+    });
+
+    it('throws an error when given incorrect player', async () => {});
 });

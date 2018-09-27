@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     GameObject.associate = function(models) {
         GameObject.belongsTo(models.problem);
+        GameObject.hasOne(models.resource);
     };
     return GameObject;
 };

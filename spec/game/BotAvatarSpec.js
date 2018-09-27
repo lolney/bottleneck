@@ -3,7 +3,7 @@ import GameWorld from '../../src/server/GameWorld';
 import TwoVector from 'lance/serialize/TwoVector';
 import { WIDTH, HEIGHT } from '../../src/server/GameWorld';
 
-fdescribe('BotAvatar', () => {
+describe('BotAvatar', () => {
     let avatar = new BotAvatar(this, null, {
         position: new TwoVector(WIDTH / 2, HEIGHT / 2)
     });

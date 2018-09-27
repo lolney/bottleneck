@@ -63,7 +63,7 @@ export async function up(queryInterface, Sequelize) {
         'SELECT id FROM "problems";'
     );
     const rows = inserted_problems[0];
-    return await queryInterface.bulkInsert(
+    await queryInterface.bulkInsert(
         'gameObjects',
         [...Array(NUM_OBJECTS).keys()].map((i) => {
             return {
@@ -76,6 +76,34 @@ export async function up(queryInterface, Sequelize) {
                 updatedAt: date()
             };
         }),
+        {}
+    );
+
+    const inserted_gameObjects = await queryInterface.sequelize.query(
+        'SELECT id FROM "gameObjects";'
+    );
+    const gameObject_rows = inserted_gameObjects[0];
+
+    const createResource = (resource) => {
+        return (i) => {
+            return {
+                id: uuidv4(),
+                count: 0,
+                name: resource,
+                parent: 'gameObject',
+                gameObjectId: gameObject_rows[i].id,
+                createdAt: date(),
+                updatedAt: date()
+            };
+        };
+    };
+
+    await queryInterface.bulkInsert(
+        'resources',
+        [
+            ...[...Array(NUM_OBJECTS).keys()].map(createResource('stone')),
+            ...[...Array(NUM_OBJECTS).keys()].map(createResource('wood'))
+        ],
         {}
     );
 }
