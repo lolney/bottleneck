@@ -36,7 +36,7 @@ function formatObject(obj) {
         dbId: dv.id,
         objectType: dv.objectType,
         problemId: dv.problem.id,
-        resource: dv.resource,
+        resources: dv.resources,
         solvedBy: dv.problem.solvedProblem
             ? dv.problem.solvedProblem.user.playerId
             : null
@@ -187,12 +187,18 @@ export async function setPlayerId(userId, number, location) {
     let user = await models.user.find({ where: { id: userId } });
     player.setUser(user);
 
-    let resource = await models.resource.create({
+    let stone = await models.resource.create({
         parent: 'player',
         name: 'stone',
         count: 0
     });
-    resource.setPlayer(player);
+    let wood = await models.resource.create({
+        parent: 'player',
+        name: 'wood',
+        count: 0
+    });
+    wood.setPlayer(player);
+    stone.setPlayer(player);
 
     return player;
 }
@@ -203,20 +209,21 @@ export async function setPlayerId(userId, number, location) {
  */
 export async function addToResourceCount(playerId, resourceName, count) {
     // playerResource of id resourceId associated with player
-    let obj = getDataValues(
-        await models.player.find({
-            where: { id: playerId },
-            include: [
-                {
-                    model: models.resource
-                }
-            ]
-        })
-    );
-    let newCount = obj.resource.count + count;
+    let raw = await models.player.find({
+        where: { id: playerId },
+        include: [
+            {
+                model: models.resource,
+                where: { name: resourceName }
+            }
+        ]
+    });
+    let obj = getDataValues(raw);
+    let resource = obj.resources[0];
+    let newCount = resource.count + count;
     await models.resource.update(
         { count: newCount },
-        { where: { id: obj.resource.id } }
+        { where: { id: resource.id } }
     );
     return newCount;
 }

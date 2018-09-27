@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     Player.associate = function(models) {
         Player.belongsTo(models.user);
-        Player.hasOne(models.resource);
+        Player.hasMany(models.resource);
     };
     return Player;
 };

@@ -272,23 +272,33 @@ fdescribe('addToResourceCount', () => {
     });
 
     afterAll(async () => {
-        let resource = await player.getResource();
-        await resource.destroy();
+        let resources = await player.getResources();
+        await resources.map((res) => res.destroy());
         await player.destroy();
         await user.destroy();
     });
 
     it('correctly adds resource count to newly-initialized player', async () => {
         let gameObjects = await objects(); // get a random gameObject
-        let resource = gameObjects[0].resource;
-        let count = resource.count; // find resource count of
+        console.log(gameObjects[0]);
+        let resources = gameObjects[0].resources;
+        let counts = resources.map((o) => o.count); // find resource count of
 
-        expect(count).toEqual(0);
+        expect(counts[0]).toEqual(0);
+        expect(counts[1]).toEqual(0);
 
-        let newCount = await addToResourceCount(player.id, resource.name, 10);
+        let newCount0 = await addToResourceCount(
+            player.id,
+            resources[0].name,
+            10
+        );
+        let newCount1 = await addToResourceCount(
+            player.id,
+            resources[1].name,
+            15
+        );
 
-        expect(newCount).toEqual(10);
+        expect(newCount0).toEqual(10);
+        expect(newCount1).toEqual(15);
     });
-
-    it('throws an error when given incorrect player', async () => {});
 });
