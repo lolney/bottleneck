@@ -38,6 +38,7 @@
         "query-string": "^4.2.3",
         "react": "^16.4.0",
         "react-ace": "^6.1.1",
+        "react-alert": "^4.0.4",
         "react-bootstrap": "^0.32.1",
         "react-dom": "^16.4.0",
         "react-draggable": "^3.0.5",

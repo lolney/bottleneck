@@ -4,13 +4,33 @@ import DefencesBrowser from './defences/DefencesBrowser.jsx';
 import PropTypes from 'prop-types';
 import ControlledButton from './ControlledButton.jsx';
 import Menu from './Menu.jsx';
+import { Modal } from 'react-bootstrap';
 
 export default class HUD extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            show: false
+        };
+        this.handleShow = this.handleShow.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+    }
+
+    handleClose() {
+        this.setState({ show: false });
+    }
+
+    handleShow() {
+        this.setState({ show: true });
+    }
     render() {
         return (
             <div className="hud-buttons bootstrap-styles">
                 <ButtonToolbar>
-                    <Button className="top-btn hud-button">
+                    <Button
+                        className="top-btn hud-button"
+                        onClick={this.handleShow}
+                    >
                         <div className="hud-column">
                             <img
                                 alt="log icon"
@@ -21,6 +41,33 @@ export default class HUD extends React.Component {
                         </div>
                         <div className="hud-column-2">txt</div>
                     </Button>
+
+                    <Modal show={this.state.show} onHide={this.handleClose}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Modal heading</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <h4>Text in a modal</h4>
+                            <p>
+                                Duis mollis, est non commodo luctus, nisi erat
+                                porttitor ligula.
+                            </p>
+
+                            <hr />
+
+                            <h4>Overflowing text to show scroll behavior</h4>
+                            <p>
+                                Cras mattis consectetur purus sit amet
+                                fermentum. Cras justo odio, dapibus ac facilisis
+                                in, egestas eget quam. Morbi leo risus, porta ac
+                                consectetur ac, vestibulum at eros.
+                            </p>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button onClick={this.handleClose}>Close</Button>
+                        </Modal.Footer>
+                    </Modal>
+
                     <Button className="hud-button">
                         <div className="hud-column">
                             <img

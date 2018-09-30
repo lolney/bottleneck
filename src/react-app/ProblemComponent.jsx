@@ -3,6 +3,8 @@ import BinaryTreeComponent from './BinaryTreeComponent.jsx';
 import ImageComponent from './ImageComponent.jsx';
 import PropTypes from 'prop-types';
 import './CSS/Image.scss';
+import { Modal } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 
 export default class ProblemComponent extends React.Component {
     constructor(props) {
@@ -10,7 +12,18 @@ export default class ProblemComponent extends React.Component {
         this.state = {
             done: false
         };
+
         this.getChild.bind(this);
+        this.handleShow = this.handleShow.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+    }
+
+    handleClose() {
+        this.setState({ done: false });
+    }
+
+    handleShow() {
+        this.setState({ done: true });
     }
 
     getChild(typeString) {
@@ -39,6 +52,7 @@ export default class ProblemComponent extends React.Component {
                             this.props.problem.id,
                             this.props.generator
                         );
+                    this.handleShow;
                     this.setState({ done: done });
                 },
                 generator: this.props.generator,
@@ -46,13 +60,28 @@ export default class ProblemComponent extends React.Component {
             }
         );
         return (
-            <div className="modal">
-                <div className="wrapper">
-                    <header className="header">
-                        {this.props.problem.title}
-                    </header>
-                    {child}
-                    <footer className="footer">{description}</footer>
+            <div>
+                <div className="modal">
+                    <div className="wrapper">
+                        <header className="header">
+                            {this.props.problem.title}
+                        </header>
+                        {child}
+                        <Modal show={this.state.done} onHide={this.handleClose}>
+                            <Modal.Header closeButton>
+                                <Modal.Title>Modal heading</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                <h4>Text in a modal</h4>
+                            </Modal.Body>
+                            <Modal.Footer>
+                                <Button onClick={this.handleClose}>
+                                    Close
+                                </Button>
+                            </Modal.Footer>
+                        </Modal>
+                        <footer className="footer">{description}</footer>
+                    </div>
                 </div>
             </div>
         );
