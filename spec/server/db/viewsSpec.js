@@ -8,7 +8,8 @@ import {
     chainIncludes,
     setPlayerId,
     getUserId,
-    addToResourceCount
+    addToResourceCount,
+    getObjectResources
 } from '../../../src/server/db';
 import models from '../../../src/server/db/models';
 import TwoVector from 'lance/serialize/TwoVector';
@@ -262,7 +263,7 @@ describe('setPlayerId', () => {
     });
 });
 
-fdescribe('addToResourceCount', () => {
+describe('addToResourceCount', () => {
     let user;
     let player;
 
@@ -280,7 +281,6 @@ fdescribe('addToResourceCount', () => {
 
     it('correctly adds resource count to newly-initialized player', async () => {
         let gameObjects = await objects(); // get a random gameObject
-        console.log(gameObjects[0]);
         let resources = gameObjects[0].resources;
         let counts = resources.map((o) => o.count); // find resource count of
 
@@ -300,5 +300,17 @@ fdescribe('addToResourceCount', () => {
 
         expect(newCount0).toEqual(10);
         expect(newCount1).toEqual(15);
+    });
+});
+
+fdescribe('getObjectResources', () => {
+    it('returns a list of resources', async () => {
+        let gameObjects = await objects(); // get a random gameObject
+        let obj = gameObjects[0];
+
+        let resources = await getObjectResources(obj.dbId);
+
+        expect(resources.length).toEqual(2);
+        expect(resources[0].count).not.toBe(null);
     });
 });

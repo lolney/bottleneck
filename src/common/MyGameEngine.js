@@ -23,6 +23,10 @@ export default class MyGameEngine extends GameEngine {
         this.problemIdIndex = {};
     }
 
+    isOwnedByPlayer(object) {
+        return this.playerId == object.playerNumber;
+    }
+
     registerClasses(serializer) {
         serializer.registerClass(PlayerAvatar);
         serializer.registerClass(Avatar);
@@ -85,12 +89,13 @@ export default class MyGameEngine extends GameEngine {
         else this.problemIdIndex[obj.problemId] = [obj];
     }
 
-    makePlayer(playerId) {
-        console.log(`adding player ${playerId}`);
+    makePlayer(playerId, playerNumber) {
+        console.log(`adding player ${playerNumber}`);
         return this.addObjectToWorld(
             new PlayerAvatar(this, null, {
                 position: new TwoVector(WIDTH / 2, HEIGHT / 2),
-                playerId: playerId
+                playerId: playerId,
+                playerNumber: playerNumber
             })
         );
     }
@@ -129,14 +134,37 @@ export default class MyGameEngine extends GameEngine {
     }
 
     closestResource(problemId) {
-        return this.world.queryObject({ problemId: problemId });
+        return this.queryObject({ problemId: problemId });
+    }
+
+    queryObjects(query, returnSingle = false) {
+        let result = [];
+        this.world.forEachObject((id, obj) => {
+            for (const key of Object.keys(query)) {
+                if (obj[key] == query[key]) {
+                    if (returnSingle) {
+                        result = obj;
+                        return false;
+                    }
+                    result.push(obj);
+                }
+            }
+        });
+        if (returnSingle && result.length == 0) {
+            return null;
+        }
+        return result;
+    }
+
+    queryObject(query) {
+        return this.queryObjects(query, true);
     }
 
     processInput(inputData, playerId) {
         super.processInput(inputData, playerId);
 
         // get the player's primary object
-        let player = this.world.queryObject({ playerId: playerId });
+        let player = this.queryObject({ playerNumber: playerId });
         if (player) {
             this.trace.info(
                 () => `player ${playerId} pressed ${inputData.input}`

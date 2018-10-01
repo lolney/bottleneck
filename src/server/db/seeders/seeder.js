@@ -88,7 +88,7 @@ export async function up(queryInterface, Sequelize) {
         return (i) => {
             return {
                 id: uuidv4(),
-                count: 0,
+                count: 10,
                 name: resource,
                 parent: 'gameObject',
                 gameObjectId: gameObject_rows[i].id,

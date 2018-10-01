@@ -219,6 +219,7 @@ let migrationCommands = [
                     type: Sequelize.INTEGER
                 },
                 location: {
+                    allowNull: true,
                     type: Sequelize.GEOMETRY('POINT')
                 },
                 userId: {

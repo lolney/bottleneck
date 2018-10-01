@@ -38,9 +38,14 @@ require('socketio-auth')(io, {
 
         let userId = await getUserId(username);
         socket.client.userId = userId;
-        callback(null, succeeded);
 
-        await setPlayerId(userId, socket.playerId);
+        console.log('got user id');
+
+        let player = await setPlayerId(userId, socket.playerId);
+        socket.client.playerDbId = player.id;
+
+        console.log('added player to db');
+        callback(null, succeeded);
     },
     timeout: 'none'
 });
