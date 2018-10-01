@@ -6,6 +6,26 @@ import ControlledButton from './ControlledButton.jsx';
 import Menu from './Menu.jsx';
 
 export default class HUD extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            resources: {
+                wood: 0,
+                stone: 0
+            }
+        };
+        this.props.socket.on('resourceUpdate', (data) => {
+            let resources = { ...this.state.resources };
+            if (data.shouldReset == true) {
+                resources[data.name] = data.count;
+            } else {
+                resources[data.name] = resources[data.name] + data.count;
+            }
+            this.setState({ ...this.state, resources: resources });
+        });
+    }
+
     render() {
         return (
             <div className="hud-buttons bootstrap-styles">
@@ -19,7 +39,9 @@ export default class HUD extends React.Component {
                                 width="20px"
                             />
                         </div>
-                        <div className="hud-column-2">txt</div>
+                        <div className="hud-column-2">
+                            {this.state.resources['wood']}
+                        </div>
                     </Button>
                     <Button className="hud-button">
                         <div className="hud-column">
@@ -30,7 +52,9 @@ export default class HUD extends React.Component {
                                 width="20px"
                             />
                         </div>
-                        <div className="hud-column-2">txt</div>
+                        <div className="hud-column-2">
+                            {this.state.resources['stone']}
+                        </div>
                     </Button>
                     <ControlledButton
                         className="hud-button"

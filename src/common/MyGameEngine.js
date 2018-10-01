@@ -133,8 +133,9 @@ export default class MyGameEngine extends GameEngine {
         return false;
     }
 
+    // TODO: doesn't actually find closest resource
     closestResource(problemId) {
-        return this.queryObject({ problemId: problemId });
+        return this.queryObjects({ problemId: problemId });
     }
 
     queryObjects(query, returnSingle = false) {
