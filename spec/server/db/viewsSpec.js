@@ -7,9 +7,12 @@ import {
     getSolutions,
     chainIncludes,
     setPlayerId,
-    getUserId
+    getUserId,
+    addToResourceCount,
+    getObjectResources
 } from '../../../src/server/db';
 import models from '../../../src/server/db/models';
+import TwoVector from 'lance/serialize/TwoVector';
 
 describe('chainIncludes', () => {
     it('returns the correct answer for a single include', () => {
@@ -257,5 +260,57 @@ describe('setPlayerId', () => {
 
         expect(user.playerId).toEqual('1');
         await setPlayerId(user.id, null);
+    });
+});
+
+describe('addToResourceCount', () => {
+    let user;
+    let player;
+
+    beforeAll(async () => {
+        user = await createUser('test2', 'test2', 'test2@test.com');
+        player = await setPlayerId(user.id, 0, new TwoVector(0, 0));
+    });
+
+    afterAll(async () => {
+        let resources = await player.getResources();
+        await resources.map((res) => res.destroy());
+        await player.destroy();
+        await user.destroy();
+    });
+
+    it('correctly adds resource count to newly-initialized player', async () => {
+        let gameObjects = await objects(); // get a random gameObject
+        let resources = gameObjects[0].resources;
+        let counts = resources.map((o) => o.count); // find resource count of
+
+        expect(counts[0]).toEqual(0);
+        expect(counts[1]).toEqual(0);
+
+        let newCount0 = await addToResourceCount(
+            player.id,
+            resources[0].name,
+            10
+        );
+        let newCount1 = await addToResourceCount(
+            player.id,
+            resources[1].name,
+            15
+        );
+
+        expect(newCount0).toEqual(10);
+        expect(newCount1).toEqual(15);
+    });
+});
+
+fdescribe('getObjectResources', () => {
+    it('returns a list of resources', async () => {
+        let gameObjects = await objects(); // get a random gameObject
+        let obj = gameObjects[0];
+
+        let resources = await getObjectResources(obj.dbId);
+
+        expect(resources.length).toEqual(2);
+        expect(resources[0].count).not.toBe(null);
     });
 });

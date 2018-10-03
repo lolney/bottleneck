@@ -9,7 +9,6 @@ function loadStories() {
     require('../stories/defences.js');
     require('../stories/hud.js');
     require('../stories/menu.js');
-    require('../stories/menucontainer.js');
 
     // You can require as many stories as you need.
 }

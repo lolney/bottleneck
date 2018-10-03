@@ -1,0 +1,40 @@
+.selectMenu {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  .sidebar {
+    background: #f1f1f1;
+    border: 1px solid #ddd;
+    padding: 1em;
+    height: 100%;
+    width: 25%;
+    min-height: 20px;
+    .btn {
+      border: 1px solid #ddd;
+      min-width: 40px;
+      min-height: 80px;
+      margin-top: 0.5em;
+      margin-bottom: 0.5em;
+      padding: 0.25em;
+      display: flex;
+      width: 100%;
+      flex-wrap: wrap;
+
+      .column {
+        margin-left: 1%;
+        min-height: 100%;
+        margin-top: 1%;
+        flex: 50%;
+        color: black;
+        display: block;
+        font: 300 1em/1.5em "Lato", sans-serif;
+        font-size: 1em;
+        flex-wrap: wrap;
+      }
+    }
+    @import "./GeneralClasses.scss";
+  }
+}

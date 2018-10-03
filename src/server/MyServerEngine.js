@@ -5,18 +5,20 @@ import Avatar from '../common/Avatar';
 import PlayerAvatar from '../common/PlayerAvatar';
 import Controller from './Controller';
 import { objects } from './db';
+import GameWorld from './GameWorld';
 
 export default class MyServerEngine extends ServerEngine {
     constructor(io, gameEngine, inputOptions) {
         super(io, gameEngine, inputOptions);
-        Controller.attachGameEngine(gameEngine);
+        this.gameWorld = GameWorld.generate();
+        Controller.attachGameEngine(gameEngine, this.gameWorld);
     }
 
     async start() {
         super.start();
         let objs = await objects();
         this.gameEngine.makeTrees(objs);
-        this.gameEngine.makeWalls();
+        this.gameEngine.addObjects(this.gameWorld.getObjects());
         this.gameEngine.on('collisionStart', MyServerEngine.collision);
     }
 
@@ -35,19 +37,34 @@ export default class MyServerEngine extends ServerEngine {
 
     onPlayerConnected(socket) {
         super.onPlayerConnected(socket);
-        Controller.addPlayer(socket.playerId, socket);
-        this.gameEngine.makePlayer(socket.playerId);
+        let waitForAuth = () => {
+            if (socket.auth) {
+                console.log('Authenticated. Creating player.');
+                Controller.addPlayer(
+                    socket.client.playerDbId,
+                    socket.playerId,
+                    socket
+                );
+                this.gameEngine.makePlayer(
+                    socket.client.playerDbId,
+                    socket.playerId
+                );
+            } else setTimeout(waitForAuth, 100);
+        };
+        waitForAuth();
     }
 
-    onPlayerDisconnected(socketId, playerId) {
-        super.onPlayerDisconnected(socketId, playerId);
-        console.log(`removing player ${playerId}`);
-        let playerObjects = this.gameEngine.world.queryObjects({
-            playerId: playerId
+    onPlayerDisconnected(socketId, playerNumber) {
+        super.onPlayerDisconnected(socketId, playerNumber);
+        console.log(`removing player ${playerNumber}`);
+        let playerObjects = this.gameEngine.queryObjects({
+            playerNumber: playerNumber
         });
         playerObjects.forEach((obj) => {
             this.gameEngine.removeObjectFromWorld(obj.id);
+            if (obj.playerId) {
+                Controller.removePlayer(obj.playerId);
+            }
         });
-        Controller.removePlayer(playerId);
     }
 }

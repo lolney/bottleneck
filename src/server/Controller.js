@@ -1,7 +1,13 @@
 import ImageProblem from '../problem-engine/ImageProblem';
 import BinaryTreeProblem from '../problem-engine/BinaryTreeProblem';
-import { problem, addSolution } from './db';
-import { getSolutions, solvedProblem, setPlayerId } from './db/index';
+import {
+    problem,
+    addSolution,
+    getObjectResources,
+    addToResourceCount
+} from './db';
+import { getSolutions, solvedProblem, deletePlayerId } from './db/index';
+import { siegeItems } from '../../stories/fixtures';
 
 function serialize(problem) {
     switch (problem.type) {
@@ -22,76 +28,126 @@ class Controller {
         this.socketsMap = {};
     }
 
-    attachGameEngine(gameEngine) {
+    attachGameEngine(gameEngine, gameWorld) {
         this.gameEngine = gameEngine;
+        this.gameWorld = gameWorld;
     }
     /**
      * Register the routes for `socket`
      * @param {socketIO} socket
      */
-    addPlayer(playerId, socket) {
-        let solutionHandler = () => {
-            socket.on('solution', async (data) => {
-                if (!socket.auth) throw new Error('User is not authenticated');
+    addPlayer(playerId, playerNumber, socket) {
+        socket.on('solution', async (data) => {
+            if (!socket.auth) throw new Error('User is not authenticated');
 
-                let userId = socket.client.userId;
-                await addSolution(userId, data.problemId, data.code);
+            let userId = socket.client.userId;
+            await addSolution(userId, data.problemId, data.code);
 
-                let solutions = await getSolutions(userId);
-                socket.emit('solvedProblems', solutions);
-                // Let all players know this problem has been solved
-                this.gameEngine.markAsSolved(data.problemId, socket.playerId);
-                for (const sock of Object.values(this.socketsMap)) {
-                    sock.emit('solution', {
-                        problemId: data.problemId,
-                        playerId: socket.playerId
-                    });
-                }
-            });
-        };
-
-        let solvedProblemsHandler = () => {
-            socket.on('solvedProblems', async () => {
-                if (!socket.auth) throw new Error('User is not authenticated');
-
-                let userId = socket.client.userId;
-                let solutions = await getSolutions(userId);
-                socket.emit('solvedProblems', solutions);
-            });
-        };
-
-        let problemHandler = () => {
-            socket.on('solvedProblem', async (data) => {
-                let solved = await solvedProblem(data.id);
-                let problem = await serialize(solved.problem);
-                socket.emit('solvedProblem', {
-                    ...solved,
-                    problem: problem
+            let solutions = await getSolutions(userId);
+            socket.emit('solvedProblems', solutions);
+            // Let all players know this problem has been solved
+            this.gameEngine.markAsSolved(data.problemId, socket.playerId);
+            for (const sock of Object.values(this.socketsMap)) {
+                sock.emit('solution', {
+                    problemId: data.problemId,
+                    playerId: playerNumber
                 });
-            });
-        };
+            }
 
-        solutionHandler();
-        solvedProblemsHandler();
-        problemHandler();
+            this.addBot(playerId, playerNumber, data.problemId);
+        });
+
+        socket.on('solvedProblems', async () => {
+            if (!socket.auth) throw new Error('User is not authenticated');
+
+            let userId = socket.client.userId;
+            let solutions = await getSolutions(userId);
+            socket.emit('solvedProblems', solutions);
+        });
+
+        socket.on('solvedProblem', async (data) => {
+            let solved = await solvedProblem(data.id);
+            let problem = await serialize(solved.problem);
+            socket.emit('solvedProblem', {
+                ...solved,
+                problem: problem
+            });
+        });
+
+        socket.on('siegeItems', () => {
+            socket.emit('siegeItems', siegeItems);
+        });
+
         this.socketsMap[playerId] = socket;
+        console.log(`added player ${playerId}`);
+    }
+
+    addBot(playerId, playerNumber, problemId) {
+        let position = this.gameWorld.getStartingPosition(playerNumber);
+        console.log('problemId:', problemId);
+        let bot = this.gameEngine.addBot({
+            type: 'collector',
+            playerId: playerId,
+            playerNumber: playerNumber,
+            problemId: problemId,
+            position: position
+        });
+        bot.attach(this, this.gameWorld, this.gameEngine);
+    }
+
+    async addToResourceCount(playerId, gameObjectId) {
+        // lookup resources associated with this gameObjectId
+        let resources = await getObjectResources(gameObjectId);
+        // inc resources (need player id, count, and type of resource)
+        for (const resource of resources) {
+            addToResourceCount(playerId, resource.name, resource.count);
+            // push a resource update to client
+            this.pushCount(playerId, resource.name, resource.count);
+        }
+    }
+
+    async pushCount(playerId, name, count, shouldReset = false) {
+        this.pushData(playerId, 'resourceUpdate', {
+            name: name,
+            count: count,
+            shouldReset: shouldReset
+        });
     }
 
     async pushProblem(playerId, dbId) {
         let socket = this.socketsMap[playerId];
-        if (!socket.auth) throw new Error('User is not authenticated');
+        let prob = (await problem(dbId, socket.client.userId)).problem;
+        let serialized = await serialize(prob);
 
-        let prob = await problem(dbId, socket.client.userId);
-        let serialized = await serialize(prob.problem);
+        // TODO: temporary; should only be on solved problem
+        if (!socket.bot) {
+            if (!prob.id) {
+                throw Error('Problem not found');
+            }
+            this.addBot(playerId, socket.playerId, prob.id);
+            socket.bot = true;
+        }
 
-        console.log('Authenticated: ', socket.auth);
-        socket.emit('problem', { ...prob, problem: serialized });
+        this.pushData(playerId, 'problem', { ...prob, problem: serialized });
     }
 
     removePlayer(playerId) {
         let socket = this.socketsMap[playerId];
-        setPlayerId(socket.client.userId, null);
+        deletePlayerId(socket.client.userId, playerId);
         delete this.socketsMap[playerId];
+    }
+
+    /**
+     * Method for pushing data to the client
+     * @param {string} playerId
+     * @param {string} channel
+     * @param {*} data
+     */
+    pushData(playerId, channel, data) {
+        let socket = this.socketsMap[playerId];
+        if (!socket.auth) throw new Error('User is not authenticated');
+
+        socket.emit(channel, data);
     }
 }
 

@@ -1,7 +1,5 @@
 import React from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
-import './CSS/Menu.scss';
-import './CSS/MenuWindow.scss';
 import PropTypes from 'prop-types';
 import ControlledButton from './ControlledButton.jsx';
 import DefencesBrowser from './defences/DefencesBrowser.jsx';
@@ -25,13 +23,14 @@ class Menu extends React.Component {
     render() {
         return (
             <div className="menu">
-                <div className="fieldset">
-                    <h1 className="fieldset">Main Menu</h1>
+                <div className="header">
+                    <h1>Main Menu</h1>
                 </div>
                 <div className="menuElements bootstrap-styles">
                     <ButtonToolbar>
                         <ControlledButton
-                            addWindow={() =>
+                            className="menu-button"
+                            addWindow={(callback) =>
                                 this.props.addWindow(
                                     <SolutionHistory
                                         socket={this.props.socket}
@@ -44,7 +43,8 @@ class Menu extends React.Component {
                                             );
                                         }}
                                     />,
-                                    'solutionHistory'
+                                    'solutionHistory',
+                                    callback
                                 )
                             }
                             removeWindow={() =>
@@ -53,8 +53,8 @@ class Menu extends React.Component {
                         >
                             Solution History
                         </ControlledButton>
-                        <Button>Settings</Button>
-                        <Button>Exit Game</Button>
+                        <Button className="menu-button">Settings</Button>
+                        <Button className="menu-button">Exit Game</Button>
                     </ButtonToolbar>
                 </div>
             </div>

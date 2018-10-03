@@ -1,4 +1,5 @@
 import models from './models';
+import db from './models';
 import moment from 'moment';
 //import TwoVector from 'lance/serialize/TwoVector';
 // not sure why we can't import TwoVector here
@@ -35,6 +36,7 @@ function formatObject(obj) {
         dbId: dv.id,
         objectType: dv.objectType,
         problemId: dv.problem.id,
+        resources: dv.resources,
         solvedBy: dv.problem.solvedProblem
             ? dv.problem.solvedProblem.user.playerId
             : null
@@ -61,12 +63,15 @@ async function getProblemSubTypes(problem) {
  * @returns all game objects, including the user ID of any user that has solved it
  */
 export async function objects() {
+    let includes = chainIncludes(
+        models.problem,
+        models.solvedProblem,
+        models.user
+    );
+    includes.push({ model: models.resource });
+
     let raw = await models.gameObject.findAll({
-        include: chainIncludes(
-            models.problem,
-            models.solvedProblem,
-            models.user
-        )
+        include: includes
     });
     return raw.map((raw_elem) => formatObject(raw_elem));
 }
@@ -164,9 +169,73 @@ export async function getUserId(username) {
     return obj.dataValues.id;
 }
 
-export function setPlayerId(userId, playerId) {
-    return models.user.update(
-        { playerId: playerId },
-        { where: { id: userId } }
+/**
+ * Cteates player with the provided number and associates it with user,
+ * returning the newly-created player
+ * @param {*} userId
+ * @param {*} number
+ * @param {TwoVector} location
+ * @returns {*} - the player
+ */
+export async function setPlayerId(userId, number, location) {
+    let player = await models.player.create({
+        playerNumber: Number(number),
+        location: !location
+            ? null
+            : db.Sequelize.fn(
+                'ST_GeomFromText',
+                `POINT(${location.x} ${location.y})`
+            )
+    });
+    let user = await models.user.find({ where: { id: userId } });
+    player.setUser(user);
+
+    let stone = await models.resource.create({
+        parent: 'player',
+        name: 'stone',
+        count: 0
+    });
+    let wood = await models.resource.create({
+        parent: 'player',
+        name: 'wood',
+        count: 0
+    });
+    wood.setPlayer(player);
+    stone.setPlayer(player);
+
+    return player;
+}
+
+export async function deletePlayerId(userId, playerId) {}
+
+export async function getObjectResources(gameObjectId) {
+    let obj = await models.gameObject.find({
+        where: { id: gameObjectId }
+    });
+    return obj.getResources();
+}
+
+/**
+ * Add `count` to the current resource count for player `playerId`
+ * @returns {Number} - the new resource count
+ */
+export async function addToResourceCount(playerId, resourceName, count) {
+    // playerResource of id resourceId associated with player
+    let raw = await models.player.find({
+        where: { id: playerId },
+        include: [
+            {
+                model: models.resource,
+                where: { name: resourceName }
+            }
+        ]
+    });
+    let obj = getDataValues(raw);
+    let resource = obj.resources[0];
+    let newCount = resource.count + count;
+    await models.resource.update(
+        { count: newCount },
+        { where: { id: resource.id } }
     );
+    return newCount;
 }

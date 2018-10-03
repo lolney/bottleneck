@@ -1,16 +1,36 @@
 import React from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
-import './CSS/HUD.scss';
 import DefencesBrowser from './defences/DefencesBrowser.jsx';
 import PropTypes from 'prop-types';
 import ControlledButton from './ControlledButton.jsx';
+import Menu from './Menu.jsx';
 
 export default class HUD extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            resources: {
+                wood: 0,
+                stone: 0
+            }
+        };
+        this.props.socket.on('resourceUpdate', (data) => {
+            let resources = { ...this.state.resources };
+            if (data.shouldReset == true) {
+                resources[data.name] = data.count;
+            } else {
+                resources[data.name] = resources[data.name] + data.count;
+            }
+            this.setState({ ...this.state, resources: resources });
+        });
+    }
+
     render() {
         return (
             <div className="hud-buttons bootstrap-styles">
                 <ButtonToolbar>
-                    <Button className="top-btn">
+                    <Button className="top-btn hud-button">
                         <div className="hud-column">
                             <img
                                 alt="log icon"
@@ -19,9 +39,11 @@ export default class HUD extends React.Component {
                                 width="20px"
                             />
                         </div>
-                        <div className="hud-column">txt</div>
+                        <div className="hud-column-2">
+                            {this.state.resources['wood']}
+                        </div>
                     </Button>
-                    <Button>
+                    <Button className="hud-button">
                         <div className="hud-column">
                             <img
                                 alt="rock icon"
@@ -30,15 +52,20 @@ export default class HUD extends React.Component {
                                 width="20px"
                             />
                         </div>
-                        <div className="hud-column">txt</div>
+                        <div className="hud-column-2">
+                            {this.state.resources['stone']}
+                        </div>
                     </Button>
                     <ControlledButton
-                        addWindow={() =>
+                        className="hud-button"
+                        addWindow={(callback) =>
                             this.props.addWindow(
                                 <DefencesBrowser
                                     imageSrcs={['assets/sprites/tree1.png']}
+                                    socket={this.props.socket}
                                 />,
-                                'defencesBrowser'
+                                'defencesBrowser',
+                                callback
                             )
                         }
                         removeWindow={() =>
@@ -53,11 +80,17 @@ export default class HUD extends React.Component {
                                 width="20px"
                             />
                         </div>
-                        <div className="hud-column">Defences</div>
+                        <div className="hud-column-2">Siege Tools</div>
                     </ControlledButton>
-                    <Button className="btm-btn" onClick={this.props.openWindow}>
+                    <ControlledButton
+                        className="btm-btn hud-button"
+                        addWindow={(callback) =>
+                            this.props.addMenu(callback, this.props.socket)
+                        }
+                        removeWindow={(key) => this.props.removeMenu()}
+                    >
                         Menu
-                    </Button>
+                    </ControlledButton>
                 </ButtonToolbar>
             </div>
         );
@@ -65,7 +98,9 @@ export default class HUD extends React.Component {
 }
 
 HUD.propTypes = {
-    openWindow: PropTypes.func.isRequired,
+    addMenu: PropTypes.func.isRequired,
     addWindow: PropTypes.func.isRequired,
-    removeWindow: PropTypes.func.isRequired
+    removeWindow: PropTypes.func.isRequired,
+    removeMenu: PropTypes.func.isRequired,
+    socket: PropTypes.object.isRequired
 };

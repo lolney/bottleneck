@@ -4,9 +4,8 @@ import { storiesOf } from '@storybook/react';
 import Windows from '../src/react-app/Windows.jsx';
 import EditorModal from '../src/react-app/EditorModal.jsx';
 
-import { solvedProblems } from './fixtures';
-import SelectMenu from '../src/react-app/solution-history/SelectMenu.jsx';
-import { getSupportedCodeFixes } from 'typescript';
+import { socket } from './solutionHistory';
+import SolutionHistory from '../src/react-app/solution-history/SolutionHistory.jsx';
 
 export class WindowsContainer extends React.Component {
     constructor(props) {
@@ -39,8 +38,8 @@ export class WindowsContainer2 extends React.Component {
         return (
             <div>
                 <Windows ref={this.windows}>
-                    <SelectMenu
-                        solvedProblems={solvedProblems}
+                    <SolutionHistory
+                        socket={socket}
                         openWindow={(code, problem) => {
                             console.log('opened');
                             this.windows.current.addWindow(

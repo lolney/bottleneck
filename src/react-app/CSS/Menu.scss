@@ -1,22 +1,16 @@
-$fieldset-height: 100px;
+$header-height: 100px;
 
 .menu {
+  @import "./GeneralClasses.scss";
   height: 100%;
-  .fieldset {
-    background: #f1f1f1;
-    text-align: center;
-    height: $fieldset-height;
-    h1 {
-      font: 300 1em/1.5em "Lato", sans-serif;
-      font-size: 3em;
-      padding: 0.4em;
-    }
+  .header {
+    height: $header-height;
   }
   .menuElements {
     background: white;
     border: 1px solid #ddd;
     border-radius: 3px;
-    height: calc(100% - #{$fieldset-height});
+    height: calc(100% - #{$header-height});
     overflow: auto;
 
     .btn-toolbar {
@@ -38,8 +32,4 @@ $fieldset-height: 100px;
       }
     }
   }
-}
-
-.bootstrap-styles {
-  @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap.scss";
 }
