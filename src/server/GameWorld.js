@@ -504,7 +504,7 @@ export class MazeWall {
         let isHorizonal = width == 1;
 
         this.width = isHorizonal ? scale : maze.wallWidth;
-        this.height = isHorizonal ? maze.wallWidth : maze.corridorWidth;
+        this.height = isHorizonal ? maze.wallWidth : scale + maze.wallWidth;
 
         let xPadding = 0;
         let yPadding = isHorizonal
