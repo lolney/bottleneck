@@ -1,4 +1,4 @@
-global.Jimp = require('jimp'); // does not work in browser if not global
+import Jimp from 'jimp'; // does not work in browser if not global
 import Problem from './Problem';
 import Validator, { Type, Range } from './Validator';
 
@@ -155,7 +155,7 @@ export class Image {
 
     static fromImage(image) {
         return new Promise((resolve, reject) => {
-            image.getBase64(global.Jimp.MIME_BMP, (err, base64) => {
+            image.getBase64(Jimp.MIME_BMP, (err, base64) => {
                 if (err) reject(err);
                 resolve(new Image(base64));
             });
@@ -164,7 +164,7 @@ export class Image {
 
     getImage() {
         let s = this.original.slice(22);
-        return global.Jimp.read(Buffer.from(s, 'base64'));
+        return Jimp.read(Buffer.from(s, 'base64'));
     }
 
     getBase64(cb) {
@@ -173,7 +173,7 @@ export class Image {
 
     static genBlank() {
         return new Promise((resolve, reject) => {
-            new global.Jimp(100, 100, 255, (err, image) => {
+            new Jimp(100, 100, 255, (err, image) => {
                 if (err) reject(err);
                 resolve(image);
             });
