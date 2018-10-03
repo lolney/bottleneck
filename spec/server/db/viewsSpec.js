@@ -255,10 +255,10 @@ describe('setPlayerId', () => {
 
         expect(user.playerId).toEqual(null);
 
-        await setPlayerId(user.id, '1');
+        let player = await setPlayerId(user.id, 1);
         user = await models.user.findOne({ where: { id: user.id } });
 
-        expect(user.playerId).toEqual('1');
+        expect(player.playerNumber).toEqual(1);
         await setPlayerId(user.id, null);
     });
 });
@@ -284,9 +284,6 @@ describe('addToResourceCount', () => {
         let resources = gameObjects[0].resources;
         let counts = resources.map((o) => o.count); // find resource count of
 
-        expect(counts[0]).toEqual(0);
-        expect(counts[1]).toEqual(0);
-
         let newCount0 = await addToResourceCount(
             player.id,
             resources[0].name,
@@ -303,7 +300,7 @@ describe('addToResourceCount', () => {
     });
 });
 
-fdescribe('getObjectResources', () => {
+describe('getObjectResources', () => {
     it('returns a list of resources', async () => {
         let gameObjects = await objects(); // get a random gameObject
         let obj = gameObjects[0];

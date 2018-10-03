@@ -180,6 +180,11 @@ export default class BotAvatar extends DynamicObject {
             this.isCalculating = true;
             this.path = this.newPath();
             console.log('New path length:', this.path.length);
+            // TODO: on completion
+            /*if (this.path.length == 0) {
+                this.detach();
+                return;
+            }*/
             this.checkPath();
             this.isCalculating = false;
         }

@@ -4,17 +4,23 @@ import TwoVector from 'lance/serialize/TwoVector';
 import { WIDTH, HEIGHT } from '../../src/server/GameWorld';
 
 describe('BotAvatar', () => {
-    let avatar = new BotAvatar(this, null, {
-        position: new TwoVector(WIDTH / 2, HEIGHT / 2)
-    });
-    let gameWorld = GameWorld.generate();
-    let resourcePosition = new TwoVector(WIDTH / 2, 0);
+    let avatar;
 
-    let gameEngine = {
-        closestResource: () => {
-            return { position: resourcePosition };
-        }
-    };
+    beforeEach(() => {
+        avatar = new BotAvatar(this, null, {
+            position: new TwoVector(WIDTH / 2, HEIGHT / 2)
+        });
+        let gameWorld = GameWorld.generate();
+        let resourcePosition = new TwoVector(WIDTH / 2, 0);
+
+        let gameEngine = {
+            closestResource: () => {
+                return { position: resourcePosition, dbId: '0' };
+            }
+        };
+
+        avatar.serverState = { gameEngine: gameEngine, gameWorld: gameWorld };
+    });
 
     it('initializes correctly', () => {
         let avatar = new BotAvatar(this, null, {});
@@ -23,14 +29,14 @@ describe('BotAvatar', () => {
     });
 
     it('properly creates a path', () => {
-        let path = avatar.newPath(gameWorld, gameEngine);
+        let path = avatar.newPath();
 
         expect(path).not.toBe(undefined);
         expect(path.length).toBeGreaterThan(0);
     });
 
     it('properly follows a path', () => {
-        avatar.followWaypoint(gameWorld, gameEngine);
+        avatar.followWaypoint();
 
         expect(Math.abs(avatar.velocity.x + avatar.velocity.y)).toBeGreaterThan(
             0
