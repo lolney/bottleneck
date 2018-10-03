@@ -1,19 +1,29 @@
-//import { WIDTH, HEIGHT } from '../../../common/MyGameEngine';
 import ImageProblem from '../../../problem-engine/ImageProblem';
 import uuidv4 from 'uuid/v4';
 import { date } from '../../db';
 import BinaryTreeProblem from '../../../problem-engine/BinaryTreeProblem';
+//import GameWorld from '../../GameWorld';
 
 let randomInt = (minimum, maximum) =>
-    Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
+    Math.floor(Math.random() * (maximum - minimum)) + minimum;
 
-const WIDTH = 2000;
-const HEIGHT = 1200;
 const NUM_OBJECTS = 50;
 
-function createPoint() {
-    let x = Math.random() * WIDTH;
-    let y = Math.random() * HEIGHT;
+function randomInRanges(...ranges) {
+    let rangeIndex = randomInt(0, ranges.length);
+    let range = ranges[rangeIndex];
+    if (range.length != 2) {
+        throw new TypeError(`Expected array of length 2; got ${range}`);
+    }
+    return randomInt(range[0], range[1]);
+}
+
+function randomPoint() {
+    // Can't import GameWorld here since it imports TwoVector
+    //let bounds = GameWorld.getResourceBounds();
+    let x = randomInRanges([0, 800], [1200, 2000]);
+    if (x > 800 && x < 1000) console.log(x);
+    let y = randomInRanges([0, 300], [900, 1200]);
     return 'POINT(' + x + ' ' + y + ')';
 }
 
@@ -68,7 +78,7 @@ export async function up(queryInterface, Sequelize) {
         [...Array(NUM_OBJECTS).keys()].map((i) => {
             return {
                 id: uuidv4(),
-                location: Sequelize.fn('ST_GeomFromText', createPoint()),
+                location: Sequelize.fn('ST_GeomFromText', randomPoint()),
                 objectType: 'tree',
                 behaviorType: 'resource',
                 problemId: rows[randomInt(0, rows.length - 1)].id,

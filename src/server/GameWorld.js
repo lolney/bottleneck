@@ -25,6 +25,19 @@ export default class GameWorld {
         this.pathFinder = new PF.AStarFinder();
     }
 
+    static getResourceBounds() {
+        let gameBounds = Bounds.fromDimensions(WIDTH, HEIGHT);
+        let halfBounds = gameBounds.scale(0.48, 1);
+
+        let { left, top, bottom, center: mazeBounds } = halfBounds.crop(
+            0.25,
+            1,
+            0.3,
+            0.7
+        );
+        return top;
+    }
+
     static generate() {
         let gameBounds = Bounds.fromDimensions(WIDTH, HEIGHT);
         let halfBounds = gameBounds.scale(0.48, 1);
