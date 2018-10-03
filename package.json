@@ -23,7 +23,7 @@
     "cerialize": "^0.1.18",
     "dotenv": "^6.0.0",
     "express": "^4.14.0",
-    "jimp": "github:oliver-moran/jimp#61eb1905f162549873c988da04dad0a9e6c407f1",
+    "jimp": "^0.5.3",
     "jquery": "^3.3.1",
     "js-graph-algorithms": "^1.0.18",
     "lance-gg": "github:lolney/lance#master",
