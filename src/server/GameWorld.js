@@ -99,12 +99,13 @@ export default class GameWorld {
         let start = this.grid.worldCoordsToCell(mapStart);
         let end = this.grid.worldCoordsToCell(mapEnd);
 
+        console.log('grid start x,y, end x,y', start.x, start.y, end.x, end.y);
         if (this.grid.isOccupied(end)) {
             throw new Error('end tile is unreachable');
         }
 
         let grid = new PF.Grid(this.grid.to2DArray());
-        console.log('grid start x,y, end x,y', start.x, start.y, end.x, end.y);
+
         let path = this.pathFinder.findPath(
             start.x,
             start.y,
@@ -206,8 +207,8 @@ export class Grid {
         let x = worldCoords.x % WIDTH;
         let y = worldCoords.y % HEIGHT;
         return new TwoVector(
-            Math.round(this.resolution * (x / WIDTH)),
-            Math.round(this.resolution * (y / HEIGHT))
+            Math.floor(this.resolution * (x / WIDTH)),
+            Math.floor(this.resolution * (y / HEIGHT))
         );
     }
 

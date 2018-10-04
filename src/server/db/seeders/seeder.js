@@ -80,6 +80,7 @@ export async function up(queryInterface, Sequelize) {
                 id: uuidv4(),
                 location: Sequelize.fn('ST_GeomFromText', randomPoint()),
                 objectType: 'tree',
+                collected: false,
                 behaviorType: 'resource',
                 problemId: rows[randomInt(0, rows.length - 1)].id,
                 createdAt: date(),

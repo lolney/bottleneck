@@ -119,7 +119,7 @@ export default class MyRenderer extends Renderer {
      */
     onReceiveSolution(problemId, playerId) {
         for (const actor of this.gameObjectActors[problemId]) {
-            actor.handleSolutionFromPlayer(playerId);
+            actor.handleSolutionFromPlayer(playerId, false);
         }
     }
 

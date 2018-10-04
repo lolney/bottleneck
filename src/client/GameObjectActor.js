@@ -1,5 +1,12 @@
 import StaticActor from './StaticActor';
 
+/*const State = Object.freeze({
+    COLLECTED: symbol('collected'),
+    SOLVED_BY_ME: symbol('solved_by_me'),
+    SOLVED_BY_OTHER: symbol('solved_by_other'),
+    UNSOLVED: symbol('unsolved')
+});*/
+
 /**
  * Has sprites for
  * - Unsolved
@@ -7,17 +14,28 @@ import StaticActor from './StaticActor';
  * - Solved by player that owns this game engine
  */
 export default class GameObjectActor {
-    constructor(avatar, renderer, resource, problemId, myPlayerId, solvedBy) {
+    constructor(
+        avatar,
+        renderer,
+        resource,
+        problemId,
+        myplayerNumber,
+        solvedBy,
+        collected
+    ) {
         this.actor = new StaticActor(avatar, renderer, resource);
-        this.myPlayerId = myPlayerId;
-        this.handleSolutionFromPlayer(solvedBy);
+        this.myplayerNumber = myplayerNumber;
+        this.handleSolutionFromPlayer(solvedBy, collected);
         renderer.addGameObjectActor(problemId, this);
     }
 
-    handleSolutionFromPlayer(playerId) {
-        if (playerId == undefined || playerId == null) {
+    handleSolutionFromPlayer(playerNumber, collected) {
+        if (collected == true) {
+            let filter = new PIXI.filters.AlphaFilter(0.4);
+            this.actor.sprite.filters = [filter];
+        } else if (playerNumber == undefined || playerNumber == null) {
             this.actor.sprite.filters = [];
-        } else if (playerId == this.myPlayerId) {
+        } else if (playerNumber == this.myplayerNumber) {
             let filter = new PIXI.filters.ColorMatrixFilter();
             filter.negative();
             this.actor.sprite.filters = [filter];

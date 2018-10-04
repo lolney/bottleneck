@@ -4,7 +4,8 @@ import {
     problem,
     addSolution,
     getObjectResources,
-    addToResourceCount
+    addToResourceCount,
+    markAsCollected
 } from './db';
 import { getSolutions, solvedProblem, deletePlayerId } from './db/index';
 import { siegeItems } from '../../stories/fixtures';
@@ -46,7 +47,7 @@ class Controller {
             let solutions = await getSolutions(userId);
             socket.emit('solvedProblems', solutions);
             // Let all players know this problem has been solved
-            this.gameEngine.markAsSolved(data.problemId, socket.playerId);
+            this.gameEngine.markAsSolved(data.problemId, playerNumber);
             for (const sock of Object.values(this.socketsMap)) {
                 sock.emit('solution', {
                     problemId: data.problemId,
@@ -84,7 +85,6 @@ class Controller {
 
     addBot(playerId, playerNumber, problemId) {
         let position = this.gameWorld.getStartingPosition(playerNumber);
-        console.log('problemId:', problemId);
         let bot = this.gameEngine.addBot({
             type: 'collector',
             playerId: playerId,
@@ -106,6 +106,10 @@ class Controller {
         }
     }
 
+    async markAsCollected(gameObjectId) {
+        return markAsCollected(gameObjectId);
+    }
+
     async pushCount(playerId, name, count, shouldReset = false) {
         this.pushData(playerId, 'resourceUpdate', {
             name: name,
@@ -119,11 +123,12 @@ class Controller {
         let prob = (await problem(dbId, socket.client.userId)).problem;
         let serialized = await serialize(prob);
 
+        if (!prob.id) {
+            throw Error('Problem not found');
+        }
+
         // TODO: temporary; should only be on solved problem
         if (!socket.bot) {
-            if (!prob.id) {
-                throw Error('Problem not found');
-            }
             this.addBot(playerId, socket.playerId, prob.id);
             socket.bot = true;
         }
@@ -133,8 +138,10 @@ class Controller {
 
     removePlayer(playerId) {
         let socket = this.socketsMap[playerId];
-        deletePlayerId(socket.client.userId, playerId);
-        delete this.socketsMap[playerId];
+        if (socket) {
+            deletePlayerId(socket.client.userId, playerId);
+            delete this.socketsMap[playerId];
+        }
     }
 
     /**

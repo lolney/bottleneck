@@ -37,6 +37,7 @@ function formatObject(obj) {
         objectType: dv.objectType,
         problemId: dv.problem.id,
         resources: dv.resources,
+        collected: dv.collected,
         solvedBy: dv.problem.solvedProblem
             ? dv.problem.solvedProblem.user.playerId
             : null
@@ -238,4 +239,11 @@ export async function addToResourceCount(playerId, resourceName, count) {
         { where: { id: resource.id } }
     );
     return newCount;
+}
+
+export async function markAsCollected(gameObjectId) {
+    return await models.gameObject.update(
+        { collected: true },
+        { where: { id: gameObjectId } }
+    );
 }

@@ -120,6 +120,11 @@ export default class MyGameEngine extends GameEngine {
         }
     }
 
+    markAsCollected(dbId) {
+        let obj = this.queryObject({ dbId: dbId });
+        obj.collected = 'true';
+    }
+
     causesCollision() {
         let collisionObjects = this.physicsEngine.collisionDetection.detect();
         for (const pair of collisionObjects) {

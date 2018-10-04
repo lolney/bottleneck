@@ -26,6 +26,9 @@ export default class BotAvatar extends DynamicObject {
         // console.log(`syncing ${other}`);
     }
 
+    /**
+     * Overriding bendToCurrent to maintain position, velocity from server
+     */
     bendToCurrent(original, percent, worldSettings, isLocal, increments) {
         let position = this.position.clone();
         let velocity = this.velocity.clone();
@@ -145,7 +148,12 @@ export default class BotAvatar extends DynamicObject {
             break;
         case State.COLLECTING:
             this.state = State.RETURNING;
-            // TODO: mark resource as collected
+            this.serverState.gameEngine.markAsCollected(
+                this.targetGameObjectId
+            );
+            this.serverState.controller.markAsCollected(
+                this.targetGameObjectId
+            );
             break;
         case State.AT_BASE:
             if (gameObjectId == null) {
