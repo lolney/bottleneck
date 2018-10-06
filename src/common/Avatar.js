@@ -4,7 +4,7 @@ import DynamicObject from 'lance/serialize/DynamicObject';
 import Serializer from 'lance/serialize/Serializer';
 import GameObjectActor from '../client/GameObjectActor.js';
 
-export default class GameObject extends DynamicObject {
+export default class Avatar extends DynamicObject {
     static get netScheme() {
         return Object.assign(
             {
@@ -27,7 +27,7 @@ export default class GameObject extends DynamicObject {
             this.collected = props.collected.toString();
             this.problemId = props.problemId;
         }
-        this.class = GameObject;
+        this.class = Avatar;
         // TODO: add this to a config
         this.width = 100;
         this.height = 25;

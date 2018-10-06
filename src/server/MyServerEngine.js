@@ -1,7 +1,7 @@
 'use strict';
 
 import ServerEngine from 'lance/ServerEngine';
-import GameObject from '../common/GameObject';
+import Avatar from '../common/Avatar';
 import PlayerAvatar from '../common/PlayerAvatar';
 import Controller from './Controller';
 import { objects } from './db';
@@ -24,7 +24,7 @@ export default class MyServerEngine extends ServerEngine {
 
     static collision(e) {
         let collisionObjects = Object.keys(e).map((k) => e[k]);
-        let object = collisionObjects.find((o) => o instanceof GameObject);
+        let object = collisionObjects.find((o) => o instanceof Avatar);
         let player = collisionObjects.find((o) => o instanceof PlayerAvatar);
 
         if (!object || !player) return;

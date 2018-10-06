@@ -3,8 +3,7 @@
 import GameEngine from 'lance/GameEngine';
 import SimplePhysicsEngine from 'lance/physics/SimplePhysicsEngine';
 import PlayerAvatar from './PlayerAvatar';
-import GameObject from './GameObject';
-import DummyPlayer from './DummyPlayer';
+import Avatar from './Avatar';
 import BotAvatar from './BotAvatar';
 import Blockable from './Blockable';
 import TwoVector from 'lance/serialize/TwoVector';
@@ -30,8 +29,7 @@ export default class MyGameEngine extends GameEngine {
 
     registerClasses(serializer) {
         serializer.registerClass(PlayerAvatar);
-        serializer.registerClass(DummyPlayer);
-        serializer.registerClass(GameObject);
+        serializer.registerClass(Avatar);
         serializer.registerClass(Blockable);
         serializer.registerClass(BotAvatar);
     }
@@ -49,7 +47,7 @@ export default class MyGameEngine extends GameEngine {
     makeTrees(objects) {
         for (let obj of objects) {
             obj.position = new TwoVector(obj.position[0], obj.position[1]);
-            let avatar = new GameObject(this, null, obj);
+            let avatar = new Avatar(this, null, obj);
             this.addObjectToWorld(avatar);
             this.addObjToProblemIdIndex(avatar);
         }
@@ -83,7 +81,7 @@ export default class MyGameEngine extends GameEngine {
     /**
      * Maps problem ids to objects to efficiently update objects that correspond
      * to a given problem
-     * @param {GameObject} obj
+     * @param {Avatar} obj
      */
     addObjToProblemIdIndex(obj) {
         if (this.problemIdIndex[obj.problemId])
@@ -93,16 +91,9 @@ export default class MyGameEngine extends GameEngine {
 
     makePlayer(playerId, playerNumber) {
         console.log(`adding player ${playerNumber}`);
-        let start = new TwoVector(WIDTH / 2, HEIGHT / 2);
-        this.addObjectToWorld(
-            new DummyPlayer(this, null, {
-                position: start.clone(),
-                playerNumber: playerNumber
-            })
-        );
         return this.addObjectToWorld(
             new PlayerAvatar(this, null, {
-                position: start,
+                position: new TwoVector(WIDTH / 2, HEIGHT / 2),
                 playerId: playerId,
                 playerNumber: playerNumber
             })
@@ -111,7 +102,7 @@ export default class MyGameEngine extends GameEngine {
 
     makeDefence(defenceId, position) {
         return this.addObjectToWorld(
-            new GameObject(this, null, {
+            new Avatar(this, null, {
                 position: position,
                 objectType: 'google',
                 dbId: defenceId,
@@ -136,15 +127,11 @@ export default class MyGameEngine extends GameEngine {
 
     causesCollision() {
         let collisionObjects = this.physicsEngine.collisionDetection.detect();
-        if (collisionObjects.length > 0) console.log(collisionObjects);
         for (const pair of collisionObjects) {
             let objects = Object.values(pair);
             let object = objects.find((o) => o instanceof Blockable);
             let player = objects.find((o) => o instanceof PlayerAvatar);
-            let dummy = objects.find((o) => o instanceof DummyPlayer);
 
-            if (dummy) console.log('dummy', dummy.position);
-            if (player) console.log('player', player.position);
             if (!object || !player) continue;
             return true;
         }
@@ -156,18 +143,16 @@ export default class MyGameEngine extends GameEngine {
         return this.queryObject({ problemId: problemId });
     }
 
-    queryObjects(query, targetType, returnSingle = false) {
+    queryObjects(query, returnSingle = false) {
         let result = [];
         this.world.forEachObject((id, obj) => {
-            if (!targetType || obj instanceof targetType) {
-                for (const key of Object.keys(query)) {
-                    if (obj[key] == query[key]) {
-                        if (returnSingle) {
-                            result = obj;
-                            return false;
-                        }
-                        result.push(obj);
+            for (const key of Object.keys(query)) {
+                if (obj[key] == query[key]) {
+                    if (returnSingle) {
+                        result = obj;
+                        return false;
                     }
+                    result.push(obj);
                 }
             }
         });
@@ -177,22 +162,21 @@ export default class MyGameEngine extends GameEngine {
         return result;
     }
 
-    queryObject(query, targetType) {
-        return this.queryObjects(query, targetType, true);
+    queryObject(query) {
+        return this.queryObjects(query, true);
     }
 
     processInput(inputData, playerId) {
         super.processInput(inputData, playerId);
 
         // get the player's primary object
-        let player = this.queryObject({ playerNumber: playerId }, PlayerAvatar);
-        let dummy = this.queryObject({ playerNumber: playerId }, DummyPlayer);
-        if (player && dummy) {
+        let player = this.queryObject({ playerNumber: playerId });
+        if (player) {
             this.trace.info(
                 () => `player ${playerId} pressed ${inputData.input}`
             );
+            let { x, y } = player.position;
 
-            dummy.position = player.position.clone();
             if (inputData.input === 'up') {
                 player.position.y -= STEP;
             } else if (inputData.input === 'down') {
@@ -209,22 +193,17 @@ export default class MyGameEngine extends GameEngine {
                 player.position.x -= STEP;
             }
 
-            let collision = this.causesCollision();
-            if (collision) {
-                console.log(
-                    'collision, dummy, player',
-                    dummy.position,
-                    player.position
-                );
+            let shouldRevert = this.causesCollision();
+            if (shouldRevert) {
                 this.trace.info(
                     () =>
                         `reverting position: ${player.position.x},${
                             player.position.y
-                        }`
+                        }
+                    } => ${x},${y}`
                 );
-                player.position = dummy.position.clone();
-            } else {
-                dummy.position = player.position.clone();
+                player.position.x = x;
+                player.position.y = y;
             }
         }
     }

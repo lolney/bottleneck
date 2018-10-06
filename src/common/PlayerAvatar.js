@@ -26,11 +26,6 @@ export default class PlayerAvatar extends DynamicObject {
         this.height = 25;
     }
 
-    syncTo(other) {
-        console.log(this.position, other.position);
-        super.syncTo(other);
-    }
-
     onAddToWorld(gameEngine) {
         console.log(`adding player ${this.id}`);
         if (gameEngine.renderer) {
