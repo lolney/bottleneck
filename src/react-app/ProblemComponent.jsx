@@ -3,8 +3,20 @@ import BinaryTreeComponent from './BinaryTreeComponent.jsx';
 import ImageComponent from './ImageComponent.jsx';
 import PropTypes from 'prop-types';
 import './CSS/Image.scss';
-import { Modal } from 'react-bootstrap';
 import { Button } from 'react-bootstrap';
+import { render } from 'react-dom';
+import { Provider } from 'react-alert';
+import AlertTemplate from 'react-alert-template-basic';
+import { Component, Fragment } from 'react';
+import { withAlert } from 'react-alert';
+
+class AlertWindow extends React.Component {
+    render() {
+        if (done) {
+            return this.props.alert.show('Oh look, an alert!');
+        }
+    }
+}
 
 export default class ProblemComponent extends React.Component {
     constructor(props) {
@@ -60,28 +72,17 @@ export default class ProblemComponent extends React.Component {
             }
         );
         return (
-            <div>
-                <div className="modal">
-                    <div className="wrapper">
-                        <header className="header">
-                            {this.props.problem.title}
-                        </header>
-                        {child}
-                        <Modal show={this.state.done} onHide={this.handleClose}>
-                            <Modal.Header closeButton>
-                                <Modal.Title>Modal heading</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <h4>Text in a modal</h4>
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <Button onClick={this.handleClose}>
-                                    Close
-                                </Button>
-                            </Modal.Footer>
-                        </Modal>
-                        <footer className="footer">{description}</footer>
-                    </div>
+            <div className="modal">
+                <div className="wrapper">
+                    <header className="header">
+                        {this.props.problem.title}
+                    </header>
+                    {child}
+                    <AlertWindow
+                        done={this.state.done}
+                        alert={this.props.alert}
+                    />
+                    <footer className="footer">{description}</footer>
                 </div>
             </div>
         );
@@ -96,5 +97,11 @@ ProblemComponent.propTypes = {
         id: PropTypes.string,
         title: PropTypes.string,
         description: PropTypes.string
-    }).isRequired
+    }).isRequired,
+    alert: PropTypes.func.isRequired
+};
+
+AlertWindow.propTypes = {
+    alert: PropTypes.func.isRequired,
+    done: PropTypes.state.isRequired
 };

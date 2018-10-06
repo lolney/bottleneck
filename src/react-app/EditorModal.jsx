@@ -45,6 +45,7 @@ export default class EditorModal extends React.Component {
                         generator={this.state.generator}
                         reportError={this.reportError}
                         onSolution={this.props.onSolution}
+                        alert={this.props.alert}
                     />
                 )}
                 <Editor
@@ -60,5 +61,6 @@ export default class EditorModal extends React.Component {
 EditorModal.propTypes = {
     onSolution: PropTypes.func.isRequired,
     problem: PropTypes.object,
-    code: PropTypes.string.isRequired
+    code: PropTypes.string.isRequired,
+    alert: PropTypes.func.isRequired
 };
