@@ -11,6 +11,7 @@ export default class Avatar extends DynamicObject {
                 objectType: { type: Serializer.TYPES.STRING },
                 dbId: { type: Serializer.TYPES.STRING },
                 solvedBy: { type: Serializer.TYPES.STRING },
+                collected: { type: Serializer.TYPES.STRING },
                 problemId: { type: Serializer.TYPES.STRING }
             },
             super.netScheme
@@ -23,6 +24,7 @@ export default class Avatar extends DynamicObject {
             this.objectType = props.objectType;
             this.dbId = props.dbId;
             this.solvedBy = props.solvedBy;
+            this.collected = props.collected.toString();
             this.problemId = props.problemId;
         }
         this.class = Avatar;
@@ -31,15 +33,28 @@ export default class Avatar extends DynamicObject {
         this.height = 25;
     }
 
+    syncTo(other) {
+        super.syncTo(other);
+        if (this.collected != other.collected) {
+            console.log('setting resource to collected');
+            let target = other.actor ? other : this;
+            target.actor.handleSolutionFromPlayer(other.solvedBy, true);
+        }
+        this.collected = other.collected;
+        this.solvedBy = other.solvedBy;
+    }
+
     onAddToWorld(gameEngine) {
         if (gameEngine.renderer) {
+            console.log('collected ', this.collected);
             this.actor = new GameObjectActor(
                 this,
                 gameEngine.renderer,
                 this.objectType,
                 this.problemId,
                 gameEngine.playerId,
-                this.solvedBy
+                this.solvedBy,
+                this.collected === 'true'
             );
         }
     }

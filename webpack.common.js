@@ -58,8 +58,10 @@ module.exports = {
         ]
     },
     resolve: {
-        alias: { lance: path.resolve(__dirname, 'node_modules/lance-gg/src/') },
-        alias: { jimp: path.resolve(__dirname, 'node_modules/jimp/') }
+        alias: {
+            lance: path.resolve(__dirname, 'node_modules/lance-gg/src/'),
+            jimp: path.resolve(__dirname, 'node_modules/jimp/')
+        }
     },
     plugins: [
         new webpack.DefinePlugin({

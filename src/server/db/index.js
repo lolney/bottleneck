@@ -37,6 +37,7 @@ function formatObject(obj) {
         objectType: dv.objectType,
         problemId: dv.problem.id,
         resources: dv.resources,
+        collected: dv.collected,
         solvedBy: dv.problem.solvedProblem
             ? dv.problem.solvedProblem.user.playerId
             : null
@@ -170,19 +171,22 @@ export async function getUserId(username) {
 }
 
 /**
- * TODO: should create player with the provided number and associate with user,
- * returning the id of the newly-created object
+ * Cteates player with the provided number and associates it with user,
+ * returning the newly-created player
  * @param {*} userId
- * @param {*} playerId
+ * @param {*} number
  * @param {TwoVector} location
+ * @returns {*} - the player
  */
 export async function setPlayerId(userId, number, location) {
     let player = await models.player.create({
         playerNumber: Number(number),
-        location: db.Sequelize.fn(
-            'ST_GeomFromText',
-            `POINT(${location.x} ${location.y})`
-        )
+        location: !location
+            ? null
+            : db.Sequelize.fn(
+                'ST_GeomFromText',
+                `POINT(${location.x} ${location.y})`
+            )
     });
     let user = await models.user.find({ where: { id: userId } });
     player.setUser(user);
@@ -201,6 +205,15 @@ export async function setPlayerId(userId, number, location) {
     stone.setPlayer(player);
 
     return player;
+}
+
+export async function deletePlayerId(userId, playerId) {}
+
+export async function getObjectResources(gameObjectId) {
+    let obj = await models.gameObject.find({
+        where: { id: gameObjectId }
+    });
+    return obj.getResources();
 }
 
 /**
@@ -226,4 +239,11 @@ export async function addToResourceCount(playerId, resourceName, count) {
         { where: { id: resource.id } }
     );
     return newCount;
+}
+
+export async function markAsCollected(gameObjectId) {
+    return await models.gameObject.update(
+        { collected: true },
+        { where: { id: gameObjectId } }
+    );
 }

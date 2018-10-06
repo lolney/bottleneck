@@ -71,6 +71,7 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'userId',
             constraints: false
         });
+        User.hasOne(models.player);
     };
 
     return User;

@@ -54,9 +54,9 @@ describe('Grid', () => {
     it('does okay with an object that is small compared to the grid', () => {
         let grid = new Grid(100);
         let obj = {
-            position: new TwoVector(WIDTH / 128, HEIGHT / 2),
-            width: WIDTH / 64,
-            height: HEIGHT
+            position: new TwoVector(WIDTH / 2, HEIGHT / 128),
+            width: WIDTH,
+            height: HEIGHT / 64
         };
 
         let i = 0;
@@ -73,15 +73,15 @@ describe('Grid', () => {
     it('left fourth set to 1 when added', () => {
         let grid = new Grid(100);
         let obj1 = {
-            position: new TwoVector(WIDTH / 8, HEIGHT / 2),
-            width: WIDTH / 4,
-            height: HEIGHT
+            position: new TwoVector(WIDTH / 2, HEIGHT / 8),
+            width: WIDTH,
+            height: HEIGHT / 4
         };
 
         let obj2 = {
-            position: new TwoVector((5 * WIDTH) / 8, HEIGHT / 2),
-            width: (3 * WIDTH) / 4,
-            height: HEIGHT
+            position: new TwoVector(WIDTH / 2, (5 * HEIGHT) / 8),
+            width: WIDTH,
+            height: (3 * HEIGHT) / 4
         };
 
         grid.add(obj1);

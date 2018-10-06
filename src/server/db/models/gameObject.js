@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         location: DataTypes.GEOMETRY('POINT'),
         behaviorType: DataTypes.ENUM('resource', 'defence'),
+        collected: DataTypes.BOOLEAN,
         objectType: DataTypes.TEXT,
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE

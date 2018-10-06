@@ -71,6 +71,9 @@ let migrationCommands = [
                     type: Sequelize.TEXT
                 },
                 behaviorType: { type: Sequelize.ENUM('resource', 'defence') },
+                collected: {
+                    type: Sequelize.BOOLEAN
+                },
                 problemId: {
                     type: Sequelize.UUID,
                     references: {
@@ -219,6 +222,7 @@ let migrationCommands = [
                     type: Sequelize.INTEGER
                 },
                 location: {
+                    allowNull: true,
                     type: Sequelize.GEOMETRY('POINT')
                 },
                 userId: {

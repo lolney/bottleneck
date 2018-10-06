@@ -8,7 +8,8 @@ import {
     chainIncludes,
     setPlayerId,
     getUserId,
-    addToResourceCount
+    addToResourceCount,
+    getObjectResources
 } from '../../../src/server/db';
 import models from '../../../src/server/db/models';
 import TwoVector from 'lance/serialize/TwoVector';
@@ -254,15 +255,15 @@ describe('setPlayerId', () => {
 
         expect(user.playerId).toEqual(null);
 
-        await setPlayerId(user.id, '1');
+        let player = await setPlayerId(user.id, 1);
         user = await models.user.findOne({ where: { id: user.id } });
 
-        expect(user.playerId).toEqual('1');
+        expect(player.playerNumber).toEqual(1);
         await setPlayerId(user.id, null);
     });
 });
 
-fdescribe('addToResourceCount', () => {
+describe('addToResourceCount', () => {
     let user;
     let player;
 
@@ -280,12 +281,8 @@ fdescribe('addToResourceCount', () => {
 
     it('correctly adds resource count to newly-initialized player', async () => {
         let gameObjects = await objects(); // get a random gameObject
-        console.log(gameObjects[0]);
         let resources = gameObjects[0].resources;
         let counts = resources.map((o) => o.count); // find resource count of
-
-        expect(counts[0]).toEqual(0);
-        expect(counts[1]).toEqual(0);
 
         let newCount0 = await addToResourceCount(
             player.id,
@@ -300,5 +297,17 @@ fdescribe('addToResourceCount', () => {
 
         expect(newCount0).toEqual(10);
         expect(newCount1).toEqual(15);
+    });
+});
+
+describe('getObjectResources', () => {
+    it('returns a list of resources', async () => {
+        let gameObjects = await objects(); // get a random gameObject
+        let obj = gameObjects[0];
+
+        let resources = await getObjectResources(obj.dbId);
+
+        expect(resources.length).toEqual(2);
+        expect(resources[0].count).not.toBe(null);
     });
 });
