@@ -5,21 +5,40 @@ import { WIDTH, HEIGHT } from '../../src/server/GameWorld';
 
 describe('BotAvatar', () => {
     let avatar;
+    let resourcePositions;
 
     beforeEach(() => {
         avatar = new BotAvatar(this, null, {
-            position: new TwoVector(WIDTH / 2, HEIGHT / 2)
+            position: new TwoVector(WIDTH / 2, HEIGHT / 2),
+            playerNumber: 0
         });
         let gameWorld = GameWorld.generate();
-        let resourcePosition = new TwoVector(WIDTH / 2, 0);
+        resourcePositions = [
+            new TwoVector((3 * WIDTH) / 8, 0),
+            new TwoVector((5 * WIDTH) / 8, 0),
+            new TwoVector((7 * WIDTH) / 8, 0)
+        ];
 
         let gameEngine = {
-            closestResource: () => {
-                return { position: resourcePosition, dbId: '0' };
-            }
+            getResources: () => {
+                return resourcePositions.map((pos, i) => ({
+                    position: pos,
+                    dbId: i.toString()
+                }));
+            },
+            on: () => {}
         };
 
-        avatar.serverState = { gameEngine: gameEngine, gameWorld: gameWorld };
+        avatar.attach(null, gameWorld, gameEngine);
+    });
+
+    it('resources initialized correctly', () => {
+        let sorted = resourcePositions.sort((a, b) => a.x > b.x);
+        for (let i = 0; i < 3; i++) {
+            expect(avatar.nextResource().position.x).toEqual(sorted[i].x);
+        }
+
+        expect(avatar.nextResource()).toBe(undefined);
     });
 
     it('initializes correctly', () => {

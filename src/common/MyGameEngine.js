@@ -121,7 +121,8 @@ export default class MyGameEngine extends GameEngine {
     }
 
     markAsCollected(dbId) {
-        let obj = this.queryObject({ dbId: dbId });
+        let obj = this.queryObject({ dbId: dbId }, Avatar);
+        console.log(`Marking ${obj} as collected`);
         obj.collected = 'true';
     }
 
@@ -138,21 +139,22 @@ export default class MyGameEngine extends GameEngine {
         return false;
     }
 
-    // TODO: doesn't actually find closest resource
-    closestResource(problemId) {
-        return this.queryObject({ problemId: problemId });
+    getResources(problemId) {
+        return this.queryObjects({ problemId: problemId }, Avatar);
     }
 
-    queryObjects(query, returnSingle = false) {
+    queryObjects(query, targetType, returnSingle = false) {
         let result = [];
         this.world.forEachObject((id, obj) => {
-            for (const key of Object.keys(query)) {
-                if (obj[key] == query[key]) {
-                    if (returnSingle) {
-                        result = obj;
-                        return false;
+            if (!targetType || obj instanceof targetType) {
+                for (const key of Object.keys(query)) {
+                    if (obj[key] == query[key]) {
+                        if (returnSingle) {
+                            result = obj;
+                            return false;
+                        }
+                        result.push(obj);
                     }
-                    result.push(obj);
                 }
             }
         });
@@ -162,8 +164,8 @@ export default class MyGameEngine extends GameEngine {
         return result;
     }
 
-    queryObject(query) {
-        return this.queryObjects(query, true);
+    queryObject(query, targetType) {
+        return this.queryObjects(query, targetType, true);
     }
 
     processInput(inputData, playerId) {

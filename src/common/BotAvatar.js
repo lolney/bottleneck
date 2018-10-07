@@ -12,6 +12,10 @@ const State = {
     AT_BASE: Symbol('at_base')
 };
 
+/**
+ * Represents the state of resource collection bots
+ * Note: not properly serialized
+ */
 export default class BotAvatar extends DynamicObject {
     static get netScheme() {
         return Object.assign({}, super.netScheme);
@@ -60,17 +64,47 @@ export default class BotAvatar extends DynamicObject {
         this.path = [];
     }
 
+    static distance(a, b) {
+        return a
+            .clone()
+            .subtract(b)
+            .length();
+    }
+
+    initResources() {
+        let startingPosition = this.serverState.gameWorld.getStartingPosition(
+            this.playerNumber
+        );
+        let resources = this.serverState.gameEngine.getResources(
+            this.problemId
+        );
+        let distances = {};
+        for (const resource of resources) {
+            distances[resource.dbId] = BotAvatar.distance(
+                startingPosition,
+                resource.position
+            );
+        }
+        return resources.sort((a, b) => distances[b.dbId] > distances[a.dbId]);
+    }
+
     attach(controller, gameWorld, gameEngine) {
         console.log('attaching bot');
+
         this.serverState = {
             controller: controller,
             gameWorld: gameWorld,
             gameEngine: gameEngine
         };
+        this.serverState['resources'] = this.initResources();
         this.onPreStep = () => {
             this.followWaypoint();
         };
         gameEngine.on('preStep', this.onPreStep);
+    }
+
+    nextResource() {
+        return this.serverState.resources.pop();
     }
 
     followWaypoint() {
@@ -104,9 +138,11 @@ export default class BotAvatar extends DynamicObject {
             );
         } else if (this.state == State.AT_BASE) {
             // lookup closest unharvested resource
-            let obj = this.serverState.gameEngine.closestResource(
-                this.problemId
-            );
+            let obj = this.nextResource();
+            if (obj == undefined) {
+                console.log('last resource reached');
+                return [];
+            }
             this.transitionState(obj.dbId);
             console.log(
                 'Leaving base. position, target: ',
@@ -151,9 +187,6 @@ export default class BotAvatar extends DynamicObject {
             this.serverState.gameEngine.markAsCollected(
                 this.targetGameObjectId
             );
-            this.serverState.controller.markAsCollected(
-                this.targetGameObjectId
-            );
             break;
         case State.AT_BASE:
             if (gameObjectId == null) {
@@ -188,14 +221,17 @@ export default class BotAvatar extends DynamicObject {
             this.isCalculating = true;
             this.path = this.newPath();
             console.log('New path length:', this.path.length);
-            // TODO: on completion
-            /*if (this.path.length == 0) {
+            if (this.path.length == 0) {
                 this.detach();
                 return;
-            }*/
+            }
             this.checkPath();
             this.isCalculating = false;
         }
+    }
+
+    detach() {
+        this.serverState.gameEngine.removeObjectFromWorld(this.id);
     }
 
     onAddToWorld(gameEngine) {
@@ -208,5 +244,6 @@ export default class BotAvatar extends DynamicObject {
         if (gameEngine.renderer) {
             this.actor.destroy(this.id, gameEngine.renderer);
         }
+        this.onPreStep = null;
     }
 }
