@@ -106,7 +106,8 @@ export default class MyGameEngine extends GameEngine {
                 position: position,
                 objectType: 'defence',
                 dbId: defenceId,
-                solvedBy: null
+                solvedBy: null,
+                collected: false
             })
         );
     }

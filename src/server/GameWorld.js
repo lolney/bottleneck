@@ -101,6 +101,7 @@ export default class GameWorld {
 
         console.log('grid start x,y, end x,y', start.x, start.y, end.x, end.y);
         if (this.grid.isOccupied(end)) {
+            this.grid.print([end]);
             throw new Error('end tile is unreachable');
         }
 
@@ -172,9 +173,13 @@ export class Grid {
 
         for (let y = 0; y < height; y++) {
             for (let x = 0; x < width; x++) {
-                yield this.resolution * (bottom + y) + (left + x);
+                yield this.getIndex(left + x, bottom + y);
             }
         }
+    }
+
+    getIndex(x, y) {
+        return this.resolution * y + x;
     }
 
     print(coords = [], path = []) {
@@ -238,7 +243,7 @@ export class Grid {
     }
 
     isOccupied(coords) {
-        return this.grid[coords.x * this.resolution + coords.y] != 0;
+        return this.grid[this.getIndex(coords.x, coords.y)] != 0;
     }
 
     remove(obj) {
