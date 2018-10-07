@@ -1,4 +1,4 @@
-import StaticActor from './StaticActor';
+import AnimatedActor from './AnimatedActor';
 
 /*const State = Object.freeze({
     COLLECTED: symbol('collected'),
@@ -23,7 +23,7 @@ export default class GameObjectActor {
         solvedBy,
         collected
     ) {
-        this.actor = new StaticActor(avatar, renderer, resource);
+        this.actor = new AnimatedActor(avatar, renderer, resource, 0.1, true);
         this.myplayerNumber = myplayerNumber;
         this.handleSolutionFromPlayer(solvedBy, collected);
         renderer.addGameObjectActor(problemId, this);
@@ -31,6 +31,7 @@ export default class GameObjectActor {
 
     handleSolutionFromPlayer(playerNumber, collected) {
         if (collected == true) {
+            this.actor.playOnce();
             let filter = new PIXI.filters.AlphaFilter(0.4);
             this.actor.sprite.filters = [filter];
         } else if (playerNumber == undefined || playerNumber == null) {

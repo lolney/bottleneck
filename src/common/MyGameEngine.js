@@ -104,7 +104,7 @@ export default class MyGameEngine extends GameEngine {
         return this.addObjectToWorld(
             new Avatar(this, null, {
                 position: position,
-                objectType: 'google',
+                objectType: 'defence',
                 dbId: defenceId,
                 solvedBy: null
             })

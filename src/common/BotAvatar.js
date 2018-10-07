@@ -1,7 +1,7 @@
 'use strict';
 
 import DynamicObject from 'lance/serialize/DynamicObject';
-import AnimatedActor from '../client/AnimatedActor.js';
+import PlayerActor from '../client/PlayerActor.js';
 import Serializer from 'lance/serialize/Serializer';
 import TwoVector from 'lance/serialize/TwoVector';
 
@@ -236,7 +236,7 @@ export default class BotAvatar extends DynamicObject {
 
     onAddToWorld(gameEngine) {
         if (gameEngine.renderer) {
-            this.actor = new AnimatedActor(this, gameEngine.renderer, false);
+            this.actor = new PlayerActor(this, gameEngine.renderer, false);
         }
     }
 
