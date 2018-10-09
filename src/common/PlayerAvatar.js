@@ -1,7 +1,7 @@
 'use strict';
 
 import DynamicObject from 'lance/serialize/DynamicObject';
-import AnimatedActor from '../client/AnimatedActor.js';
+import PlayerActor from '../client/PlayerActor.js';
 import Serializer from 'lance/serialize/Serializer';
 
 export default class PlayerAvatar extends DynamicObject {
@@ -12,6 +12,10 @@ export default class PlayerAvatar extends DynamicObject {
             },
             super.netScheme
         );
+    }
+
+    blocks() {
+        return false;
     }
 
     constructor(gameEngine, options, props) {
@@ -34,7 +38,7 @@ export default class PlayerAvatar extends DynamicObject {
                     gameEngine.playerId
                 } ${this.playerNumber}`
             );
-            this.actor = new AnimatedActor(
+            this.actor = new PlayerActor(
                 this,
                 gameEngine.renderer,
                 gameEngine.isOwnedByPlayer(this)

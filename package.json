@@ -2,7 +2,7 @@
   "name": "bottleneck",
   "version": "2.0.0",
   "engines": {
-    "node": "8.10.0"
+    "node": ">= 7.6.0"
   },
   "description": "Multiplayer RPG with scripting-based problem solving",
   "main": "main.js",
@@ -38,6 +38,8 @@
     "query-string": "^4.2.3",
     "react": "^16.4.0",
     "react-ace": "^6.1.1",
+    "react-alert": "github:lolney/react-alert#master",
+    "react-alert-template-basic": "^1.0.0",
     "react-bootstrap": "^0.32.1",
     "react-dom": "^16.4.0",
     "react-draggable": "^3.0.5",

@@ -4,17 +4,42 @@ import TwoVector from 'lance/serialize/TwoVector';
 import { WIDTH, HEIGHT } from '../../src/server/GameWorld';
 
 describe('BotAvatar', () => {
-    let avatar = new BotAvatar(this, null, {
-        position: new TwoVector(WIDTH / 2, HEIGHT / 2)
-    });
-    let gameWorld = GameWorld.generate();
-    let resourcePosition = new TwoVector(WIDTH / 2, 0);
+    let avatar;
+    let resourcePositions;
 
-    let gameEngine = {
-        closestResource: () => {
-            return { position: resourcePosition };
+    beforeEach(() => {
+        avatar = new BotAvatar(this, null, {
+            position: new TwoVector(WIDTH / 2, HEIGHT / 2),
+            playerNumber: 0
+        });
+        let gameWorld = GameWorld.generate();
+        resourcePositions = [
+            new TwoVector((3 * WIDTH) / 8, 0),
+            new TwoVector((5 * WIDTH) / 8, 0),
+            new TwoVector((7 * WIDTH) / 8, 0)
+        ];
+
+        let gameEngine = {
+            getResources: () => {
+                return resourcePositions.map((pos, i) => ({
+                    position: pos,
+                    dbId: i.toString()
+                }));
+            },
+            on: () => {}
+        };
+
+        avatar.attach(null, gameWorld, gameEngine);
+    });
+
+    it('resources initialized correctly', () => {
+        let sorted = resourcePositions.sort((a, b) => a.x > b.x);
+        for (let i = 0; i < 3; i++) {
+            expect(avatar.nextResource().position.x).toEqual(sorted[i].x);
         }
-    };
+
+        expect(avatar.nextResource()).toBe(undefined);
+    });
 
     it('initializes correctly', () => {
         let avatar = new BotAvatar(this, null, {});
@@ -23,14 +48,14 @@ describe('BotAvatar', () => {
     });
 
     it('properly creates a path', () => {
-        let path = avatar.newPath(gameWorld, gameEngine);
+        let path = avatar.newPath();
 
         expect(path).not.toBe(undefined);
         expect(path.length).toBeGreaterThan(0);
     });
 
     it('properly follows a path', () => {
-        avatar.followWaypoint(gameWorld, gameEngine);
+        avatar.followWaypoint();
 
         expect(Math.abs(avatar.velocity.x + avatar.velocity.y)).toBeGreaterThan(
             0

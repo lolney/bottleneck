@@ -21,42 +21,54 @@ export const siegeItems = [
         name: 'Gate',
         image: 'assets/sprites/tree1.png',
         type: 'offensive',
-        costwood: '4',
-        coststone: '0'
+        cost: {
+            wood: '4',
+            stone: '0'
+        }
     },
     {
         name: 'Bridge',
         image: 'assets/sprites/tree1.png',
         type: 'offensive',
-        costwood: '4',
-        coststone: '0'
+        cost: {
+            wood: '4',
+            stone: '0'
+        }
     },
     {
         name: 'Ladder',
         image: 'assets/sprites/Rock1.png',
         type: 'offensive',
-        costwood: '4',
-        coststone: '0'
+        cost: {
+            wood: '4',
+            stone: '0'
+        }
     },
     {
         name: 'Slowfield',
         image: 'assets/sprites/Rock2.png',
         type: 'defensive',
-        costwood: '2',
-        coststone: '2'
+        cost: {
+            wood: '2',
+            stone: '2'
+        }
     },
     {
         name: 'Pit',
         image: 'assets/sprites/tree2.png',
         type: 'defensive',
-        costwood: '1',
-        coststone: '3'
+        cost: {
+            wood: '1',
+            stone: '3'
+        }
     },
     {
         name: 'Fence',
         image: 'assets/sprites/tree2.png',
         type: 'defensive',
-        costwood: '4',
-        coststone: '0'
+        cost: {
+            wood: '4',
+            stone: '0'
+        }
     }
-];
+].map((obj, i) => Object.assign({ id: i.toString() }, obj));

@@ -17,6 +17,7 @@ import './CSS/Defences.scss';
 import './CSS/Solutions.scss';
 import './CSS/Menu.scss';
 import './CSS/MenuWindow.scss';
+import './CSS/LoadingScreen.scss';
 
 /*
 \ App

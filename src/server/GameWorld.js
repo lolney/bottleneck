@@ -99,12 +99,14 @@ export default class GameWorld {
         let start = this.grid.worldCoordsToCell(mapStart);
         let end = this.grid.worldCoordsToCell(mapEnd);
 
+        console.log('grid start x,y, end x,y', start.x, start.y, end.x, end.y);
         if (this.grid.isOccupied(end)) {
+            this.grid.print([end]);
             throw new Error('end tile is unreachable');
         }
 
         let grid = new PF.Grid(this.grid.to2DArray());
-        console.log('grid start x,y, end x,y', start.x, start.y, end.x, end.y);
+
         let path = this.pathFinder.findPath(
             start.x,
             start.y,
@@ -171,9 +173,13 @@ export class Grid {
 
         for (let y = 0; y < height; y++) {
             for (let x = 0; x < width; x++) {
-                yield this.resolution * (bottom + y) + (left + x);
+                yield this.getIndex(left + x, bottom + y);
             }
         }
+    }
+
+    getIndex(x, y) {
+        return this.resolution * y + x;
     }
 
     print(coords = [], path = []) {
@@ -206,8 +212,8 @@ export class Grid {
         let x = worldCoords.x % WIDTH;
         let y = worldCoords.y % HEIGHT;
         return new TwoVector(
-            Math.round(this.resolution * (x / WIDTH)),
-            Math.round(this.resolution * (y / HEIGHT))
+            Math.floor(this.resolution * (x / WIDTH)),
+            Math.floor(this.resolution * (y / HEIGHT))
         );
     }
 
@@ -237,7 +243,7 @@ export class Grid {
     }
 
     isOccupied(coords) {
-        return this.grid[coords.x * this.resolution + coords.y] != 0;
+        return this.grid[this.getIndex(coords.x, coords.y)] != 0;
     }
 
     remove(obj) {
@@ -504,7 +510,7 @@ export class MazeWall {
         let isHorizonal = width == 1;
 
         this.width = isHorizonal ? scale : maze.wallWidth;
-        this.height = isHorizonal ? maze.wallWidth : maze.corridorWidth;
+        this.height = isHorizonal ? maze.wallWidth : scale + maze.wallWidth;
 
         let xPadding = 0;
         let yPadding = isHorizonal

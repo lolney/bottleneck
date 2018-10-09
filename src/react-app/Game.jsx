@@ -1,6 +1,7 @@
 import React from 'react';
 import querystring from 'query-string';
 import MyClientEngine from '../client/MyClientEngine';
+import Router from '../client/Router';
 import MyGameEngine from '../common/MyGameEngine';
 
 // default options, overwritten by query-string options
@@ -12,7 +13,7 @@ const defaults = {
     syncOptions: {
         sync: 'extrapolate',
         localObjBending: 0.0,
-        remoteObjBending: 0.8,
+        remoteObjBending: 0.0,
         bendingIncrements: 6
     },
     auth: {
@@ -37,6 +38,7 @@ export default class Game extends React.Component {
         const clientEngine = new MyClientEngine(gameEngine, options);
 
         clientEngine.start().then(() => {
+            Router.init(clientEngine.socket);
             this.props.onReceiveSocket(clientEngine.socket);
             clientEngine.socket.on('solution', (data) => {
                 gameEngine.renderer.onReceiveSolution(

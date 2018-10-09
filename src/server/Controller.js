@@ -4,7 +4,9 @@ import {
     problem,
     addSolution,
     getObjectResources,
-    addToResourceCount
+    addToResourceCount,
+    markAsCollected,
+    getPlayerResources
 } from './db';
 import { getSolutions, solvedProblem, deletePlayerId } from './db/index';
 import { siegeItems } from '../../stories/fixtures';
@@ -46,7 +48,7 @@ class Controller {
             let solutions = await getSolutions(userId);
             socket.emit('solvedProblems', solutions);
             // Let all players know this problem has been solved
-            this.gameEngine.markAsSolved(data.problemId, socket.playerId);
+            this.gameEngine.markAsSolved(data.problemId, playerNumber);
             for (const sock of Object.values(this.socketsMap)) {
                 sock.emit('solution', {
                     problemId: data.problemId,
@@ -74,17 +76,52 @@ class Controller {
             });
         });
 
+        socket.on('resourceInitial', async () => {
+            let resources = await getPlayerResources(playerId);
+            let dict = {};
+            for (const res of resources) {
+                dict[res.name] = res.count;
+            }
+            socket.emit('resourceInitial', dict);
+        });
+
+        socket.on('makeDefence', async (data) => {
+            let resources = this.getDefenceCost(data.defenceId);
+
+            try {
+                await Promise.all(
+                    Object.entries(resources).map(async (pair) => {
+                        let { 0: name, 1: count } = pair;
+                        return await addToResourceCount(playerId, name, -count);
+                    })
+                );
+
+                this.gameEngine.makeDefence(data.defenceId, data.position);
+                Object.entries(resources).map((pair) => {
+                    let { 0: name, 1: count } = pair;
+                    this.pushCount(playerId, name, -count);
+                });
+            } catch (error) {
+                console.error('Could not make defence: ', error.message);
+            }
+        });
+
         socket.on('siegeItems', () => {
             socket.emit('siegeItems', siegeItems);
         });
 
         this.socketsMap[playerId] = socket;
+        //this.pushCount();
         console.log(`added player ${playerId}`);
+    }
+
+    getDefenceCost(defenceId) {
+        let item = siegeItems.find((elem) => elem.id == defenceId);
+        return item.cost;
     }
 
     addBot(playerId, playerNumber, problemId) {
         let position = this.gameWorld.getStartingPosition(playerNumber);
-        console.log('problemId:', problemId);
         let bot = this.gameEngine.addBot({
             type: 'collector',
             playerId: playerId,
@@ -106,6 +143,10 @@ class Controller {
         }
     }
 
+    async markAsCollected(gameObjectId) {
+        return markAsCollected(gameObjectId);
+    }
+
     async pushCount(playerId, name, count, shouldReset = false) {
         this.pushData(playerId, 'resourceUpdate', {
             name: name,
@@ -119,11 +160,12 @@ class Controller {
         let prob = (await problem(dbId, socket.client.userId)).problem;
         let serialized = await serialize(prob);
 
+        if (!prob.id) {
+            throw Error('Problem not found');
+        }
+
         // TODO: temporary; should only be on solved problem
         if (!socket.bot) {
-            if (!prob.id) {
-                throw Error('Problem not found');
-            }
             this.addBot(playerId, socket.playerId, prob.id);
             socket.bot = true;
         }
@@ -133,8 +175,10 @@ class Controller {
 
     removePlayer(playerId) {
         let socket = this.socketsMap[playerId];
-        deletePlayerId(socket.client.userId, playerId);
-        delete this.socketsMap[playerId];
+        if (socket) {
+            deletePlayerId(socket.client.userId, playerId);
+            delete this.socketsMap[playerId];
+        }
     }
 
     /**

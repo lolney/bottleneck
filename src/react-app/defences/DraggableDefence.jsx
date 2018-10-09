@@ -7,10 +7,10 @@ export default class DraggableDefence extends React.Component {
         return (
             <img
                 className="defence"
-                draggable="true"
+                draggable={this.props.draggable}
                 src={this.props.src}
                 onDragStart={(event) => {
-                    event.dataTransfer.setData('text/plain', this.props.src);
+                    event.dataTransfer.setData('text/plain', this.props.id);
                 }}
             />
         );
@@ -18,5 +18,6 @@ export default class DraggableDefence extends React.Component {
 }
 
 DraggableDefence.propTypes = {
-    src: PropTypes.string.isRequired
+    src: PropTypes.string.isRequired,
+    draggable: PropTypes.bool.isRequired
 };

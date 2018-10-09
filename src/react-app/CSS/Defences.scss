@@ -2,7 +2,7 @@
   display: flex;
   flex-flow: column;
 
-  @import "./GeneralClasses.scss";
+  @import "./Common.scss";
 
   .body {
     background: white;
@@ -29,6 +29,9 @@
     flex-wrap: wrap;
     justify-content: center;
     margin: 5vh;
+    .not-buyable {
+      color: red;
+    }
     .defence {
       white-space: normal;
       margin: 0.5vw;

@@ -4,10 +4,13 @@ import DefencesBrowser from './defences/DefencesBrowser.jsx';
 import PropTypes from 'prop-types';
 import ControlledButton from './ControlledButton.jsx';
 import Menu from './Menu.jsx';
+import { Modal } from 'react-bootstrap';
 
 export default class HUD extends React.Component {
     constructor(props) {
         super(props);
+
+        console.log('constructing HUD');
 
         this.state = {
             resources: {
@@ -15,22 +18,32 @@ export default class HUD extends React.Component {
                 stone: 0
             }
         };
-        this.props.socket.on('resourceUpdate', (data) => {
-            let resources = { ...this.state.resources };
-            if (data.shouldReset == true) {
-                resources[data.name] = data.count;
-            } else {
-                resources[data.name] = resources[data.name] + data.count;
-            }
-            this.setState({ ...this.state, resources: resources });
+        // Listen for initial update first
+        this.props.socket.once('resourceInitial', (data) => {
+            console.log('got initial: ', data);
+            this.setState({ ...this.state, resources: data });
+
+            this.props.socket.on('resourceUpdate', (data) => {
+                let resources = { ...this.state.resources };
+                if (data.shouldReset == true) {
+                    resources[data.name] = data.count;
+                } else {
+                    resources[data.name] = resources[data.name] + data.count;
+                }
+                this.setState({ ...this.state, resources: resources });
+            });
         });
+        this.props.socket.emit('resourceInitial');
     }
 
     render() {
         return (
             <div className="hud-buttons bootstrap-styles">
                 <ButtonToolbar>
-                    <Button className="top-btn hud-button">
+                    <Button
+                        className="top-btn hud-button"
+                        onClick={this.handleShow}
+                    >
                         <div className="hud-column">
                             <img
                                 alt="log icon"

@@ -104,9 +104,12 @@ export default class MyGameEngine extends GameEngine {
         return this.addObjectToWorld(
             new Avatar(this, null, {
                 position: position,
-                objectType: 'google',
+                objectType: 'tree',
+                behaviorType: 'defence',
                 dbId: defenceId,
-                solvedBy: null
+                problemId: null,
+                solvedBy: null,
+                collected: false
             })
         );
     }
@@ -120,11 +123,17 @@ export default class MyGameEngine extends GameEngine {
         }
     }
 
+    markAsCollected(dbId) {
+        let obj = this.queryObject({ dbId: dbId }, Avatar);
+        console.log(`Marking ${obj} as collected`);
+        obj.collected = 'true';
+    }
+
     causesCollision() {
         let collisionObjects = this.physicsEngine.collisionDetection.detect();
         for (const pair of collisionObjects) {
             let objects = Object.values(pair);
-            let object = objects.find((o) => o instanceof Blockable);
+            let object = objects.find((o) => o.blocks());
             let player = objects.find((o) => o instanceof PlayerAvatar);
 
             if (!object || !player) continue;
@@ -133,21 +142,22 @@ export default class MyGameEngine extends GameEngine {
         return false;
     }
 
-    // TODO: doesn't actually find closest resource
-    closestResource(problemId) {
-        return this.queryObject({ problemId: problemId });
+    getResources(problemId) {
+        return this.queryObjects({ problemId: problemId }, Avatar);
     }
 
-    queryObjects(query, returnSingle = false) {
+    queryObjects(query, targetType, returnSingle = false) {
         let result = [];
         this.world.forEachObject((id, obj) => {
-            for (const key of Object.keys(query)) {
-                if (obj[key] == query[key]) {
-                    if (returnSingle) {
-                        result = obj;
-                        return false;
+            if (!targetType || obj instanceof targetType) {
+                for (const key of Object.keys(query)) {
+                    if (obj[key] == query[key]) {
+                        if (returnSingle) {
+                            result = obj;
+                            return false;
+                        }
+                        result.push(obj);
                     }
-                    result.push(obj);
                 }
             }
         });
@@ -157,8 +167,8 @@ export default class MyGameEngine extends GameEngine {
         return result;
     }
 
-    queryObject(query) {
-        return this.queryObjects(query, true);
+    queryObject(query, targetType) {
+        return this.queryObjects(query, targetType, true);
     }
 
     processInput(inputData, playerId) {

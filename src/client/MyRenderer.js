@@ -11,9 +11,9 @@ export default class MyRenderer extends Renderer {
     get ASSETPATHS() {
         return {
             player: 'assets/sprites/walking.json',
-            tree: 'assets/sprites/Rock1.png',
+            tree: 'assets/sprites/Rock2.json',
             background: '/assets/grass.jpg',
-            google: 'assets/sprites/tree1.png',
+            defence: 'assets/sprites/tree1.png',
             wall: 'assets/rock-wall-2.png'
         };
     }
@@ -119,7 +119,7 @@ export default class MyRenderer extends Renderer {
      */
     onReceiveSolution(problemId, playerId) {
         for (const actor of this.gameObjectActors[problemId]) {
-            actor.handleSolutionFromPlayer(playerId);
+            actor.handleSolutionFromPlayer(playerId, false);
         }
     }
 

@@ -1,3 +1,5 @@
+import Router from './Router';
+
 export default class DragHandler {
     constructor(canvas, gameEngine, renderer) {
         this.dragObject = null;
@@ -21,19 +23,22 @@ export default class DragHandler {
             ev.preventDefault();
 
             this.updateTempObject(ev);
+            let id = ev.dataTransfer.getData('text/plain');
+            Router.makeDefence(id, this.dragObject.position);
+            this.removeTempObject();
+            /*
             this.dragObject.actor.getSprite().filters = [];
-            this.dragObject = null;
+            this.dragObject = null;*/
         });
     }
 
     updateTempObject(ev) {
-        let id = ev.dataTransfer.getData('text');
         let position = this.renderer.canvasToWorldCoordinates(
             ev.clientX,
             ev.clientY
         );
         if (this.dragObject == null) {
-            this.dragObject = this.gameEngine.makeDefence(id, position);
+            this.dragObject = this.gameEngine.makeDefence(null, position);
             let filter = new PIXI.filters.ColorMatrixFilter();
             this.dragObject.actor.getSprite().filters = [filter];
             filter.negative();
@@ -43,7 +48,10 @@ export default class DragHandler {
     }
 
     removeTempObject() {
-        this.gameEngine.removeObjectFromWorld(this.dragObject.id);
+        let obj = this.dragObject;
+        console.log('removing ', obj.dbId);
+
+        this.gameEngine.removeObjectFromWorld(obj.id);
         this.dragObject = null;
     }
 }

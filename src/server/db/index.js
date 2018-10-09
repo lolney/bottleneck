@@ -35,8 +35,10 @@ function formatObject(obj) {
         position: [dv.location.coordinates[0], dv.location.coordinates[1]],
         dbId: dv.id,
         objectType: dv.objectType,
+        behaviorType: dv.behaviorType,
         problemId: dv.problem.id,
         resources: dv.resources,
+        collected: dv.collected,
         solvedBy: dv.problem.solvedProblem
             ? dv.problem.solvedProblem.user.playerId
             : null
@@ -193,17 +195,22 @@ export async function setPlayerId(userId, number, location) {
     let stone = await models.resource.create({
         parent: 'player',
         name: 'stone',
-        count: 0
+        count: 10
     });
     let wood = await models.resource.create({
         parent: 'player',
         name: 'wood',
-        count: 0
+        count: 10
     });
     wood.setPlayer(player);
     stone.setPlayer(player);
 
     return player;
+}
+
+export async function getPlayerResources(playerId) {
+    let player = await models.player.find({ where: { id: playerId } });
+    return player.getResources();
 }
 
 export async function deletePlayerId(userId, playerId) {}
@@ -233,9 +240,19 @@ export async function addToResourceCount(playerId, resourceName, count) {
     let obj = getDataValues(raw);
     let resource = obj.resources[0];
     let newCount = resource.count + count;
+    if (newCount < 0) {
+        throw new Error(`Resource count would be negative: ${newCount}`);
+    }
     await models.resource.update(
         { count: newCount },
         { where: { id: resource.id } }
     );
     return newCount;
+}
+
+export async function markAsCollected(gameObjectId) {
+    return await models.gameObject.update(
+        { collected: true },
+        { where: { id: gameObjectId } }
+    );
 }

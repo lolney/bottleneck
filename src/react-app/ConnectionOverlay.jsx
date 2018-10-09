@@ -42,10 +42,32 @@ export default class ConnectionOverlay extends React.Component {
 
     render() {
         switch (this.state.state) {
-            case State.Connected:
-                return null;
-            default:
-                return <div> {this.state.state} </div>;
+        case State.Connected:
+            return null;
+        default:
+            return (
+                <div className="loading-screen">
+                    <div id="spinner" className="spinner">
+                        <div className="loader-wrapper">
+                            <div className="loader">
+                                <div />
+                                <div />
+                                <div />
+                                <div />
+                                <div />
+                                <div />
+                                <div />
+                                <div />
+                            </div>
+                        </div>
+                        <div className="text-container">
+                            <div className="loading-text">
+                                {this.state.state}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
         }
     }
 }

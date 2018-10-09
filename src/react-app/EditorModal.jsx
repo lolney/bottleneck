@@ -2,10 +2,11 @@ import React from 'react';
 import Editor from './Editor.jsx';
 import ProblemComponent from './ProblemComponent.jsx';
 import PropTypes from 'prop-types';
+import { withAlert } from 'react-alert';
 
 import './CSS/Modal.scss';
 
-export default class EditorModal extends React.Component {
+class EditorModal extends React.Component {
     constructor(props) {
         super(props);
 
@@ -45,6 +46,7 @@ export default class EditorModal extends React.Component {
                         generator={this.state.generator}
                         reportError={this.reportError}
                         onSolution={this.props.onSolution}
+                        alert={this.props.alert}
                     />
                 )}
                 <Editor
@@ -57,8 +59,11 @@ export default class EditorModal extends React.Component {
     }
 }
 
+export default withAlert(EditorModal);
+
 EditorModal.propTypes = {
     onSolution: PropTypes.func.isRequired,
     problem: PropTypes.object,
-    code: PropTypes.string.isRequired
+    code: PropTypes.string.isRequired,
+    alert: PropTypes.object.isRequired
 };
