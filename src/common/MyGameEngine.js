@@ -7,11 +7,10 @@ import Avatar from './Avatar';
 import BotAvatar from './BotAvatar';
 import Blockable from './Blockable';
 import TwoVector from 'lance/serialize/TwoVector';
+import { WIDTH, HEIGHT } from '../config';
 import { resolve } from 'url';
 
 const STEP = 5;
-export const WIDTH = 2000;
-export const HEIGHT = 1200;
 
 export default class MyGameEngine extends GameEngine {
     constructor(options) {

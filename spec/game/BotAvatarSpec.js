@@ -1,7 +1,7 @@
 import BotAvatar from '../../src/common/BotAvatar';
 import GameWorld from '../../src/server/GameWorld';
 import TwoVector from 'lance/serialize/TwoVector';
-import { WIDTH, HEIGHT } from '../../src/server/GameWorld';
+import { WIDTH, HEIGHT } from '../../src/config';
 
 describe('BotAvatar', () => {
     let avatar;

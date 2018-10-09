@@ -1,7 +1,7 @@
 'use strict';
 
 import Renderer from 'lance/render/Renderer';
-import { WIDTH, HEIGHT } from '../common/MyGameEngine';
+import { WIDTH, HEIGHT } from '../config';
 import TwoVector from 'lance/serialize/TwoVector';
 import DragHandler from './DragHandler';
 
