@@ -5,7 +5,8 @@ import {
     addSolution,
     getObjectResources,
     addToResourceCount,
-    markAsCollected
+    markAsCollected,
+    getPlayerResources
 } from './db';
 import { getSolutions, solvedProblem, deletePlayerId } from './db/index';
 import { siegeItems } from '../../stories/fixtures';
@@ -75,9 +76,34 @@ class Controller {
             });
         });
 
-        socket.on('makeDefence', (data) => {
-            console.log('received makeDefence command: ', data);
-            this.gameEngine.makeDefence(data.defenceId, data.position);
+        socket.on('resourceInitial', async () => {
+            let resources = await getPlayerResources(playerId);
+            let dict = {};
+            for (const res of resources) {
+                dict[res.name] = res.count;
+            }
+            socket.emit('resourceInitial', dict);
+        });
+
+        socket.on('makeDefence', async (data) => {
+            let resources = this.getDefenceCost(data.defenceId);
+
+            try {
+                await Promise.all(
+                    Object.entries(resources).map(async (pair) => {
+                        let { 0: name, 1: count } = pair;
+                        return await addToResourceCount(playerId, name, -count);
+                    })
+                );
+
+                this.gameEngine.makeDefence(data.defenceId, data.position);
+                Object.entries(resources).map((pair) => {
+                    let { 0: name, 1: count } = pair;
+                    this.pushCount(playerId, name, -count);
+                });
+            } catch (error) {
+                console.error('Could not make defence: ', error.message);
+            }
         });
 
         socket.on('siegeItems', () => {
@@ -85,7 +111,13 @@ class Controller {
         });
 
         this.socketsMap[playerId] = socket;
+        //this.pushCount();
         console.log(`added player ${playerId}`);
+    }
+
+    getDefenceCost(defenceId) {
+        let item = siegeItems.find((elem) => elem.id == defenceId);
+        return item.cost;
     }
 
     addBot(playerId, playerNumber, problemId) {

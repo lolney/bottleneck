@@ -15,7 +15,6 @@ export default class DragHandler {
         canvas.addEventListener('dragleave', (ev) => {
             ev.preventDefault();
 
-            console.log('dragleave');
             this.removeTempObject();
         });
 
@@ -23,9 +22,9 @@ export default class DragHandler {
             // Prevent opening a new tab on Firefox
             ev.preventDefault();
 
-            console.log('drop');
             this.updateTempObject(ev);
-            Router.makeDefence(this.dragObject.dbId, this.dragObject.position);
+            let id = ev.dataTransfer.getData('text/plain');
+            Router.makeDefence(id, this.dragObject.position);
             this.removeTempObject();
             /*
             this.dragObject.actor.getSprite().filters = [];
@@ -34,8 +33,6 @@ export default class DragHandler {
     }
 
     updateTempObject(ev) {
-        // TODO: distinguish between defence types
-        // let id = ev.dataTransfer.getData('text');
         let position = this.renderer.canvasToWorldCoordinates(
             ev.clientX,
             ev.clientY
@@ -52,6 +49,8 @@ export default class DragHandler {
 
     removeTempObject() {
         let obj = this.dragObject;
+        console.log('removing ', obj.dbId);
+
         this.gameEngine.removeObjectFromWorld(obj.id);
         this.dragObject = null;
     }

@@ -10,21 +10,30 @@ export default class HUD extends React.Component {
     constructor(props) {
         super(props);
 
+        console.log('constructing HUD');
+
         this.state = {
             resources: {
                 wood: 0,
                 stone: 0
             }
         };
-        this.props.socket.on('resourceUpdate', (data) => {
-            let resources = { ...this.state.resources };
-            if (data.shouldReset == true) {
-                resources[data.name] = data.count;
-            } else {
-                resources[data.name] = resources[data.name] + data.count;
-            }
-            this.setState({ ...this.state, resources: resources });
+        // Listen for initial update first
+        this.props.socket.once('resourceInitial', (data) => {
+            console.log('got initial: ', data);
+            this.setState({ ...this.state, resources: data });
+
+            this.props.socket.on('resourceUpdate', (data) => {
+                let resources = { ...this.state.resources };
+                if (data.shouldReset == true) {
+                    resources[data.name] = data.count;
+                } else {
+                    resources[data.name] = resources[data.name] + data.count;
+                }
+                this.setState({ ...this.state, resources: resources });
+            });
         });
+        this.props.socket.emit('resourceInitial');
     }
 
     render() {
@@ -47,33 +56,6 @@ export default class HUD extends React.Component {
                             {this.state.resources['wood']}
                         </div>
                     </Button>
-
-                    <Modal show={this.state.show} onHide={this.handleClose}>
-                        <Modal.Header closeButton>
-                            <Modal.Title>Modal heading</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <h4>Text in a modal</h4>
-                            <p>
-                                Duis mollis, est non commodo luctus, nisi erat
-                                porttitor ligula.
-                            </p>
-
-                            <hr />
-
-                            <h4>Overflowing text to show scroll behavior</h4>
-                            <p>
-                                Cras mattis consectetur purus sit amet
-                                fermentum. Cras justo odio, dapibus ac facilisis
-                                in, egestas eget quam. Morbi leo risus, porta ac
-                                consectetur ac, vestibulum at eros.
-                            </p>
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <Button onClick={this.handleClose}>Close</Button>
-                        </Modal.Footer>
-                    </Modal>
-
                     <Button className="hud-button">
                         <div className="hud-column">
                             <img

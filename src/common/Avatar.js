@@ -52,7 +52,6 @@ export default class Avatar extends DynamicObject {
 
     onAddToWorld(gameEngine) {
         if (gameEngine.renderer) {
-            console.log('collected ', this.collected);
             this.actor = new GameObjectActor(
                 this,
                 gameEngine.renderer,

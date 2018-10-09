@@ -195,17 +195,22 @@ export async function setPlayerId(userId, number, location) {
     let stone = await models.resource.create({
         parent: 'player',
         name: 'stone',
-        count: 0
+        count: 10
     });
     let wood = await models.resource.create({
         parent: 'player',
         name: 'wood',
-        count: 0
+        count: 10
     });
     wood.setPlayer(player);
     stone.setPlayer(player);
 
     return player;
+}
+
+export async function getPlayerResources(playerId) {
+    let player = await models.player.find({ where: { id: playerId } });
+    return player.getResources();
 }
 
 export async function deletePlayerId(userId, playerId) {}
@@ -235,6 +240,9 @@ export async function addToResourceCount(playerId, resourceName, count) {
     let obj = getDataValues(raw);
     let resource = obj.resources[0];
     let newCount = resource.count + count;
+    if (newCount < 0) {
+        throw new Error(`Resource count would be negative: ${newCount}`);
+    }
     await models.resource.update(
         { count: newCount },
         { where: { id: resource.id } }
