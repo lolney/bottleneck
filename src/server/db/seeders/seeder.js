@@ -2,12 +2,13 @@ import ImageProblem from '../../../problem-engine/ImageProblem';
 import uuidv4 from 'uuid/v4';
 import { date } from '../../db';
 import BinaryTreeProblem from '../../../problem-engine/BinaryTreeProblem';
-//import GameWorld from '../../GameWorld';
+import { WIDTH, HEIGHT } from '../../.../../../config';
 
 let randomInt = (minimum, maximum) =>
     Math.floor(Math.random() * (maximum - minimum)) + minimum;
 
 const NUM_OBJECTS = 50;
+const RIVER_RADIUS = 200;
 
 function randomInRanges(...ranges) {
     let rangeIndex = randomInt(0, ranges.length);
@@ -21,9 +22,14 @@ function randomInRanges(...ranges) {
 function randomPoint() {
     // Can't import GameWorld here since it imports TwoVector
     //let bounds = GameWorld.getResourceBounds();
-    let x = randomInRanges([0, 800], [1200, 2000]);
-    if (x > 800 && x < 1000) console.log(x);
-    let y = randomInRanges([0, 300], [900, 1200]);
+    let x = randomInRanges(
+        [0, WIDTH / 2 - RIVER_RADIUS],
+        [WIDTH / 2 + RIVER_RADIUS, WIDTH]
+    );
+    let y = randomInRanges(
+        [0, 0.25 * HEIGHT],
+        [HEIGHT - 0.25 * HEIGHT, HEIGHT]
+    );
     return 'POINT(' + x + ' ' + y + ')';
 }
 
@@ -82,7 +88,7 @@ export async function up(queryInterface, Sequelize) {
                 objectType: 'tree',
                 collected: false,
                 behaviorType: 'resource',
-                problemId: rows[randomInt(0, rows.length - 1)].id,
+                problemId: rows[randomInt(0, rows.length)].id,
                 createdAt: date(),
                 updatedAt: date()
             };

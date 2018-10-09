@@ -1,6 +1,13 @@
 [![Waffle.io - Columns and their card count](https://badge.waffle.io/lolney/bottleneck.svg?columns=all)](https://waffle.io/lolney/bottleneck)
 
-Still early in development, but demo at [bottleneck-production.herokuapp.com](http://bottleneck-production.herokuapp.com/).
+# Bottleneck
+
+Bottleneck is an open source, RTS-inspired game based around efficiently automating the management of your base. Collect resources by solving naturally-integrated programming problems, which you can use to build defences or break down your opponent's. Win by gathering enough creeps to circumvent those defences and breach your opponent's keep.
+
+Preview;
+![](https://i.imgur.com/qUP0D9d.png)
+
+Pre-alpha demo at [bottleneck-production.herokuapp.com](http://bottleneck-production.herokuapp.com/).
 
 Latest build at [scripting-rpg.herokuapp.com](http://scripting-rpg.herokuapp.com/).
 
@@ -21,7 +28,7 @@ Create a .env file at the project root, containing:
 DATABASE_URL=postgresql://USERNAME:PASSWORD@localhost:5432/bottleneck_development
 ```
 
-Install postgis. On Ubuntu:
+Install postgis. For instance, on Debian/Ubuntu:
 
 ```
 apt-get install postgis*

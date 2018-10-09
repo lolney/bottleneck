@@ -1,9 +1,10 @@
 import jsgraphs from 'js-graph-algorithms';
 import TwoVector from 'lance/serialize/TwoVector';
 import PF from 'pathfinding';
+import { WIDTH, HEIGHT } from '../config';
 
-export const WIDTH = 2000;
-export const HEIGHT = 1200;
+const wallWidth = 20;
+const corridorWidth = 60;
 
 /**
  * Can be generated or loaded from the database
@@ -49,9 +50,6 @@ export default class GameWorld {
             0.3,
             0.7
         );
-
-        const wallWidth = 20;
-        const corridorWidth = 60;
 
         let maze = new Maze(mazeBounds, corridorWidth, wallWidth);
         objects = objects.concat(maze.createWalls());
@@ -463,7 +461,7 @@ export class MazeGraph {
     }
 
     isNotEntrance() {
-        let left = this.getIndex(this.nRows / 2, 0);
+        let left = this.getIndex(Math.floor(this.nRows / 2), 0);
         let lower = this.getIndex(this.nRows - 1, Math.floor(this.nCols / 2));
         let upper = this.getIndex(0, Math.floor(this.nCols / 2));
         return (edge) =>
