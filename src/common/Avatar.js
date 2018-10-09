@@ -9,6 +9,7 @@ export default class Avatar extends DynamicObject {
         return Object.assign(
             {
                 objectType: { type: Serializer.TYPES.STRING },
+                behaviorType: { type: Serializer.TYPES.STRING },
                 dbId: { type: Serializer.TYPES.STRING },
                 solvedBy: { type: Serializer.TYPES.STRING },
                 collected: { type: Serializer.TYPES.STRING },
@@ -26,11 +27,16 @@ export default class Avatar extends DynamicObject {
             this.solvedBy = props.solvedBy;
             this.collected = props.collected.toString();
             this.problemId = props.problemId;
+            this.behaviorType = props.behaviorType;
         }
         this.class = Avatar;
-        // TODO: add this to a config
-        this.width = 100;
+        // TODO: add this to a config, tied to objectType (or directly to db?)
+        this.width = 25;
         this.height = 25;
+    }
+
+    blocks() {
+        return this.behaviorType == 'defence';
     }
 
     syncTo(other) {

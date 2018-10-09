@@ -75,6 +75,11 @@ class Controller {
             });
         });
 
+        socket.on('makeDefence', (data) => {
+            console.log('received makeDefence command: ', data);
+            this.gameEngine.makeDefence(data.defenceId, data.position);
+        });
+
         socket.on('siegeItems', () => {
             socket.emit('siegeItems', siegeItems);
         });

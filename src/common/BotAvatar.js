@@ -64,6 +64,10 @@ export default class BotAvatar extends DynamicObject {
         this.path = [];
     }
 
+    blocks() {
+        return false;
+    }
+
     static distance(a, b) {
         return a
             .clone()

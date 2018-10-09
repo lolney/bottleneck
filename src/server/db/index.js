@@ -35,6 +35,7 @@ function formatObject(obj) {
         position: [dv.location.coordinates[0], dv.location.coordinates[1]],
         dbId: dv.id,
         objectType: dv.objectType,
+        behaviorType: dv.behaviorType,
         problemId: dv.problem.id,
         resources: dv.resources,
         collected: dv.collected,

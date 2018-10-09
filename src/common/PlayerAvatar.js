@@ -14,6 +14,10 @@ export default class PlayerAvatar extends DynamicObject {
         );
     }
 
+    blocks() {
+        return false;
+    }
+
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
         if (props && props.playerId) {

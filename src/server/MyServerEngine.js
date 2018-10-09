@@ -24,7 +24,9 @@ export default class MyServerEngine extends ServerEngine {
 
     static collision(e) {
         let collisionObjects = Object.keys(e).map((k) => e[k]);
-        let object = collisionObjects.find((o) => o instanceof Avatar);
+        let object = collisionObjects.find(
+            (o) => o instanceof Avatar && o.behaviorType == 'resource'
+        );
         let player = collisionObjects.find((o) => o instanceof PlayerAvatar);
 
         if (!object || !player) return;

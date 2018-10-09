@@ -104,8 +104,10 @@ export default class MyGameEngine extends GameEngine {
         return this.addObjectToWorld(
             new Avatar(this, null, {
                 position: position,
-                objectType: 'defence',
+                objectType: 'tree',
+                behaviorType: 'defence',
                 dbId: defenceId,
+                problemId: null,
                 solvedBy: null,
                 collected: false
             })
@@ -131,7 +133,7 @@ export default class MyGameEngine extends GameEngine {
         let collisionObjects = this.physicsEngine.collisionDetection.detect();
         for (const pair of collisionObjects) {
             let objects = Object.values(pair);
-            let object = objects.find((o) => o instanceof Blockable);
+            let object = objects.find((o) => o.blocks());
             let player = objects.find((o) => o instanceof PlayerAvatar);
 
             if (!object || !player) continue;

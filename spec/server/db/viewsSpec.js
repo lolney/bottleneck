@@ -38,6 +38,7 @@ describe('objects', () => {
                     expect(obj.dbId).toEqual(jasmine.any(String));
                     expect(obj.position.length).toEqual(2);
                     expect(obj.objectType).toEqual('tree');
+                    expect(obj.behaviorType).toEqual('resource');
                     expect(obj.problemId).toEqual(jasmine.any(String));
                     expect(obj.solvedBy).toBeDefined();
                 }
