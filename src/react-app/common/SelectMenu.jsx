@@ -55,7 +55,6 @@ export default class SelectMenu extends React.Component {
     }
 
     checkIfSelected(item) {
-        console.log(this.props.getType(item) == this.state.selected);
         return this.state.selected == undefined
             ? item
             : this.props.getType(item) == this.state.selected;

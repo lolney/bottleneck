@@ -33,11 +33,6 @@ export default class PlayerAvatar extends DynamicObject {
     onAddToWorld(gameEngine) {
         console.log(`adding player ${this.id}`);
         if (gameEngine.renderer) {
-            console.log(
-                `is owned by player: ${gameEngine.isOwnedByPlayer(this)} ${
-                    gameEngine.playerId
-                } ${this.playerNumber}`
-            );
             this.actor = new PlayerActor(
                 this,
                 gameEngine.renderer,

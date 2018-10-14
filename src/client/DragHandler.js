@@ -1,4 +1,5 @@
 import Router from './Router';
+import { siegeItems } from '../config';
 
 export default class DragHandler {
     constructor(canvas, gameEngine, renderer) {
@@ -24,11 +25,7 @@ export default class DragHandler {
 
             this.updateTempObject(ev);
             let id = ev.dataTransfer.getData('text/plain');
-            let position = this.renderer.canvasToWorldCoordinates(
-                ev.clientX,
-                ev.clientY
-            );
-            Router.makeDefence(id, position);
+            Router.makeDefence(id, this.dragObject.position);
             this.removeTempObject();
             /*
             this.dragObject.actor.getSprite().filters = [];
@@ -38,7 +35,7 @@ export default class DragHandler {
 
     getId(ev) {
         let id = null;
-        for (const candidate of [0, 1, 2, 3, 4, 5].map((i) => i.toString())) {
+        for (const candidate of siegeItems.map((elem) => elem.id)) {
             if (ev.dataTransfer.types.includes(candidate)) {
                 id = candidate;
                 break;
@@ -50,7 +47,6 @@ export default class DragHandler {
         return id;
     }
 
-    // TODO
     updateTempObject(ev) {
         let position = this.renderer.canvasToWorldCoordinates(
             ev.clientX,

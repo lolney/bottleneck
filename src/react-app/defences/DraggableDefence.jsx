@@ -11,6 +11,7 @@ export default class DraggableDefence extends React.Component {
                 src={this.props.src}
                 onDragStart={(event) => {
                     event.dataTransfer.setData('text/plain', this.props.id);
+                    event.dataTransfer.setData(this.props.id, this.props.id);
                 }}
             />
         );
