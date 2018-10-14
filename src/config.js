@@ -21,7 +21,7 @@ export const Player = {
 export const siegeItems = [
     {
         name: 'Gate',
-        image: 'assets/sprites/tree1.png',
+        image: 'assets/gate.png',
         type: 'offensive',
         cost: {
             wood: '4',
@@ -30,7 +30,7 @@ export const siegeItems = [
     },
     {
         name: 'Bridge',
-        image: 'assets/sprites/tree1.png',
+        image: 'assets/bridge.png',
         type: 'offensive',
         cost: {
             wood: '4',
@@ -39,7 +39,7 @@ export const siegeItems = [
     },
     {
         name: 'Ladder',
-        image: 'assets/sprites/Rock1.png',
+        image: 'assets/ladder1.png',
         type: 'offensive',
         cost: {
             wood: '4',
@@ -48,7 +48,7 @@ export const siegeItems = [
     },
     {
         name: 'Slowfield',
-        image: 'assets/slowfield.png',
+        image: 'assets/slowfield2.png',
         type: 'defensive',
         cost: {
             wood: '2',
@@ -66,7 +66,7 @@ export const siegeItems = [
     },
     {
         name: 'Fence',
-        image: 'assets/sprites/tree2.png',
+        image: 'assets/fence.png',
         type: 'defensive',
         cost: {
             wood: '4',
