@@ -96,7 +96,11 @@ class Controller {
                     })
                 );
 
-                this.gameEngine.makeDefence(data.defenceId, data.position);
+                let defence = this.gameEngine.makeDefence(
+                    data.defenceId,
+                    data.position
+                );
+                this.gameWorld.update(defence);
                 Object.entries(resources).map((pair) => {
                     let { 0: name, 1: count } = pair;
                     this.pushCount(playerId, name, -count);

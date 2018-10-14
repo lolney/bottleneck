@@ -296,8 +296,8 @@ describe('addToResourceCount', () => {
             15
         );
 
-        expect(newCount0).toEqual(10);
-        expect(newCount1).toEqual(15);
+        expect(newCount0).toEqual(10 + counts[0]);
+        expect(newCount1).toEqual(15 + counts[1]);
     });
 });
 

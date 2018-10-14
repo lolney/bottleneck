@@ -3,6 +3,7 @@
 import DynamicObject from 'lance/serialize/DynamicObject';
 import Serializer from 'lance/serialize/Serializer';
 import GameObjectActor from '../client/GameObjectActor.js';
+import { Player } from '../config';
 
 export default class Avatar extends DynamicObject {
     static get netScheme() {
@@ -30,9 +31,8 @@ export default class Avatar extends DynamicObject {
             this.behaviorType = props.behaviorType;
         }
         this.class = Avatar;
-        // TODO: add this to a config, tied to objectType (or directly to db?)
-        this.width = 25;
-        this.height = 25;
+        this.width = Player.width;
+        this.height = Player.height;
     }
 
     blocks() {

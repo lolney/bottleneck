@@ -1,7 +1,7 @@
 import jsgraphs from 'js-graph-algorithms';
 import TwoVector from 'lance/serialize/TwoVector';
 import PF from 'pathfinding';
-import { WIDTH, HEIGHT } from '../config';
+import { WIDTH, HEIGHT, Player } from '../config';
 
 const wallWidth = 20;
 const corridorWidth = 60;
@@ -127,16 +127,22 @@ export default class GameWorld {
      * @param {number} obj.id
      */
     update(obj) {
+        let paddingX = Player.width / 2;
+        let paddingY = Player.height / 2;
+
         let prev = this.objects[obj.id];
         if (prev) {
-            this.grid.remove(prev);
+            this.grid.remove(prev, paddingX, paddingY);
         }
         this.objects[obj.id] = obj;
-        this.grid.add(obj);
+        this.grid.add(obj, paddingX, paddingY);
     }
 
     remove(obj) {
-        this.grid.remove(obj);
+        let paddingX = Player.width / 2;
+        let paddingY = Player.height / 2;
+
+        this.grid.remove(obj, paddingX, paddingY);
         delete this.objects[obj.id];
     }
 }
@@ -160,14 +166,14 @@ export class Grid {
      * @param {number} obj.width
      * @param {number} obj.height
      */
-    *getIndices(obj) {
+    *getIndices(obj, paddingX = 0, paddingY = 0) {
         let getX = (x) => Math.round(this.resolution * (x / WIDTH));
         let getY = (y) => Math.round(this.resolution * (y / HEIGHT));
 
-        let width = getX(obj.width);
-        let height = getY(obj.height);
-        let left = getX(obj.position.x - obj.width / 2);
-        let bottom = getY(obj.position.y - obj.height / 2);
+        let width = getX(obj.width + paddingX);
+        let height = getY(obj.height + paddingY);
+        let left = getX(obj.position.x - obj.width / 2 - paddingX);
+        let bottom = getY(obj.position.y - obj.height / 2 - paddingY);
 
         for (let y = 0; y < height; y++) {
             for (let x = 0; x < width; x++) {
@@ -234,8 +240,8 @@ export class Grid {
         return outArray;
     }
 
-    add(obj) {
-        for (const index of this.getIndices(obj)) {
+    add(obj, paddingX = 0, paddingY = 0) {
+        for (const index of this.getIndices(obj, paddingX, paddingY)) {
             this.grid[index]++;
         }
     }
@@ -244,8 +250,8 @@ export class Grid {
         return this.grid[this.getIndex(coords.x, coords.y)] != 0;
     }
 
-    remove(obj) {
-        for (const index of this.getIndices(obj)) {
+    remove(obj, paddingX = 0, paddingY = 0) {
+        for (const index of this.getIndices(obj, paddingX, paddingY)) {
             this.grid[index]--;
         }
     }
