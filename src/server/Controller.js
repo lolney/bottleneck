@@ -9,7 +9,7 @@ import {
     getPlayerResources
 } from './db';
 import { getSolutions, solvedProblem, deletePlayerId } from './db/index';
-import { siegeItems } from '../../stories/fixtures';
+import { siegeItems } from '../config';
 
 function serialize(problem) {
     switch (problem.type) {

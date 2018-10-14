@@ -7,8 +7,8 @@ import Avatar from './Avatar';
 import BotAvatar from './BotAvatar';
 import Blockable from './Blockable';
 import TwoVector from 'lance/serialize/TwoVector';
-import { WIDTH, HEIGHT } from '../config';
-import { resolve } from 'url';
+import { WIDTH, HEIGHT, getSiegeItemFromId } from '../config';
+import DefenceAvatar from './DefenceAvatar';
 
 const STEP = 5;
 
@@ -29,6 +29,7 @@ export default class MyGameEngine extends GameEngine {
     registerClasses(serializer) {
         serializer.registerClass(PlayerAvatar);
         serializer.registerClass(Avatar);
+        serializer.registerClass(DefenceAvatar);
         serializer.registerClass(Blockable);
         serializer.registerClass(BotAvatar);
     }
@@ -100,14 +101,14 @@ export default class MyGameEngine extends GameEngine {
     }
 
     makeDefence(defenceId, position) {
+        let siegeItem = getSiegeItemFromId(defenceId);
+        console.log('adding siegeItem: ', siegeItem);
         return this.addObjectToWorld(
-            new Avatar(this, null, {
+            new DefenceAvatar(this, null, {
                 position: position,
-                objectType: 'tree',
+                objectType: siegeItem.name,
                 behaviorType: 'defence',
                 dbId: defenceId,
-                problemId: null,
-                solvedBy: null,
                 collected: false
             })
         );

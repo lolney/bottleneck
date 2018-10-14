@@ -24,7 +24,11 @@ export default class DragHandler {
 
             this.updateTempObject(ev);
             let id = ev.dataTransfer.getData('text/plain');
-            Router.makeDefence(id, this.dragObject.position);
+            let position = this.renderer.canvasToWorldCoordinates(
+                ev.clientX,
+                ev.clientY
+            );
+            Router.makeDefence(id, position);
             this.removeTempObject();
             /*
             this.dragObject.actor.getSprite().filters = [];
@@ -32,13 +36,30 @@ export default class DragHandler {
         });
     }
 
+    getId(ev) {
+        let id = null;
+        for (const candidate of [0, 1, 2, 3, 4, 5].map((i) => i.toString())) {
+            if (ev.dataTransfer.types.includes(candidate)) {
+                id = candidate;
+                break;
+            }
+        }
+        if (id == null) {
+            throw new Error('couldn\'t find id');
+        }
+        return id;
+    }
+
+    // TODO
     updateTempObject(ev) {
         let position = this.renderer.canvasToWorldCoordinates(
             ev.clientX,
             ev.clientY
         );
+
+        let id = this.getId(ev);
         if (this.dragObject == null) {
-            this.dragObject = this.gameEngine.makeDefence(null, position);
+            this.dragObject = this.gameEngine.makeDefence(id, position);
             let filter = new PIXI.filters.ColorMatrixFilter();
             this.dragObject.actor.getSprite().filters = [filter];
             filter.negative();

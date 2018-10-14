@@ -7,7 +7,7 @@ import { WindowsContainer } from './windows';
 import '../src/react-app/CSS/Defences.scss';
 
 import { siegeItems } from './fixtures';
-import { solvedProblems } from './fixtures';
+import { solvedProblems } from '../src/config';
 
 let on = (event, callback) => {
     let data;
