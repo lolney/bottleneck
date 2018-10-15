@@ -12,6 +12,11 @@ const State = {
     AT_BASE: Symbol('at_base')
 };
 
+const Status = {
+    IDLE: Symbol('idle'),
+    WORKING: Symbol('working')
+};
+
 /**
  * Represents the state of resource collection bots
  * Note: not properly serialized
@@ -124,6 +129,10 @@ export default class BotAvatar extends DynamicObject {
         } else this.velocity = new TwoVector(0, 0);
     }
 
+    /**
+     * Returns a new path, transitioning state as necessary
+     * If there are no more resources to be collected, returns []
+     */
     newPath() {
         if (this.state == State.COLLECTING) {
             this.transitionState();
@@ -134,8 +143,7 @@ export default class BotAvatar extends DynamicObject {
                     this.playerNumber
                 )
             );
-            return this.serverState.gameWorld.pathfind(
-                this.position,
+            return this.pathFind(
                 this.serverState.gameWorld.getStartingPosition(
                     this.playerNumber
                 )
@@ -153,15 +161,37 @@ export default class BotAvatar extends DynamicObject {
                 this.position,
                 obj.position
             );
-            return this.serverState.gameWorld.pathfind(
-                this.position,
-                obj.position
-            );
+            return this.pathFind(obj.position);
         } else {
             throw new Error(
                 `Unexpected state for Bot: ${this.state.toString()}`
             );
         }
+    }
+
+    /**
+     * Retun a path, if possible. Else, idle until new path can be found,
+     * checking every second.
+     * @param {TwoVector} dst -
+     */
+    pathFind(dst) {
+        this.statis = Status.IDLE;
+        return new Promise((resolve) => {
+            let tryPath = () => {
+                let path = this.serverState.gameWorld.pathfind(
+                    this.position,
+                    dst
+                );
+                if (path.length > 0) {
+                    this.status = Status.RUNNING;
+                    resolve(path);
+                } else {
+                    this.status = Status.IDLE;
+                    setTimeout(tryPath, 1000);
+                }
+            };
+            tryPath();
+        });
     }
 
     getNextPosition() {
@@ -204,7 +234,7 @@ export default class BotAvatar extends DynamicObject {
         }
     }
 
-    checkPath() {
+    async checkPath() {
         if (this.path.length > 0) {
             let next = this.getNextPosition();
             let radius = 4;
@@ -212,10 +242,8 @@ export default class BotAvatar extends DynamicObject {
                 .clone()
                 .subtract(next)
                 .length();
-            // console.log('distance', distance, this.path.length);
             if (distance < radius) {
                 this.path = this.path.slice(1, this.path.length);
-                // console.log('culling path', this.path.length);
                 if (this.path.length == 0) {
                     this.transitionState();
                 }
@@ -223,7 +251,7 @@ export default class BotAvatar extends DynamicObject {
         }
         if (this.path.length == 0 && !this.isCalculating) {
             this.isCalculating = true;
-            this.path = this.newPath();
+            this.path = await this.newPath();
             console.log('New path length:', this.path.length);
             if (this.path.length == 0) {
                 this.detach();
