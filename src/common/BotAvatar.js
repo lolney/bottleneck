@@ -5,7 +5,7 @@ import PlayerActor from '../client/PlayerActor.js';
 import Serializer from 'lance/serialize/Serializer';
 import TwoVector from 'lance/serialize/TwoVector';
 
-const State = {
+export const State = {
     COLLECTING: Symbol('collecting'),
     RETURNING: Symbol('returning'),
     LEAVING: Symbol('leaving'),
@@ -105,6 +105,7 @@ export default class BotAvatar extends DynamicObject {
             gameWorld: gameWorld,
             gameEngine: gameEngine
         };
+        this.targetGameObject = null;
         this.serverState['resources'] = this.initResources();
         this.onPreStep = () => {
             this.followWaypoint();
@@ -116,8 +117,8 @@ export default class BotAvatar extends DynamicObject {
         return this.serverState.resources.pop();
     }
 
-    followWaypoint() {
-        this.checkPath();
+    async followWaypoint() {
+        await this.checkPath();
         if (this.path.length > 0) {
             let next = this.getNextPosition();
             // console.log(next, this.position);
@@ -155,7 +156,7 @@ export default class BotAvatar extends DynamicObject {
                 console.log('last resource reached');
                 return [];
             }
-            this.transitionState(obj.dbId);
+            this.transitionState(obj);
             console.log(
                 'Leaving base. position, target: ',
                 this.position,
@@ -201,9 +202,9 @@ export default class BotAvatar extends DynamicObject {
 
     /**
      * Transition the bot to its next state. Includes side effects.
-     * @param {string} gameObjectId
+     * @param {gameObject} gameObject
      */
-    transitionState(gameObjectId = null) {
+    transitionState(gameObject = null) {
         switch (this.state) {
         case State.LEAVING:
             this.state = State.COLLECTING;
@@ -212,21 +213,21 @@ export default class BotAvatar extends DynamicObject {
             this.state = State.AT_BASE;
             this.serverState.controller.addToResourceCount(
                 this.playerId,
-                this.targetGameObjectId
+                this.targetGameObject.dbId
             );
-            this.targetGameObjectId = gameObjectId;
+            this.targetGameObject = gameObject;
             break;
         case State.COLLECTING:
             this.state = State.RETURNING;
             this.serverState.gameEngine.markAsCollected(
-                this.targetGameObjectId
+                this.targetGameObject.dbId
             );
             break;
         case State.AT_BASE:
-            if (gameObjectId == null) {
-                throw new TypeError('Expected non-null gameObjectId');
+            if (gameObject == null) {
+                throw new TypeError('Expected non-null gameObject');
             }
-            this.targetGameObjectId = gameObjectId;
+            this.targetGameObject = gameObject;
             this.state = State.LEAVING;
             break;
         default:
@@ -243,6 +244,7 @@ export default class BotAvatar extends DynamicObject {
                 .subtract(next)
                 .length();
             if (distance < radius) {
+                // trim path
                 this.path = this.path.slice(1, this.path.length);
                 if (this.path.length == 0) {
                     this.transitionState();
@@ -260,6 +262,27 @@ export default class BotAvatar extends DynamicObject {
             this.checkPath();
             this.isCalculating = false;
         }
+    }
+
+    async resetPath() {
+        this.path = [];
+        if (this.targetGameObject != null) {
+            this.serverState.resources.push(this.targetGameObject);
+        }
+        switch (this.state) {
+        case State.LEAVING:
+            this.state = State.AT_BASE;
+            break;
+        case State.RETURNING:
+            this.state = State.COLLECTING;
+            break;
+        case State.COLLECTING:
+        case State.AT_BASE:
+            break;
+        default:
+            throw new Error('Unexpected state');
+        }
+        await this.checkPath();
     }
 
     detach() {

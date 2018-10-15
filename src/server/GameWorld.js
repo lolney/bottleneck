@@ -100,7 +100,8 @@ export default class GameWorld {
         console.log('grid start x,y, end x,y', start.x, start.y, end.x, end.y);
         if (this.grid.isOccupied(end)) {
             this.grid.print([end]);
-            throw new Error('end tile is unreachable');
+            console.log('end tile is unreachable');
+            return [];
         }
 
         let grid = new PF.Grid(this.grid.to2DArray());

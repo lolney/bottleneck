@@ -103,7 +103,7 @@ export default class MyGameEngine extends GameEngine {
     makeDefence(defenceId, position) {
         let siegeItem = getSiegeItemFromId(defenceId);
         console.log('adding siegeItem: ', siegeItem);
-        return this.addObjectToWorld(
+        let obj = this.addObjectToWorld(
             new DefenceAvatar(this, null, {
                 position: position,
                 objectType: siegeItem.name,
@@ -112,6 +112,15 @@ export default class MyGameEngine extends GameEngine {
                 collected: false
             })
         );
+
+        this.resetBots();
+
+        return obj;
+    }
+
+    async resetBots() {
+        let bots = this.queryObjects({}, BotAvatar);
+        await Promise.all(bots.map((bot) => bot.resetPath()));
     }
 
     markAsSolved(problemId, playerId) {
@@ -150,14 +159,19 @@ export default class MyGameEngine extends GameEngine {
         let result = [];
         this.world.forEachObject((id, obj) => {
             if (!targetType || obj instanceof targetType) {
+                let found = true;
                 for (const key of Object.keys(query)) {
-                    if (obj[key] == query[key]) {
-                        if (returnSingle) {
-                            result = obj;
-                            return false;
-                        }
-                        result.push(obj);
+                    if (obj[key] != query[key]) {
+                        found = false;
+                        break;
                     }
+                }
+                if (found) {
+                    if (returnSingle) {
+                        result = obj;
+                        return false;
+                    }
+                    result.push(obj);
                 }
             }
         });

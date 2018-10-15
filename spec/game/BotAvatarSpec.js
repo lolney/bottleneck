@@ -1,4 +1,4 @@
-import BotAvatar from '../../src/common/BotAvatar';
+import BotAvatar, { State } from '../../src/common/BotAvatar';
 import GameWorld from '../../src/server/GameWorld';
 import TwoVector from 'lance/serialize/TwoVector';
 import { WIDTH, HEIGHT } from '../../src/config';
@@ -47,18 +47,32 @@ describe('BotAvatar', () => {
         expect(avatar).not.toBe(undefined);
     });
 
-    it('properly creates a path', () => {
-        let path = avatar.newPath();
+    it('properly creates a path', async () => {
+        let path = await avatar.newPath();
 
         expect(path).not.toBe(undefined);
         expect(path.length).toBeGreaterThan(0);
     });
 
-    it('properly follows a path', () => {
-        avatar.followWaypoint();
+    it('properly follows a path', async () => {
+        await avatar.followWaypoint();
 
         expect(Math.abs(avatar.velocity.x + avatar.velocity.y)).toBeGreaterThan(
             0
         );
+    });
+
+    it('can reset properly while following a resource', async () => {
+        expect(avatar.targetGameObject).toBe(null);
+        await avatar.followWaypoint();
+
+        expect(avatar.state).toEqual(State.LEAVING);
+        expect(avatar.targetGameObject.dbId).toEqual('0');
+
+        await avatar.resetPath();
+
+        expect(avatar.targetGameObject.dbId).toEqual('0');
+        expect(avatar.state).toEqual(State.LEAVING);
+        expect(avatar.path).not.toBe(null);
     });
 });
