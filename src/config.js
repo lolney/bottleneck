@@ -30,7 +30,7 @@ export const siegeItems = [
     },
     {
         name: 'Bridge',
-        image: 'assets/bridge.png',
+        image: 'assets/bridge4.png',
         type: 'offensive',
         cost: {
             wood: '4',
@@ -48,7 +48,7 @@ export const siegeItems = [
     },
     {
         name: 'Slowfield',
-        image: 'assets/slowfield2.png',
+        image: 'assets/slowfield3.png',
         type: 'defensive',
         cost: {
             wood: '2',
@@ -57,7 +57,7 @@ export const siegeItems = [
     },
     {
         name: 'Pit',
-        image: 'assets/hole.png',
+        image: 'assets/hole2.png',
         type: 'defensive',
         cost: {
             wood: '1',
