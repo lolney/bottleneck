@@ -4,7 +4,7 @@ import Renderer from 'lance/render/Renderer';
 import { WIDTH, HEIGHT } from '../config';
 import TwoVector from 'lance/serialize/TwoVector';
 import DragHandler from './DragHandler';
-import { getSiegeItemsAssetPaths } from '../config';
+import { getAssetPaths } from '../config';
 
 let PIXI = null;
 
@@ -18,7 +18,7 @@ export default class MyRenderer extends Renderer {
                 defence: 'assets/sprites/tree1.png',
                 wall: 'assets/rock-wall-2.png'
             },
-            getSiegeItemsAssetPaths()
+            getAssetPaths()
         );
     }
 

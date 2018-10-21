@@ -5,9 +5,10 @@ export const getSiegeItemFromId = (id) => {
     return siegeItems.find((item) => item.id == id);
 };
 
-export const getSiegeItemsAssetPaths = () => {
+export const getAssetPaths = () => {
+    let items = siegeItems.concat([playerBase]);
     let assetPaths = {};
-    for (const item of siegeItems) {
+    for (const item of items) {
         assetPaths[item.name] = item.image;
     }
     return assetPaths;
@@ -32,7 +33,8 @@ export const playerBase = {
     baseHP: 20,
     height: 50,
     width: 50,
-    image: 'assets/gate.png'
+    name: 'Keep',
+    image: 'assets/Keep.png'
 };
 
 export const siegeItems = [

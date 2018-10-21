@@ -106,11 +106,18 @@ export default class MyGameEngine extends GameEngine {
         else this.problemIdIndex[obj.problemId] = [obj];
     }
 
-    makePlayer(playerId, playerNumber) {
+    makePlayer(playerId, playerNumber, baseLocation) {
         console.log(`adding player ${playerNumber}`);
+        this.addObjectToWorld(
+            new PlayerBaseAvatar(this, null, {
+                position: baseLocation,
+                playerId: playerId,
+                playerNumber: playerNumber
+            })
+        );
         return this.addObjectToWorld(
             new PlayerAvatar(this, null, {
-                position: new TwoVector(WIDTH / 2, HEIGHT / 2),
+                position: baseLocation,
                 playerId: playerId,
                 playerNumber: playerNumber
             })

@@ -30,7 +30,7 @@ export default class PlayerBaseAvatar extends DynamicObject {
             this.actor = new StaticActor(
                 this,
                 gameEngine.renderer,
-                playerBase.image
+                playerBase.name
             );
         }
     }

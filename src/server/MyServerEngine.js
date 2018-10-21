@@ -49,7 +49,8 @@ export default class MyServerEngine extends ServerEngine {
                 );
                 this.gameEngine.makePlayer(
                     socket.client.playerDbId,
-                    socket.playerId
+                    socket.playerId,
+                    this.gameWorld.getStartingPosition(socket.playerId)
                 );
             } else setTimeout(waitForAuth, 100);
         };
