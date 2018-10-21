@@ -4,11 +4,16 @@ import GameEngine from 'lance/GameEngine';
 import SimplePhysicsEngine from 'lance/physics/SimplePhysicsEngine';
 import PlayerAvatar from './PlayerAvatar';
 import Avatar from './Avatar';
+import CollectionBotAvatar from './CollectionBotAvatar';
 import BotAvatar from './BotAvatar';
-import Blockable from './Blockable';
+import WallAvatar from './WallAvatar';
+import DefenceAvatar from './DefenceAvatar';
+import AssaultBotAvatar from './AssaultBotAvatar';
+import PlayerBaseAvatar from './PlayerBaseAvatar';
+import WaterAvatar from './WaterAvatar';
+
 import TwoVector from 'lance/serialize/TwoVector';
-import { WIDTH, HEIGHT } from '../config';
-import { resolve } from 'url';
+import { WIDTH, HEIGHT, getSiegeItemFromId } from '../config';
 
 const STEP = 5;
 
@@ -29,8 +34,12 @@ export default class MyGameEngine extends GameEngine {
     registerClasses(serializer) {
         serializer.registerClass(PlayerAvatar);
         serializer.registerClass(Avatar);
-        serializer.registerClass(Blockable);
-        serializer.registerClass(BotAvatar);
+        serializer.registerClass(DefenceAvatar);
+        serializer.registerClass(WallAvatar);
+        serializer.registerClass(CollectionBotAvatar);
+        serializer.registerClass(AssaultBotAvatar);
+        serializer.registerClass(PlayerBaseAvatar);
+        serializer.registerClass(WaterAvatar);
     }
 
     start() {
@@ -54,18 +63,40 @@ export default class MyGameEngine extends GameEngine {
 
     addObjects(objects) {
         for (const obj of objects) {
-            this.addObjectToWorld(new Blockable(this, null, obj));
+            let Type;
+            switch (obj.type) {
+            case 'wall':
+                Type = WallAvatar;
+                break;
+            case 'water':
+                Type = WaterAvatar;
+                break;
+            default:
+                throw new Error(`Unexpected type: ${obj.type}`);
+            }
+            this.addObjectToWorld(new Type(this, null, obj));
         }
     }
 
     addBot(options) {
-        return this.addObjectToWorld(new BotAvatar(this, null, options));
+        let Type;
+        switch (options.type) {
+        case 'assault':
+            Type = AssaultBotAvatar;
+            break;
+        case 'collector':
+            Type = CollectionBotAvatar;
+            break;
+        default:
+            throw new Error('Unexpected type');
+        }
+        return this.addObjectToWorld(new Type(this, null, options));
     }
 
     makeWalls() {
         for (let i = 0; i < 10; i++) {
             this.addObjectToWorld(
-                new Blockable(this, null, {
+                new WallAvatar(this, null, {
                     position: new TwoVector(
                         Math.random() * WIDTH,
                         Math.random() * HEIGHT
@@ -88,11 +119,18 @@ export default class MyGameEngine extends GameEngine {
         else this.problemIdIndex[obj.problemId] = [obj];
     }
 
-    makePlayer(playerId, playerNumber) {
+    makePlayer(playerId, playerNumber, baseLocation) {
         console.log(`adding player ${playerNumber}`);
+        this.addObjectToWorld(
+            new PlayerBaseAvatar(this, null, {
+                position: baseLocation,
+                playerId: playerId,
+                playerNumber: playerNumber
+            })
+        );
         return this.addObjectToWorld(
             new PlayerAvatar(this, null, {
-                position: new TwoVector(WIDTH / 2, HEIGHT / 2),
+                position: baseLocation,
                 playerId: playerId,
                 playerNumber: playerNumber
             })
@@ -100,17 +138,26 @@ export default class MyGameEngine extends GameEngine {
     }
 
     makeDefence(defenceId, position) {
-        return this.addObjectToWorld(
-            new Avatar(this, null, {
+        let siegeItem = getSiegeItemFromId(defenceId);
+        console.log('adding siegeItem: ', siegeItem);
+        let obj = this.addObjectToWorld(
+            new DefenceAvatar(this, null, {
                 position: position,
-                objectType: 'tree',
+                objectType: siegeItem.name,
                 behaviorType: 'defence',
                 dbId: defenceId,
-                problemId: null,
-                solvedBy: null,
                 collected: false
             })
         );
+
+        this.resetBots();
+
+        return obj;
+    }
+
+    async resetBots() {
+        let bots = this.queryObjects({}, BotAvatar);
+        await Promise.all(bots.map((bot) => bot.resetPath()));
     }
 
     markAsSolved(problemId, playerId) {
@@ -126,6 +173,18 @@ export default class MyGameEngine extends GameEngine {
         let obj = this.queryObject({ dbId: dbId }, Avatar);
         console.log(`Marking ${obj} as collected`);
         obj.collected = 'true';
+    }
+
+    /**
+     * Decrement the health of an enemy base
+     * @param {number} enemyPlayerId
+     */
+    setBaseHP(enemyPlayerNumber, hp) {
+        let obj = this.queryObject(
+            { playerNumber: enemyPlayerNumber },
+            PlayerBaseAvatar
+        );
+        obj.hp = hp;
     }
 
     causesCollision() {
@@ -145,18 +204,27 @@ export default class MyGameEngine extends GameEngine {
         return this.queryObjects({ problemId: problemId }, Avatar);
     }
 
+    getPlayerByNumber(playerNumber) {
+        return this.queryObject({ playerNumber: playerNumber }, PlayerAvatar);
+    }
+
     queryObjects(query, targetType, returnSingle = false) {
         let result = [];
         this.world.forEachObject((id, obj) => {
             if (!targetType || obj instanceof targetType) {
+                let found = true;
                 for (const key of Object.keys(query)) {
-                    if (obj[key] == query[key]) {
-                        if (returnSingle) {
-                            result = obj;
-                            return false;
-                        }
-                        result.push(obj);
+                    if (obj[key] != query[key]) {
+                        found = false;
+                        break;
                     }
+                }
+                if (found) {
+                    if (returnSingle) {
+                        result = obj;
+                        return false;
+                    }
+                    result.push(obj);
                 }
             }
         });

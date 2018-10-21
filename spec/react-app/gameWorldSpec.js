@@ -1,11 +1,5 @@
-import {
-    Grid,
-    WIDTH,
-    HEIGHT,
-    Bounds,
-    Maze,
-    MazeWall
-} from '../../src/server/GameWorld';
+import { Grid, Bounds, Maze, MazeWall } from '../../src/server/GameWorld';
+import { WIDTH, HEIGHT } from '../../src/config';
 import TwoVector from 'lance/serialize/TwoVector';
 
 const BOUNDS = Bounds.fromDimensions(510, 510);

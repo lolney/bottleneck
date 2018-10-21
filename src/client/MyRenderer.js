@@ -4,18 +4,22 @@ import Renderer from 'lance/render/Renderer';
 import { WIDTH, HEIGHT } from '../config';
 import TwoVector from 'lance/serialize/TwoVector';
 import DragHandler from './DragHandler';
+import { getAssetPaths } from '../config';
 
 let PIXI = null;
 
 export default class MyRenderer extends Renderer {
     get ASSETPATHS() {
-        return {
-            player: 'assets/sprites/walking.json',
-            tree: 'assets/sprites/Rock2.json',
-            background: '/assets/grass.jpg',
-            defence: 'assets/sprites/tree1.png',
-            wall: 'assets/rock-wall-2.png'
-        };
+        return Object.assign(
+            {
+                player: 'assets/sprites/walking.json',
+                tree: 'assets/sprites/Rock2.json',
+                background: '/assets/grass.jpg',
+                defence: 'assets/sprites/tree1.png',
+                wall: 'assets/rock-wall-2.png'
+            },
+            getAssetPaths()
+        );
     }
 
     constructor(gameEngine, clientEngine) {

@@ -6,10 +6,11 @@ import {
     getObjectResources,
     addToResourceCount,
     markAsCollected,
-    getPlayerResources
+    getPlayerResources,
+    decrementHP
 } from './db';
 import { getSolutions, solvedProblem, deletePlayerId } from './db/index';
-import { siegeItems } from '../../stories/fixtures';
+import { siegeItems, assaultBot } from '../config';
 
 function serialize(problem) {
     switch (problem.type) {
@@ -25,6 +26,10 @@ function serialize(problem) {
     }
 }
 
+/**
+ * Mediates interaction between the client, server-side game engine,
+ * and DB. Must be initialized with {@link Controller#attachGameEngine}.
+ */
 class Controller {
     constructor() {
         this.socketsMap = {};
@@ -55,8 +60,7 @@ class Controller {
                     playerId: playerNumber
                 });
             }
-
-            this.addBot(playerId, playerNumber, data.problemId);
+            this.addCollectorbot(playerId, playerNumber, data.problemId);
         });
 
         socket.on('solvedProblems', async () => {
@@ -89,20 +93,30 @@ class Controller {
             let resources = this.getDefenceCost(data.defenceId);
 
             try {
-                await Promise.all(
-                    Object.entries(resources).map(async (pair) => {
-                        let { 0: name, 1: count } = pair;
-                        return await addToResourceCount(playerId, name, -count);
-                    })
-                );
+                this.deductResourceCosts(resources);
 
-                this.gameEngine.makeDefence(data.defenceId, data.position);
+                let defence = this.gameEngine.makeDefence(
+                    data.defenceId,
+                    data.position
+                );
+                this.gameWorld.update(defence);
                 Object.entries(resources).map((pair) => {
                     let { 0: name, 1: count } = pair;
                     this.pushCount(playerId, name, -count);
                 });
             } catch (error) {
                 console.error('Could not make defence: ', error.message);
+            }
+        });
+
+        socket.on('makeAssaultBot', async (data) => {
+            let resources = assaultBot.cost;
+
+            try {
+                await this.deductResourceCosts(playerId, resources);
+                this.addAssaultBot(playerId, playerNumber);
+            } catch (error) {
+                console.error('Could not create Assault bot: ', error.message);
             }
         });
 
@@ -115,21 +129,72 @@ class Controller {
         console.log(`added player ${playerId}`);
     }
 
+    /**
+     * @private
+     */
+    async deductResourceCosts(playerId, resources) {
+        await Promise.all(
+            Object.entries(resources).map(async (pair) => {
+                let { 0: name, 1: count } = pair;
+                return await addToResourceCount(playerId, name, -count);
+            })
+        );
+    }
+
+    /**
+     * @private
+     */
     getDefenceCost(defenceId) {
         let item = siegeItems.find((elem) => elem.id == defenceId);
         return item.cost;
     }
 
-    addBot(playerId, playerNumber, problemId) {
-        let position = this.gameWorld.getStartingPosition(playerNumber);
-        let bot = this.gameEngine.addBot({
+    /**
+     * @private
+     * @param {object} config
+     * @param {number} config.playerNumber
+     * @param {string} config.playerId
+     * @param {string} config.type
+     */
+    addBot(config) {
+        let position = this.gameWorld.getStartingPosition(config.playerNumber);
+        config = Object.assign(config, { position: position });
+        let bot = this.gameEngine.addBot(config);
+        bot.attach(this, this.gameWorld, this.gameEngine);
+    }
+
+    /**
+     * @private
+     * @param {string} playerId
+     * @param {number} playerNumber
+     * @param {string} problemId
+     */
+    addCollectorbot(playerId, playerNumber, problemId) {
+        let config = {
             type: 'collector',
             playerId: playerId,
             playerNumber: playerNumber,
-            problemId: problemId,
-            position: position
-        });
-        bot.attach(this, this.gameWorld, this.gameEngine);
+            problemId: problemId
+        };
+        this.addBot(config);
+    }
+
+    /**
+     * @private
+     * @param {string} playerId
+     * @param {number} playerNumber
+     */
+    addAssaultBot(playerId, playerNumber) {
+        let opponentNumber = playerNumber == 0 ? 1 : 0;
+        let opponent = this.gameEngine.getPlayerByNumber(opponentNumber);
+
+        let config = {
+            type: 'assault',
+            playerId: playerId,
+            opponentPlayerId: opponent.playerId,
+            playerNumber: playerNumber
+        };
+        this.addBot(config);
     }
 
     async addToResourceCount(playerId, gameObjectId) {
@@ -145,6 +210,14 @@ class Controller {
 
     async markAsCollected(gameObjectId) {
         return markAsCollected(gameObjectId);
+    }
+
+    async doAssault(enemyPlayerId) {
+        let hp = await decrementHP(enemyPlayerId);
+        if (hp <= 0) {
+            // @unimplemented: win game
+        }
+        this.gameEngine.setBaseHP(enemyPlayerId, hp);
     }
 
     async pushCount(playerId, name, count, shouldReset = false) {
@@ -166,7 +239,7 @@ class Controller {
 
         // TODO: temporary; should only be on solved problem
         if (!socket.bot) {
-            this.addBot(playerId, socket.playerId, prob.id);
+            this.addCollectorbot(playerId, socket.playerId, prob.id);
             socket.bot = true;
         }
 

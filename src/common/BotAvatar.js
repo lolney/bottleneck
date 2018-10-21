@@ -5,16 +5,14 @@ import PlayerActor from '../client/PlayerActor.js';
 import Serializer from 'lance/serialize/Serializer';
 import TwoVector from 'lance/serialize/TwoVector';
 
-const State = {
-    COLLECTING: Symbol('collecting'),
-    RETURNING: Symbol('returning'),
-    LEAVING: Symbol('leaving'),
-    AT_BASE: Symbol('at_base')
+const Status = {
+    IDLE: Symbol('idle'),
+    WORKING: Symbol('working')
 };
 
 /**
- * Represents the state of resource collection bots
- * Note: not properly serialized
+ * Base class for bots, representing syncing, pathfinding,
+ * and waypoint following
  */
 export default class BotAvatar extends DynamicObject {
     static get netScheme() {
@@ -57,10 +55,7 @@ export default class BotAvatar extends DynamicObject {
             this.velocity = new TwoVector(0, 0);
         }
         this.isCalculating = false;
-        this.state = State.AT_BASE;
         this.class = BotAvatar;
-        this.width = 25;
-        this.height = 25;
         this.path = [];
     }
 
@@ -75,23 +70,6 @@ export default class BotAvatar extends DynamicObject {
             .length();
     }
 
-    initResources() {
-        let startingPosition = this.serverState.gameWorld.getStartingPosition(
-            this.playerNumber
-        );
-        let resources = this.serverState.gameEngine.getResources(
-            this.problemId
-        );
-        let distances = {};
-        for (const resource of resources) {
-            distances[resource.dbId] = BotAvatar.distance(
-                startingPosition,
-                resource.position
-            );
-        }
-        return resources.sort((a, b) => distances[b.dbId] > distances[a.dbId]);
-    }
-
     attach(controller, gameWorld, gameEngine) {
         console.log('attaching bot');
 
@@ -100,19 +78,14 @@ export default class BotAvatar extends DynamicObject {
             gameWorld: gameWorld,
             gameEngine: gameEngine
         };
-        this.serverState['resources'] = this.initResources();
         this.onPreStep = () => {
             this.followWaypoint();
         };
         gameEngine.on('preStep', this.onPreStep);
     }
 
-    nextResource() {
-        return this.serverState.resources.pop();
-    }
-
-    followWaypoint() {
-        this.checkPath();
+    async followWaypoint() {
+        await this.checkPath();
         if (this.path.length > 0) {
             let next = this.getNextPosition();
             // console.log(next, this.position);
@@ -124,44 +97,39 @@ export default class BotAvatar extends DynamicObject {
         } else this.velocity = new TwoVector(0, 0);
     }
 
-    newPath() {
-        if (this.state == State.COLLECTING) {
-            this.transitionState();
-            console.log(
-                'Returning to base. position, base: ',
-                this.position,
-                this.serverState.gameWorld.getStartingPosition(
-                    this.playerNumber
-                )
-            );
-            return this.serverState.gameWorld.pathfind(
-                this.position,
-                this.serverState.gameWorld.getStartingPosition(
-                    this.playerNumber
-                )
-            );
-        } else if (this.state == State.AT_BASE) {
-            // lookup closest unharvested resource
-            let obj = this.nextResource();
-            if (obj == undefined) {
-                console.log('last resource reached');
-                return [];
-            }
-            this.transitionState(obj.dbId);
-            console.log(
-                'Leaving base. position, target: ',
-                this.position,
-                obj.position
-            );
-            return this.serverState.gameWorld.pathfind(
-                this.position,
-                obj.position
-            );
-        } else {
-            throw new Error(
-                `Unexpected state for Bot: ${this.state.toString()}`
-            );
-        }
+    /**
+     * Returns a new path, transitioning state as necessary
+     * If there are no more resources to be collected, returns []
+     */
+    async newPath() {
+        // @TODO: consider making this generic with a newPath function
+        // for each state transition
+        return ['0,0']
+    }
+
+    /**
+     * Retun a path, if possible. Else, idle until new path can be found,
+     * checking every second.
+     * @param {TwoVector} dst -
+     */
+    pathFind(dst) {
+        this.status = Status.IDLE;
+        return new Promise((resolve) => {
+            let tryPath = () => {
+                let path = this.serverState.gameWorld.pathfind(
+                    this.position,
+                    dst
+                );
+                if (path.length > 0) {
+                    this.status = Status.RUNNING;
+                    resolve(path);
+                } else {
+                    this.status = Status.IDLE;
+                    setTimeout(tryPath, 1000);
+                }
+            };
+            tryPath();
+        });
     }
 
     getNextPosition() {
@@ -171,40 +139,14 @@ export default class BotAvatar extends DynamicObject {
 
     /**
      * Transition the bot to its next state. Includes side effects.
-     * @param {string} gameObjectId
+     * @param {gameObject} gameObject
      */
-    transitionState(gameObjectId = null) {
-        switch (this.state) {
-        case State.LEAVING:
-            this.state = State.COLLECTING;
-            break;
-        case State.RETURNING:
-            this.state = State.AT_BASE;
-            this.serverState.controller.addToResourceCount(
-                this.playerId,
-                this.targetGameObjectId
-            );
-            this.targetGameObjectId = gameObjectId;
-            break;
-        case State.COLLECTING:
-            this.state = State.RETURNING;
-            this.serverState.gameEngine.markAsCollected(
-                this.targetGameObjectId
-            );
-            break;
-        case State.AT_BASE:
-            if (gameObjectId == null) {
-                throw new TypeError('Expected non-null gameObjectId');
-            }
-            this.targetGameObjectId = gameObjectId;
-            this.state = State.LEAVING;
-            break;
-        default:
-            throw new Error('Unexpected state');
-        }
+    transitionState(gameObject = null) {
+        // @TODO: consider making this generic, subclasses providing
+        // state transition rules and callbacks
     }
 
-    checkPath() {
+    async checkPath() {
         if (this.path.length > 0) {
             let next = this.getNextPosition();
             let radius = 4;
@@ -212,10 +154,9 @@ export default class BotAvatar extends DynamicObject {
                 .clone()
                 .subtract(next)
                 .length();
-            // console.log('distance', distance, this.path.length);
             if (distance < radius) {
+                // trim path
                 this.path = this.path.slice(1, this.path.length);
-                // console.log('culling path', this.path.length);
                 if (this.path.length == 0) {
                     this.transitionState();
                 }
@@ -223,7 +164,7 @@ export default class BotAvatar extends DynamicObject {
         }
         if (this.path.length == 0 && !this.isCalculating) {
             this.isCalculating = true;
-            this.path = this.newPath();
+            this.path = await this.newPath();
             console.log('New path length:', this.path.length);
             if (this.path.length == 0) {
                 this.detach();
@@ -232,6 +173,11 @@ export default class BotAvatar extends DynamicObject {
             this.checkPath();
             this.isCalculating = false;
         }
+    }
+
+    async resetPath() {
+        // @TODO: consider making this generic, subclasses providing
+        // reverse state transition rules
     }
 
     detach() {

@@ -1,12 +1,23 @@
 import jsgraphs from 'js-graph-algorithms';
 import TwoVector from 'lance/serialize/TwoVector';
 import PF from 'pathfinding';
-import { WIDTH, HEIGHT } from '../config';
+import { WIDTH, HEIGHT, Player } from '../config';
 
 const wallWidth = 20;
 const corridorWidth = 60;
 
 /**
+  @typedef worldObject
+  @type {object}
+  @property {number} id - used to track for pathfinding purposes.
+  @property {TwoVector} position - world coordinates
+  @property {number} width
+  @property {number} height
+  @property {string} type - wall or water; determines corresponding Avatar type 
+ /
+
+/**
+ * Contains the list of blockable objects in the world
  * Can be generated or loaded from the database
  */
 export default class GameWorld {
@@ -40,8 +51,14 @@ export default class GameWorld {
     }
 
     static generate() {
+        const centerRadius = 0.02;
         let gameBounds = Bounds.fromDimensions(WIDTH, HEIGHT);
-        let halfBounds = gameBounds.scale(0.48, 1);
+        let { left: halfBounds, center: centerBounds } = gameBounds.crop(
+            0.5 - centerRadius,
+            0.5 + centerRadius,
+            0,
+            1
+        );
         let objects = [];
 
         let { left, top, bottom, center: mazeBounds } = halfBounds.crop(
@@ -67,13 +84,17 @@ export default class GameWorld {
             position: mirror(obj.position)
         }));
         objects = objects.concat(mirrored);
+        objects.push(centerBounds.asObject());
 
         // TODO: generate other connecting walls, objects
         return new GameWorld(objects, [start, mirror(start)]);
     }
 
     getStartingPosition(playerId) {
-        console.log('start: ', this.starts[playerId % this.starts.length]);
+        console.log(
+            `start for player ${playerId}: `,
+            this.starts[playerId % this.starts.length]
+        );
         return this.starts[playerId % this.starts.length].clone();
     }
 
@@ -100,7 +121,8 @@ export default class GameWorld {
         console.log('grid start x,y, end x,y', start.x, start.y, end.x, end.y);
         if (this.grid.isOccupied(end)) {
             this.grid.print([end]);
-            throw new Error('end tile is unreachable');
+            console.log('end tile is unreachable');
+            return [];
         }
 
         let grid = new PF.Grid(this.grid.to2DArray());
@@ -120,23 +142,29 @@ export default class GameWorld {
 
     /**
      * Update the collision map for this object, or add it if it's not already added
-     * @param {*} obj
+     * @param {worldObject} obj
      * @param {TwoVector} obj.position
      * @param {number} obj.width
      * @param {number} obj.height
      * @param {number} obj.id
      */
     update(obj) {
+        let paddingX = Player.width / 2;
+        let paddingY = Player.height / 2;
+
         let prev = this.objects[obj.id];
         if (prev) {
-            this.grid.remove(prev);
+            this.grid.remove(prev, paddingX, paddingY);
         }
         this.objects[obj.id] = obj;
-        this.grid.add(obj);
+        this.grid.add(obj, paddingX, paddingY);
     }
 
     remove(obj) {
-        this.grid.remove(obj);
+        let paddingX = Player.width / 2;
+        let paddingY = Player.height / 2;
+
+        this.grid.remove(obj, paddingX, paddingY);
         delete this.objects[obj.id];
     }
 }
@@ -160,14 +188,14 @@ export class Grid {
      * @param {number} obj.width
      * @param {number} obj.height
      */
-    *getIndices(obj) {
+    *getIndices(obj, paddingX = 0, paddingY = 0) {
         let getX = (x) => Math.round(this.resolution * (x / WIDTH));
         let getY = (y) => Math.round(this.resolution * (y / HEIGHT));
 
-        let width = getX(obj.width);
-        let height = getY(obj.height);
-        let left = getX(obj.position.x - obj.width / 2);
-        let bottom = getY(obj.position.y - obj.height / 2);
+        let width = getX(obj.width + paddingX);
+        let height = getY(obj.height + paddingY);
+        let left = getX(obj.position.x - obj.width / 2 - paddingX);
+        let bottom = getY(obj.position.y - obj.height / 2 - paddingY);
 
         for (let y = 0; y < height; y++) {
             for (let x = 0; x < width; x++) {
@@ -234,8 +262,8 @@ export class Grid {
         return outArray;
     }
 
-    add(obj) {
-        for (const index of this.getIndices(obj)) {
+    add(obj, paddingX = 0, paddingY = 0) {
+        for (const index of this.getIndices(obj, paddingX, paddingY)) {
             this.grid[index]++;
         }
     }
@@ -244,8 +272,8 @@ export class Grid {
         return this.grid[this.getIndex(coords.x, coords.y)] != 0;
     }
 
-    remove(obj) {
-        for (const index of this.getIndices(obj)) {
+    remove(obj, paddingX = 0, paddingY = 0) {
+        for (const index of this.getIndices(obj, paddingX, paddingY)) {
             this.grid[index]--;
         }
     }
@@ -299,6 +327,19 @@ export class Bounds {
         return [this.xLo, this.xHi, this.yLo, this.yHi];
     }
 
+    /**
+     * @returns {worldObject}
+     */
+    asObject() {
+        return {
+            id: Math.random(),
+            position: this.getCenter(),
+            width: this.getWidth(),
+            height: this.getHeight(),
+            type: 'water'
+        };
+    }
+
     subtractLeft(x) {
         this.xLo += x;
         return this;
@@ -309,6 +350,9 @@ export class Bounds {
         return this;
     }
 
+    /**
+     * @returns {worldObject}
+     */
     topWall(wallWidth) {
         let center = new TwoVector(
             this.xLo + this.getWidth() / 2,
@@ -318,10 +362,14 @@ export class Bounds {
             id: Math.random(),
             position: center,
             width: this.getWidth(),
-            height: wallWidth
+            height: wallWidth,
+            type: 'wall'
         };
     }
 
+    /**
+     * @returns {worldObject}
+     */
     rightWall(wallWidth) {
         let center = new TwoVector(
             this.xHi - wallWidth / 2,
@@ -331,10 +379,14 @@ export class Bounds {
             id: Math.random(),
             position: center,
             width: wallWidth,
-            height: this.getHeight()
+            height: this.getHeight(),
+            type: 'wall'
         };
     }
 
+    /**
+     * @returns {worldObject}
+     */
     bottomWall(wallWidth) {
         let center = new TwoVector(
             this.xLo + this.getWidth() / 2,
@@ -344,7 +396,8 @@ export class Bounds {
             id: Math.random(),
             position: center,
             width: this.getWidth(),
-            height: wallWidth
+            height: wallWidth,
+            type: 'wall'
         };
     }
 
@@ -484,12 +537,16 @@ export class MazeGraph {
         edge.weight = 1000;
     }
 
+    /**
+     * @returns {worldObject[]}
+     */
     getWallObjects() {
         return this.createWalls().map((wall) => ({
             id: Math.random(),
             position: wall.getPosition(),
             width: wall.width,
-            height: wall.height
+            height: wall.height,
+            type: 'wall'
         }));
     }
 }

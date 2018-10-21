@@ -4,7 +4,7 @@ let PIXI = null;
  * Handles renderer-specific details for non-animated sprites
  */
 export default class Actor {
-    constructor(avatar, renderer, resourceName) {
+    constructor(avatar) {
         PIXI = require('pixi.js');
         // Create the sprite
         this.sprite = new PIXI.Container();

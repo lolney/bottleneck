@@ -1,12 +1,12 @@
 export default {
     offensive: {
         alt: 'sword icon',
-        text: 'Sword Icon',
+        text: 'Offensive',
         src: 'assets/noun_Sword.png'
     },
     defensive: {
         alt: 'shield icon',
-        text: 'Shield Icon',
+        text: 'Defensive',
         src: 'assets/Shield.png'
     }
 };

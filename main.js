@@ -4,6 +4,7 @@ import express from 'express';
 import socketIO from 'socket.io';
 import path from 'path';
 import { checkPassword, getUserId, setPlayerId } from './src/server/db';
+import Instance from './src/server/Instance';
 
 const PORT = process.env.PORT || 3000;
 const INDEX = path.join(__dirname, './index.html');
@@ -50,25 +51,5 @@ require('socketio-auth')(io, {
     timeout: 'none'
 });
 
-// Game Server
-import Trace from 'lance/lib/Trace';
-import MyServerEngine from './src/server/MyServerEngine';
-import MyGameEngine from './src/common/MyGameEngine';
-
-// Game Instances
-const gameEngine = new MyGameEngine({
-    traceLevel: Trace.TRACE_NONE,
-    collisionOptions: {
-        collisions: {
-            type: 'HSHG'
-        }
-    }
-});
-const serverEngine = new MyServerEngine(io, gameEngine, {
-    debug: {},
-    updateRate: 6,
-    timeoutInterval: 0
-});
-
-// start the game
-serverEngine.start();
+// Create the game instance
+new Instance(io);

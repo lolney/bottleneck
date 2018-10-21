@@ -294,6 +294,44 @@ let migrationCommands = [
             },
             {}
         ]
+    },
+    {
+        fn: 'createTable',
+        params: [
+            'bases',
+            {
+                id: {
+                    type: Sequelize.UUID,
+                    primaryKey: true,
+                    defaultValue: Sequelize.UUIDV4
+                },
+                location: {
+                    type: Sequelize.GEOMETRY('POINT')
+                },
+                hp: {
+                    type: Sequelize.INTEGER
+                },
+                playerId: {
+                    allowNull: true,
+                    type: Sequelize.UUID,
+                    references: {
+                        model: 'players',
+                        key: 'id'
+                    }
+                },
+                createdAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                },
+                updatedAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                }
+            },
+            {}
+        ]
     }
 ];
 
@@ -329,7 +367,11 @@ module.exports = {
             }),
             queryInterface.dropTable('problems'),
             queryInterface.dropTable('resources'),
-            queryInterface.dropTable('players'),
+            queryInterface.dropTable('bases'),
+            queryInterface.dropTable('players', {
+                force: true,
+                cascade: true
+            }),
             queryInterface.dropTable('users', {
                 force: true,
                 cascade: true

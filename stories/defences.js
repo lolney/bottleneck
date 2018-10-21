@@ -7,20 +7,23 @@ import { WindowsContainer } from './windows';
 import '../src/react-app/CSS/Defences.scss';
 
 import { siegeItems } from './fixtures';
-import { solvedProblems } from './fixtures';
+import { solvedProblems } from '../src/config';
+
+let on = (event, callback) => {
+    let data;
+    if (event == 'siegeItems') {
+        data = siegeItems;
+    } else if (event == 'solvedProblems') {
+        data = solvedProblems;
+    }
+    window.setTimeout(() => {
+        callback(siegeItems);
+    }, 50);
+};
 
 export const socket = {
-    on: (event, callback) => {
-        let data;
-        if (event == 'siegeItems') {
-            data = siegeItems;
-        } else if (event == 'solvedProblems') {
-            data = solvedProblems;
-        }
-        window.setTimeout(() => {
-            callback(siegeItems);
-        }, 50);
-    },
+    on: on,
+    once: on,
     emit: () => {}
 };
 
