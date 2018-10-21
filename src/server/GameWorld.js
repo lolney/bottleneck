@@ -7,6 +7,17 @@ const wallWidth = 20;
 const corridorWidth = 60;
 
 /**
+  @typedef worldObject
+  @type {object}
+  @property {number} id - used to track for pathfinding purposes.
+  @property {TwoVector} position - world coordinates
+  @property {number} width
+  @property {number} height
+  @property {string} type - wall or water; determines corresponding Avatar type 
+ /
+
+/**
+ * Contains the list of blockable objects in the world
  * Can be generated or loaded from the database
  */
 export default class GameWorld {
@@ -40,8 +51,14 @@ export default class GameWorld {
     }
 
     static generate() {
+        const centerRadius = 0.02;
         let gameBounds = Bounds.fromDimensions(WIDTH, HEIGHT);
-        let halfBounds = gameBounds.scale(0.48, 1);
+        let { left: halfBounds, center: centerBounds } = gameBounds.crop(
+            0.5 - centerRadius,
+            0.5 + centerRadius,
+            0,
+            1
+        );
         let objects = [];
 
         let { left, top, bottom, center: mazeBounds } = halfBounds.crop(
@@ -67,13 +84,17 @@ export default class GameWorld {
             position: mirror(obj.position)
         }));
         objects = objects.concat(mirrored);
+        objects.push(centerBounds.asObject());
 
         // TODO: generate other connecting walls, objects
         return new GameWorld(objects, [start, mirror(start)]);
     }
 
     getStartingPosition(playerId) {
-        console.log(`start for player ${playerId}: `, this.starts[playerId % this.starts.length]);
+        console.log(
+            `start for player ${playerId}: `,
+            this.starts[playerId % this.starts.length]
+        );
         return this.starts[playerId % this.starts.length].clone();
     }
 
@@ -121,7 +142,7 @@ export default class GameWorld {
 
     /**
      * Update the collision map for this object, or add it if it's not already added
-     * @param {*} obj
+     * @param {worldObject} obj
      * @param {TwoVector} obj.position
      * @param {number} obj.width
      * @param {number} obj.height
@@ -306,6 +327,19 @@ export class Bounds {
         return [this.xLo, this.xHi, this.yLo, this.yHi];
     }
 
+    /**
+     * @returns {worldObject}
+     */
+    asObject() {
+        return {
+            id: Math.random(),
+            position: this.getCenter(),
+            width: this.getWidth(),
+            height: this.getHeight(),
+            type: 'water'
+        };
+    }
+
     subtractLeft(x) {
         this.xLo += x;
         return this;
@@ -316,6 +350,9 @@ export class Bounds {
         return this;
     }
 
+    /**
+     * @returns {worldObject}
+     */
     topWall(wallWidth) {
         let center = new TwoVector(
             this.xLo + this.getWidth() / 2,
@@ -325,10 +362,14 @@ export class Bounds {
             id: Math.random(),
             position: center,
             width: this.getWidth(),
-            height: wallWidth
+            height: wallWidth,
+            type: 'wall'
         };
     }
 
+    /**
+     * @returns {worldObject}
+     */
     rightWall(wallWidth) {
         let center = new TwoVector(
             this.xHi - wallWidth / 2,
@@ -338,10 +379,14 @@ export class Bounds {
             id: Math.random(),
             position: center,
             width: wallWidth,
-            height: this.getHeight()
+            height: this.getHeight(),
+            type: 'wall'
         };
     }
 
+    /**
+     * @returns {worldObject}
+     */
     bottomWall(wallWidth) {
         let center = new TwoVector(
             this.xLo + this.getWidth() / 2,
@@ -351,7 +396,8 @@ export class Bounds {
             id: Math.random(),
             position: center,
             width: this.getWidth(),
-            height: wallWidth
+            height: wallWidth,
+            type: 'wall'
         };
     }
 
@@ -491,12 +537,16 @@ export class MazeGraph {
         edge.weight = 1000;
     }
 
+    /**
+     * @returns {worldObject[]}
+     */
     getWallObjects() {
         return this.createWalls().map((wall) => ({
             id: Math.random(),
             position: wall.getPosition(),
             width: wall.width,
-            height: wall.height
+            height: wall.height,
+            type: 'wall'
         }));
     }
 }

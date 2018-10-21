@@ -6,7 +6,7 @@ export const getSiegeItemFromId = (id) => {
 };
 
 export const getAssetPaths = () => {
-    let items = siegeItems.concat([playerBase]);
+    let items = siegeItems.concat([playerBase, verticalWall, horizontalWall]);
     let assetPaths = {};
     for (const item of items) {
         assetPaths[item.name] = item.image;
@@ -35,6 +35,16 @@ export const playerBase = {
     width: 50,
     name: 'Keep',
     image: 'assets/Keep.png'
+};
+
+export const verticalWall = {
+    name: 'verticalWall',
+    image: 'assets/rock-wall-vertical.png'
+};
+
+export const horizontalWall = {
+    name: 'horizontalWall',
+    image: 'assets/rock-wall-horizontal.png'
 };
 
 export const siegeItems = [

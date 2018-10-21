@@ -1,8 +1,9 @@
 import DynamicObject from 'lance/serialize/DynamicObject';
-import TilingActor from '../client/TilingActor';
+import ShaderActor from '../client/ShaderActor';
 import Serializer from 'lance/serialize/Serializer';
+import { water as waterShader } from '../shaders';
 
-export default class Blockable extends DynamicObject {
+export default class WaterAvatar extends DynamicObject {
     static get netScheme() {
         return Object.assign(
             {
@@ -19,7 +20,7 @@ export default class Blockable extends DynamicObject {
             this.width = props.width;
             this.height = props.height;
         }
-        this.class = Blockable;
+        this.class = WaterAvatar;
     }
 
     blocks() {
@@ -28,7 +29,11 @@ export default class Blockable extends DynamicObject {
 
     onAddToWorld(gameEngine) {
         if (gameEngine.renderer) {
-            this.actor = new TilingActor(this, gameEngine.renderer, 'wall');
+            this.actor = new ShaderActor(
+                this,
+                gameEngine.renderer,
+                waterShader
+            );
         }
     }
 

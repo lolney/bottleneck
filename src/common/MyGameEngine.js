@@ -6,10 +6,11 @@ import PlayerAvatar from './PlayerAvatar';
 import Avatar from './Avatar';
 import CollectionBotAvatar from './CollectionBotAvatar';
 import BotAvatar from './BotAvatar';
-import Blockable from './Blockable';
+import WallAvatar from './WallAvatar';
 import DefenceAvatar from './DefenceAvatar';
 import AssaultBotAvatar from './AssaultBotAvatar';
 import PlayerBaseAvatar from './PlayerBaseAvatar';
+import WaterAvatar from './WaterAvatar';
 
 import TwoVector from 'lance/serialize/TwoVector';
 import { WIDTH, HEIGHT, getSiegeItemFromId } from '../config';
@@ -34,10 +35,11 @@ export default class MyGameEngine extends GameEngine {
         serializer.registerClass(PlayerAvatar);
         serializer.registerClass(Avatar);
         serializer.registerClass(DefenceAvatar);
-        serializer.registerClass(Blockable);
+        serializer.registerClass(WallAvatar);
         serializer.registerClass(CollectionBotAvatar);
         serializer.registerClass(AssaultBotAvatar);
         serializer.registerClass(PlayerBaseAvatar);
+        serializer.registerClass(WaterAvatar);
     }
 
     start() {
@@ -61,7 +63,18 @@ export default class MyGameEngine extends GameEngine {
 
     addObjects(objects) {
         for (const obj of objects) {
-            this.addObjectToWorld(new Blockable(this, null, obj));
+            let Type;
+            switch (obj.type) {
+            case 'wall':
+                Type = WallAvatar;
+                break;
+            case 'water':
+                Type = WaterAvatar;
+                break;
+            default:
+                throw new Error(`Unexpected type: ${obj.type}`);
+            }
+            this.addObjectToWorld(new Type(this, null, obj));
         }
     }
 
@@ -83,7 +96,7 @@ export default class MyGameEngine extends GameEngine {
     makeWalls() {
         for (let i = 0; i < 10; i++) {
             this.addObjectToWorld(
-                new Blockable(this, null, {
+                new WallAvatar(this, null, {
                     position: new TwoVector(
                         Math.random() * WIDTH,
                         Math.random() * HEIGHT

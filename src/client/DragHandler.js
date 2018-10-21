@@ -47,11 +47,20 @@ export default class DragHandler {
         return id;
     }
 
+    static snapToGrid(vec) {
+        let out = vec.clone();
+        out.x = Math.floor(out.x / 20) * 20;
+        out.y = Math.floor(out.y / 20) * 20;
+        return out;
+    }
+
     updateTempObject(ev) {
         let position = this.renderer.canvasToWorldCoordinates(
             ev.clientX,
             ev.clientY
         );
+
+        position = DragHandler.snapToGrid(position);
 
         let id = this.getId(ev);
         if (this.dragObject == null) {
