@@ -73,7 +73,7 @@ export default class GameWorld {
     }
 
     getStartingPosition(playerId) {
-        console.log('start: ', this.starts[playerId % this.starts.length]);
+        console.log(`start for player ${playerId}: `, this.starts[playerId % this.starts.length]);
         return this.starts[playerId % this.starts.length].clone();
     }
 

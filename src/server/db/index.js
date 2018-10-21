@@ -1,6 +1,7 @@
 import models from './models';
 import db from './models';
 import moment from 'moment';
+import { assaultBot, playerBase } from '../../config';
 //import TwoVector from 'lance/serialize/TwoVector';
 // not sure why we can't import TwoVector here
 
@@ -180,18 +181,22 @@ export async function getUserId(username) {
  * @returns {*} - the player
  */
 export async function setPlayerId(userId, number, location) {
+    let sequelizeLocation = !location
+        ? null
+        : db.Sequelize.fn(
+            'ST_GeomFromText',
+            `POINT(${location.x} ${location.y})`
+        );
     let player = await models.player.create({
         playerNumber: Number(number),
-        location: !location
-            ? null
-            : db.Sequelize.fn(
-                'ST_GeomFromText',
-                `POINT(${location.x} ${location.y})`
-            )
+        location: sequelizeLocation
     });
     let user = await models.user.find({ where: { id: userId } });
-    player.setUser(user);
 
+    let base = await models.base.create({
+        location: sequelizeLocation,
+        hp: playerBase.baseHP
+    });
     let stone = await models.resource.create({
         parent: 'player',
         name: 'stone',
@@ -202,8 +207,12 @@ export async function setPlayerId(userId, number, location) {
         name: 'wood',
         count: 10
     });
-    wood.setPlayer(player);
-    stone.setPlayer(player);
+    await Promise.all([
+        player.setUser(user),
+        player.setBase(base),
+        await wood.setPlayer(player),
+        await stone.setPlayer(player)
+    ]);
 
     return player;
 }
@@ -255,4 +264,22 @@ export async function markAsCollected(gameObjectId) {
         { collected: true },
         { where: { id: gameObjectId } }
     );
+}
+
+/**
+ * Decrement player base HP by the amount that an assault bot deducts
+ * @param {number} playerNumber
+ * @returns {number} The updated HP
+ */
+export async function decrementHP(playerId) {
+    let player = await models.player.find({
+        where: { id: playerId }
+    });
+    let base = await player.getBase();
+    let hp = base.hp - assaultBot.damage;
+    if (hp < 0) {
+        hp = 0;
+    }
+    await models.base.update({ hp: hp }, { where: { id: base.id } });
+    return hp;
 }

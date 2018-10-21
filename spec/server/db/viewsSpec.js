@@ -9,10 +9,12 @@ import {
     setPlayerId,
     getUserId,
     addToResourceCount,
-    getObjectResources
+    getObjectResources,
+    decrementHP
 } from '../../../src/server/db';
 import models from '../../../src/server/db/models';
 import TwoVector from 'lance/serialize/TwoVector';
+import { assaultBot, playerBase } from '../../../src/config';
 
 describe('chainIncludes', () => {
     it('returns the correct answer for a single include', () => {
@@ -251,16 +253,28 @@ describe('addSolution', () => {
 });
 
 describe('setPlayerId', () => {
-    it('correctly sets the user id', async () => {
-        let user = await models.user.findOne();
+    let user;
+    let player;
 
+    beforeAll(async () => {
+        user = await createUser('test4', 'test4', 'test4@test.com');
+    });
+
+    afterAll(async () => {
+        await player.destroy();
+        await user.destroy();
+    });
+
+    it('correctly sets the user id', async () => {
         expect(user.playerId).toEqual(null);
 
-        let player = await setPlayerId(user.id, 1);
-        user = await models.user.findOne({ where: { id: user.id } });
+        player = await setPlayerId(user.id, 1, new TwoVector(0, 0));
 
         expect(player.playerNumber).toEqual(1);
-        await setPlayerId(user.id, null);
+
+        let base = await player.getBase();
+
+        expect(base.hp).toEqual(playerBase.baseHP);
     });
 });
 
@@ -269,13 +283,11 @@ describe('addToResourceCount', () => {
     let player;
 
     beforeAll(async () => {
-        user = await createUser('test2', 'test2', 'test2@test.com');
+        user = await createUser('test3', 'test3', 'test3@test.com');
         player = await setPlayerId(user.id, 0, new TwoVector(0, 0));
     });
 
     afterAll(async () => {
-        let resources = await player.getResources();
-        await resources.map((res) => res.destroy());
         await player.destroy();
         await user.destroy();
     });
@@ -298,6 +310,24 @@ describe('addToResourceCount', () => {
 
         expect(newCount0).toEqual(10 + counts[0]);
         expect(newCount1).toEqual(15 + counts[1]);
+    });
+
+    it('decrementHP correctly updates db', async () => {
+        console.log('setting hp:');
+        let hp = await decrementHP(player.id);
+        console.log('hp:', hp);
+
+        expect(hp).toEqual(playerBase.baseHP - assaultBot.damage);
+
+        let base = await player.getBase();
+
+        expect(base.hp).toEqual(hp);
+
+        while (hp > 0) {
+            hp = await decrementHP(player.id);
+        }
+
+        expect(hp).toEqual(0);
     });
 });
 

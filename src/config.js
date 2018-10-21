@@ -18,6 +18,23 @@ export const Player = {
     width: 25
 };
 
+export const assaultBot = {
+    height: 25,
+    width: 25,
+    cost: {
+        wood: '10',
+        stone: '10'
+    },
+    damage: 10
+};
+
+export const playerBase = {
+    baseHP: 20,
+    height: 50,
+    width: 50,
+    image: 'assets/gate.png'
+};
+
 export const siegeItems = [
     {
         name: 'Gate',

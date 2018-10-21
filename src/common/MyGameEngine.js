@@ -4,11 +4,15 @@ import GameEngine from 'lance/GameEngine';
 import SimplePhysicsEngine from 'lance/physics/SimplePhysicsEngine';
 import PlayerAvatar from './PlayerAvatar';
 import Avatar from './Avatar';
+import CollectionBotAvatar from './CollectionBotAvatar';
 import BotAvatar from './BotAvatar';
 import Blockable from './Blockable';
+import DefenceAvatar from './DefenceAvatar';
+import AssaultBotAvatar from './AssaultBotAvatar';
+import PlayerBaseAvatar from './PlayerBaseAvatar';
+
 import TwoVector from 'lance/serialize/TwoVector';
 import { WIDTH, HEIGHT, getSiegeItemFromId } from '../config';
-import DefenceAvatar from './DefenceAvatar';
 
 const STEP = 5;
 
@@ -31,7 +35,9 @@ export default class MyGameEngine extends GameEngine {
         serializer.registerClass(Avatar);
         serializer.registerClass(DefenceAvatar);
         serializer.registerClass(Blockable);
-        serializer.registerClass(BotAvatar);
+        serializer.registerClass(CollectionBotAvatar);
+        serializer.registerClass(AssaultBotAvatar);
+        serializer.registerClass(PlayerBaseAvatar);
     }
 
     start() {
@@ -60,7 +66,18 @@ export default class MyGameEngine extends GameEngine {
     }
 
     addBot(options) {
-        return this.addObjectToWorld(new BotAvatar(this, null, options));
+        let Type;
+        switch (options.type) {
+        case 'assault':
+            Type = AssaultBotAvatar;
+            break;
+        case 'collector':
+            Type = CollectionBotAvatar;
+            break;
+        default:
+            throw new Error('Unexpected type');
+        }
+        return this.addObjectToWorld(new Type(this, null, options));
     }
 
     makeWalls() {
@@ -138,6 +155,18 @@ export default class MyGameEngine extends GameEngine {
         obj.collected = 'true';
     }
 
+    /**
+     * Decrement the health of an enemy base
+     * @param {number} enemyPlayerId
+     */
+    setBaseHP(enemyPlayerNumber, hp) {
+        let obj = this.queryObject(
+            { playerNumber: enemyPlayerNumber },
+            PlayerBaseAvatar
+        );
+        obj.hp = hp;
+    }
+
     causesCollision() {
         let collisionObjects = this.physicsEngine.collisionDetection.detect();
         for (const pair of collisionObjects) {
@@ -153,6 +182,10 @@ export default class MyGameEngine extends GameEngine {
 
     getResources(problemId) {
         return this.queryObjects({ problemId: problemId }, Avatar);
+    }
+
+    getPlayerByNumber(playerNumber) {
+        return this.queryObject({ playerNumber: playerNumber }, PlayerAvatar);
     }
 
     queryObjects(query, targetType, returnSingle = false) {
