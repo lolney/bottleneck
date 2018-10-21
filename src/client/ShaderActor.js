@@ -23,7 +23,8 @@ export default class ShaderActor extends Actor {
             shader, // fragment shader
             {
                 time: { value: 0.0 },
-                resolution: { value: [avatar.width, avatar.height] }
+                resolution: { value: [avatar.width, avatar.height] },
+                adjustment: { value: renderer.camera.y }
             }
         );
 
@@ -31,6 +32,7 @@ export default class ShaderActor extends Actor {
         const interval = 1000 / fps;
         window.setInterval(() => {
             myFilter.uniforms.time += interval;
+            myFilter.uniforms.adjustment = renderer.camera.y;
         }, interval);
         rect.filters = [myFilter];
 

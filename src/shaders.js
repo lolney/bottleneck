@@ -9,13 +9,12 @@ export const water = `
     uniform vec4 uColor;
     uniform vec2 resolution;
     uniform float time;
+    uniform float adjustment;
 
     #define MAX_ITER 5
     #define TAU 6.28318530718
 
     #define TILING_FACTOR 5.0
-    #define XSCALE 100.0 // needs to be much larger than original
-    #define YSCALE 1000.0
 
     float waterHighlight(vec2 p, float my_time, float foaminess)
     {
@@ -39,8 +38,9 @@ export const water = `
     void main(void) 
     {   
         float my_time = time * 0.0001 + 23.0; // looks worse early on
-        vec2 uv = vTextureCoord.xy / resolution.xy;
-        uv = vec2(uv.x * XSCALE, uv.y * YSCALE);
+
+        vec2 uv = vec2(vTextureCoord.x, vTextureCoord.y - (-max(0.0, -adjustment) / resolution.y));
+        
         vec2 uv_square = vec2(uv.x * resolution.x / resolution.y, uv.y);
         float dist_center = pow(2.0*length(uv - 0.5), 2.0);
         
@@ -57,9 +57,9 @@ export const water = `
         
         color = mix(water_color, color, clearness);
 
-        gl_FragColor = texture2D(uSampler, vTextureCoord);
         gl_FragColor.r = color.r;
         gl_FragColor.g = color.g;
         gl_FragColor.b = color.b;
+        gl_FragColor.a = 1.0;
     }
 `;
