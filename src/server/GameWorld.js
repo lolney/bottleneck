@@ -516,7 +516,7 @@ export class MazeGraph {
         return root
             .traverse()
             .filter(this.isNotEntrance())
-            .sort((a, b) => a.index > b.index);
+            .sort((a, b) => a.index - b.index);
     }
 
     createWalls() {
