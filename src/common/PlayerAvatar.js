@@ -36,6 +36,7 @@ export default class PlayerAvatar extends DynamicObject {
             this.actor = new PlayerActor(
                 this,
                 gameEngine.renderer,
+                'player',
                 gameEngine.isOwnedByPlayer(this)
             );
         }

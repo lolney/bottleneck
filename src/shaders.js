@@ -60,6 +60,6 @@ export const water = `
         gl_FragColor.r = color.r;
         gl_FragColor.g = color.g;
         gl_FragColor.b = color.b;
-        gl_FragColor.a = 1.0;
+        gl_FragColor.a = 0.5;
     }
 `;
