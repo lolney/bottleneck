@@ -9,7 +9,7 @@ export const water = `
     uniform vec4 uColor;
     uniform vec2 resolution;
     uniform float time;
-    uniform float adjustment;
+    uniform vec2 adjustment;
 
     #define MAX_ITER 5
     #define TAU 6.28318530718
@@ -39,7 +39,7 @@ export const water = `
     {   
         float my_time = time * 0.0001 + 23.0; // looks worse early on
 
-        vec2 uv = vec2(vTextureCoord.x, vTextureCoord.y - (-max(0.0, -adjustment) / resolution.y));
+        vec2 uv = vec2(vTextureCoord.x, vTextureCoord.y - (-max(0.0, -adjustment.y) / resolution.y));
         
         vec2 uv_square = vec2(uv.x * resolution.x / resolution.y, uv.y);
         float dist_center = pow(2.0*length(uv - 0.5), 2.0);
