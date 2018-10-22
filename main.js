@@ -4,7 +4,7 @@ import express from 'express';
 import socketIO from 'socket.io';
 import path from 'path';
 import { checkPassword, getUserId, setPlayerId } from './src/server/db';
-import Instance from './src/server/Instance';
+import MatchMaker from './src/server/MatchMaker';
 
 const PORT = process.env.PORT || 3000;
 const INDEX = path.join(__dirname, './index.html');
@@ -51,5 +51,5 @@ require('socketio-auth')(io, {
     timeout: 'none'
 });
 
-// Create the game instance
-new Instance(io);
+// Create the Matchmaker
+new MatchMaker(io);

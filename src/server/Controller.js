@@ -170,6 +170,8 @@ class Controller {
      * @param {string} problemId
      */
     addCollectorbot(playerId, playerNumber, problemId) {
+        // @temporary
+        this.addAssaultBot(playerId, playerNumber);
         let config = {
             type: 'collector',
             playerId: playerId,
@@ -185,16 +187,22 @@ class Controller {
      * @param {number} playerNumber
      */
     addAssaultBot(playerId, playerNumber) {
-        let opponentNumber = playerNumber == 0 ? 1 : 0;
+        let opponentNumber = playerNumber == 1 ? 2 : 1;
         let opponent = this.gameEngine.getPlayerByNumber(opponentNumber);
 
-        let config = {
-            type: 'assault',
-            playerId: playerId,
-            opponentPlayerId: opponent.playerId,
-            playerNumber: playerNumber
-        };
-        this.addBot(config);
+        if (opponent) {
+            let config = {
+                type: 'assault',
+                playerId: playerId,
+                opponentPlayerId: opponent.playerId,
+                playerNumber: playerNumber
+            };
+            this.addBot(config);
+        } else {
+            console.error(
+                `Attempted to add assault bot for player ${playerNumber}, but no opponent found`
+            );
+        }
     }
 
     async addToResourceCount(playerId, gameObjectId) {

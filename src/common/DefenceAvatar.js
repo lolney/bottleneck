@@ -27,11 +27,14 @@ export default class DefenceAvatar extends DynamicObject {
         this.class = DefenceAvatar;
         this.width = Player.width;
         this.height = Player.height;
+        this.isCountered = false;
     }
 
     blocks() {
-        return true;
+        return !this.isCountered;
     }
+
+    attachCounter() {}
 
     onAddToWorld(gameEngine) {
         if (gameEngine.renderer) {

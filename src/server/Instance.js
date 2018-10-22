@@ -5,7 +5,7 @@ import MyGameEngine from '../common/MyGameEngine';
 
 export default class Instance {
     // Game Instances
-    constructor(io) {
+    constructor() {
         this.gameEngine = new MyGameEngine({
             traceLevel: Trace.TRACE_NONE,
             collisionOptions: {
@@ -14,11 +14,19 @@ export default class Instance {
                 }
             }
         });
-        this.serverEngine = new MyServerEngine(io, this.gameEngine, {
-            debug: {},
-            updateRate: 6,
-            timeoutInterval: 0
-        });
+        this.serverEngine = new MyServerEngine(
+            { on: () => {} },
+            this.gameEngine,
+            {
+                debug: {},
+                updateRate: 6,
+                timeoutInterval: 0
+            }
+        );
         this.serverEngine.start();
+    }
+
+    onPlayerConnected(io) {
+        this.serverEngine.onPlayerConnected(io);
     }
 }
