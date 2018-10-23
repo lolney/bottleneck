@@ -6,6 +6,7 @@ import PlayerAvatar from '../common/PlayerAvatar';
 import Controller from './Controller';
 import { objects } from './db';
 import GameWorld from './GameWorld';
+import logger from './Logger';
 
 export default class MyServerEngine extends ServerEngine {
     constructor(io, gameEngine, inputOptions) {
@@ -31,8 +32,8 @@ export default class MyServerEngine extends ServerEngine {
 
         if (!object || !player) return;
 
-        console.log('Emitting problem:display event: ', player.playerId);
-        console.log('Object id: ', object.dbId);
+        logger.debug('Emitting problem:display event: ', player.playerId);
+        logger.debug('Object id: ', object.dbId);
 
         Controller.pushProblem(player.playerId, object.dbId);
     }
@@ -41,7 +42,7 @@ export default class MyServerEngine extends ServerEngine {
         super.onPlayerConnected(socket);
         let waitForAuth = () => {
             if (socket.auth) {
-                console.log('Authenticated. Creating player.');
+                logger.info('Authenticated. Creating player.');
                 Controller.addPlayer(
                     socket.client.playerDbId,
                     socket.playerId,
@@ -59,7 +60,7 @@ export default class MyServerEngine extends ServerEngine {
 
     onPlayerDisconnected(socketId, playerNumber) {
         super.onPlayerDisconnected(socketId, playerNumber);
-        console.log(`removing player ${playerNumber}`);
+        logger.info(`Removing player ${playerNumber}`);
         let playerObjects = this.gameEngine.queryObjects({
             playerNumber: playerNumber
         });

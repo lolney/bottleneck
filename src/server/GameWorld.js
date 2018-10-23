@@ -2,6 +2,7 @@ import jsgraphs from 'js-graph-algorithms';
 import TwoVector from 'lance/serialize/TwoVector';
 import PF from 'pathfinding';
 import { WIDTH, HEIGHT, Player } from '../config';
+import logger from './Logger';
 
 const wallWidth = 20;
 const corridorWidth = 60;
@@ -91,7 +92,7 @@ export default class GameWorld {
     }
 
     getStartingPosition(playerId) {
-        console.log(
+        logger.debug(
             `start for player ${playerId}: `,
             this.starts[playerId % this.starts.length]
         );
@@ -108,7 +109,7 @@ export default class GameWorld {
      * @param {TwoVector} end
      */
     pathfind(mapStart, mapEnd) {
-        console.log(
+        logger.debug(
             'start x,y, end x,y',
             mapStart.x,
             mapStart.y,
@@ -118,10 +119,10 @@ export default class GameWorld {
         let start = this.grid.worldCoordsToCell(mapStart);
         let end = this.grid.worldCoordsToCell(mapEnd);
 
-        console.log('grid start x,y, end x,y', start.x, start.y, end.x, end.y);
+        logger.debug('grid start x,y, end x,y', start.x, start.y, end.x, end.y);
         if (this.grid.isOccupied(end)) {
             this.grid.print([end]);
-            console.log('end tile is unreachable');
+            logger.warning('end tile is unreachable');
             return [];
         }
 
@@ -230,7 +231,7 @@ export class Grid {
         }
 
         for (const str of strs) {
-            console.log(str.join(''));
+            logger.debug(str.join(''));
         }
     }
 
@@ -541,8 +542,7 @@ export class MazeGraph {
         return (edge) =>
             [left, lower, upper].reduce(
                 (accum, entrance) =>
-                    accum &&
-                    this.getIndex(edge.end.i, edge.end.j) != entrance,
+                    accum && this.getIndex(edge.end.i, edge.end.j) != entrance,
                 true
             );
     }
@@ -660,7 +660,7 @@ export class TreeEdge {
                 }
             }
         };
-        
+
         _determineIndex(0, this);
     }
 

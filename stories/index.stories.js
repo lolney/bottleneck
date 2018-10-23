@@ -54,7 +54,6 @@ storiesOf('BinaryTreeComponent', module)
         let fetchProps = async () => {
             let problem = new BinaryTreeProblem();
             let serialized = await problem.serialize();
-            console.log(serialized);
             return { socket: mockEngine({ problem: serialized }).socket };
         };
         return <AsyncComponent fetchProps={fetchProps} />;

@@ -21,7 +21,6 @@ export default class PlayerAvatar extends DynamicObject {
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
         if (props && props.playerId) {
-            console.log(typeof props.playerNumber);
             this.playerId = props.playerId;
             this.playerNumber = props.playerNumber;
         }

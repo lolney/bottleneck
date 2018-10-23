@@ -93,21 +93,6 @@ export default class MyGameEngine extends GameEngine {
         return this.addObjectToWorld(new Type(this, null, options));
     }
 
-    makeWalls() {
-        for (let i = 0; i < 10; i++) {
-            this.addObjectToWorld(
-                new WallAvatar(this, null, {
-                    position: new TwoVector(
-                        Math.random() * WIDTH,
-                        Math.random() * HEIGHT
-                    ),
-                    width: 200,
-                    height: 50
-                })
-            );
-        }
-    }
-
     /**
      * Maps problem ids to objects to efficiently update objects that correspond
      * to a given problem

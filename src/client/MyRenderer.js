@@ -39,8 +39,6 @@ export default class MyRenderer extends Renderer {
     }
 
     init() {
-        console.log('init renderer');
-
         this.viewportWidth = window.innerWidth;
         this.viewportHeight = window.innerHeight;
 

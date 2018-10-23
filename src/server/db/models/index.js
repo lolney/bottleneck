@@ -1,4 +1,5 @@
 'use strict';
+import logger from '../../Logger';
 
 require('dotenv').config();
 let fs = require('fs');
@@ -9,12 +10,18 @@ let env = process.env.NODE_ENV || 'development';
 let config = require(__dirname + '/../config/config.json')[env];
 let db = {};
 
+var pg = require('pg');
+delete pg.native;
+
+config = Object.assign(config, {
+    logging: (sql, sequelizeObject) => logger.debug.bind(logger)(sql),
+    dialect: 'postgres',
+    protocol: 'postgres'
+});
+
 if (process.env.DATABASE_URL) {
     // the application is executed on Heroku ... use the postgres database
-    var sequelize = new Sequelize(process.env.DATABASE_URL, {
-        dialect: 'postgres',
-        protocol: 'postgres'
-    });
+    var sequelize = new Sequelize(process.env.DATABASE_URL, config);
 } else if (config.use_env_variable) {
     var sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {

@@ -11,6 +11,7 @@ import {
 } from './db';
 import { getSolutions, solvedProblem, deletePlayerId } from './db/index';
 import { siegeItems, assaultBot } from '../config';
+import logger from './Logger';
 
 function serialize(problem) {
     switch (problem.type) {
@@ -126,7 +127,7 @@ class Controller {
 
         this.socketsMap[playerId] = socket;
         //this.pushCount();
-        console.log(`added player ${playerId}`);
+        logger.debug(`added player ${playerId}`);
     }
 
     /**

@@ -1,4 +1,5 @@
 import Instance from './Instance';
+import logger from './Logger';
 
 const MAX_QUEUE_LENGTH = 2;
 
@@ -14,7 +15,7 @@ export default class MatchMaker {
     }
 
     finalize(instance) {
-        console.log('Enough players have joined. Starting the game.');
+        logger.info('Enough players have joined. Starting the game.');
         for (const socket of this.queuedPlayers) {
             socket.removeListener('disconnect', socket.onPlayerDisconnected);
             socket.onPlayerDisconnected = null;
@@ -43,7 +44,7 @@ export default class MatchMaker {
             throw new Error('Too many players in queue: ', qp.length);
         }
 
-        console.log('Player joined the queue. Queue length: ', qp.length);
+        logger.info('Player joined the queue. Queue length: ', qp.length);
         if (qp.length == MAX_QUEUE_LENGTH) {
             this.finalize(this.instance);
         }

@@ -313,9 +313,7 @@ describe('addToResourceCount', () => {
     });
 
     it('decrementHP correctly updates db', async () => {
-        console.log('setting hp:');
         let hp = await decrementHP(player.id);
-        console.log('hp:', hp);
 
         expect(hp).toEqual(playerBase.baseHP - assaultBot.damage);
 
