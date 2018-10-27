@@ -4,6 +4,7 @@ import { ENGINE_METHOD_DIGESTS } from 'constants';
 
 import EditorSocketWatcher from './EditorSocketWatcher.jsx';
 import ConnectionOverlay from './ConnectionOverlay.jsx';
+import VictoryOverlay from './VictoryOverlay.jsx';
 import Login from './Login.jsx';
 import HUD from './HUD.jsx';
 import Game from './Game.jsx';
@@ -18,6 +19,7 @@ import './CSS/Solutions.scss';
 import './CSS/Menu.scss';
 import './CSS/MenuWindow.scss';
 import './CSS/LoadingScreen.scss';
+import './CSS/VictoryOverlay.scss';
 
 /*
 \ App
@@ -99,6 +101,7 @@ export class App extends React.Component {
                         socket={this.state.socket}
                     />
                 )}
+                <VictoryOverlay socket={this.state.socket} />
                 <Windows ref={this.windows} />
                 {this.state.socket && (
                     <HUD
