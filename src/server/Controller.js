@@ -130,7 +130,7 @@ class Controller {
 
         this.playerMap.addPlayer(playerId, socket);
         //this.pushCount();
-        if(this.playerMap.socketsMap.length == 2) {
+        if(Object.keys(this.playerMap.socketsMap).length == 2) {
             this.doWinGame(playerId);
         }
         logger.debug(`added player ${playerId}`);
@@ -237,8 +237,9 @@ class Controller {
 
     doWinGame(enemyPlayerId) {
         let winningPlayer = this.playerMap.getOtherPlayerId(enemyPlayerId);
+        logger.info(`Player ${winningPlayer} has won the game`);
         this.playerMap.publish(winningPlayer, 'gameWin', {});
-        this.playerMap.publish(enemyPlayerId, 'gameLoss', {});
+        this.playerMap.publish(enemyPlayerId, 'gameLose', {});
     }
 
     async pushCount(playerId, name, count, shouldReset = false) {
@@ -299,7 +300,7 @@ class PlayerMap {
 
     getOtherPlayerId(playerId) {
         let others = Object.keys(this.socketsMap).filter(
-            (id) => playerId != playerId
+            (id) => playerId != id
         );
 
         if (others.length == 0) {

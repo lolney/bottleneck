@@ -22,7 +22,7 @@ export default class VictoryOverlay extends React.Component {
     }
 
     render() {
-        switch (this.state) {
+        switch (this.state.status) {
         case State.Pending:
             return null;
         default:
