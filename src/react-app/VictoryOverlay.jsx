@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 const State = Object.freeze({
     Win: 'Victory!',
     Lose: 'You Lose!',
-    Pending: 'pending'
+    Pending: 'Pending'
 });
 
 export default class VictoryOverlay extends React.Component {
@@ -27,7 +27,7 @@ export default class VictoryOverlay extends React.Component {
     }
 
     render() {
-        switch (this.state.state) {
+        switch (this.state) {
         case State.Pending:
             return null;
         default:
