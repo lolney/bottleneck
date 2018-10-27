@@ -10,14 +10,14 @@ const State = Object.freeze({
 export default class VictoryOverlay extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { state: State.Pending };
+        this.state = { status: State.Pending };
         this.props.socket.addEventListener('gameWin', (event) => {
             console.log('game won');
-            this.setState({ state: State.Win });
+            this.setState({ status: State.Win });
         });
         this.props.socket.addEventListener('gameLose', (event) => {
             console.log('game lost');
-            this.setState({ state: State.Lose });
+            this.setState({ status: State.Lose });
         });
     }
 
@@ -29,7 +29,9 @@ export default class VictoryOverlay extends React.Component {
             return (
                 <div className="victory-overlay">
                     <div className="text-container">
-                        <div className="victory-text">{this.state}</div>
+                        <div className="victory-text">
+                            {this.state.status}
+                        </div>
                     </div>
                 </div>
             );
