@@ -10,20 +10,15 @@ const State = Object.freeze({
 export default class VictoryOverlay extends React.Component {
     constructor(props) {
         super(props);
-        if (this.props.socket) {
-            this.state = State.Pending;
-            this.props.socket.addEventListener('gameWin', (event) => {
-                console.log('game won');
-                this.setState({ state: State.Win });
-            });
-            this.props.socket.addEventListener('gameLose', (event) => {
-                console.log('game lost');
-                this.setState({ state: State.Lose });
-            });
-        } else {
-            console.log('game pending');
-            this.setState({ state: State.Pending });
-        }
+        this.state = { state: State.Pending };
+        this.props.socket.addEventListener('gameWin', (event) => {
+            console.log('game won');
+            this.setState({ state: State.Win });
+        });
+        this.props.socket.addEventListener('gameLose', (event) => {
+            console.log('game lost');
+            this.setState({ state: State.Lose });
+        });
     }
 
     render() {

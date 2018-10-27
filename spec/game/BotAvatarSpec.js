@@ -23,6 +23,10 @@ const gameEngine = {
     },
     on: () => {}
 };
+const gameWorld = GameWorld.generate();
+gameWorld.pathfind = () => {
+    return [`${WIDTH - 1},${HEIGHT - 1}`, `${WIDTH},${HEIGHT}`];
+};
 
 describe('BotAvatar', () => {
     let avatar;
@@ -32,7 +36,6 @@ describe('BotAvatar', () => {
             position: new TwoVector(WIDTH / 2, HEIGHT / 2),
             playerNumber: 0
         });
-        let gameWorld = GameWorld.generate();
         resourcePositions = avatar.attach(null, gameWorld, gameEngine);
     });
 
@@ -59,7 +62,6 @@ describe('CollectionBotAvatar', () => {
             position: new TwoVector(WIDTH / 2, HEIGHT / 2),
             playerNumber: 0
         });
-        let gameWorld = GameWorld.generate();
 
         avatar.attach(null, gameWorld, gameEngine);
     });
@@ -105,7 +107,6 @@ describe('AssaultBotAvatar', () => {
             playerNumber: 0
         });
         assaulted = false;
-        let gameWorld = GameWorld.generate();
         let controller = {
             doAssault: () => {
                 assaulted = true;

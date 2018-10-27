@@ -101,7 +101,9 @@ export class App extends React.Component {
                         socket={this.state.socket}
                     />
                 )}
-                <VictoryOverlay socket={this.state.socket} />
+                {this.state.socket && (
+                    <VictoryOverlay socket={this.state.socket} />
+                )}
                 <Windows ref={this.windows} />
                 {this.state.socket && (
                     <HUD

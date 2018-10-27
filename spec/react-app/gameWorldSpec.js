@@ -117,11 +117,11 @@ describe('MazeWall', () => {
 
         expect(wall.getStart()).toEqual(new TwoVector(0, WALL_WIDTH / 2));
         expect(wall.getEnd()).toEqual(
-            new TwoVector(CORRIDOR_WIDTH + WALL_WIDTH, WALL_WIDTH / 2)
+            new TwoVector(CORRIDOR_WIDTH + WALL_WIDTH * 2, WALL_WIDTH / 2)
         );
 
         expect(wall.getPosition()).toEqual(
-            new TwoVector((CORRIDOR_WIDTH + WALL_WIDTH) / 2, WALL_WIDTH / 2)
+            new TwoVector((CORRIDOR_WIDTH + WALL_WIDTH * 2) / 2, WALL_WIDTH / 2)
         );
     });
 
@@ -185,9 +185,6 @@ describe('MazeNode', () => {
     });
 
     it('adds nodes iff they are in bounds', () => {
-        for (const node of maze.graph.getNodes()) {
-            node.add();
-        }
         for (let i = 0; i < maze.graph.nCols; i++) {
             if (i == maze.graph.nCols - 1 || i == 0) {
                 expect(maze.graph.graph.adj(i).length).toEqual(2);

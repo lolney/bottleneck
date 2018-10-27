@@ -1,5 +1,3 @@
-// Can this be retooled to associate with either gameObject or player,
-// instead of just gameObject? This would remove the need for playerResource.
 module.exports = (sequelize, DataTypes) => {
     let Resource = sequelize.define('resource', {
         id: {
