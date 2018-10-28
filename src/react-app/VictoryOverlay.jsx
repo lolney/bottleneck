@@ -1,4 +1,6 @@
 import React from 'react';
+import { ButtonToolbar, Button } from 'react-bootstrap';
+import ControlledButton from './ControlledButton.jsx';
 import PropTypes from 'prop-types';
 
 const State = Object.freeze({
@@ -28,9 +30,14 @@ export default class VictoryOverlay extends React.Component {
         default:
             return (
                 <div className="victory-overlay">
-                    <div className="text-container">
+                    <div className="text-container menuWindow">
                         <div className="victory-text">
                             {this.state.status}
+                        </div>
+                        <div className="bootstrap-styles">
+                            <ButtonToolbar>
+                                <Button className="menu-button">OK</Button>
+                            </ButtonToolbar>
                         </div>
                     </div>
                 </div>
