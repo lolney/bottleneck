@@ -122,18 +122,18 @@ export default class MyGameEngine extends GameEngine {
         );
     }
 
-    makeDefence(defenceId, position) {
+    makeDefence(defenceId, position, playerNumber) {
         let siegeItem = getSiegeItemFromId(defenceId);
         console.log('adding siegeItem: ', siegeItem);
-        let obj = this.addObjectToWorld(
-            new DefenceAvatar(this, null, {
-                position: position,
-                objectType: siegeItem.name,
-                behaviorType: 'defence',
-                dbId: defenceId,
-                collected: false
-            })
-        );
+        let obj = new DefenceAvatar(this, null, {
+            position: position,
+            objectType: siegeItem.name,
+            behaviorType: siegeItem.type,
+            dbId: defenceId,
+            collected: false,
+            playerNumber: playerNumber
+        });
+        this.addObjectToWorld(obj);
 
         this.resetBots();
 
@@ -164,9 +164,9 @@ export default class MyGameEngine extends GameEngine {
      * Decrement the health of an enemy base
      * @param {number} enemyPlayerId
      */
-    setBaseHP(enemyPlayerNumber, hp) {
+    setBaseHP(enemyPlayerId, hp) {
         let obj = this.queryObject(
-            { playerNumber: enemyPlayerNumber },
+            { playerId: enemyPlayerId },
             PlayerBaseAvatar
         );
         obj.hp = hp;
@@ -223,11 +223,44 @@ export default class MyGameEngine extends GameEngine {
         return this.queryObjects(query, targetType, true);
     }
 
+    registerCollisionStart(condition1, condition2, handler) {
+        this.registerCollisionHandler(
+            'collisionStart',
+            condition1,
+            condition2,
+            handler
+        );
+    }
+
+    registerCollisionStop(condition1, condition2, handler) {
+        this.registerCollisionHandler(
+            'collisionStop',
+            condition1,
+            condition2,
+            handler
+        );
+    }
+
+    /**
+     * @private
+     */
+    registerCollisionHandler(verb, condition1, condition2, handler) {
+        this.on(verb, (e) => {
+            let collisionObjects = Object.keys(e).map((k) => e[k]);
+            let o1 = collisionObjects.find(condition1);
+            let o2 = collisionObjects.find(condition2);
+
+            if (!o1 || !o2) return;
+
+            handler(o1, o2);
+        });
+    }
+
     processInput(inputData, playerId) {
         super.processInput(inputData, playerId);
 
         // get the player's primary object
-        let player = this.queryObject({ playerNumber: playerId });
+        let player = this.queryObject({ playerNumber: playerId }, PlayerAvatar);
         if (player) {
             this.trace.info(
                 () => `player ${playerId} pressed ${inputData.input}`

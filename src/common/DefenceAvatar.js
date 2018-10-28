@@ -1,19 +1,43 @@
 import DynamicObject from 'lance/serialize/DynamicObject';
 import Serializer from 'lance/serialize/Serializer';
 import StaticActor from '../client/StaticActor.js';
-import { Player } from '../config';
+import { Player, getSiegeItemFromId } from '../config';
 
 export default class DefenceAvatar extends DynamicObject {
     static get netScheme() {
         return Object.assign(
             {
                 objectType: { type: Serializer.TYPES.STRING },
+                playerNumber: { type: Serializer.TYPES.INT32 },
                 behaviorType: { type: Serializer.TYPES.STRING },
                 dbId: { type: Serializer.TYPES.STRING },
-                collected: { type: Serializer.TYPES.STRING }
+                collected: { type: Serializer.TYPES.STRING },
+                attachedSiegeItemId: { type: Serializer.TYPES.STRING }
             },
             super.netScheme
         );
+    }
+
+    syncTo(other) {
+        if (
+            this.attachedSiegeItemId == null &&
+            other.attachedSiegeItemId != null &&
+            this.actor
+        ) {
+            console.log(
+                `Syncing new attachedSiegeItemId: ${other.attachedSiegeItemId}`
+            );
+            this.attachSiegeItemSprite(other.attachedSiegeItemId);
+        }
+        super.syncTo(other);
+        this.attachedSiegeItemId = other.attachedSiegeItemId;
+    }
+
+    attachSiegeItemSprite(siegeItemId) {
+        this.actor.setLoading(false);
+
+        let siegeItem = getSiegeItemFromId(siegeItemId);
+        this.actor.compositeSprite(siegeItem.name);
     }
 
     constructor(gameEngine, options, props) {
@@ -23,26 +47,55 @@ export default class DefenceAvatar extends DynamicObject {
             this.dbId = props.dbId;
             this.collected = props.collected.toString();
             this.behaviorType = props.behaviorType;
+            this.playerNumber = props.playerNumber;
         }
+        this.attachedSiegeItemId = null;
         this.class = DefenceAvatar;
         this.width = Player.width;
         this.height = Player.height;
-        this.isCountered = false;
+    }
+
+    setLoading(id) {
+        if (id) {
+            this.actor.setLoading(true, getSiegeItemFromId(id).name);
+        } else {
+            this.actor.setLoading(false);
+        }
+    }
+
+    setPlacable(set) {
+        this.actor.setPlacable(set);
+    }
+
+    isCountered() {
+        return this.attachedSiegeItemId != null;
     }
 
     blocks() {
-        return !this.isCountered;
+        return !this.isCountered();
     }
 
-    attachCounter() {}
+    attachCounter(siegeItemId) {
+        if (this.attachedSiegeItemId != null) {
+            throw new Error(
+                `Cannot attach siege item: ${
+                    this.attachedSiegeItemId
+                } is already attached`
+            );
+        }
+        this.attachedSiegeItemId = siegeItemId;
+    }
 
     onAddToWorld(gameEngine) {
-        if (gameEngine.renderer) {
+        if (gameEngine.renderer && !this.actor) {
             this.actor = new StaticActor(
                 this,
                 gameEngine.renderer,
                 this.objectType
             );
+            if (this.attachedSiegeItemId) {
+                this.attachSiegeItemSprite(this.attachedSiegeItemId);
+            }
         }
     }
 

@@ -37,14 +37,12 @@ function handleAuth(socket) {
  * and DB. Must be initialized with {@link Controller#attachGameEngine}.
  */
 class Controller {
-    constructor() {
+    constructor(gameEngine, gameWorld) {
         this.playerMap = new PlayerMap();
-    }
-
-    attachGameEngine(gameEngine, gameWorld) {
         this.gameEngine = gameEngine;
         this.gameWorld = gameWorld;
     }
+
     /**
      * Register the routes for `socket`
      * @param {socketIO} socket
@@ -96,20 +94,29 @@ class Controller {
         socket.on('makeDefence', async (data) => {
             let resources = this.getDefenceCost(data.defenceId);
 
-            try {
-                this.deductResourceCosts(resources);
+            await this.deductResourceCosts(playerId, resources);
 
-                let defence = this.gameEngine.makeDefence(
-                    data.defenceId,
-                    data.position
-                );
-                this.gameWorld.update(defence);
-                Object.entries(resources).map((pair) => {
-                    let { 0: name, 1: count } = pair;
-                    this.pushCount(playerId, name, -count);
+            let defence = this.gameEngine.makeDefence(
+                data.defenceId,
+                data.position,
+                playerNumber
+            );
+            this.gameWorld.update(defence);
+        });
+
+        socket.on('mergeDefences', async (data) => {
+            let resources = this.getDefenceCost(data.defenceId);
+
+            try {
+                await this.deductResourceCosts(playerId, resources);
+
+                let defence = this.gameEngine.queryObject({
+                    id: data.gameObjectId
                 });
+                defence.attachCounter(data.defenceId);
+                this.gameWorld.remove(defence);
             } catch (error) {
-                logger.error(`Could not make defence: ${error.message}`);
+                logger.error(`Could not merge defences: ${error.message}`);
             }
         });
 
@@ -130,9 +137,6 @@ class Controller {
 
         this.playerMap.addPlayer(playerId, socket);
         //this.pushCount();
-        if(Object.keys(this.playerMap.socketsMap).length == 2) {
-            this.doWinGame(playerId);
-        }
         logger.debug(`added player ${playerId}`);
     }
 
@@ -146,6 +150,11 @@ class Controller {
                 return await addToResourceCount(playerId, name, -count);
             })
         );
+        // Push costs
+        Object.entries(resources).map((pair) => {
+            let { 0: name, 1: count } = pair;
+            this.pushCount(playerId, name, -count);
+        });
     }
 
     /**
@@ -230,6 +239,9 @@ class Controller {
     async doAssault(enemyPlayerId) {
         let hp = await decrementHP(enemyPlayerId);
         this.gameEngine.setBaseHP(enemyPlayerId, hp);
+        logger.info(
+            `Bot has reached enemy player's base, bringing it to ${hp} hp`
+        );
         if (hp <= 0) {
             this.doWinGame(enemyPlayerId);
         }
@@ -360,4 +372,4 @@ class PlayerMap {
     }
 }
 
-export default new Controller();
+export default Controller;

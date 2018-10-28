@@ -20,7 +20,7 @@ export default class BotAvatar extends DynamicObject {
     }
 
     get maxSpeed() {
-        return 1;
+        return 5;
     }
 
     syncTo(other) {

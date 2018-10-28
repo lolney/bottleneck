@@ -23,6 +23,14 @@ export default class Actor {
         }
     }
 
+    createSprite(resourceName) {
+        let mySprite = new PIXI.Sprite(
+            PIXI.loader.resources[resourceName].texture
+        );
+        mySprite.anchor.set(0.5, 0.5);
+        return mySprite;
+    }
+
     getSprite() {
         return this.sprite;
     }

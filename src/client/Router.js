@@ -6,8 +6,16 @@ class Router {
     makeDefence(defenceId, position) {
         console.log('making defence permanent');
         this.socket.emit('makeDefence', {
-            position: position,
-            defenceId: defenceId
+            defenceId: defenceId,
+            position: position
+        });
+    }
+
+    mergeObjects(defenceId, attachedObjectId) {
+        console.log(`merging defence ${defenceId} with ${attachedObjectId}`);
+        this.socket.emit('mergeDefences', {
+            defenceId: defenceId,
+            gameObjectId: attachedObjectId
         });
     }
 }

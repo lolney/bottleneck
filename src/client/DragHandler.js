@@ -1,5 +1,9 @@
 import Router from './Router';
-import { siegeItems } from '../config';
+import { siegeItems, getSiegeItemFromId } from '../config';
+import DefenceAvatar from '../common/DefenceAvatar';
+import BotAvatar from '../common/BotAvatar';
+
+const DETACH_THRESHOLD = 50;
 
 export default class DragHandler {
     constructor(canvas, gameEngine, renderer) {
@@ -25,11 +29,8 @@ export default class DragHandler {
 
             this.updateTempObject(ev);
             let id = ev.dataTransfer.getData('text/plain');
-            Router.makeDefence(id, this.dragObject.position);
+            this.dragObject.handleDrop(id);
             this.removeTempObject();
-            /*
-            this.dragObject.actor.getSprite().filters = [];
-            this.dragObject = null;*/
         });
     }
 
@@ -62,22 +63,131 @@ export default class DragHandler {
 
         position = DragHandler.snapToGrid(position);
 
-        let id = this.getId(ev);
         if (this.dragObject == null) {
-            this.dragObject = this.gameEngine.makeDefence(id, position);
-            let filter = new PIXI.filters.ColorMatrixFilter();
-            this.dragObject.actor.getSprite().filters = [filter];
-            filter.negative();
+            let id = this.getId(ev);
+            this.createDragObject(id, position);
         } else {
-            this.dragObject.position = position;
+            this.dragObject.update(position);
         }
     }
 
+    createDragObject(id, position) {
+        let gameObject = this.gameEngine.makeDefence(id, position);
+        this.dragObject = (() => {
+            switch (gameObject.behaviorType) {
+            case 'defensive':
+                return new DefensiveDragObject(this.gameEngine, gameObject);
+            case 'offensive':
+                return new OffensiveDragObject(this.gameEngine, gameObject);
+            default:
+                throw new Error(
+                    `Invalid siege object class: ${gameObject.behaviorType}`
+                );
+            }
+        })();
+    }
+
     removeTempObject() {
-        let obj = this.dragObject;
+        let obj = this.dragObject.gameObject;
         console.log('removing ', obj.dbId);
 
         this.gameEngine.removeObjectFromWorld(obj.id);
         this.dragObject = null;
+    }
+}
+
+class OffensiveDragObject {
+    constructor(gameEngine, gameObject) {
+        this.gameEngine = gameEngine;
+        this.id = gameObject.dbId;
+        this.gameObject = gameObject;
+        this.attachedObject = null;
+
+        this.gameObject.setPlacable(false);
+
+        this.start = (_, other) => {
+            console.log('attaching offensive item');
+            if (this.attachedObject) {
+                this.resetAttachedObject();
+            }
+            this.attachedObject = other;
+            this.attachedObject.setLoading(this.id);
+            this.gameObject.setPlacable(true);
+            this.gameObject.position = other.position;
+        };
+
+        let gameObjectTest = (o) => o.id == gameObject.id;
+        let otherObjectTest = (o) =>
+            o instanceof DefenceAvatar &&
+            o.behaviorType == 'defensive' &&
+            !this.gameEngine.isOwnedByPlayer(o);
+
+        this.gameEngine.registerCollisionStart(
+            gameObjectTest,
+            otherObjectTest,
+            this.start
+        );
+
+        /* Can include, but keeps from showing loading status after drop
+        this.nObjects = 0;
+
+        this.stop = () => {
+            this.nObjects--;
+            if (this.nObjects == 0) {
+                this.resetAttachedObject();
+            } else if (this.nObjects < 0) {
+                throw new Error(
+                    `Collision stop, but this.nObjects is < 0: ${this.nObjects}`
+                );
+            }
+        };
+
+        this.gameEngine.registerCollisionStop(
+            gameObjectTest,
+            (o) => this.attachedObject && this.attachedObject.id == o.id,
+            this.stop
+        );*/
+    }
+
+    resetAttachedObject() {
+        this.attachedObject.setLoading(false);
+        this.attachedObject = null;
+        this.gameObject.setPlacable(false);
+    }
+
+    update(position) {
+        if (this.attachedObject) {
+            if (
+                BotAvatar.distance(this.attachedObject.position, position) >
+                DETACH_THRESHOLD
+            ) {
+                this.resetAttachedObject();
+            }
+        }
+        this.gameObject.position = position;
+    }
+
+    handleDrop(id) {
+        [this.start, this.stop].forEach((fn) =>
+            this.gameEngine.removeListener(fn)
+        );
+        if (this.attachedObject != null) {
+            Router.mergeObjects(id, this.attachedObject.id);
+        }
+    }
+}
+
+class DefensiveDragObject {
+    constructor(gameEngine, gameObject) {
+        this.gameEngine = gameEngine;
+        this.gameObject = gameObject;
+    }
+
+    update(position) {
+        this.gameObject.position = position;
+    }
+
+    handleDrop(id) {
+        Router.makeDefence(id, this.gameObject.position);
     }
 }

@@ -30,7 +30,7 @@ export const assaultBot = {
 };
 
 export const playerBase = {
-    baseHP: 20,
+    baseHP: 10,
     height: 50,
     width: 50,
     name: 'Keep',
