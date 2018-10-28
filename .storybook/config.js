@@ -5,8 +5,9 @@ function loadStories() {
     require('../stories/index.stories.js');
     require('../stories/pixiDemo.js');
     require('../stories/solutionHistory.js');
+    require('../stories/victoryOverlay.js');
     require('../stories/windows.js');
-    require('../stories/defences.js');
+    require('../stories/defenses.js');
     require('../stories/hud.js');
     require('../stories/menu.js');
 

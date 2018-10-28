@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SelectMenu from '../common/SelectMenu.jsx';
-import DraggableDefence from './DraggableDefence.jsx';
+import DraggableDefense from './DraggableDefense.jsx';
 import { ButtonToolbar, Button } from 'react-bootstrap';
 import buttonConfig from './buttonConfig';
 import SiegeItemsWrapper from './SiegeItemsWrapper.jsx';
 
-export default class DefencesBrowser extends React.Component {
+export default class DefensesBrowser extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -39,7 +39,7 @@ export default class DefencesBrowser extends React.Component {
 
     render() {
         return (
-            <div className="defences">
+            <div className="defenses">
                 <div className="header">
                     <h1>Siege Tools</h1>
                 </div>
@@ -62,6 +62,6 @@ export default class DefencesBrowser extends React.Component {
     }
 }
 
-DefencesBrowser.propTypes = {
+DefensesBrowser.propTypes = {
     socket: PropTypes.object.isRequired
 };

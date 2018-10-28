@@ -20,7 +20,7 @@ export default class BotAvatar extends DynamicObject {
     }
 
     get maxSpeed() {
-        return 1;
+        return 5;
     }
 
     syncTo(other) {
@@ -104,7 +104,7 @@ export default class BotAvatar extends DynamicObject {
     async newPath() {
         // @TODO: consider making this generic with a newPath function
         // for each state transition
-        return ['0,0']
+        return ['0,0'];
     }
 
     /**
@@ -186,7 +186,12 @@ export default class BotAvatar extends DynamicObject {
 
     onAddToWorld(gameEngine) {
         if (gameEngine.renderer) {
-            this.actor = new PlayerActor(this, gameEngine.renderer, false);
+            this.actor = new PlayerActor(
+                this,
+                gameEngine.renderer,
+                'bot',
+                false
+            );
         }
     }
 

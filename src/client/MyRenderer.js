@@ -13,9 +13,10 @@ export default class MyRenderer extends Renderer {
         return Object.assign(
             {
                 player: 'assets/sprites/walking.json',
+                bot: 'assets/sprites/botwalk.json',
                 tree: 'assets/sprites/Rock2.json',
                 background: '/assets/grass.jpg',
-                defence: 'assets/sprites/tree1.png',
+                defense: 'assets/sprites/tree1.png',
                 wall: 'assets/rock-wall-2.png'
             },
             getAssetPaths()
@@ -38,8 +39,6 @@ export default class MyRenderer extends Renderer {
     }
 
     init() {
-        console.log('init renderer');
-
         this.viewportWidth = window.innerWidth;
         this.viewportHeight = window.innerHeight;
 

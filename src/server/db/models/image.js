@@ -1,9 +1,6 @@
-/* 
-Need to do queries without associations api,
-deciding which table to query based on the typeString of the parent?
-
-Need to include the model to lookup in an include query
-*/
+/**
+ * Subtype of problem
+ */
 module.exports = (sequelize, DataTypes) => {
     let ImageProblem = sequelize.define('image', {
         id: {

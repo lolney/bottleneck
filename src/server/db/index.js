@@ -5,6 +5,14 @@ import { assaultBot, playerBase } from '../../config';
 //import TwoVector from 'lance/serialize/TwoVector';
 // not sure why we can't import TwoVector here
 
+/**
+ * This file contains a bunch of the equivalent of GraphQL resolvers,
+ * Django views, or MVC controllers, but is poorly organized.
+ * @TODO: consider breaking into separate files and removing dependence
+ * on getDataValues, which appears to work contrary to how sequelize is
+ * intended.
+ */
+
 export function date() {
     return moment().format('YYYY-MM-DD HH:mm:ss');
 }

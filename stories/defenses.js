@@ -2,9 +2,9 @@ import React from 'react';
 
 import StorybookConsole from 'react-storybook-console';
 import { storiesOf } from '@storybook/react';
-import DefencesBrowser from '../src/react-app/defences/DefencesBrowser.jsx';
+import DefensesBrowser from '../src/react-app/defenses/DefensesBrowser.jsx';
 import { WindowsContainer } from './windows';
-import '../src/react-app/CSS/Defences.scss';
+import '../src/react-app/CSS/Defenses.scss';
 
 import { siegeItems } from './fixtures';
 import { solvedProblems } from '../src/config';
@@ -27,8 +27,8 @@ export const socket = {
     emit: () => {}
 };
 
-storiesOf('Adding defences', module)
+storiesOf('Adding defenses', module)
     .addDecorator(StorybookConsole)
-    .add('Defences Browser', () => (
-        <DefencesBrowser openWindow={(code) => alert(code)} socket={socket} />
+    .add('Defenses Browser', () => (
+        <DefensesBrowser openWindow={(code) => alert(code)} socket={socket} />
     ));

@@ -11,6 +11,7 @@ import {
 } from './db';
 import { getSolutions, solvedProblem, deletePlayerId } from './db/index';
 import { siegeItems, assaultBot } from '../config';
+import logger from './Logger';
 
 function serialize(problem) {
     switch (problem.type) {
@@ -26,26 +27,29 @@ function serialize(problem) {
     }
 }
 
+function handleAuth(socket) {
+    // @unimplemented
+    if (!socket.auth) throw new Error('User is not authenticated');
+}
+
 /**
  * Mediates interaction between the client, server-side game engine,
  * and DB. Must be initialized with {@link Controller#attachGameEngine}.
  */
 class Controller {
-    constructor() {
-        this.socketsMap = {};
-    }
-
-    attachGameEngine(gameEngine, gameWorld) {
+    constructor(gameEngine, gameWorld) {
+        this.playerMap = new PlayerMap();
         this.gameEngine = gameEngine;
         this.gameWorld = gameWorld;
     }
+
     /**
      * Register the routes for `socket`
      * @param {socketIO} socket
      */
     addPlayer(playerId, playerNumber, socket) {
         socket.on('solution', async (data) => {
-            if (!socket.auth) throw new Error('User is not authenticated');
+            handleAuth(socket);
 
             let userId = socket.client.userId;
             await addSolution(userId, data.problemId, data.code);
@@ -54,17 +58,15 @@ class Controller {
             socket.emit('solvedProblems', solutions);
             // Let all players know this problem has been solved
             this.gameEngine.markAsSolved(data.problemId, playerNumber);
-            for (const sock of Object.values(this.socketsMap)) {
-                sock.emit('solution', {
-                    problemId: data.problemId,
-                    playerId: playerNumber
-                });
-            }
+            this.playerMap.publishAll('solution', {
+                problemId: data.problemId,
+                playerId: playerNumber
+            });
             this.addCollectorbot(playerId, playerNumber, data.problemId);
         });
 
         socket.on('solvedProblems', async () => {
-            if (!socket.auth) throw new Error('User is not authenticated');
+            handleAuth(socket);
 
             let userId = socket.client.userId;
             let solutions = await getSolutions(userId);
@@ -89,23 +91,32 @@ class Controller {
             socket.emit('resourceInitial', dict);
         });
 
-        socket.on('makeDefence', async (data) => {
-            let resources = this.getDefenceCost(data.defenceId);
+        socket.on('makeDefense', async (data) => {
+            let resources = this.getDefenseCost(data.defenseId);
+
+            await this.deductResourceCosts(playerId, resources);
+
+            let defense = this.gameEngine.makeDefense(
+                data.defenseId,
+                data.position,
+                playerNumber
+            );
+            this.gameWorld.update(defense);
+        });
+
+        socket.on('mergeDefenses', async (data) => {
+            let resources = this.getDefenseCost(data.defenseId);
 
             try {
-                this.deductResourceCosts(resources);
+                await this.deductResourceCosts(playerId, resources);
 
-                let defence = this.gameEngine.makeDefence(
-                    data.defenceId,
-                    data.position
-                );
-                this.gameWorld.update(defence);
-                Object.entries(resources).map((pair) => {
-                    let { 0: name, 1: count } = pair;
-                    this.pushCount(playerId, name, -count);
+                let defense = this.gameEngine.queryObject({
+                    id: data.gameObjectId
                 });
+                defense.attachCounter(data.defenseId);
+                this.gameWorld.remove(defense);
             } catch (error) {
-                console.error('Could not make defence: ', error.message);
+                logger.error(`Could not merge defenses: ${error.message}`);
             }
         });
 
@@ -116,7 +127,7 @@ class Controller {
                 await this.deductResourceCosts(playerId, resources);
                 this.addAssaultBot(playerId, playerNumber);
             } catch (error) {
-                console.error('Could not create Assault bot: ', error.message);
+                logger.error(`Could not create Assault bot: ${error.message}`);
             }
         });
 
@@ -124,9 +135,9 @@ class Controller {
             socket.emit('siegeItems', siegeItems);
         });
 
-        this.socketsMap[playerId] = socket;
+        this.playerMap.addPlayer(playerId, socket);
         //this.pushCount();
-        console.log(`added player ${playerId}`);
+        logger.debug(`added player ${playerId}`);
     }
 
     /**
@@ -139,13 +150,18 @@ class Controller {
                 return await addToResourceCount(playerId, name, -count);
             })
         );
+        // Push costs
+        Object.entries(resources).map((pair) => {
+            let { 0: name, 1: count } = pair;
+            this.pushCount(playerId, name, -count);
+        });
     }
 
     /**
      * @private
      */
-    getDefenceCost(defenceId) {
-        let item = siegeItems.find((elem) => elem.id == defenceId);
+    getDefenseCost(defenseId) {
+        let item = siegeItems.find((elem) => elem.id == defenseId);
         return item.cost;
     }
 
@@ -170,6 +186,8 @@ class Controller {
      * @param {string} problemId
      */
     addCollectorbot(playerId, playerNumber, problemId) {
+        // @temporary
+        this.addAssaultBot(playerId, playerNumber);
         let config = {
             type: 'collector',
             playerId: playerId,
@@ -185,16 +203,22 @@ class Controller {
      * @param {number} playerNumber
      */
     addAssaultBot(playerId, playerNumber) {
-        let opponentNumber = playerNumber == 0 ? 1 : 0;
+        let opponentNumber = playerNumber == 1 ? 2 : 1;
         let opponent = this.gameEngine.getPlayerByNumber(opponentNumber);
 
-        let config = {
-            type: 'assault',
-            playerId: playerId,
-            opponentPlayerId: opponent.playerId,
-            playerNumber: playerNumber
-        };
-        this.addBot(config);
+        if (opponent) {
+            let config = {
+                type: 'assault',
+                playerId: playerId,
+                opponentPlayerId: opponent.playerId,
+                playerNumber: playerNumber
+            };
+            this.addBot(config);
+        } else {
+            logger.error(
+                `Attempted to add assault bot for player ${playerNumber}, but no opponent found`
+            );
+        }
     }
 
     async addToResourceCount(playerId, gameObjectId) {
@@ -214,14 +238,24 @@ class Controller {
 
     async doAssault(enemyPlayerId) {
         let hp = await decrementHP(enemyPlayerId);
-        if (hp <= 0) {
-            // @unimplemented: win game
-        }
         this.gameEngine.setBaseHP(enemyPlayerId, hp);
+        logger.info(
+            `Bot has reached enemy player's base, bringing it to ${hp} hp`
+        );
+        if (hp <= 0) {
+            this.doWinGame(enemyPlayerId);
+        }
+    }
+
+    doWinGame(enemyPlayerId) {
+        let winningPlayer = this.playerMap.getOtherPlayerId(enemyPlayerId);
+        logger.info(`Player ${winningPlayer} has won the game`);
+        this.playerMap.publish(winningPlayer, 'gameWin', {});
+        this.playerMap.publish(enemyPlayerId, 'gameLose', {});
     }
 
     async pushCount(playerId, name, count, shouldReset = false) {
-        this.pushData(playerId, 'resourceUpdate', {
+        this.playerMap.publish(playerId, 'resourceUpdate', {
             name: name,
             count: count,
             shouldReset: shouldReset
@@ -229,8 +263,8 @@ class Controller {
     }
 
     async pushProblem(playerId, dbId) {
-        let socket = this.socketsMap[playerId];
-        let prob = (await problem(dbId, socket.client.userId)).problem;
+        let prob = (await problem(dbId, this.playerMap.getUserId(playerId)))
+            .problem;
         let serialized = await serialize(prob);
 
         if (!prob.id) {
@@ -238,19 +272,55 @@ class Controller {
         }
 
         // TODO: temporary; should only be on solved problem
-        if (!socket.bot) {
-            this.addCollectorbot(playerId, socket.playerId, prob.id);
-            socket.bot = true;
+        if (!this.playerMap.botExists(playerId)) {
+            this.addCollectorbot(
+                playerId,
+                this.playerMap.getPlayerNumber(playerId),
+                prob.id
+            );
+            this.playerMap.setBotExists(playerId);
         }
 
-        this.pushData(playerId, 'problem', { ...prob, problem: serialized });
+        this.playerMap.publish(playerId, 'problem', {
+            ...prob,
+            problem: serialized
+        });
     }
 
     removePlayer(playerId) {
-        let socket = this.socketsMap[playerId];
-        if (socket) {
-            deletePlayerId(socket.client.userId, playerId);
-            delete this.socketsMap[playerId];
+        this.playerMap.removePlayer(playerId);
+    }
+}
+
+/**
+ * Stores playerId -> socket map and handles socket interaction
+ */
+class PlayerMap {
+    constructor() {
+        /**@private */
+        this.socketsMap = {};
+    }
+
+    addPlayer(playerId, socket) {
+        this.socketsMap[playerId] = socket;
+    }
+
+    /**@private */
+    getPlayer(playerId) {
+        return this.socketsMap[playerId];
+    }
+
+    getOtherPlayerId(playerId) {
+        let others = Object.keys(this.socketsMap).filter(
+            (id) => playerId != id
+        );
+
+        if (others.length == 0) {
+            throw Error('Tried to win game when only one player is present');
+        } else if (others.length > 1) {
+            throw Error('More than two players in the game');
+        } else {
+            return others[0];
         }
     }
 
@@ -260,12 +330,46 @@ class Controller {
      * @param {string} channel
      * @param {*} data
      */
-    pushData(playerId, channel, data) {
-        let socket = this.socketsMap[playerId];
-        if (!socket.auth) throw new Error('User is not authenticated');
+    publish(playerId, eventName, data) {
+        let socket = this.getPlayer(playerId);
+        handleAuth(socket);
 
-        socket.emit(channel, data);
+        socket.emit(eventName, data);
+    }
+
+    publishAll(eventName, data) {
+        for (const sock of Object.values(this.socketsMap)) {
+            sock.emit(eventName, data);
+        }
+    }
+
+    getPlayerNumber(playerId) {
+        let socket = this.getPlayer(playerId);
+        return socket.playerId;
+    }
+
+    getUserId(playerId) {
+        let socket = this.getPlayer(playerId);
+        return socket.client.userId;
+    }
+
+    botExists(playerId) {
+        let socket = this.getPlayer(playerId);
+        return socket.bot === true;
+    }
+
+    setBotExists(playerId) {
+        let socket = this.getPlayer(playerId);
+        socket.bot = true;
+    }
+
+    removePlayer(playerId) {
+        let socket = this.getPlayer(playerId);
+        if (socket) {
+            deletePlayerId(socket.client.userId, playerId);
+            delete this.socketsMap[playerId];
+        }
     }
 }
 
-export default new Controller();
+export default Controller;

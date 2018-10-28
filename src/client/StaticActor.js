@@ -10,15 +10,38 @@ export default class StaticActor extends Actor {
         super(avatar, renderer, resourceName);
         PIXI = require('pixi.js');
         // Create the sprite
-        let mySprite = new PIXI.Sprite(
-            PIXI.loader.resources[resourceName].texture
-        );
-        mySprite.anchor.set(0.5, 0.5);
+        let mySprite = this.createSprite(resourceName);
         this.sprite.addChild(mySprite);
 
         // Store in the renderer and in PIXI's renderer
         if (shouldAttach === true) {
             this.attach(renderer, avatar);
+        }
+    }
+
+    compositeSprite(resource) {
+        let newSprite = this.createSprite(resource);
+        this.sprite.addChild(newSprite);
+    }
+
+    setLoading(set = true, resource = null) {
+        if (set) {
+            this.loadingSprite = this.createSprite(resource);
+            this.loadingSprite.filters = [new PIXI.filters.AlphaFilter(0.6)];
+            this.sprite.addChild(this.loadingSprite);
+        } else if (this.loadingSprite) {
+            this.sprite.removeChild(this.loadingSprite);
+            this.loadingSprite = null;
+        }
+    }
+
+    setPlacable(set) {
+        if (!set) {
+            this.placableFilter = new PIXI.filters.ColorMatrixFilter();
+            this.placableFilter.negative();
+            this.sprite.filters = [this.placableFilter];
+        } else if (this.placableFilter) {
+            this.sprite.filters = [];
         }
     }
 }

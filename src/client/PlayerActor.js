@@ -6,8 +6,8 @@ let PIXI = null;
  * Handles renderer-specific details for player
  */
 export default class PlayerActor extends AnimatedActor {
-    constructor(avatar, renderer, mainPlayer) {
-        super(avatar, renderer, 'player', 0.25);
+    constructor(avatar, renderer, identity, mainPlayer) {
+        super(avatar, renderer, identity, 0.25);
         PIXI = require('pixi.js');
 
         this.lastPosition = Object.assign({}, avatar.position);

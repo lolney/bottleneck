@@ -1,6 +1,14 @@
-import { Grid, Bounds, Maze, MazeWall } from '../../src/server/GameWorld';
+import {
+    Grid,
+    Bounds,
+    Maze,
+    MazeWall,
+    TreeEdge,
+    MazeGraph
+} from '../../src/server/GameWorld';
 import { WIDTH, HEIGHT } from '../../src/config';
 import TwoVector from 'lance/serialize/TwoVector';
+import jsgraphs from 'js-graph-algorithms';
 
 const BOUNDS = Bounds.fromDimensions(510, 510);
 const CORRIDOR_WIDTH = 40;
@@ -109,11 +117,11 @@ describe('MazeWall', () => {
 
         expect(wall.getStart()).toEqual(new TwoVector(0, WALL_WIDTH / 2));
         expect(wall.getEnd()).toEqual(
-            new TwoVector(CORRIDOR_WIDTH + WALL_WIDTH, WALL_WIDTH / 2)
+            new TwoVector(CORRIDOR_WIDTH + WALL_WIDTH * 2, WALL_WIDTH / 2)
         );
 
         expect(wall.getPosition()).toEqual(
-            new TwoVector((CORRIDOR_WIDTH + WALL_WIDTH) / 2, WALL_WIDTH / 2)
+            new TwoVector((CORRIDOR_WIDTH + WALL_WIDTH * 2) / 2, WALL_WIDTH / 2)
         );
     });
 
@@ -177,9 +185,6 @@ describe('MazeNode', () => {
     });
 
     it('adds nodes iff they are in bounds', () => {
-        for (const node of maze.graph.getNodes()) {
-            node.add();
-        }
         for (let i = 0; i < maze.graph.nCols; i++) {
             if (i == maze.graph.nCols - 1 || i == 0) {
                 expect(maze.graph.graph.adj(i).length).toEqual(2);
@@ -187,5 +192,161 @@ describe('MazeNode', () => {
                 expect(maze.graph.graph.adj(i).length).toEqual(3);
             }
         }
+    });
+});
+
+describe('TreeEdge', () => {
+    let mazeGraph;
+    let kruskal;
+
+    beforeAll(() => {
+        mazeGraph = new MazeGraph(null, 3, 3);
+        kruskal = new jsgraphs.KruskalMST(mazeGraph.graph);
+    });
+
+    it('is properly created', async () => {
+        let root = TreeEdge.createRecursive(mazeGraph, kruskal.mst);
+
+        expect(root).not.toBe(null);
+        expect(root.neighbors.length).not.toEqual(0);
+
+        let list = root.traverse();
+
+        expect(list.length).toBeGreaterThan(2);
+        expect(list.length).toBeLessThan(12);
+    });
+
+    it('after determining index, all indices are set', async () => {
+        let root = TreeEdge.createRecursive(mazeGraph, kruskal.mst);
+        root.determineIndex();
+        let list = root.traverse();
+
+        for (const elem of list) {
+            expect(elem.index).not.toBe(null);
+        }
+    });
+
+    it('can create walls', async () => {
+        let walls = mazeGraph.createWallEdges();
+
+        expect(walls.length).toBeGreaterThan(2);
+        expect(walls.length).toBeLessThan(12);
+        for (const elem of walls) {
+            expect(elem.index).not.toBe(null);
+        }
+    });
+
+    it('t-intersection: vertical sits below', async () => {
+        let root = new TreeEdge();
+        root.start = { i: 0, j: 0 };
+        root.end = { i: 0, j: 1 };
+
+        let rightTop = new TreeEdge();
+        rightTop.start = { i: 0, j: 1 };
+        rightTop.end = { i: 0, j: 2 };
+
+        let vert = new TreeEdge();
+        vert.start = { i: 0, j: 1 };
+        vert.end = { i: 1, j: 1 };
+
+        let leftBottom = new TreeEdge();
+        leftBottom.start = { i: 1, j: 1 };
+        leftBottom.end = { i: 1, j: 0 };
+
+        let rightBottom = new TreeEdge();
+        rightBottom.start = { i: 1, j: 1 };
+        rightBottom.end = { i: 1, j: 2 };
+
+        root.neighbors = [rightTop, vert];
+        rightTop.neighbors = [vert, root];
+        vert.neighbors = [rightTop, root, leftBottom, rightBottom];
+        leftBottom.neighbors = [vert, rightBottom];
+        rightBottom.neighbors = [leftBottom, vert];
+
+        root.determineIndex();
+
+        expect(root.index).toEqual(0);
+        expect(rightTop.index).toEqual(0);
+        expect(vert.index).toEqual(1);
+        expect(leftBottom.index).toEqual(2);
+        expect(rightBottom.index).toEqual(2);
+    });
+
+    it('L-intersection, starting from below', async () => {
+        let root = new TreeEdge();
+        root.start = { i: 1, j: 1 };
+        root.end = { i: 1, j: 0 };
+
+        let vert = new TreeEdge();
+        vert.start = { i: 1, j: 0 };
+        vert.end = { i: 0, j: 0 };
+
+        root.neighbors = [vert];
+        vert.neighbors = [root];
+
+        root.determineIndex();
+
+        expect(root.index).toEqual(0);
+        expect(vert.index).toEqual(-1);
+    });
+
+    it('L-intersection, starting from above', async () => {
+        let root = new TreeEdge();
+        root.start = { i: 1, j: 1 };
+        root.end = { i: 1, j: 0 };
+
+        let vert = new TreeEdge();
+        vert.start = { i: 1, j: 0 };
+        vert.end = { i: 0, j: 0 };
+
+        root.neighbors = [vert];
+        vert.neighbors = [root];
+
+        vert.determineIndex();
+
+        expect(root.index).toEqual(1);
+        expect(vert.index).toEqual(0);
+    });
+
+    it('tau-intersection, starting from below', async () => {
+        let root = new TreeEdge();
+        root.start = { i: 1, j: 1 };
+        root.end = { i: 0, j: 1 };
+
+        let horiz = new TreeEdge();
+        horiz.start = { i: 0, j: 1 };
+        horiz.end = { i: 0, j: 0 };
+
+        root.neighbors = [horiz];
+        horiz.neighbors = [root];
+
+        root.determineIndex();
+
+        expect(root.index).toEqual(0);
+        expect(horiz.index).toEqual(-1);
+    });
+
+    it('c-intersection, starting from above', async () => {
+        let root = new TreeEdge();
+        root.start = { i: 0, j: 1 };
+        root.end = { i: 0, j: 0 };
+
+        let vert = new TreeEdge();
+        vert.start = { i: 0, j: 0 };
+        vert.end = { i: 1, j: 0 };
+
+        let horiz = new TreeEdge();
+        horiz.start = { i: 1, j: 0 };
+        horiz.end = { i: 1, j: 1 };
+
+        root.neighbors = [vert];
+        vert.neighbors = [horiz, root];
+        horiz.neighbors = [vert];
+
+        root.determineIndex();
+
+        expect(root.index).toEqual(0);
+        expect(vert.index).toEqual(1);
+        expect(horiz.index).toEqual(2);
     });
 });

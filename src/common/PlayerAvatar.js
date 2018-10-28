@@ -3,6 +3,7 @@
 import DynamicObject from 'lance/serialize/DynamicObject';
 import PlayerActor from '../client/PlayerActor.js';
 import Serializer from 'lance/serialize/Serializer';
+import { Player } from '../config';
 
 export default class PlayerAvatar extends DynamicObject {
     static get netScheme() {
@@ -21,13 +22,12 @@ export default class PlayerAvatar extends DynamicObject {
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
         if (props && props.playerId) {
-            console.log(typeof props.playerNumber);
             this.playerId = props.playerId;
             this.playerNumber = props.playerNumber;
         }
         this.class = PlayerAvatar;
-        this.width = 25;
-        this.height = 25;
+        this.width = Player.width;
+        this.height = Player.height;
     }
 
     onAddToWorld(gameEngine) {
@@ -36,6 +36,7 @@ export default class PlayerAvatar extends DynamicObject {
             this.actor = new PlayerActor(
                 this,
                 gameEngine.renderer,
+                'player',
                 gameEngine.isOwnedByPlayer(this)
             );
         }

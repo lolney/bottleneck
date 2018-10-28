@@ -2,6 +2,7 @@ import jsgraphs from 'js-graph-algorithms';
 import TwoVector from 'lance/serialize/TwoVector';
 import PF from 'pathfinding';
 import { WIDTH, HEIGHT, Player } from '../config';
+import logger from './Logger';
 
 const wallWidth = 20;
 const corridorWidth = 60;
@@ -18,7 +19,7 @@ const corridorWidth = 60;
 
 /**
  * Contains the list of blockable objects in the world
- * Can be generated or loaded from the database
+ * Can be generated or (@unimplemented) loaded from the database
  */
 export default class GameWorld {
     constructor(objects, starts) {
@@ -69,11 +70,11 @@ export default class GameWorld {
         );
 
         let maze = new Maze(mazeBounds, corridorWidth, wallWidth);
-        objects = objects.concat(maze.createWalls());
         objects.push(left.topWall(wallWidth));
-        objects.push(left.bottomWall(wallWidth));
+        objects = objects.concat(maze.createWalls());
         objects.push(top.rightWall(wallWidth));
         objects.push(bottom.rightWall(wallWidth));
+        objects = [left.bottomWall(wallWidth)].concat(objects);
 
         let mirror = (pos) => new TwoVector(WIDTH - pos.x, pos.y);
         let start = left.getCenter();
@@ -91,7 +92,7 @@ export default class GameWorld {
     }
 
     getStartingPosition(playerId) {
-        console.log(
+        logger.debug(
             `start for player ${playerId}: `,
             this.starts[playerId % this.starts.length]
         );
@@ -108,7 +109,7 @@ export default class GameWorld {
      * @param {TwoVector} end
      */
     pathfind(mapStart, mapEnd) {
-        console.log(
+        logger.debug(
             'start x,y, end x,y',
             mapStart.x,
             mapStart.y,
@@ -118,10 +119,10 @@ export default class GameWorld {
         let start = this.grid.worldCoordsToCell(mapStart);
         let end = this.grid.worldCoordsToCell(mapEnd);
 
-        console.log('grid start x,y, end x,y', start.x, start.y, end.x, end.y);
+        logger.debug('grid start x,y, end x,y', start.x, start.y, end.x, end.y);
         if (this.grid.isOccupied(end)) {
             this.grid.print([end]);
-            console.log('end tile is unreachable');
+            logger.warning('end tile is unreachable');
             return [];
         }
 
@@ -230,7 +231,7 @@ export class Grid {
         }
 
         for (const str of strs) {
-            console.log(str.join(''));
+            logger.debug(str.join(''));
         }
     }
 
@@ -452,6 +453,11 @@ export class Maze {
 
 export class MazeGraph {
     constructor(maze, nCols, nRows) {
+        if (nCols < 3 || nRows < 3) {
+            throw new TypeError(
+                `nCols and nRows must be at least 3, but are ${nCols}, ${nRows}`
+            );
+        }
         this.maze = maze;
         /**
          * Number of columns (counting walls, not corridors)
@@ -460,6 +466,10 @@ export class MazeGraph {
         this.nRows = nRows;
 
         this.graph = new jsgraphs.WeightedGraph(this.nCols * this.nRows);
+        for (const node of this.getNodes()) {
+            node.add();
+        }
+        this.addOpening(Math.floor(this.nRows / 2), this.nCols - 1);
     }
 
     *getNodes() {
@@ -485,28 +495,40 @@ export class MazeGraph {
     }
 
     getMazeNode(index) {
-        let i = Math.floor(index / this.nCols);
-        let j = index % this.nCols;
+        let { i, j } = this.getIJFromIndex(index);
         return new MazeNode(this, i, j);
     }
 
-    createWalls() {
-        for (const node of this.getNodes()) {
-            node.add();
-        }
-        this.addOpening(Math.floor(this.nRows / 2), this.nCols - 1);
+    getIJFromIndex(index) {
+        return {
+            i: Math.floor(index / this.nCols),
+            j: index % this.nCols
+        };
+    }
 
+    /**
+     * Create walls, sorted by z-order
+     */
+    createWallEdges() {
         let kruskal = new jsgraphs.KruskalMST(this.graph);
-        return kruskal.mst
+        let root = TreeEdge.createRecursive(this, kruskal.mst);
+        root.determineIndex(0);
+
+        return root
+            .traverse()
             .filter(this.isNotEntrance())
-            .map(
-                (edge) =>
-                    new MazeWall(
-                        this.maze,
-                        this.getMazeNode(edge.v),
-                        this.getMazeNode(edge.w)
-                    )
-            );
+            .sort((a, b) => a.index - b.index);
+    }
+
+    createWalls() {
+        return this.createWallEdges().map(
+            (edge) =>
+                new MazeWall(
+                    this.maze,
+                    this.getMazeNode(this.getIndex(edge.start.i, edge.start.j)),
+                    this.getMazeNode(this.getIndex(edge.end.i, edge.end.j))
+                )
+        );
     }
 
     getIndex(i, j) {
@@ -519,7 +541,8 @@ export class MazeGraph {
         let upper = this.getIndex(0, Math.floor(this.nCols / 2));
         return (edge) =>
             [left, lower, upper].reduce(
-                (accum, entrance) => accum && edge.v != entrance,
+                (accum, entrance) =>
+                    accum && this.getIndex(edge.end.i, edge.end.j) != entrance,
                 true
             );
     }
@@ -551,6 +574,150 @@ export class MazeGraph {
     }
 }
 
+/**
+ * A representation of the graph corresponding to the walls of the maze,
+ * used to determine the z-index of walls (@property {TreeEdge.index})
+ */
+export class TreeEdge {
+    constructor(edge, mazeGraph) {
+        if (mazeGraph && edge) {
+            this.start = mazeGraph.getIJFromIndex(edge.v);
+            this.end = mazeGraph.getIJFromIndex(edge.w);
+        }
+        this.neighbors = [];
+        this.index = null;
+    }
+
+    static createRecursive(mazeGraph, edges) {
+        let root = new TreeEdge(edges[0], mazeGraph);
+        let visited = {};
+        visited[TreeEdge.serializeEdge(edges[0])] = root;
+        root.create(mazeGraph, edges[0], visited, new Set(edges));
+        return root;
+    }
+
+    traverse() {
+        let visited = new Set();
+        let result = [this];
+        let _traverse = (edge) => {
+            for (const neighbor of edge.neighbors) {
+                if (!visited.has(neighbor)) {
+                    visited.add(neighbor);
+                    result.push(neighbor);
+                    _traverse(neighbor);
+                }
+            }
+        };
+        _traverse(this);
+        return result;
+    }
+
+    /**
+     * @private
+     */
+    static serializeEdge(edge) {
+        return `${edge.v},${edge.w}`;
+    }
+
+    /**
+     * @private
+     */
+    create(mazeGraph, edge, visited, edges) {
+        let getNeighborsFrom = (node) => {
+            let nearNeighbors = mazeGraph.graph.adj(node);
+            nearNeighbors = nearNeighbors == undefined ? [] : nearNeighbors;
+            return nearNeighbors.filter((e) => edge != e);
+        };
+
+        let farNeighbors = getNeighborsFrom(edge.w);
+        let nearNeighbors = getNeighborsFrom(edge.v);
+        let neighbors = nearNeighbors.concat(farNeighbors);
+
+        for (const neighbor of neighbors) {
+            let serialized = TreeEdge.serializeEdge(neighbor);
+            if (edges.has(neighbor)) {
+                let neighborObj = visited[serialized];
+                if (!neighborObj) {
+                    neighborObj = new TreeEdge(neighbor, mazeGraph);
+                    visited[serialized] = neighborObj;
+                    neighborObj.create(mazeGraph, neighbor, visited, edges);
+                }
+                this.neighbors.push(neighborObj);
+            }
+        }
+    }
+
+    determineIndex() {
+        let visited = new Set([this]);
+
+        let _determineIndex = (index, edge) => {
+            edge.index = index;
+            for (const neighbor of edge.neighbors) {
+                if (!visited.has(neighbor)) {
+                    visited.add(neighbor);
+                    let relativeIndex = edge.determineRelativeIndex(neighbor);
+                    _determineIndex(index + relativeIndex, neighbor);
+                }
+            }
+        };
+
+        _determineIndex(0, this);
+    }
+
+    isVertical() {
+        return this.start.j == this.end.j;
+    }
+
+    neighborIsBelow(neighbor) {
+        let mine = [this.start.i, this.end.i];
+        let theirs = [neighbor.start.i, neighbor.end.i];
+        for (const a of mine) {
+            for (const b of theirs) {
+                if (a < b) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    hasVerticalNeighborBelow() {
+        for (const neighbor of this.neighbors) {
+            if (neighbor.isVertical() && this.neighborIsBelow(neighbor)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    determineRelativeIndex(neighbor) {
+        let edge = this;
+        if (neighbor.isVertical() == edge.isVertical()) {
+            return 0;
+        } else {
+            if (edge.isVertical()) {
+                if (
+                    edge.neighborIsBelow(neighbor) &&
+                    !edge.hasVerticalNeighborBelow()
+                ) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            } else {
+                if (
+                    !edge.hasVerticalNeighborBelow() &&
+                    !edge.neighborIsBelow(neighbor)
+                ) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        }
+    }
+}
+
 export class MazeWall {
     /**
      *
@@ -564,7 +731,7 @@ export class MazeWall {
 
         let isHorizonal = width == 1;
 
-        this.width = isHorizonal ? scale : maze.wallWidth;
+        this.width = isHorizonal ? scale + maze.wallWidth : maze.wallWidth;
         this.height = isHorizonal ? maze.wallWidth : scale + maze.wallWidth;
 
         let xPadding = 0;

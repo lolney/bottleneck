@@ -4,7 +4,8 @@ import express from 'express';
 import socketIO from 'socket.io';
 import path from 'path';
 import { checkPassword, getUserId, setPlayerId } from './src/server/db';
-import Instance from './src/server/Instance';
+import MatchMaker from './src/server/MatchMaker';
+import logger from './src/server/Logger';
 
 const PORT = process.env.PORT || 3000;
 const INDEX = path.join(__dirname, './index.html');
@@ -16,7 +17,7 @@ server.get('/', function(req, res) {
 });
 server.use('/', express.static(path.join(__dirname, '.')));
 let requestHandler = server.listen(PORT, () =>
-    console.log(`Listening on ${PORT}`)
+    logger.info(`Listening on ${PORT}`)
 );
 
 /*
@@ -33,23 +34,23 @@ require('socketio-auth')(io, {
         let username = data.username;
         let password = data.password;
 
-        console.log(`User is logging in: ${data.username}`);
+        logger.info(`User is logging in: ${data.username}`);
         let succeeded = await checkPassword(username, password);
-        console.log(`Authentication succeeded: ${succeeded}`);
+        logger.info(`Authentication succeeded: ${succeeded}`);
 
         let userId = await getUserId(username);
         socket.client.userId = userId;
 
-        console.log('got user id');
+        logger.debug('got user id');
 
         let player = await setPlayerId(userId, socket.playerId);
         socket.client.playerDbId = player.id;
 
-        console.log('added player to db');
+        logger.debug('added player to db');
         callback(null, succeeded);
     },
     timeout: 'none'
 });
 
-// Create the game instance
-new Instance(io);
+// Create the Matchmaker
+new MatchMaker(io);

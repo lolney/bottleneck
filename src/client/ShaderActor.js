@@ -18,22 +18,23 @@ export default class ShaderActor extends Actor {
             avatar.height
         );
 
+        let getAdustment = () => [renderer.camera.x, renderer.camera.y];
         let myFilter = new PIXI.Filter(
             null,
             shader, // fragment shader
             {
                 time: { value: 0.0 },
                 resolution: { value: [avatar.width, avatar.height] },
-                adjustment: { value: renderer.camera.y }
+                adjustment: { value: getAdustment() }
             }
         );
 
         const fps = 60;
         const interval = 1000 / fps;
-        window.setInterval(() => {
+        renderer.gameEngine.on('preStep', () => {
             myFilter.uniforms.time += interval;
-            myFilter.uniforms.adjustment = renderer.camera.y;
-        }, interval);
+            myFilter.uniforms.adjustment = getAdustment();
+        });
         rect.filters = [myFilter];
 
         this.sprite.addChild(rect);

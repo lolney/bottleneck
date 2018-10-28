@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import DraggableDefence from './DraggableDefence.jsx';
+import DraggableDefense from './DraggableDefense.jsx';
 
 const resources = [
     { name: 'wood', src: 'assets/low-log.png' },
@@ -35,8 +35,12 @@ export default class SiegeItemsWrapper extends React.Component {
     render() {
         return (
             <div className="results">
-                <p> Drag and drop a defence to add it to the game </p>
-                <div className="defences-grid">
+                <p> Drag and drop an item to add it to the game. </p>
+                <p>
+                    Add defenses to block your opponent; add offenses to
+                    neutralize their defenses.
+                </p>
+                <div className="defenses-grid">
                     {this.props.data.map((siegeItem) => (
                         <SiegeItem
                             isBuyable={this.isBuyable(siegeItem)}
@@ -57,12 +61,12 @@ class SiegeItem extends React.Component {
         return (
             <div>
                 <div className="column">
-                    <DraggableDefence
+                    <DraggableDefense
                         key={siegeItem.id}
                         src={siegeItem.image}
                         id={siegeItem.id}
                         draggable={this.props.isBuyable}
-                        className="defence"
+                        className="defense"
                     />
                 </div>
                 <div className="column">

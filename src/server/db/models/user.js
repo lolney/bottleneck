@@ -42,7 +42,6 @@ module.exports = (sequelize, DataTypes) => {
             hooks: {
                 beforeCreate: (user, options) => {
                     return encryptPassword(user.password).then((success) => {
-                        console.log('Encrypted password');
                         user.password = success;
                     });
                 }

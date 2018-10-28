@@ -1,4 +1,4 @@
-.defences {
+.defenses {
   display: flex;
   flex-flow: column;
 
@@ -20,11 +20,12 @@
 
   .results {
     width: 100%;
+    padding: 5px;
     display: flex;
     flex-flow: column;
   }
 
-  .defences-grid {
+  .defenses-grid {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -32,7 +33,7 @@
     .not-buyable {
       color: red;
     }
-    .defence {
+    .defense {
       white-space: normal;
       margin: 0.5vw;
       min-width: 40px;

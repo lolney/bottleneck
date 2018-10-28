@@ -4,20 +4,22 @@ import { ENGINE_METHOD_DIGESTS } from 'constants';
 
 import EditorSocketWatcher from './EditorSocketWatcher.jsx';
 import ConnectionOverlay from './ConnectionOverlay.jsx';
+import VictoryOverlay from './VictoryOverlay.jsx';
 import Login from './Login.jsx';
 import HUD from './HUD.jsx';
 import Game from './Game.jsx';
 import Windows from './Windows.jsx';
 
-import DefencesBrowser from './defences/DefencesBrowser.jsx';
+import DefensesBrowser from './defenses/DefensesBrowser.jsx';
 
-import './CSS/Defences.scss';
+import './CSS/Defenses.scss';
 import './CSS/HUD.scss';
-import './CSS/Defences.scss';
+import './CSS/Defenses.scss';
 import './CSS/Solutions.scss';
 import './CSS/Menu.scss';
 import './CSS/MenuWindow.scss';
 import './CSS/LoadingScreen.scss';
+import './CSS/VictoryOverlay.scss';
 
 /*
 \ App
@@ -98,6 +100,9 @@ export class App extends React.Component {
                         key={this.state.socket == null}
                         socket={this.state.socket}
                     />
+                )}
+                {this.state.socket && (
+                    <VictoryOverlay socket={this.state.socket} />
                 )}
                 <Windows ref={this.windows} />
                 {this.state.socket && (

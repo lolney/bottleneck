@@ -23,3 +23,5 @@ dist/main.js
 
 src/index.js
 dist/*
+
+*.log

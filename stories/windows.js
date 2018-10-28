@@ -41,7 +41,6 @@ export class WindowsContainer2 extends React.Component {
                     <SolutionHistory
                         socket={socket}
                         openWindow={(code, problem) => {
-                            console.log('opened');
                             this.windows.current.addWindow(
                                 <EditorModal
                                     onSolution={() => {}}

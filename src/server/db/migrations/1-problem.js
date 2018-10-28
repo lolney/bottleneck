@@ -70,7 +70,7 @@ let migrationCommands = [
                 objectType: {
                     type: Sequelize.TEXT
                 },
-                behaviorType: { type: Sequelize.ENUM('resource', 'defence') },
+                behaviorType: { type: Sequelize.ENUM('resource', 'defense') },
                 collected: {
                     type: Sequelize.BOOLEAN
                 },

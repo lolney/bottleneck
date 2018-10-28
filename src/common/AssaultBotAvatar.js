@@ -26,7 +26,7 @@ export default class AssaultBotAvatar extends BotAvatar {
             this.opponentPlayerId = props.opponentPlayerId;
         }
         // @TODO: this may have to be set in props (if playerNumber is not one of these)
-        this.opponentPlayerNumber = this.playerNumber == 0 ? 1 : 0;
+        this.opponentPlayerNumber = this.playerNumber == 1 ? 2 : 1;
         this.state = State.AT_BASE;
         this.class = AssaultBotAvatar;
         this.width = 25;

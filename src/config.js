@@ -30,11 +30,11 @@ export const assaultBot = {
 };
 
 export const playerBase = {
-    baseHP: 20,
+    baseHP: 10,
     height: 50,
     width: 50,
     name: 'Keep',
-    image: 'assets/Keep.png'
+    image: 'assets/Keep-warped.png'
 };
 
 export const verticalWall = {
@@ -45,6 +45,11 @@ export const verticalWall = {
 export const horizontalWall = {
     name: 'horizontalWall',
     image: 'assets/rock-wall-horizontal.png'
+};
+
+export const dirt = {
+    name: 'dirt',
+    image: 'assets/dirt.png'
 };
 
 export const siegeItems = [
