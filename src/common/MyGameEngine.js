@@ -7,7 +7,7 @@ import Avatar from './Avatar';
 import CollectionBotAvatar from './CollectionBotAvatar';
 import BotAvatar from './BotAvatar';
 import WallAvatar from './WallAvatar';
-import DefenceAvatar from './DefenceAvatar';
+import DefenseAvatar from './DefenseAvatar';
 import AssaultBotAvatar from './AssaultBotAvatar';
 import PlayerBaseAvatar from './PlayerBaseAvatar';
 import WaterAvatar from './WaterAvatar';
@@ -34,7 +34,7 @@ export default class MyGameEngine extends GameEngine {
     registerClasses(serializer) {
         serializer.registerClass(PlayerAvatar);
         serializer.registerClass(Avatar);
-        serializer.registerClass(DefenceAvatar);
+        serializer.registerClass(DefenseAvatar);
         serializer.registerClass(WallAvatar);
         serializer.registerClass(CollectionBotAvatar);
         serializer.registerClass(AssaultBotAvatar);
@@ -122,14 +122,14 @@ export default class MyGameEngine extends GameEngine {
         );
     }
 
-    makeDefence(defenceId, position, playerNumber) {
-        let siegeItem = getSiegeItemFromId(defenceId);
+    makeDefense(defenseId, position, playerNumber) {
+        let siegeItem = getSiegeItemFromId(defenseId);
         console.log('adding siegeItem: ', siegeItem);
-        let obj = new DefenceAvatar(this, null, {
+        let obj = new DefenseAvatar(this, null, {
             position: position,
             objectType: siegeItem.name,
             behaviorType: siegeItem.type,
-            dbId: defenceId,
+            dbId: defenseId,
             collected: false,
             playerNumber: playerNumber
         });

@@ -3,7 +3,7 @@ import Serializer from 'lance/serialize/Serializer';
 import StaticActor from '../client/StaticActor.js';
 import { Player, getSiegeItemFromId } from '../config';
 
-export default class DefenceAvatar extends DynamicObject {
+export default class DefenseAvatar extends DynamicObject {
     static get netScheme() {
         return Object.assign(
             {
@@ -50,7 +50,7 @@ export default class DefenceAvatar extends DynamicObject {
             this.playerNumber = props.playerNumber;
         }
         this.attachedSiegeItemId = null;
-        this.class = DefenceAvatar;
+        this.class = DefenseAvatar;
         this.width = Player.width;
         this.height = Player.height;
     }

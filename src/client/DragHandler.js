@@ -1,6 +1,6 @@
 import Router from './Router';
-import { siegeItems, getSiegeItemFromId } from '../config';
-import DefenceAvatar from '../common/DefenceAvatar';
+import { siegeItems } from '../config';
+import DefenseAvatar from '../common/DefenseAvatar';
 import BotAvatar from '../common/BotAvatar';
 
 const DETACH_THRESHOLD = 50;
@@ -72,7 +72,7 @@ export default class DragHandler {
     }
 
     createDragObject(id, position) {
-        let gameObject = this.gameEngine.makeDefence(id, position);
+        let gameObject = this.gameEngine.makeDefense(id, position);
         this.dragObject = (() => {
             switch (gameObject.behaviorType) {
             case 'defensive':
@@ -118,7 +118,7 @@ class OffensiveDragObject {
 
         let gameObjectTest = (o) => o.id == gameObject.id;
         let otherObjectTest = (o) =>
-            o instanceof DefenceAvatar &&
+            o instanceof DefenseAvatar &&
             o.behaviorType == 'defensive' &&
             !this.gameEngine.isOwnedByPlayer(o);
 
@@ -188,6 +188,6 @@ class DefensiveDragObject {
     }
 
     handleDrop(id) {
-        Router.makeDefence(id, this.gameObject.position);
+        Router.makeDefense(id, this.gameObject.position);
     }
 }

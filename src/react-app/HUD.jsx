@@ -1,6 +1,6 @@
 import React from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
-import DefencesBrowser from './defences/DefencesBrowser.jsx';
+import DefensesBrowser from './defenses/DefensesBrowser.jsx';
 import PropTypes from 'prop-types';
 import ControlledButton from './ControlledButton.jsx';
 import Menu from './Menu.jsx';
@@ -73,21 +73,21 @@ export default class HUD extends React.Component {
                         className="hud-button"
                         addWindow={(callback) =>
                             this.props.addWindow(
-                                <DefencesBrowser
+                                <DefensesBrowser
                                     imageSrcs={['assets/sprites/tree1.png']}
                                     socket={this.props.socket}
                                 />,
-                                'defencesBrowser',
+                                'defensesBrowser',
                                 callback
                             )
                         }
                         removeWindow={() =>
-                            this.props.removeWindow('defencesBrowser')
+                            this.props.removeWindow('defensesBrowser')
                         }
                     >
                         <div className="hud-column">
                             <img
-                                alt="defence icon"
+                                alt="defense icon"
                                 src="assets/noun_rook_3679.svg"
                                 height="20px"
                                 width="20px"

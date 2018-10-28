@@ -36,7 +36,7 @@ export default class Avatar extends DynamicObject {
     }
 
     blocks() {
-        return this.behaviorType == 'defence';
+        return this.behaviorType == 'defense';
     }
 
     syncTo(other) {

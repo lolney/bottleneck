@@ -3,18 +3,18 @@ class Router {
         this.socket = socket;
     }
 
-    makeDefence(defenceId, position) {
-        console.log('making defence permanent');
-        this.socket.emit('makeDefence', {
-            defenceId: defenceId,
+    makeDefense(defenseId, position) {
+        console.log('making defense permanent');
+        this.socket.emit('makeDefense', {
+            defenseId: defenseId,
             position: position
         });
     }
 
-    mergeObjects(defenceId, attachedObjectId) {
-        console.log(`merging defence ${defenceId} with ${attachedObjectId}`);
-        this.socket.emit('mergeDefences', {
-            defenceId: defenceId,
+    mergeObjects(defenseId, attachedObjectId) {
+        console.log(`merging defense ${defenseId} with ${attachedObjectId}`);
+        this.socket.emit('mergeDefenses', {
+            defenseId: defenseId,
             gameObjectId: attachedObjectId
         });
     }

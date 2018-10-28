@@ -91,32 +91,32 @@ class Controller {
             socket.emit('resourceInitial', dict);
         });
 
-        socket.on('makeDefence', async (data) => {
-            let resources = this.getDefenceCost(data.defenceId);
+        socket.on('makeDefense', async (data) => {
+            let resources = this.getDefenseCost(data.defenseId);
 
             await this.deductResourceCosts(playerId, resources);
 
-            let defence = this.gameEngine.makeDefence(
-                data.defenceId,
+            let defense = this.gameEngine.makeDefense(
+                data.defenseId,
                 data.position,
                 playerNumber
             );
-            this.gameWorld.update(defence);
+            this.gameWorld.update(defense);
         });
 
-        socket.on('mergeDefences', async (data) => {
-            let resources = this.getDefenceCost(data.defenceId);
+        socket.on('mergeDefenses', async (data) => {
+            let resources = this.getDefenseCost(data.defenseId);
 
             try {
                 await this.deductResourceCosts(playerId, resources);
 
-                let defence = this.gameEngine.queryObject({
+                let defense = this.gameEngine.queryObject({
                     id: data.gameObjectId
                 });
-                defence.attachCounter(data.defenceId);
-                this.gameWorld.remove(defence);
+                defense.attachCounter(data.defenseId);
+                this.gameWorld.remove(defense);
             } catch (error) {
-                logger.error(`Could not merge defences: ${error.message}`);
+                logger.error(`Could not merge defenses: ${error.message}`);
             }
         });
 
@@ -160,8 +160,8 @@ class Controller {
     /**
      * @private
      */
-    getDefenceCost(defenceId) {
-        let item = siegeItems.find((elem) => elem.id == defenceId);
+    getDefenseCost(defenseId) {
+        let item = siegeItems.find((elem) => elem.id == defenseId);
         return item.cost;
     }
 

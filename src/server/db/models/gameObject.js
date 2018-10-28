@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true
         },
         location: DataTypes.GEOMETRY('POINT'),
-        behaviorType: DataTypes.ENUM('resource', 'defence'),
+        behaviorType: DataTypes.ENUM('resource', 'defense'),
         collected: DataTypes.BOOLEAN,
         objectType: DataTypes.TEXT,
         createdAt: DataTypes.DATE,
