@@ -4,7 +4,8 @@ import {
     Maze,
     MazeWall,
     TreeEdge,
-    MazeGraph
+    MazeGraph,
+    WaterBuilder
 } from '../../src/server/GameWorld';
 import { WIDTH, HEIGHT } from '../../src/config';
 import TwoVector from 'lance/serialize/TwoVector';
@@ -109,7 +110,7 @@ describe('MazeWall', () => {
     let maze;
 
     beforeEach(() => {
-        maze = new Maze(BOUNDS, CORRIDOR_WIDTH, WALL_WIDTH);
+        maze = Maze.create(BOUNDS, CORRIDOR_WIDTH, WALL_WIDTH);
     });
 
     it('correctly calculates the dimensions for a horizontal wall', () => {
@@ -144,18 +145,18 @@ describe('MazeWall', () => {
 
 describe('Maze', () => {
     it('calculates nCols and nRows correctly', () => {
-        let maze = new Maze(BOUNDS, CORRIDOR_WIDTH, WALL_WIDTH);
+        let maze = Maze.create(BOUNDS, CORRIDOR_WIDTH, WALL_WIDTH);
 
-        let mg = maze.graph;
+        let mg = maze.createMazeGraph();
 
         expect(mg.nCols).toEqual(11);
         expect(mg.nRows).toEqual(11);
     });
 
     it('calculates nCols and nRows correctly with uneven bounds', () => {
-        let maze = new Maze(Bounds.fromDimensions(20, 20), 8, 1);
+        let maze = Maze.create(Bounds.fromDimensions(20, 20), 8, 1);
 
-        let mg = maze.graph;
+        let mg = maze.createMazeGraph();
 
         expect(mg.nCols).toEqual(3);
         expect(mg.nRows).toEqual(3);
@@ -165,9 +166,9 @@ describe('Maze', () => {
     });
 
     it('calculates nCols and nRows correctly with uneven dimensions', () => {
-        let maze = new Maze(Bounds.fromDimensions(20, 21), 8, 1);
+        let maze = Maze.create(Bounds.fromDimensions(20, 21), 8, 1);
 
-        let mg = maze.graph;
+        let mg = maze.createMazeGraph();
 
         expect(mg.nCols).toEqual(3);
         expect(mg.nRows).toEqual(3);
@@ -181,17 +182,53 @@ describe('MazeNode', () => {
     let maze;
 
     beforeEach(() => {
-        maze = new Maze(BOUNDS, CORRIDOR_WIDTH, WALL_WIDTH);
+        maze = Maze.create(BOUNDS, CORRIDOR_WIDTH, WALL_WIDTH);
     });
 
     it('adds nodes iff they are in bounds', () => {
-        for (let i = 0; i < maze.graph.nCols; i++) {
-            if (i == maze.graph.nCols - 1 || i == 0) {
-                expect(maze.graph.graph.adj(i).length).toEqual(2);
+        let graph = maze.createMazeGraph();
+        for (let i = 0; i < graph.nCols; i++) {
+            if (i == graph.nCols - 1 || i == 0) {
+                expect(graph.graph.adj(i).length).toEqual(2);
             } else {
-                expect(maze.graph.graph.adj(i).length).toEqual(3);
+                expect(graph.graph.adj(i).length).toEqual(3);
             }
         }
+    });
+});
+
+describe('WaterBuilder', () => {
+    let maze;
+    let bounds;
+    let builder;
+
+    const width = 10;
+
+    beforeAll(() => {
+        bounds = new Bounds(BOUNDS.xHi, BOUNDS.xHi + width, 0, BOUNDS.yHi);
+        maze = Maze.create(BOUNDS, CORRIDOR_WIDTH, WALL_WIDTH);
+        builder = new WaterBuilder(bounds, maze);
+    });
+
+    it('calcs center of water block properly', () => {
+        let pos = builder.calcDummyCenter();
+
+        expect(pos.x).toEqual(bounds.getCenter().x);
+        expect(pos.y).toBeLessThan((3 * maze.bounds.yHi) / 4);
+        expect(pos.y).toBeGreaterThan((1 * maze.bounds.yLo) / 4);
+    });
+
+    it('properly creates the center block', () => {
+        let block = builder.createCenterBlock();
+
+        expect(block.width).toEqual(width);
+        expect(block.height).toEqual(CORRIDOR_WIDTH);
+        expect(block.type).toEqual('siegeItem');
+        expect(block.playerNumber).toEqual(0);
+        expect(block.collected).toEqual(false);
+        expect(block.dbId).toEqual(jasmine.any(String));
+        expect(block.objectType).toEqual(jasmine.any(String));
+        expect(block.behaviorType).toEqual(jasmine.any(String));
     });
 });
 
@@ -200,7 +237,8 @@ describe('TreeEdge', () => {
     let kruskal;
 
     beforeAll(() => {
-        mazeGraph = new MazeGraph(null, 3, 3);
+        let maze = new Maze(null, null, null, 3, 3);
+        mazeGraph = new MazeGraph(maze, 3, 3);
         kruskal = new jsgraphs.KruskalMST(mazeGraph.graph);
     });
 

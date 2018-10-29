@@ -71,6 +71,9 @@ export default class MyGameEngine extends GameEngine {
             case 'water':
                 Type = WaterAvatar;
                 break;
+            case 'siegeItem':
+                Type = DefenseAvatar;
+                break;
             default:
                 throw new Error(`Unexpected type: ${obj.type}`);
             }
@@ -129,6 +132,8 @@ export default class MyGameEngine extends GameEngine {
             position: position,
             objectType: siegeItem.name,
             behaviorType: siegeItem.type,
+            width: 25,
+            height: 25,
             dbId: defenseId,
             collected: false,
             playerNumber: playerNumber

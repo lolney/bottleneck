@@ -1,7 +1,7 @@
 import jsgraphs from 'js-graph-algorithms';
 import TwoVector from 'lance/serialize/TwoVector';
 import PF from 'pathfinding';
-import { WIDTH, HEIGHT, Player } from '../config';
+import { WIDTH, HEIGHT, Player, waterDummy } from '../config';
 import logger from './Logger';
 
 const wallWidth = 20;
@@ -69,7 +69,7 @@ export default class GameWorld {
             0.7
         );
 
-        let maze = new Maze(mazeBounds, corridorWidth, wallWidth);
+        let maze = Maze.create(mazeBounds, corridorWidth, wallWidth);
         objects.push(left.topWall(wallWidth));
         objects = objects.concat(maze.createWalls());
         objects.push(top.rightWall(wallWidth));
@@ -85,7 +85,10 @@ export default class GameWorld {
             position: mirror(obj.position)
         }));
         objects = objects.concat(mirrored);
-        objects.push(centerBounds.asObject());
+        // Add the water
+        let wb = new WaterBuilder(centerBounds, maze);
+        objects.push(wb.createWater());
+        objects.push(wb.createCenterBlock());
 
         // TODO: generate other connecting walls, objects
         return new GameWorld(objects, [start, mirror(start)]);
@@ -328,19 +331,6 @@ export class Bounds {
         return [this.xLo, this.xHi, this.yLo, this.yHi];
     }
 
-    /**
-     * @returns {worldObject}
-     */
-    asObject() {
-        return {
-            id: Math.random(),
-            position: this.getCenter(),
-            width: this.getWidth(),
-            height: this.getHeight(),
-            type: 'water'
-        };
-    }
-
     subtractLeft(x) {
         this.xLo += x;
         return this;
@@ -416,12 +406,85 @@ export class Bounds {
     }
 }
 
+export class WaterBuilder {
+    constructor(centerBounds, maze) {
+        this.bounds = centerBounds;
+        this.maze = maze;
+    }
+
+    /**
+     * @returns {worldObject}
+     */
+    createWater() {
+        return {
+            id: Math.random(),
+            position: this.bounds.getCenter(),
+            width: this.bounds.getWidth(),
+            height: this.bounds.getHeight(),
+            type: 'water'
+        };
+    }
+
+    /**
+     * @private
+     */
+    calcDummyCenter() {
+        let { x: xCenter } = this.bounds.getCenter();
+        let [i] = this.maze.getRightOpening();
+        let w = this.maze.corridorWidth + this.maze.wallWidth;
+
+        let yLo = this.maze.bounds.yLo + i * w;
+        let yHi = yLo + this.maze.corridorWidth;
+        let yCenter = yLo + (yHi - yLo) / 2;
+
+        return new TwoVector(xCenter, yCenter);
+    }
+
+    /**
+     * @returns {worldObject}
+     */
+    createCenterBlock() {
+        return {
+            id: Math.random(),
+            position: this.calcDummyCenter(),
+            width: this.bounds.getWidth(),
+            height: this.maze.corridorWidth,
+            type: 'siegeItem',
+            playerNumber: 0,
+            collected: false,
+            dbId: waterDummy.id,
+            objectType: waterDummy.name,
+            behaviorType: waterDummy.type
+        };
+    }
+}
+
 export class Maze {
-    constructor(bounds, corridorWidth, wallWidth) {
+    /**
+     * Construct directly from values
+     * @param {Bounds} bounds
+     * @param {number} corridorWidth
+     * @param {number} wallWidth
+     * @param {number} nCols
+     * @param {number} nRows
+     */
+    constructor(bounds, corridorWidth, wallWidth, nCols, nRows) {
         this.bounds = bounds;
         this.corridorWidth = corridorWidth;
         this.wallWidth = wallWidth;
 
+        this.nCols = nCols;
+        this.nRows = nRows;
+    }
+
+    /**
+     * Create the maze parameters according to how many corridors can fit,
+     * removing space from the left.
+     * @param {Bounds} bounds
+     * @param {number} corridorWidth
+     * @param {number} wallWidth
+     */
+    static create(bounds, corridorWidth, wallWidth) {
         let w = corridorWidth + wallWidth;
         let nCorridors = (dim) => Math.floor((dim - wallWidth) / w);
 
@@ -432,22 +495,31 @@ export class Maze {
         let nRows = 1 + nCorridors(bounds.getHeight());
 
         // Scale corridor width so that it fits the vertical space
-        this.corridorWidth =
+        corridorWidth =
             (bounds.getHeight() - wallWidth) / (nRows - 1) - wallWidth;
 
         // Adjust width to put extra space on the left
         let effectiveWidth =
-            (this.corridorWidth + wallWidth) * (nCols - 1) + wallWidth;
-        this.bounds.subtractLeft(this.bounds.getWidth() - effectiveWidth);
+            (corridorWidth + wallWidth) * (nCols - 1) + wallWidth;
+        bounds.subtractLeft(bounds.getWidth() - effectiveWidth);
 
-        this.graph = new MazeGraph(this, nCols, nRows);
+        return new Maze(bounds, corridorWidth, wallWidth, nCols, nRows);
+    }
+
+    getRightOpening() {
+        return [Math.floor(this.nRows / 2), this.nCols - 1];
+    }
+
+    createMazeGraph() {
+        return new MazeGraph(this, this.nCols, this.nRows);
     }
 
     /**
      * Map the abstract maze representation into game objects
      */
     createWalls() {
-        return this.graph.getWallObjects();
+        let graph = this.createMazeGraph();
+        return graph.getWallObjects();
     }
 }
 
@@ -469,7 +541,8 @@ export class MazeGraph {
         for (const node of this.getNodes()) {
             node.add();
         }
-        this.addOpening(Math.floor(this.nRows / 2), this.nCols - 1);
+        let [i, j] = maze.getRightOpening();
+        this.addOpening(i, j);
     }
 
     *getNodes() {
@@ -539,12 +612,13 @@ export class MazeGraph {
         let left = this.getIndex(Math.floor(this.nRows / 2), 0);
         let lower = this.getIndex(this.nRows - 1, Math.floor(this.nCols / 2));
         let upper = this.getIndex(0, Math.floor(this.nCols / 2));
-        return (edge) =>
-            [left, lower, upper].reduce(
-                (accum, entrance) =>
-                    accum && this.getIndex(edge.end.i, edge.end.j) != entrance,
-                true
-            );
+        return (edge) => {
+            for (const entrance of [left, lower, upper]) {
+                if (this.getIndex(edge.end.i, edge.end.j) == entrance)
+                    return false;
+            }
+            return true;
+        };
     }
 
     getEdge(i, j, vertical = true) {

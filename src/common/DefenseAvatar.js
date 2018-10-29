@@ -44,15 +44,15 @@ export default class DefenseAvatar extends DynamicObject {
         super(gameEngine, options, props);
         if (props) {
             this.objectType = props.objectType;
-            this.dbId = props.dbId;
+            this.dbId = props.dbId.toString();
             this.collected = props.collected.toString();
             this.behaviorType = props.behaviorType;
             this.playerNumber = props.playerNumber;
+            this.width = props.width;
+            this.height = props.height;
         }
         this.attachedSiegeItemId = null;
         this.class = DefenseAvatar;
-        this.width = Player.width;
-        this.height = Player.height;
     }
 
     setLoading(id) {

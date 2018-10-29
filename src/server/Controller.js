@@ -242,6 +242,7 @@ class Controller {
         logger.info(
             `Bot has reached enemy player's base, bringing it to ${hp} hp`
         );
+        this.playerMap.publishAll('hp', { playerId: enemyPlayerId, hp: hp });
         if (hp <= 0) {
             this.doWinGame(enemyPlayerId);
         }
