@@ -1,6 +1,4 @@
 import React from 'react';
-import { renderToString } from 'react-dom/server';
-import brace from 'brace';
 import AceEditor from 'react-ace';
 import PropTypes from 'prop-types';
 

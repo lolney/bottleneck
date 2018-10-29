@@ -2,6 +2,9 @@ import React from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
+/**
+ * Toggleable button with toggle-on and toggle-off handlers
+ */
 export default class ControlledButton extends React.Component {
     constructor(props) {
         super(props);

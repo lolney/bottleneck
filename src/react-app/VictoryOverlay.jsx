@@ -14,11 +14,9 @@ export default class VictoryOverlay extends React.Component {
         super(props);
         this.state = { status: State.Pending };
         this.props.socket.addEventListener('gameWin', (event) => {
-            console.log('game won');
             this.setState({ status: State.Win });
         });
         this.props.socket.addEventListener('gameLose', (event) => {
-            console.log('game lost');
             this.setState({ status: State.Lose });
         });
     }

@@ -14,11 +14,11 @@ export default class HealthBar extends React.Component {
             transform: `scaleX(${hp / playerBase.baseHP})`
         };
         return (
-            <div className="bar-container">
+            <div key={key} className="bar-container">
+                <div className={key} style={style} />
                 <div className="bar-label">
                     <span className="outline-text">{hp}</span>
                 </div>
-                <div key={key} className={key} style={style} />
             </div>
         );
     }

@@ -3,10 +3,9 @@ import React from 'react';
 import StorybookConsole from 'react-storybook-console';
 import { storiesOf } from '@storybook/react';
 import DefensesBrowser from '../src/react-app/defenses/DefensesBrowser.jsx';
-import { WindowsContainer } from './windows';
 import '../src/react-app/CSS/Defenses.scss';
 
-import { siegeItems } from './fixtures';
+import { siegeItems } from '../src/config';
 import { solvedProblems } from '../src/config';
 
 let on = (event, callback) => {
