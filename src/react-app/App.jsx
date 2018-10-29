@@ -7,6 +7,7 @@ import ConnectionOverlay from './ConnectionOverlay.jsx';
 import VictoryOverlay from './VictoryOverlay.jsx';
 import Login from './Login.jsx';
 import HUD from './HUD.jsx';
+import HealthBar from './HealthBar.jsx';
 import Game from './Game.jsx';
 import Windows from './Windows.jsx';
 
@@ -20,6 +21,7 @@ import './CSS/Menu.scss';
 import './CSS/MenuWindow.scss';
 import './CSS/LoadingScreen.scss';
 import './CSS/VictoryOverlay.scss';
+import './CSS/HealthBar.scss';
 
 /*
 \ App
@@ -104,7 +106,11 @@ export class App extends React.Component {
                 {this.state.socket && (
                     <VictoryOverlay socket={this.state.socket} />
                 )}
+
+                {this.state.socket && <HealthBar socket={this.state.socket} />}
+
                 <Windows ref={this.windows} />
+
                 {this.state.socket && (
                     <HUD
                         addMenu={this.addMenu}

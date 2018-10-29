@@ -1,0 +1,43 @@
+.health-bar {
+  top: 0;
+  position: absolute;
+  width: 50%;
+  height: 5%;
+  pointer-events: none;
+  left: 0;
+  right: 0;
+  margin: auto;
+  border: none;
+  border-radius: 1px;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  padding: 0px;
+  .column-1 {
+    min-height: 100%;
+    text-align: center;
+    width: 50%;
+    background-color: blue;
+    color: #000000;
+    display: block;
+    font: 300 1em/1.5em "Lato", sans-serif;
+    font-size: 1em;
+    flex-wrap: wrap;
+    position: absolute;
+    left: 0;
+  }
+
+  .column-3 {
+    min-height: 100%;
+    text-align: center;
+    width: 50%;
+    background-color: red;
+    color: #000000;
+    display: block;
+    font: 300 1em/1.5em "Lato", sans-serif;
+    font-size: 1em;
+    flex-wrap: wrap;
+    position: absolute;
+    right: 0;
+  }
+}
