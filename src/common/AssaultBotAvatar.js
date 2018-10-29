@@ -67,7 +67,6 @@ export default class AssaultBotAvatar extends BotAvatar {
      * Transition the bot to its next state. Includes side effects.
      */
     transitionState() {
-        console.log('transitioning: ', this.state);
         switch (this.state) {
         case State.ASSAULTING:
             this.state = State.AT_ENEMY_BASE;
@@ -84,17 +83,21 @@ export default class AssaultBotAvatar extends BotAvatar {
     }
 
     async resetPath() {
-        this.path = [];
-        switch (this.state) {
-        case State.ASSAULTING:
-            this.state = State.AT_BASE;
-            break;
-        case State.AT_ENEMY_BASE:
-        case State.AT_BASE:
-            break;
-        default:
-            throw new Error('Unexpected state');
+        if (!this.isCalculating) {
+            this.isCalculating = true;
+            this.path = [];
+            switch (this.state) {
+            case State.ASSAULTING:
+                this.state = State.AT_BASE;
+                break;
+            case State.AT_ENEMY_BASE:
+            case State.AT_BASE:
+                break;
+            default:
+                throw new Error('Unexpected state');
+            }
+            this.isCalculating = false;
+            await this.checkPath();
         }
-        await this.checkPath();
     }
 }

@@ -76,6 +76,10 @@ export default class GameWorld {
         objects.push(bottom.rightWall(wallWidth));
         objects = [left.bottomWall(wallWidth)].concat(objects);
 
+        objects.push(top.topWall(wallWidth));
+        objects.push(halfBounds.leftWall(wallWidth));
+        objects.push(bottom.bottomWall(wallWidth));
+
         let mirror = (pos) => new TwoVector(WIDTH - pos.x, pos.y);
         let start = left.getCenter();
 
@@ -161,14 +165,19 @@ export default class GameWorld {
             this.grid.remove(prev, paddingX, paddingY);
         }
         this.objects[obj.id] = obj;
-        this.grid.add(obj, paddingX, paddingY);
+
+        if (obj.blocks !== false) {
+            this.grid.add(obj, paddingX, paddingY);
+        }
     }
 
     remove(obj) {
         let paddingX = Player.width / 2;
         let paddingY = Player.height / 2;
 
-        this.grid.remove(obj, paddingX, paddingY);
+        if (obj.blocks !== false) {
+            this.grid.remove(obj, paddingX, paddingY);
+        }
         delete this.objects[obj.id];
     }
 }
@@ -378,6 +387,23 @@ export class Bounds {
     /**
      * @returns {worldObject}
      */
+    leftWall(wallWidth) {
+        let center = new TwoVector(
+            this.xLo + wallWidth / 2,
+            this.yLo + this.getHeight() / 2
+        );
+        return {
+            id: Math.random(),
+            position: center,
+            width: wallWidth,
+            height: this.getHeight(),
+            type: 'wall'
+        };
+    }
+
+    /**
+     * @returns {worldObject}
+     */
     bottomWall(wallWidth) {
         let center = new TwoVector(
             this.xLo + this.getWidth() / 2,
@@ -421,7 +447,8 @@ export class WaterBuilder {
             position: this.bounds.getCenter(),
             width: this.bounds.getWidth(),
             height: this.bounds.getHeight(),
-            type: 'water'
+            type: 'water',
+            blocks: false
         };
     }
 
@@ -433,7 +460,7 @@ export class WaterBuilder {
         let [i] = this.maze.getRightOpening();
         let w = this.maze.corridorWidth + this.maze.wallWidth;
 
-        let yLo = this.maze.bounds.yLo + i * w;
+        let yLo = this.maze.wallWidth + this.maze.bounds.yLo + i * w;
         let yHi = yLo + this.maze.corridorWidth;
         let yCenter = yLo + (yHi - yLo) / 2;
 

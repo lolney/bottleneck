@@ -1,17 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ENGINE_METHOD_DIGESTS } from 'constants';
 
 import EditorSocketWatcher from './EditorSocketWatcher.jsx';
 import ConnectionOverlay from './ConnectionOverlay.jsx';
 import VictoryOverlay from './VictoryOverlay.jsx';
 import Login from './Login.jsx';
 import HUD from './HUD.jsx';
-import HealthBar from './HealthBar.jsx';
+import HealthBarContainer from './HealthBarContainer.jsx';
 import Game from './Game.jsx';
 import Windows from './Windows.jsx';
-
-import DefensesBrowser from './defenses/DefensesBrowser.jsx';
 
 import './CSS/Defenses.scss';
 import './CSS/HUD.scss';
@@ -107,7 +104,9 @@ export class App extends React.Component {
                     <VictoryOverlay socket={this.state.socket} />
                 )}
 
-                {this.state.socket && <HealthBar socket={this.state.socket} />}
+                {this.state.socket && (
+                    <HealthBarContainer socket={this.state.socket} />
+                )}
 
                 <Windows ref={this.windows} />
 

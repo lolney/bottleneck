@@ -2,7 +2,6 @@ import React from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import ControlledButton from './ControlledButton.jsx';
-import DefensesBrowser from './defenses/DefensesBrowser.jsx';
 import SolutionHistory from './solution-history/SolutionHistory.jsx';
 
 export default class MenuWindow extends React.Component {
