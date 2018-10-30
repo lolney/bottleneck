@@ -9,14 +9,9 @@ import { solvedProblems } from './fixtures';
 
 import '../src/react-app/CSS/Solutions.scss';
 
-export const socket = {
-    on: (event, callback) => {
-        window.setTimeout(() => {
-            callback(solvedProblems);
-        }, 50);
-    },
-    emit: () => {}
-};
+import MockSocket from './mockSocket';
+
+export const socket = MockSocket.create('solvedProblems', solvedProblems);
 
 storiesOf('SolutionHistory', module)
     .addDecorator(StorybookConsole)

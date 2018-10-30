@@ -8,31 +8,16 @@ import VictoryOverlay from '../src/react-app/VictoryOverlay.jsx';
 
 import '../src/react-app/CSS/VictoryOverlay.scss';
 
-export const socket = {
-    create(eventName) {
-        return {
-            addEventListener: (event, callback) => {
-                window.setTimeout(
-                    () => (event == eventName ? callback() : null),
-                    1000
-                );
-            },
-            emit: () => {}
-        };
-    }
-};
+import MockSocket from './mockSocket';
+
+let win = MockSocket.create('gameWin');
+let lose = MockSocket.create('gameLose');
 
 storiesOf('VictoryOverlay', module)
     .addDecorator(StorybookConsole)
     .add('Win Overlay', () => (
-        <VictoryOverlay
-            openWindow={(code) => alert(code)}
-            socket={socket.create('gameWin')}
-        />
+        <VictoryOverlay openWindow={(code) => alert(code)} socket={win} />
     ))
     .add('Lose Overlay', () => (
-        <VictoryOverlay
-            openWindow={(code) => alert(code)}
-            socket={socket.create('gameLose')}
-        />
+        <VictoryOverlay openWindow={(code) => alert(code)} socket={lose} />
     ));

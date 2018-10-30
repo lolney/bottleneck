@@ -7,24 +7,11 @@ import '../src/react-app/CSS/Defenses.scss';
 
 import { siegeItems } from '../src/config';
 import { solvedProblems } from '../src/config';
+import MockSocket from './mockSocket';
 
-let on = (event, callback) => {
-    let data;
-    if (event == 'siegeItems') {
-        data = siegeItems;
-    } else if (event == 'solvedProblems') {
-        data = solvedProblems;
-    }
-    window.setTimeout(() => {
-        callback(siegeItems);
-    }, 50);
-};
-
-export const socket = {
-    on: on,
-    once: on,
-    emit: () => {}
-};
+let socket = new MockSocket()
+    .triggerEvent('siegeItems', siegeItems)
+    .triggerEvent('solvedProblems', solvedProblems).socket;
 
 storiesOf('Adding defenses', module)
     .addDecorator(StorybookConsole)

@@ -9,8 +9,7 @@ import HUD from './HUD.jsx';
 import HealthBarContainer from './HealthBarContainer.jsx';
 import Game from './Game.jsx';
 import Windows from './Windows.jsx';
-
-import Socket from './socket';
+import SocketContext from './SocketContext';
 
 import './CSS/Defenses.scss';
 import './CSS/HUD.scss';
@@ -83,7 +82,6 @@ export class App extends React.Component {
     }
 
     onReceiveSocket(socket) {
-        Socket.init(socket);
         new EditorSocketWatcher(socket, this.windows.current.addWindow);
 
         socket.addEventListener('authenticated', (event) => {
@@ -93,42 +91,44 @@ export class App extends React.Component {
 
     render() {
         return (
-            <div>
-                {!this.state.token && (
-                    <Login onReceiveToken={this.onReceiveToken} />
-                )}
-                {this.state.token && (
-                    <ConnectionOverlay
-                        key={this.state.socket == null}
-                        socket={this.state.socket}
-                    />
-                )}
-                {this.state.socket && (
-                    <VictoryOverlay socket={this.state.socket} />
-                )}
+            <SocketContext.Provider value={this.state.socket}>
+                <div>
+                    {!this.state.token && (
+                        <Login onReceiveToken={this.onReceiveToken} />
+                    )}
+                    {this.state.token && (
+                        <ConnectionOverlay
+                            key={this.state.socket == null}
+                            socket={this.state.socket}
+                        />
+                    )}
+                    {this.state.socket && (
+                        <VictoryOverlay socket={this.state.socket} />
+                    )}
 
-                {this.state.socket && (
-                    <HealthBarContainer socket={this.state.socket} />
-                )}
+                    {this.state.socket && (
+                        <HealthBarContainer socket={this.state.socket} />
+                    )}
 
-                <Windows ref={this.windows} />
+                    <Windows ref={this.windows} />
 
-                {this.state.socket && (
-                    <HUD
-                        addMenu={this.addMenu}
-                        removeMenu={this.removeMenu}
-                        addWindow={this.addWindow}
-                        removeWindow={this.removeWindow}
-                        socket={this.state.socket}
-                    />
-                )}
-                {this.state.token && (
-                    <Game
-                        onReceiveSocket={this.onReceiveSocket}
-                        token={this.state.token}
-                    />
-                )}
-            </div>
+                    {this.state.socket && (
+                        <HUD
+                            addMenu={this.addMenu}
+                            removeMenu={this.removeMenu}
+                            addWindow={this.addWindow}
+                            removeWindow={this.removeWindow}
+                            socket={this.state.socket}
+                        />
+                    )}
+                    {this.state.token && (
+                        <Game
+                            onReceiveSocket={this.onReceiveSocket}
+                            token={this.state.token}
+                        />
+                    )}
+                </div>
+            </SocketContext.Provider>
         );
     }
 }

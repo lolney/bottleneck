@@ -4,6 +4,7 @@ import DefensesBrowser from './defenses/DefensesBrowser.jsx';
 import PropTypes from 'prop-types';
 import ControlledButton from './ControlledButton.jsx';
 import { resourceIcons } from '../config';
+import AnimateOnChange from 'react-animate-on-change';
 
 export default class HUD extends React.Component {
     constructor(props) {
@@ -44,7 +45,7 @@ export default class HUD extends React.Component {
             } else {
                 resources[data.name] = resources[data.name] + data.count;
             }
-            this.setState({ ...this.state, resources: resources });
+            this.setState({ resources: resources });
         });
     }
 
@@ -109,7 +110,13 @@ const ResourceButton = ({ name, src, height, width, count }) => (
         <div className="hud-column">
             <img alt={name} src={src} height={height} width={width} />
         </div>
-        <div className={'hud-column-2 updateable'}>{count}</div>
+        <AnimateOnChange
+            baseClassName="hud-column-2"
+            animationClassName="updateable"
+            animate={true}
+        >
+            {count}
+        </AnimateOnChange>
     </Button>
 );
 
