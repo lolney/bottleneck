@@ -28,6 +28,7 @@ export default function withSocket(
                     WrappedComponent
                 );
             }
+            this.handlers = [];
             this.state = {
                 data: getInitialState(this.socket)
             };
@@ -35,20 +36,22 @@ export default function withSocket(
 
         componentDidMount() {
             for (const [event, handler] of handlers) {
-                this.socket.on(event, (data) => {
+                let modHandler = (data) => {
                     this.setState({
                         data: {
                             ...this.state.data,
                             ...handler(data, this.state.data)
                         }
                     });
-                });
+                };
+                this.socket.on(event, modHandler);
+                this.handlers.push([event, modHandler]);
             }
         }
 
         componentWillUnmount() {
-            for (const [event, handler] of handlers) {
-                this.socket.removeListener(event, handler);
+            for (const [event, handler] of this.handlers) {
+                this.socket.off(event, handler);
             }
         }
 
