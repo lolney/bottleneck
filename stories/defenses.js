@@ -10,8 +10,10 @@ import { solvedProblems } from '../src/config';
 import MockSocket from './mockSocket';
 
 let socket = new MockSocket()
-    .triggerEvent('siegeItems', siegeItems)
-    .triggerEvent('solvedProblems', solvedProblems).socket;
+    .triggerEvent('resourceInitial', { wood: 0, stone: 0 })
+    .triggerEvent('resourceUpdate', { count: 10, name: 'wood' }, 0)
+    .triggerEvent('resourceUpdate', { count: 10, name: 'wood' }, 5000)
+    .triggerEvent('siegeItems', siegeItems).socket;
 
 storiesOf('Adding defenses', module)
     .addDecorator(StorybookConsole)

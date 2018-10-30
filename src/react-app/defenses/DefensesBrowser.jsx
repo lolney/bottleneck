@@ -1,43 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SelectMenu from '../common/SelectMenu.jsx';
-import DraggableDefense from './DraggableDefense.jsx';
-import { ButtonToolbar, Button } from 'react-bootstrap';
 import buttonConfig from './buttonConfig';
 import SiegeItemsWrapper from './SiegeItemsWrapper.jsx';
+import withSocketFetch from '../withSocketFetch.jsx';
+import { resourceUpdateHandler } from '../common/resources';
 
-export default class DefensesBrowser extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            siegeItems: [],
-            resources: {
-                wood: 0,
-                stone: 0
-            }
-        };
-        this.props.socket.on('siegeItems', (data) => {
-            this.setState({ siegeItems: data });
-        });
-        this.props.socket.emit('siegeItems');
-        // Listen for initial update first
-        this.props.socket.once('resourceInitial', (data) => {
-            this.setState({ ...this.state, resources: data });
-
-            this.props.socket.on('resourceUpdate', (data) => {
-                let resources = { ...this.state.resources };
-                if (data.shouldReset == true) {
-                    resources[data.name] = data.count;
-                } else {
-                    resources[data.name] = resources[data.name] + data.count;
-                }
-                this.setState({ ...this.state, resources: resources });
-            });
-        });
-        this.props.socket.emit('resourceInitial');
-    }
-
+class DefensesBrowser extends React.Component {
     render() {
+        let siegeItems = this.props.loading ? [] : this.props.siegeItems;
+        let resources = this.props.loading ? {} : this.props.resources;
         return (
             <div className="defenses">
                 <div className="header">
@@ -45,15 +17,13 @@ export default class DefensesBrowser extends React.Component {
                 </div>
                 <div className="body">
                     <SelectMenu
-                        key={this.state.siegeItems.length}
-                        data={this.state.siegeItems}
+                        data={siegeItems}
                         getType={(siege) => siege.type}
                         buttonConfig={buttonConfig}
                     >
                         <SiegeItemsWrapper
-                            data={this.state.siegeItems}
-                            resources={this.state.resources}
-                            key={this.state.siegeItems.length}
+                            data={siegeItems}
+                            resources={resources}
                         />
                     </SelectMenu>
                 </div>
@@ -61,6 +31,15 @@ export default class DefensesBrowser extends React.Component {
         );
     }
 }
+
+export default withSocketFetch(
+    DefensesBrowser,
+    [['resourceUpdate', resourceUpdateHandler]],
+    [
+        ['resourceInitial', (data) => ({ resources: data })],
+        ['siegeItems', (data) => ({ siegeItems: data })]
+    ]
+);
 
 DefensesBrowser.propTypes = {
     socket: PropTypes.object.isRequired

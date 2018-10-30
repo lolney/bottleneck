@@ -5,54 +5,10 @@ import PropTypes from 'prop-types';
 import ControlledButton from './ControlledButton.jsx';
 import { resourceIcons } from '../config';
 import AnimateOnChange from 'react-animate-on-change';
+import withSocketFetch from './withSocketFetch.jsx';
+import { resourceUpdateHandler } from './common/resources';
 
-export default class HUD extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            resources: {
-                wood: 0,
-                stone: 0
-            }
-        };
-        this.getInitial = this.getInitial.bind(this);
-        this.addResouceUpdateListener = this.addResouceUpdateListener.bind(
-            this
-        );
-    }
-
-    componentDidMount() {
-        this.props.socket.emit('resourceInitial');
-        this.getInitial().then(() => this.addResouceUpdateListener());
-    }
-
-    getInitial() {
-        return new Promise((resolve, reject) => {
-            this.props.socket.once('resourceInitial', (data) => {
-                console.log('Initial resources: ', data);
-                this.setState({ resources: data });
-                resolve();
-            });
-        });
-    }
-
-    addResouceUpdateListener() {
-        this.props.socket.on('resourceUpdate', (data) => {
-            let resources = { ...this.state.resources };
-            if (data.shouldReset == true) {
-                resources[data.name] = data.count;
-            } else {
-                resources[data.name] = resources[data.name] + data.count;
-            }
-            this.setState({ resources: resources });
-        });
-    }
-
-    componentWillUnmount() {
-        this.props.socket.removeListener('resourceUpdate');
-    }
-
+class HUD extends React.Component {
     render() {
         return (
             <div className="hud-buttons bootstrap-styles">
@@ -61,7 +17,11 @@ export default class HUD extends React.Component {
                         <ResourceButton
                             key={resource.name}
                             {...resource}
-                            count={this.state.resources[resource.name]}
+                            count={
+                                this.props.loading
+                                    ? null
+                                    : this.props.resources[resource.name]
+                            }
                         />
                     ))}
                     <ControlledButton
@@ -110,13 +70,17 @@ const ResourceButton = ({ name, src, height, width, count }) => (
         <div className="hud-column">
             <img alt={name} src={src} height={height} width={width} />
         </div>
-        <AnimateOnChange
-            baseClassName="hud-column-2"
-            animationClassName="updateable"
-            animate={true}
-        >
-            {count}
-        </AnimateOnChange>
+        {count == null ? (
+            'loading'
+        ) : (
+            <AnimateOnChange
+                baseClassName="hud-column-2"
+                animationClassName="updateable"
+                animate={true}
+            >
+                {count}
+            </AnimateOnChange>
+        )}
     </Button>
 );
 
@@ -127,3 +91,9 @@ HUD.propTypes = {
     removeMenu: PropTypes.func.isRequired,
     socket: PropTypes.object.isRequired
 };
+
+export default withSocketFetch(
+    HUD,
+    [['resourceUpdate', resourceUpdateHandler]],
+    [['resourceInitial', (data) => ({ resources: data })]]
+);

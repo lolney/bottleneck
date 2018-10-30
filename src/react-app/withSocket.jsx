@@ -35,11 +35,14 @@ export default function withSocket(
 
         componentDidMount() {
             for (const [event, handler] of handlers) {
-                this.socket.on(event, (data) =>
+                this.socket.on(event, (data) => {
                     this.setState({
-                        data: { ...this.state.data, ...handler(data) }
-                    })
-                );
+                        data: {
+                            ...this.state.data,
+                            ...handler(data, this.state.data)
+                        }
+                    });
+                });
             }
         }
 
