@@ -15,9 +15,11 @@ describe('HealthBar', () => {
 
     beforeEach(() => {
         let socket = {
+            connected: true,
             on: (event, cb) => {
                 callback = cb;
-            }
+            },
+            removeListener: () => {}
         };
         healthbar = mount(<HealthBarContainer socket={socket} />);
     });
@@ -29,15 +31,15 @@ describe('HealthBar', () => {
     it('state set properly', () => {
         const hp = playerBase.baseHP;
 
-        let values = Object.values(healthbar.state);
+        let values = Object.values(healthbar.state('data'));
         for (const value of values) {
             expect(value).toEqual(hp);
         }
 
         callback({ enemyHp: 0 });
 
-        expect(healthbar.state('enemyHp')).toEqual(0);
-        expect(healthbar.state('myHp')).toEqual(hp);
+        expect(healthbar.state('data').enemyHp).toEqual(0);
+        expect(healthbar.state('data').myHp).toEqual(hp);
     });
 
     it('health bar set preoperly', () => {

@@ -1,18 +1,23 @@
-this.state = {
-    resources: {
-        wood: 0,
-        stone: 0
+class Socket {
+    init(socket) {
+        this.socket = socket;
     }
-};
 
-function onResourceUpdate() {
-    this.props.socket.on('resourceUpdate', (data) => {
-        let resources = { ...this.state.resources };
-        if (data.shouldReset == true) {
-            resources[data.name] = data.count;
-        } else {
-            resources[data.name] = resources[data.name] + data.count;
-        }
-        return { resources: resources };
-    });
+    get connected() {
+        return this.socket.connected;
+    }
+
+    on(event, handler) {
+        this.socket.on(event, handler);
+    }
+
+    emit(event, data) {
+        this.socket.emit(event, data);
+    }
+
+    removeListener(event, handler) {
+        this.socket.removeListener(event, handler);
+    }
 }
+
+export default new Socket();

@@ -120,6 +120,7 @@ export default class Windows extends React.Component {
     createMenu(socket) {
         return (
             <Menu
+                key="menu"
                 socket={socket}
                 addWindow={this.addWindow}
                 removeWindow={this.removeWindow}

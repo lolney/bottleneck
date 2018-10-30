@@ -6,6 +6,10 @@
   pointer-events: none;
   .btn-toolbar {
     height: 100%;
+
+    &:first-child {
+      margin-top: 10%;
+    }
     .btn {
       border: none;
       border-radius: 1px;
@@ -40,10 +44,23 @@
         font-size: 1em;
         flex-wrap: wrap;
       }
+      @keyframes animate-green {
+        from {
+          color: black;
+        }
+        50% {
+          color: green;
+        }
+        to {
+          color: black;
+        }
+      }
+      .updateable {
+        animation-name: animate-green;
+        animation-duration: 2s;
+      }
     }
-    .top-btn {
-      margin-top: 10%;
-    }
+
     .btm-btn {
       bottom: 0;
       position: absolute;

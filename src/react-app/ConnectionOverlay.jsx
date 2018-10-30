@@ -49,16 +49,7 @@ export default class ConnectionOverlay extends React.Component {
                 <div className="loading-screen">
                     <div id="spinner" className="spinner">
                         <div className="loader-wrapper">
-                            <div className="loader">
-                                <div />
-                                <div />
-                                <div />
-                                <div />
-                                <div />
-                                <div />
-                                <div />
-                                <div />
-                            </div>
+                            <div className="loader" />
                         </div>
                         <div className="text-container">
                             <div className="loading-text">

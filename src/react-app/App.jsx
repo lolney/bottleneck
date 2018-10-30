@@ -10,6 +10,8 @@ import HealthBarContainer from './HealthBarContainer.jsx';
 import Game from './Game.jsx';
 import Windows from './Windows.jsx';
 
+import Socket from './socket';
+
 import './CSS/Defenses.scss';
 import './CSS/HUD.scss';
 import './CSS/Defenses.scss';
@@ -81,6 +83,7 @@ export class App extends React.Component {
     }
 
     onReceiveSocket(socket) {
+        Socket.init(socket);
         new EditorSocketWatcher(socket, this.windows.current.addWindow);
 
         socket.addEventListener('authenticated', (event) => {

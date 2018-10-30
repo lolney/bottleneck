@@ -1,6 +1,5 @@
 import React from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
-import ControlledButton from './ControlledButton.jsx';
 import PropTypes from 'prop-types';
 
 const State = Object.freeze({

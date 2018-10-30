@@ -131,3 +131,13 @@ export const siegeItems = [
         }
     }
 ].map((obj) => Object.assign({ id: siegeItemCounter.inc() }, obj));
+
+export const resourceIcons = [
+    { name: 'wood', height: '20px', width: '20px', src: 'assets/log.png' },
+    {
+        name: 'stone',
+        height: '20px',
+        width: '20px',
+        src: 'assets/rock-particle.png'
+    }
+];

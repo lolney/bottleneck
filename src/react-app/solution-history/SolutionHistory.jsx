@@ -2,20 +2,11 @@ import React from 'react';
 import SelectMenu from '../common/SelectMenu.jsx';
 import Problem from './Problem.jsx';
 import buttonConfig from './buttonConfig';
+import { solvedProblems } from './propTypes';
+import withSocket from '../withSocket.jsx';
 import PropTypes from 'prop-types';
 
-export default class SolutionHistory extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            solvedProblems: []
-        };
-        this.props.socket.emit('solvedProblems');
-        this.props.socket.on('solvedProblems', (data) => {
-            this.setState({ solvedProblems: data });
-        });
-    }
-
+class SolutionHistory extends React.Component {
     render() {
         return (
             <div className="solutions">
@@ -29,12 +20,12 @@ export default class SolutionHistory extends React.Component {
                 </div>
 
                 <SelectMenu
-                    key={this.state.solvedProblems.length}
-                    data={this.state.solvedProblems}
+                    key={this.props.solvedProblems.length}
+                    data={this.props.solvedProblems}
                     getType={(solved) => solved.problem.type}
                     buttonConfig={buttonConfig}
                 >
-                    <Problem openWindow={this.props.openWindow} />
+                    <Problem data={[]} openWindow={this.props.openWindow} />
                 </SelectMenu>
             </div>
         );
@@ -42,6 +33,22 @@ export default class SolutionHistory extends React.Component {
 }
 
 SolutionHistory.propTypes = {
-    socket: PropTypes.object.isRequired,
+    solvedProblems: solvedProblems,
     openWindow: PropTypes.func.isRequired
 };
+
+export default withSocket(
+    SolutionHistory,
+    [
+        [
+            'solvedProblems',
+            (data) => ({
+                solvedProblems: data
+            })
+        ]
+    ],
+    (socket) => {
+        socket.emit('solvedProblems');
+        return { solvedProblems: [] };
+    }
+);

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Image } from '../problem-engine/ImageProblem';
+import { Image } from '../../problem-engine/ImageProblem';
 import PropTypes from 'prop-types';
+import { ProblemSubComponentTypes } from './PropTypes';
 
 export default class ImageComponent extends React.Component {
     constructor(props) {
@@ -59,9 +60,7 @@ export default class ImageComponent extends React.Component {
 }
 
 ImageComponent.propTypes = {
-    generator: PropTypes.func.isRequired,
-    setDone: PropTypes.func.isRequired,
-    reportError: PropTypes.func.isRequired,
+    ...ProblemSubComponentTypes,
     problem: PropTypes.shape({
         title: PropTypes.string,
         description: PropTypes.string,

@@ -11,7 +11,7 @@ const options = {
 };
 
 /**
- * Handles socket interactions
+ * Handles socket interactions for all editor windows
  * Keeps track of which problems are currently open, declining to add
  * them until the window has been closed.
  */
@@ -34,13 +34,11 @@ export default class EditorSocketWatcher {
     receiveProblem({ id, isSolved, problem, code }) {
         if (!this.openProblems[problem.id]) {
             this.addWindow(
-                <Provider template={AlertTemplate} {...options}>
-                    <EditorModal
-                        onSolution={isSolved ? () => {} : this.onSolution}
-                        problem={problem}
-                        code={isSolved ? code : problem.code}
-                    />
-                </Provider>,
+                <EditorModal
+                    onSolution={isSolved ? () => {} : this.onSolution}
+                    problem={problem}
+                    code={isSolved ? code : problem.code}
+                />,
                 id,
                 () => delete this.openProblems[problem.id]
             );

@@ -8,7 +8,8 @@ let randomInt = (minimum, maximum) =>
     Math.floor(Math.random() * (maximum - minimum)) + minimum;
 
 const NUM_OBJECTS = 50;
-const RIVER_RADIUS = 200;
+const RIVER_RADIUS = 120;
+const SIDE_BUFFER = 40;
 
 function randomInRanges(...ranges) {
     let rangeIndex = randomInt(0, ranges.length);
@@ -23,12 +24,12 @@ function randomPoint() {
     // Can't import GameWorld here since it imports TwoVector
     //let bounds = GameWorld.getResourceBounds();
     let x = randomInRanges(
-        [0, WIDTH / 2 - RIVER_RADIUS],
-        [WIDTH / 2 + RIVER_RADIUS, WIDTH]
+        [SIDE_BUFFER, WIDTH / 2 - RIVER_RADIUS],
+        [WIDTH / 2 + RIVER_RADIUS, WIDTH - SIDE_BUFFER]
     );
     let y = randomInRanges(
-        [0, 0.25 * HEIGHT],
-        [HEIGHT - 0.25 * HEIGHT, HEIGHT]
+        [SIDE_BUFFER, 0.25 * HEIGHT],
+        [HEIGHT - 0.25 * HEIGHT, HEIGHT - SIDE_BUFFER]
     );
     return 'POINT(' + x + ' ' + y + ')';
 }

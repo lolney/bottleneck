@@ -1,10 +1,18 @@
 import React from 'react';
 import Editor from './Editor.jsx';
-import ProblemComponent from './ProblemComponent.jsx';
+import ProblemComponent from './problems/ProblemComponent.jsx';
 import PropTypes from 'prop-types';
 import { withAlert } from 'react-alert';
 
+import { Provider } from 'react-alert';
+import AlertTemplate from 'react-alert-template-basic';
+
 import './CSS/Modal.scss';
+
+const alertOptions = {
+    timeout: 0,
+    position: 'bottom center'
+};
 
 class EditorModal extends React.Component {
     constructor(props) {
@@ -49,6 +57,7 @@ class EditorModal extends React.Component {
                         alert={this.props.alert}
                     />
                 )}
+
                 <Editor
                     onChange={this.setGenerator}
                     value={this.state.code}
@@ -59,7 +68,15 @@ class EditorModal extends React.Component {
     }
 }
 
-export default withAlert(EditorModal);
+const wrapWithProvider = (ComponentClass) => {
+    return (props) => (
+        <Provider template={AlertTemplate} {...alertOptions}>
+            <ComponentClass {...props} />
+        </Provider>
+    );
+};
+
+export default wrapWithProvider(withAlert(EditorModal));
 
 EditorModal.propTypes = {
     onSolution: PropTypes.func.isRequired,
