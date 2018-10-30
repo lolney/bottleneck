@@ -5,10 +5,12 @@ import PlayerActor from '../client/PlayerActor.js';
 import Serializer from 'lance/serialize/Serializer';
 import TwoVector from 'lance/serialize/TwoVector';
 
-const Status = {
+export const Status = {
     IDLE: Symbol('idle'),
     WORKING: Symbol('working')
 };
+
+const radius = 4;
 
 /**
  * Base class for bots, representing syncing, pathfinding,
@@ -73,6 +75,7 @@ export default class BotAvatar extends DynamicObject {
     attach(controller, gameWorld, gameEngine) {
         console.log('attaching bot');
 
+        this.status = Status.WORKING;
         this.serverState = {
             controller: controller,
             gameWorld: gameWorld,
@@ -121,7 +124,7 @@ export default class BotAvatar extends DynamicObject {
                     dst
                 );
                 if (path.length > 0) {
-                    this.status = Status.RUNNING;
+                    this.status = Status.WORKING;
                     resolve(path);
                 } else {
                     this.status = Status.IDLE;
@@ -149,11 +152,8 @@ export default class BotAvatar extends DynamicObject {
     async checkPath() {
         if (this.path.length > 0) {
             let next = this.getNextPosition();
-            let radius = 4;
-            let distance = this.position
-                .clone()
-                .subtract(next)
-                .length();
+            let distance = BotAvatar.distance(this.position, next);
+
             if (distance < radius) {
                 // trim path
                 this.path = this.path.slice(1, this.path.length);

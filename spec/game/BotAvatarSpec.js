@@ -1,4 +1,4 @@
-import BotAvatar from '../../src/common/BotAvatar';
+import BotAvatar, { Status } from '../../src/common/BotAvatar';
 import AssaultBotAvatar, {
     State as AssaultState
 } from '../../src/common/AssaultBotAvatar';
@@ -24,9 +24,10 @@ const gameEngine = {
     on: () => {}
 };
 const gameWorld = GameWorld.generate();
-gameWorld.pathfind = () => {
+const pathfind = () => {
     return [`${WIDTH - 1},${HEIGHT - 1}`, `${WIDTH},${HEIGHT}`];
 };
+gameWorld.pathfind = pathfind;
 
 describe('BotAvatar', () => {
     let avatar;
@@ -36,7 +37,7 @@ describe('BotAvatar', () => {
             position: new TwoVector(WIDTH / 2, HEIGHT / 2),
             playerNumber: 0
         });
-        resourcePositions = avatar.attach(null, gameWorld, gameEngine);
+        avatar.attach(null, gameWorld, gameEngine);
     });
 
     it('initializes correctly', () => {
@@ -116,6 +117,17 @@ describe('AssaultBotAvatar', () => {
         avatar.attach(controller, gameWorld, gameEngine);
     });
 
+    let attachEmptyPath = () => {
+        const gw = GameWorld.generate();
+        gw.pathfind = () => [];
+        avatar.attach(
+            avatar.serverState.controller,
+            gw,
+            avatar.serverState.gameEngine
+        );
+        return gw;
+    };
+
     it(' properly creates a path', async () => {
         let path = await avatar.newPath();
 
@@ -133,6 +145,36 @@ describe('AssaultBotAvatar', () => {
 
         expect(avatar.state).toEqual(AssaultState.ASSAULTING);
         expect(avatar.path).not.toBe(null);
+    });
+
+    it('resets properly while idling', async () => {
+        attachEmptyPath();
+
+        expect(avatar.status).toEqual(Status.WORKING);
+
+        avatar.followWaypoint();
+
+        expect(avatar.state).toEqual(AssaultState.ASSAULTING);
+        expect(avatar.status).toEqual(Status.IDLE);
+        await avatar.resetPath();
+
+        expect(avatar.isCalculating).toEqual(true);
+        expect(avatar.state).toEqual(AssaultState.ASSAULTING);
+        expect(avatar.status).toEqual(Status.IDLE);
+    });
+
+    it('idles if it can\'t find a path', async () => {
+        const gw = attachEmptyPath();
+
+        expect(avatar.status).toEqual(Status.WORKING);
+
+        setTimeout(() => {
+            expect(avatar.status).toEqual(Status.IDLE);
+            gw.pathfind = pathfind;
+        }, 100);
+        await avatar.followWaypoint();
+
+        expect(avatar.status).toEqual(Status.WORKING);
     });
 
     it('properly removes from world', async () => {

@@ -3,72 +3,27 @@ import { ButtonToolbar, Button } from 'react-bootstrap';
 import DefensesBrowser from './defenses/DefensesBrowser.jsx';
 import PropTypes from 'prop-types';
 import ControlledButton from './ControlledButton.jsx';
-import Menu from './Menu.jsx';
-import { Modal } from 'react-bootstrap';
+import { resourceIcons } from '../config';
+import AnimateOnChange from 'react-animate-on-change';
+import withSocketFetch from './withSocketFetch.jsx';
+import { resourceUpdateHandler } from './common/resources';
 
-export default class HUD extends React.Component {
-    constructor(props) {
-        super(props);
-
-        console.log('constructing HUD');
-
-        this.state = {
-            resources: {
-                wood: 0,
-                stone: 0
-            }
-        };
-        // Listen for initial update first
-        this.props.socket.once('resourceInitial', (data) => {
-            console.log('got initial: ', data);
-            this.setState({ ...this.state, resources: data });
-
-            this.props.socket.on('resourceUpdate', (data) => {
-                let resources = { ...this.state.resources };
-                if (data.shouldReset == true) {
-                    resources[data.name] = data.count;
-                } else {
-                    resources[data.name] = resources[data.name] + data.count;
-                }
-                this.setState({ ...this.state, resources: resources });
-            });
-        });
-        this.props.socket.emit('resourceInitial');
-    }
-
+class HUD extends React.Component {
     render() {
         return (
             <div className="hud-buttons bootstrap-styles">
                 <ButtonToolbar>
-                    <Button
-                        className="top-btn hud-button"
-                        onClick={this.handleShow}
-                    >
-                        <div className="hud-column">
-                            <img
-                                alt="log icon"
-                                src="assets/log.png"
-                                height="20px"
-                                width="20px"
-                            />
-                        </div>
-                        <div className="hud-column-2">
-                            {this.state.resources['wood']}
-                        </div>
-                    </Button>
-                    <Button className="hud-button">
-                        <div className="hud-column">
-                            <img
-                                alt="rock icon"
-                                src="assets/rock-particle.png"
-                                height="20px"
-                                width="20px"
-                            />
-                        </div>
-                        <div className="hud-column-2">
-                            {this.state.resources['stone']}
-                        </div>
-                    </Button>
+                    {resourceIcons.map((resource) => (
+                        <ResourceButton
+                            key={resource.name}
+                            {...resource}
+                            count={
+                                this.props.loading
+                                    ? null
+                                    : this.props.resources[resource.name]
+                            }
+                        />
+                    ))}
                     <ControlledButton
                         className="hud-button"
                         addWindow={(callback) =>
@@ -110,6 +65,25 @@ export default class HUD extends React.Component {
     }
 }
 
+const ResourceButton = ({ name, src, height, width, count }) => (
+    <Button className="hud-button">
+        <div className="hud-column">
+            <img alt={name} src={src} height={height} width={width} />
+        </div>
+        {count == null ? (
+            'loading'
+        ) : (
+            <AnimateOnChange
+                baseClassName="hud-column-2"
+                animationClassName="updateable"
+                animate={true}
+            >
+                {count}
+            </AnimateOnChange>
+        )}
+    </Button>
+);
+
 HUD.propTypes = {
     addMenu: PropTypes.func.isRequired,
     addWindow: PropTypes.func.isRequired,
@@ -117,3 +91,9 @@ HUD.propTypes = {
     removeMenu: PropTypes.func.isRequired,
     socket: PropTypes.object.isRequired
 };
+
+export default withSocketFetch(
+    HUD,
+    [['resourceUpdate', resourceUpdateHandler]],
+    [['resourceInitial', (data) => ({ resources: data })]]
+);

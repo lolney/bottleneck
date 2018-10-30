@@ -118,9 +118,9 @@ class OffensiveDragObject {
 
         let gameObjectTest = (o) => o.id == gameObject.id;
         let otherObjectTest = (o) =>
-            o instanceof DefenseAvatar &&
-            o.behaviorType == 'defensive' &&
-            !this.gameEngine.isOwnedByPlayer(o);
+            o instanceof DefenseAvatar && o.behaviorType == 'defensive';
+        // Can prevent players from placing on their own defences
+        // && !this.gameEngine.isOwnedByPlayer(o);
 
         this.gameEngine.registerCollisionStart(
             gameObjectTest,
@@ -150,6 +150,7 @@ class OffensiveDragObject {
     }
 
     resetAttachedObject() {
+        console.log('restting');
         this.attachedObject.setLoading(false);
         this.attachedObject = null;
         this.gameObject.setPlacable(false);

@@ -3,29 +3,17 @@ import React from 'react';
 import StorybookConsole from 'react-storybook-console';
 import { storiesOf } from '@storybook/react';
 import DefensesBrowser from '../src/react-app/defenses/DefensesBrowser.jsx';
-import { WindowsContainer } from './windows';
 import '../src/react-app/CSS/Defenses.scss';
 
-import { siegeItems } from './fixtures';
+import { siegeItems } from '../src/config';
 import { solvedProblems } from '../src/config';
+import MockSocket from './mockSocket';
 
-let on = (event, callback) => {
-    let data;
-    if (event == 'siegeItems') {
-        data = siegeItems;
-    } else if (event == 'solvedProblems') {
-        data = solvedProblems;
-    }
-    window.setTimeout(() => {
-        callback(siegeItems);
-    }, 50);
-};
-
-export const socket = {
-    on: on,
-    once: on,
-    emit: () => {}
-};
+let socket = new MockSocket()
+    .triggerEvent('resourceInitial', { wood: 0, stone: 0 })
+    .triggerEvent('resourceUpdate', { count: 10, name: 'wood' }, 0)
+    .triggerEvent('resourceUpdate', { count: 10, name: 'wood' }, 5000)
+    .triggerEvent('siegeItems', siegeItems).socket;
 
 storiesOf('Adding defenses', module)
     .addDecorator(StorybookConsole)

@@ -2,8 +2,7 @@ import React from 'react';
 import BinaryTreeComponent from './BinaryTreeComponent.jsx';
 import ImageComponent from './ImageComponent.jsx';
 import PropTypes from 'prop-types';
-import './CSS/Image.scss';
-
+import '../CSS/Image.scss';
 
 export default class ProblemComponent extends React.Component {
     constructor(props) {
@@ -79,7 +78,8 @@ ProblemComponent.propTypes = {
     problem: PropTypes.shape({
         id: PropTypes.string,
         title: PropTypes.string,
-        description: PropTypes.string
+        description: PropTypes.string,
+        type: PropTypes.string
     }).isRequired,
     alert: PropTypes.object.isRequired
 };

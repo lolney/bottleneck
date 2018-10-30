@@ -1,12 +1,28 @@
 export const WIDTH = 2000;
 export const HEIGHT = 1200;
 
+class SiegeItemCounter {
+    constructor() {
+        this.count = 0;
+    }
+
+    inc() {
+        return (this.count++).toString();
+    }
+}
+let siegeItemCounter = new SiegeItemCounter();
+
 export const getSiegeItemFromId = (id) => {
     return siegeItems.find((item) => item.id == id);
 };
 
 export const getAssetPaths = () => {
-    let items = siegeItems.concat([playerBase, verticalWall, horizontalWall]);
+    let items = siegeItems.concat([
+        playerBase,
+        waterDummy,
+        verticalWall,
+        horizontalWall
+    ]);
     let assetPaths = {};
     for (const item of items) {
         assetPaths[item.name] = item.image;
@@ -50,6 +66,13 @@ export const horizontalWall = {
 export const dirt = {
     name: 'dirt',
     image: 'assets/dirt.png'
+};
+
+export const waterDummy = {
+    id: siegeItemCounter.inc(),
+    name: 'Transparent',
+    image: 'assets/x.svg',
+    type: 'defensive'
 };
 
 export const siegeItems = [
@@ -107,4 +130,14 @@ export const siegeItems = [
             stone: '0'
         }
     }
-].map((obj, i) => Object.assign({ id: i.toString() }, obj));
+].map((obj) => Object.assign({ id: siegeItemCounter.inc() }, obj));
+
+export const resourceIcons = [
+    { name: 'wood', height: '20px', width: '20px', src: 'assets/log.png' },
+    {
+        name: 'stone',
+        height: '20px',
+        width: '20px',
+        src: 'assets/rock-particle.png'
+    }
+];

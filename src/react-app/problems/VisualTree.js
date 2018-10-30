@@ -1,5 +1,5 @@
 import paper from 'paper';
-import Validator, { Type } from '../problem-engine/Validator';
+import Validator, { Type } from '../../problem-engine/Validator';
 
 export class BinaryTree {
     constructor(el) {

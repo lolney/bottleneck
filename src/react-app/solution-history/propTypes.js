@@ -14,3 +14,5 @@ export const solvedProblem = PropTypes.shape({
     problem: problem.isRequired,
     code: PropTypes.string.isRequired
 });
+
+export const solvedProblems = PropTypes.arrayOf(solvedProblem).isRequired;

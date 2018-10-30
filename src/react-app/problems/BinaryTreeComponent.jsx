@@ -3,8 +3,9 @@ import VisualTree from './VisualTree';
 import { BinaryTree } from './VisualTree';
 import { Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import './CSS/BinaryTree.scss';
+import '../CSS/BinaryTree.scss';
 import '@fortawesome/fontawesome-free/css/all.css';
+import { ProblemSubComponentTypes } from './PropTypes';
 
 export default class BinaryTreeComponent extends React.Component {
     constructor(props) {
@@ -114,9 +115,7 @@ export default class BinaryTreeComponent extends React.Component {
 }
 
 BinaryTreeComponent.propTypes = {
-    generator: PropTypes.func.isRequired,
-    setDone: PropTypes.func.isRequired,
-    reportError: PropTypes.func.isRequired,
+    ...ProblemSubComponentTypes,
     problem: PropTypes.shape({
         title: PropTypes.string,
         description: PropTypes.string,

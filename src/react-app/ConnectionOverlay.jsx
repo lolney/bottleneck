@@ -50,14 +50,9 @@ export default class ConnectionOverlay extends React.Component {
                     <div id="spinner" className="spinner">
                         <div className="loader-wrapper">
                             <div className="loader">
-                                <div />
-                                <div />
-                                <div />
-                                <div />
-                                <div />
-                                <div />
-                                <div />
-                                <div />
+                                {[...Array(8).keys()].map((i) => (
+                                    <div key={i} />
+                                ))}
                             </div>
                         </div>
                         <div className="text-container">

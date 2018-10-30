@@ -115,6 +115,7 @@ class Controller {
                 });
                 defense.attachCounter(data.defenseId);
                 this.gameWorld.remove(defense);
+                this.gameEngine.resetBots();
             } catch (error) {
                 logger.error(`Could not merge defenses: ${error.message}`);
             }
@@ -136,7 +137,6 @@ class Controller {
         });
 
         this.playerMap.addPlayer(playerId, socket);
-        //this.pushCount();
         logger.debug(`added player ${playerId}`);
     }
 
@@ -239,9 +239,19 @@ class Controller {
     async doAssault(enemyPlayerId) {
         let hp = await decrementHP(enemyPlayerId);
         this.gameEngine.setBaseHP(enemyPlayerId, hp);
+
         logger.info(
             `Bot has reached enemy player's base, bringing it to ${hp} hp`
         );
+
+        let getData = (playerId) => {
+            let key = enemyPlayerId == playerId ? 'myHp' : 'enemyHp';
+            let obj = {};
+            obj[key] = hp;
+            return obj;
+        };
+        this.playerMap.publishAll('hp', getData);
+
         if (hp <= 0) {
             this.doWinGame(enemyPlayerId);
         }
@@ -338,8 +348,15 @@ class PlayerMap {
     }
 
     publishAll(eventName, data) {
-        for (const sock of Object.values(this.socketsMap)) {
-            sock.emit(eventName, data);
+        let getData;
+        if (data instanceof Function) {
+            getData = data;
+        } else {
+            getData = () => data;
+        }
+
+        for (const [id, sock] of Object.entries(this.socketsMap)) {
+            sock.emit(eventName, getData(id));
         }
     }
 

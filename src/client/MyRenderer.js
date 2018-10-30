@@ -82,6 +82,16 @@ export default class MyRenderer extends Renderer {
             this.viewportHeight
         );
 
+        window.onresize = (event) => {
+            let w = window.innerWidth;
+            let h = window.innerHeight;
+
+            this.renderer.view.style.width = w + 'px';
+            this.renderer.view.style.height = h + 'px';
+
+            this.renderer.resize(w, h);
+        };
+
         document.body
             .querySelector('.pixiContainer')
             .appendChild(this.renderer.view);

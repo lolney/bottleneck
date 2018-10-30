@@ -23,7 +23,5 @@ const logger = winston.createLogger({
         })
     ]
 });
-logger.log('info', 'testing logger');
-logger.info('test');
 
 export default logger;

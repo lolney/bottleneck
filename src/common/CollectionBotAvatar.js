@@ -133,23 +133,27 @@ export default class CollectionBotAvatar extends BotAvatar {
     }
 
     async resetPath() {
-        this.path = [];
-        if (this.targetGameObject != null) {
-            this.serverState.resources.push(this.targetGameObject);
+        if (!this.isCalculating) {
+            this.isCalculating = true;
+            this.path = [];
+            if (this.targetGameObject != null) {
+                this.serverState.resources.push(this.targetGameObject);
+            }
+            switch (this.state) {
+            case State.LEAVING:
+                this.state = State.AT_BASE;
+                break;
+            case State.RETURNING:
+                this.state = State.COLLECTING;
+                break;
+            case State.COLLECTING:
+            case State.AT_BASE:
+                break;
+            default:
+                throw new Error('Unexpected state');
+            }
+            this.isCalculating = false;
+            await this.checkPath();
         }
-        switch (this.state) {
-        case State.LEAVING:
-            this.state = State.AT_BASE;
-            break;
-        case State.RETURNING:
-            this.state = State.COLLECTING;
-            break;
-        case State.COLLECTING:
-        case State.AT_BASE:
-            break;
-        default:
-            throw new Error('Unexpected state');
-        }
-        await this.checkPath();
     }
 }

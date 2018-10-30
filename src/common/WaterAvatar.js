@@ -24,7 +24,7 @@ export default class WaterAvatar extends DynamicObject {
     }
 
     blocks() {
-        return true;
+        return false;
     }
 
     onAddToWorld(gameEngine) {
