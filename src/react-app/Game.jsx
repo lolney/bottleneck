@@ -22,7 +22,8 @@ const defaults = {
     },
     collisionOptions: {
         collisions: {
-            type: 'HSHG'
+            type: 'HSHG',
+            keyObjectDetection: true
         }
     }
 };

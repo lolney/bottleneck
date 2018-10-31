@@ -10,7 +10,8 @@ export default class Instance {
             traceLevel: Trace.TRACE_NONE,
             collisionOptions: {
                 collisions: {
-                    type: 'HSHG'
+                    type: 'HSHG',
+                    keyObjectDetection: true
                 }
             }
         });
