@@ -124,6 +124,7 @@ export default class MyRenderer extends Renderer {
             this.camera.x += this.viewportWidth / 2 - position.x;
             this.camera.y += this.viewportHeight / 2 - position.y;
             this.prev = position.clone();
+            this.gameEngine.emit('cameraMoved');
         }
     }
 

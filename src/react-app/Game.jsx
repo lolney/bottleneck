@@ -48,6 +48,8 @@ export default class Game extends React.Component {
                 );
             });
         });
+
+        gameEngine.on('cameraMoved', () => this.props.onCameraMove());
     }
 
     render() {
