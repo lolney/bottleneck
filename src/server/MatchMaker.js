@@ -11,6 +11,9 @@ export default class MatchMaker {
 
     reset() {
         this.queuedPlayers = [];
+        if (this.instance) {
+            this.instance.launch();
+        }
         this.instance = new Instance();
     }
 

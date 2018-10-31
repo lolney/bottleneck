@@ -34,15 +34,15 @@ export default class MyServerEngine extends ServerEngine {
         let waitForAuth = () => {
             if (socket.auth) {
                 logger.info('Authenticated. Creating player.');
-                this.controller.addPlayer(
-                    socket.client.playerDbId,
-                    socket.playerId,
-                    socket
-                );
                 this.gameEngine.makePlayer(
                     socket.client.playerDbId,
                     socket.playerId,
                     this.gameWorld.getStartingPosition(socket.playerId)
+                );
+                this.controller.addPlayer(
+                    socket.client.playerDbId,
+                    socket.playerId,
+                    socket
                 );
             } else setTimeout(waitForAuth, 100);
         };

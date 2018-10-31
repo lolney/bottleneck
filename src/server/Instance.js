@@ -23,10 +23,39 @@ export default class Instance {
                 timeoutInterval: 0
             }
         );
+        // Proxy onPlayerDisconnected
+        let ondc = this.serverEngine.onPlayerDisconnected.bind(
+            this.serverEngine
+        );
+        this.serverEngine.onPlayerDisconnected = (socketId, playerId) => {
+            ondc(socketId, playerId);
+            this.onPlayerDisconnected();
+        };
+        this.currentPlyers = [];
+        this.launched = false;
         this.serverEngine.start();
     }
 
-    onPlayerConnected(io) {
-        this.serverEngine.onPlayerConnected(io);
+    launch() {
+        this.launched = true;
+    }
+
+    stop() {
+        console.log('Stopping instance');
+        this.gameEngine.stop();
+        this.serverEngine.scheduler.stop();
+    }
+
+    onPlayerDisconnected() {
+        if (
+            this.launched &&
+            Object.keys(this.serverEngine.connectedPlayers).length == 0
+        ) {
+            this.stop();
+        }
+    }
+
+    onPlayerConnected(socket) {
+        this.serverEngine.onPlayerConnected(socket);
     }
 }
