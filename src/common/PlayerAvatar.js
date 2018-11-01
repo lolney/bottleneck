@@ -15,6 +15,10 @@ export default class PlayerAvatar extends DynamicObject {
         );
     }
 
+    get isKeyObject() {
+        return true;
+    }
+
     blocks() {
         return false;
     }

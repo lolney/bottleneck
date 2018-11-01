@@ -48,6 +48,7 @@ export class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            camera: false,
             token: true, // TODO: initialize as null and get from login
             socket: null
         };
@@ -59,6 +60,7 @@ export class App extends React.Component {
         this.addMenu = this.addMenu.bind(this);
         this.removeMenu = this.removeMenu.bind(this);
         this.removeWindow = this.removeWindow.bind(this);
+        this.onCameraMove = this.onCameraMove.bind(this);
     }
 
     addWindow(elem, key, callback) {
@@ -89,6 +91,10 @@ export class App extends React.Component {
         });
     }
 
+    onCameraMove() {
+        this.setState({ camera: true });
+    }
+
     render() {
         return (
             <SocketContext.Provider value={this.state.socket}>
@@ -100,6 +106,7 @@ export class App extends React.Component {
                         <ConnectionOverlay
                             key={this.state.socket == null}
                             socket={this.state.socket}
+                            camera={this.state.camera}
                         />
                     )}
                     {this.state.socket && (
@@ -112,7 +119,7 @@ export class App extends React.Component {
 
                     <Windows ref={this.windows} />
 
-                    {this.state.socket && (
+                    {this.state.camera && (
                         <HUD
                             addMenu={this.addMenu}
                             removeMenu={this.removeMenu}
@@ -124,6 +131,7 @@ export class App extends React.Component {
                     {this.state.token && (
                         <Game
                             onReceiveSocket={this.onReceiveSocket}
+                            onCameraMove={this.onCameraMove}
                             token={this.state.token}
                         />
                     )}

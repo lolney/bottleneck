@@ -22,7 +22,8 @@ const defaults = {
     },
     collisionOptions: {
         collisions: {
-            type: 'HSHG'
+            type: 'HSHG',
+            keyObjectDetection: true
         }
     }
 };
@@ -47,6 +48,8 @@ export default class Game extends React.Component {
                 );
             });
         });
+
+        gameEngine.on('cameraMoved', () => this.props.onCameraMove());
     }
 
     render() {
