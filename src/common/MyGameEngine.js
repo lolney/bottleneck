@@ -263,7 +263,6 @@ export default class MyGameEngine extends GameEngine {
 
     processInput(inputData, playerId) {
         super.processInput(inputData, playerId);
-
         // get the player's primary object
         let player = this.queryObject({ playerNumber: playerId }, PlayerAvatar);
         if (player) {

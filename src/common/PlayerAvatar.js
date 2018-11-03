@@ -15,6 +15,26 @@ export default class PlayerAvatar extends DynamicObject {
         );
     }
 
+    /**
+     * Overriding bendToCurrent to maintain position, velocity from server
+     */
+    bendToCurrent(original, percent, worldSettings, isLocal, increments) {
+        let position = this.position.clone();
+        let velocity = this.velocity.clone();
+        super.bendToCurrent(
+            original,
+            percent,
+            worldSettings,
+            isLocal,
+            increments
+        );
+        // Only do this if not the main player
+        if (this.actor && !this.actor.mainPlayer) {
+            this.position = position;
+            this.velocity = velocity;
+        }
+    }
+
     get isKeyObject() {
         return true;
     }
