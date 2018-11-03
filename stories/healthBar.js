@@ -30,6 +30,7 @@ export const socket = {
         fn();
         window.setInterval(fn, interval * iters);
     },
+    off: () => {},
     emit: () => {}
 };
 

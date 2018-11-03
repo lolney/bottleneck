@@ -40,6 +40,10 @@ export default class DefenseAvatar extends DynamicObject {
         this.actor.compositeSprite(siegeItem.name);
     }
 
+    get isKeyObject() {
+        return true;
+    }
+
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
         if (props) {
