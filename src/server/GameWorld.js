@@ -175,9 +175,7 @@ export default class GameWorld {
         let paddingX = Player.width / 2;
         let paddingY = Player.height / 2;
 
-        if (obj.blocks !== false) {
-            this.grid.remove(obj, paddingX, paddingY);
-        }
+        this.grid.remove(obj, paddingX, paddingY);
         delete this.objects[obj.id];
     }
 }

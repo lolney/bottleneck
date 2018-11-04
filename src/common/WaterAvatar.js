@@ -23,7 +23,7 @@ export default class WaterAvatar extends DynamicObject {
         this.class = WaterAvatar;
     }
 
-    blocks() {
+    get blocks() {
         return false;
     }
 

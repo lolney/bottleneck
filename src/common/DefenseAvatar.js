@@ -75,7 +75,7 @@ export default class DefenseAvatar extends DynamicObject {
         return this.attachedSiegeItemId != null;
     }
 
-    blocks() {
+    get blocks() {
         return !this.isCountered();
     }
 

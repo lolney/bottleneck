@@ -102,6 +102,7 @@ class Controller {
                 playerNumber
             );
             this.gameWorld.update(defense);
+            this.gameEngine.resetBots();
         });
 
         socket.on('mergeDefenses', async (data) => {

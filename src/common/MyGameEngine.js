@@ -132,15 +132,13 @@ export default class MyGameEngine extends GameEngine {
             position: position,
             objectType: siegeItem.name,
             behaviorType: siegeItem.type,
-            width: 25,
-            height: 25,
+            width: siegeItem.width,
+            height: siegeItem.height,
             dbId: defenseId,
             collected: false,
             playerNumber: playerNumber
         });
         this.addObjectToWorld(obj);
-
-        this.resetBots();
 
         return obj;
     }
@@ -181,7 +179,7 @@ export default class MyGameEngine extends GameEngine {
         let collisionObjects = this.physicsEngine.collisionDetection.detect();
         for (const pair of collisionObjects) {
             let objects = Object.values(pair);
-            let object = objects.find((o) => o.blocks());
+            let object = objects.find((o) => o.blocks);
             let player = objects.find((o) => o instanceof PlayerAvatar);
 
             if (!object || !player) continue;

@@ -24,7 +24,7 @@ export default class PlayerBaseAvatar extends DynamicObject {
         this.height = playerBase.height;
     }
 
-    blocks() {
+    get blocks() {
         return false;
     }
 

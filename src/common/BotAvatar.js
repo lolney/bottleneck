@@ -61,7 +61,7 @@ export default class BotAvatar extends DynamicObject {
         this.path = [];
     }
 
-    blocks() {
+    get blocks() {
         return false;
     }
 
