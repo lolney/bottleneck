@@ -148,6 +148,11 @@ export default class MyGameEngine extends GameEngine {
         await Promise.all(bots.map((bot) => bot.resetPath()));
     }
 
+    detachBots() {
+        let bots = this.queryObjects({}, BotAvatar);
+        bots.forEach((bot) => bot.detach());
+    }
+
     markAsSolved(problemId, playerId) {
         let objs = this.problemIdIndex[problemId];
         if (objs != undefined) {

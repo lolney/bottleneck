@@ -241,7 +241,7 @@ export class Grid {
         }
 
         for (const str of strs) {
-            logger.debug(str.join(''));
+            logger.info(str.join(''));
         }
     }
 

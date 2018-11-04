@@ -19,6 +19,7 @@ describe('HealthBar', () => {
             on: (event, cb) => {
                 callback = cb;
             },
+            off: () => {},
             removeListener: () => {}
         };
         healthbar = mount(<HealthBarContainer socket={socket} />);

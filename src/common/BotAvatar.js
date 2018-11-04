@@ -7,7 +7,8 @@ import TwoVector from 'lance/serialize/TwoVector';
 
 export const Status = {
     IDLE: Symbol('idle'),
-    WORKING: Symbol('working')
+    WORKING: Symbol('working'),
+    SHUTDOWN: Symbol('shutdown')
 };
 
 const radius = 4;
@@ -126,7 +127,8 @@ export default class BotAvatar extends DynamicObject {
                 if (path.length > 0) {
                     this.status = Status.WORKING;
                     resolve(path);
-                } else {
+                } else if (this.status != Status.SHUTDOWN) {
+                    console.log('trying again');
                     this.status = Status.IDLE;
                     setTimeout(tryPath, 1000);
                 }
@@ -181,6 +183,7 @@ export default class BotAvatar extends DynamicObject {
     }
 
     detach() {
+        console.log('Bot detaching');
         this.serverState.gameEngine.removeObjectFromWorld(this.id);
     }
 
@@ -196,6 +199,7 @@ export default class BotAvatar extends DynamicObject {
     }
 
     onRemoveFromWorld(gameEngine) {
+        this.status = Status.SHUTDOWN;
         if (gameEngine.renderer) {
             this.actor.destroy(this.id, gameEngine.renderer);
         }
