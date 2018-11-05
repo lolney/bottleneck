@@ -15,6 +15,7 @@ export default class PlayerActor extends AnimatedActor {
         this.animate = false;
         this.mainPlayer = mainPlayer;
 
+        this.applyFilters(identity, renderer, avatar);
         // Store in the renderer and in PIXI's renderer
         if (!mainPlayer) {
             this.sprite.x = avatar.position.x;
@@ -24,6 +25,20 @@ export default class PlayerActor extends AnimatedActor {
             this.sprite.x = renderer.viewportWidth / 2;
             this.sprite.y = renderer.viewportHeight / 2;
             renderer.layer1.addChild(this.sprite);
+        }
+    }
+
+    applyFilters(identity, renderer, avatar) {
+        switch (identity) {
+        case 'bot':
+            if (renderer.gameEngine.isOwnedByPlayer(avatar)) {
+                this.sprite.tint = '0x467998'; // blue
+            } else {
+                this.sprite.tint = '0xf33b3b'; // red
+            }
+            break;
+        default:
+            break;
         }
     }
 

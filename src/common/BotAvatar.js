@@ -19,7 +19,10 @@ const radius = 4;
  */
 export default class BotAvatar extends DynamicObject {
     static get netScheme() {
-        return Object.assign({}, super.netScheme);
+        return Object.assign(
+            { playerNumber: { type: Serializer.TYPES.INT32 } },
+            super.netScheme
+        );
     }
 
     get maxSpeed() {
@@ -28,7 +31,6 @@ export default class BotAvatar extends DynamicObject {
 
     syncTo(other) {
         super.syncTo(other);
-        // console.log(`syncing ${other}`);
     }
 
     /**
@@ -128,7 +130,7 @@ export default class BotAvatar extends DynamicObject {
                     this.status = Status.WORKING;
                     resolve(path);
                 } else if (this.status != Status.SHUTDOWN) {
-                    console.log('trying again');
+                    console.log('Trying to pathfind again');
                     this.status = Status.IDLE;
                     setTimeout(tryPath, 1000);
                 }
