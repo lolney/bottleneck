@@ -23,7 +23,7 @@ export default class WallAvatar extends DynamicObject {
         this.class = WallAvatar;
     }
 
-    blocks() {
+    get blocks() {
         return true;
     }
 

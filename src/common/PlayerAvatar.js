@@ -39,7 +39,7 @@ export default class PlayerAvatar extends DynamicObject {
         return true;
     }
 
-    blocks() {
+    get blocks() {
         return false;
     }
 

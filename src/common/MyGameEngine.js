@@ -17,6 +17,13 @@ import { WIDTH, HEIGHT, getSiegeItemFromId } from '../config';
 
 const STEP = 5;
 
+/** This is only used server-side */
+export const Status = {
+    INITIALIZING: Symbol('initializing'),
+    IN_PROGRESS: Symbol('in progress'),
+    DONE: Symbol('done')
+}
+
 export default class MyGameEngine extends GameEngine {
     constructor(options) {
         super(options);
@@ -25,6 +32,10 @@ export default class MyGameEngine extends GameEngine {
             gameEngine: this
         });
         this.problemIdIndex = {};
+    }
+
+    setStatus(status) {
+        this.status = status;
     }
 
     isOwnedByPlayer(object) {
@@ -132,15 +143,13 @@ export default class MyGameEngine extends GameEngine {
             position: position,
             objectType: siegeItem.name,
             behaviorType: siegeItem.type,
-            width: 25,
-            height: 25,
+            width: siegeItem.width,
+            height: siegeItem.height,
             dbId: defenseId,
             collected: false,
             playerNumber: playerNumber
         });
         this.addObjectToWorld(obj);
-
-        this.resetBots();
 
         return obj;
     }
@@ -148,6 +157,11 @@ export default class MyGameEngine extends GameEngine {
     async resetBots() {
         let bots = this.queryObjects({}, BotAvatar);
         await Promise.all(bots.map((bot) => bot.resetPath()));
+    }
+
+    detachBots() {
+        let bots = this.queryObjects({}, BotAvatar);
+        bots.forEach((bot) => bot.detach());
     }
 
     markAsSolved(problemId, playerId) {
@@ -181,7 +195,7 @@ export default class MyGameEngine extends GameEngine {
         let collisionObjects = this.physicsEngine.collisionDetection.detect();
         for (const pair of collisionObjects) {
             let objects = Object.values(pair);
-            let object = objects.find((o) => o.blocks());
+            let object = objects.find((o) => o.blocks);
             let player = objects.find((o) => o instanceof PlayerAvatar);
 
             if (!object || !player) continue;

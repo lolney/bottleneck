@@ -80,6 +80,8 @@ export const siegeItems = [
         name: 'Gate',
         image: 'assets/gate.png',
         type: 'offensive',
+        width: 32,
+        height: 21,
         cost: {
             wood: '4',
             stone: '0'
@@ -89,6 +91,8 @@ export const siegeItems = [
         name: 'Bridge',
         image: 'assets/bridge4.png',
         type: 'offensive',
+        width: 60,
+        height: 24,
         cost: {
             wood: '4',
             stone: '0'
@@ -98,6 +102,8 @@ export const siegeItems = [
         name: 'Ladder',
         image: 'assets/ladder1.png',
         type: 'offensive',
+        width: 12,
+        height: 32,
         cost: {
             wood: '4',
             stone: '0'
@@ -107,6 +113,8 @@ export const siegeItems = [
         name: 'Slowfield',
         image: 'assets/slowfield3.png',
         type: 'defensive',
+        width: 60,
+        height: 20,
         cost: {
             wood: '2',
             stone: '2'
@@ -116,6 +124,8 @@ export const siegeItems = [
         name: 'Pit',
         image: 'assets/hole2.png',
         type: 'defensive',
+        width: 64,
+        height: 34,
         cost: {
             wood: '1',
             stone: '3'
@@ -125,6 +135,8 @@ export const siegeItems = [
         name: 'Fence',
         image: 'assets/fence.png',
         type: 'defensive',
+        width: 32,
+        height: 19,
         cost: {
             wood: '4',
             stone: '0'

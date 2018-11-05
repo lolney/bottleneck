@@ -1,7 +1,7 @@
 // Game Server
 import Trace from 'lance/lib/Trace';
 import MyServerEngine from './MyServerEngine';
-import MyGameEngine from '../common/MyGameEngine';
+import MyGameEngine, { Status } from '../common/MyGameEngine';
 
 export default class Instance {
     // Game Instances
@@ -15,6 +15,8 @@ export default class Instance {
                 }
             }
         });
+        this.gameEngine.setStatus(Status.INITIALIZING);
+
         this.serverEngine = new MyServerEngine(
             { on: () => {} },
             this.gameEngine,
@@ -33,12 +35,11 @@ export default class Instance {
             this.onPlayerDisconnected();
         };
         this.currentPlyers = [];
-        this.launched = false;
         this.serverEngine.start();
     }
 
     launch() {
-        this.launched = true;
+        this.gameEngine.setStatus(Status.IN_PROGRESS);
     }
 
     stop() {
@@ -49,7 +50,7 @@ export default class Instance {
 
     onPlayerDisconnected() {
         if (
-            this.launched &&
+            this.gameEngine.status != Status.INITIALIZING &&
             Object.keys(this.serverEngine.connectedPlayers).length == 0
         ) {
             this.stop();

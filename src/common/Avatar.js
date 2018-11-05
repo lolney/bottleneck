@@ -35,7 +35,7 @@ export default class Avatar extends DynamicObject {
         this.height = Player.height;
     }
 
-    blocks() {
+    get blocks() {
         return this.behaviorType == 'defense';
     }
 

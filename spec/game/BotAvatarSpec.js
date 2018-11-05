@@ -21,6 +21,7 @@ const gameEngine = {
             dbId: i.toString()
         }));
     },
+    removeObjectFromWorld: () => {},
     on: () => {}
 };
 const gameWorld = GameWorld.generate();
@@ -161,6 +162,22 @@ describe('AssaultBotAvatar', () => {
         expect(avatar.isCalculating).toEqual(true);
         expect(avatar.state).toEqual(AssaultState.ASSAULTING);
         expect(avatar.status).toEqual(Status.IDLE);
+    });
+
+    it('detaches properly while idling', (done) => {
+        attachEmptyPath();
+
+        avatar.followWaypoint();
+
+        expect(avatar.status).toEqual(Status.IDLE);
+        avatar.onRemoveFromWorld(gameEngine);
+
+        expect(avatar.status).toEqual(Status.SHUTDOWN);
+
+        setTimeout(() => {
+            expect(avatar.status).toEqual(Status.SHUTDOWN);
+            done();
+        }, 1000);
     });
 
     it('idles if it can\'t find a path', async () => {
