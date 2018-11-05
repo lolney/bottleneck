@@ -17,6 +17,13 @@ import { WIDTH, HEIGHT, getSiegeItemFromId } from '../config';
 
 const STEP = 5;
 
+/** This is only used server-side */
+export const Status = {
+    INITIALIZING: Symbol('initializing'),
+    IN_PROGRESS: Symbol('in progress'),
+    DONE: Symbol('done')
+}
+
 export default class MyGameEngine extends GameEngine {
     constructor(options) {
         super(options);
@@ -25,6 +32,10 @@ export default class MyGameEngine extends GameEngine {
             gameEngine: this
         });
         this.problemIdIndex = {};
+    }
+
+    setStatus(status) {
+        this.status = status;
     }
 
     isOwnedByPlayer(object) {

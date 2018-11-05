@@ -12,6 +12,7 @@ import {
 import { getSolutions, solvedProblem, deletePlayerId } from './db/index';
 import { siegeItems, assaultBot } from '../config';
 import logger from './Logger';
+import { Status } from '../common/MyGameEngine';
 
 function serialize(problem) {
     switch (problem.type) {
@@ -259,10 +260,14 @@ class Controller {
     }
 
     doWinGame(enemyPlayerId) {
-        let winningPlayer = this.playerMap.getOtherPlayerId(enemyPlayerId);
-        logger.info(`Player ${winningPlayer} has won the game`);
-        this.playerMap.publish(winningPlayer, 'gameWin', {});
-        this.playerMap.publish(enemyPlayerId, 'gameLose', {});
+        if(this.gameEngine.status != Status.DONE) {
+            this.gameEngine.setStatus(Status.DONE);
+
+            let winningPlayer = this.playerMap.getOtherPlayerId(enemyPlayerId);
+            logger.info(`Player ${winningPlayer} has won the game`);
+            this.playerMap.publish(winningPlayer, 'gameWin', {});
+            this.playerMap.publish(enemyPlayerId, 'gameLose', {});
+        }
     }
 
     async pushCount(playerId, name, count, shouldReset = false) {
