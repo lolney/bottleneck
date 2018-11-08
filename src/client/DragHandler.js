@@ -29,7 +29,7 @@ export default class DragHandler {
 
             this.updateTempObject(ev);
             let id = ev.dataTransfer.getData('text/plain');
-            this.dragObject.handleDrop(id);
+            this.dragObject.handleDrop(renderer.clientEngine.router, id);
             this.removeTempObject();
         });
     }
@@ -168,12 +168,12 @@ class OffensiveDragObject {
         this.gameObject.position = position;
     }
 
-    handleDrop(id) {
+    handleDrop(router, id) {
         [this.start, this.stop].forEach((fn) =>
             this.gameEngine.removeListener(fn)
         );
         if (this.attachedObject != null) {
-            Router.mergeObjects(id, this.attachedObject.id);
+            router.mergeObjects(id, this.attachedObject.id);
         }
     }
 }
@@ -188,7 +188,7 @@ class DefensiveDragObject {
         this.gameObject.position = position;
     }
 
-    handleDrop(id) {
-        Router.makeDefense(id, this.gameObject.position);
+    handleDrop(router, id) {
+        router.makeDefense(id, this.gameObject.position);
     }
 }
