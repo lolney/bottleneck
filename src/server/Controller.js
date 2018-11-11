@@ -12,6 +12,7 @@ import {
 import { getSolutions, solvedProblem, deletePlayerId } from './db/index';
 import { siegeItems, assaultBot } from '../config';
 import logger from './Logger';
+import { log } from 'util';
 import { Status } from '../common/MyGameEngine';
 
 function serialize(problem) {

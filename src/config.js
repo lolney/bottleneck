@@ -153,3 +153,25 @@ export const resourceIcons = [
         src: 'assets/rock-particle.png'
     }
 ];
+
+export const clientDefaults = {
+    traceLevel: 1,
+    delayInputCount: 3,
+    scheduler: 'render-schedule',
+    syncOptions: {
+        sync: 'extrapolate',
+        localObjBending: 0.0,
+        remoteObjBending: 0.0,
+        bendingIncrements: 6
+    },
+    auth: {
+        username: 'test',
+        password: 'secret'
+    },
+    collisionOptions: {
+        collisions: {
+            type: 'HSHG',
+            keyObjectDetection: true
+        }
+    }
+};

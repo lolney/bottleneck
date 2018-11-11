@@ -4,8 +4,8 @@ import KeyboardControls from 'lance/controls/KeyboardControls';
 import Router from './Router';
 
 export default class MyClientEngine extends ClientEngine {
-    constructor(gameEngine, options) {
-        super(gameEngine, options, MyRenderer);
+    constructor(gameEngine, options, renderer = MyRenderer) {
+        super(gameEngine, options, renderer);
 
         this.controls = new KeyboardControls(this);
         this.controls.bindKey('up', 'up', { repeat: true });
