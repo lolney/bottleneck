@@ -50,6 +50,23 @@ class HUD extends React.Component {
                         </div>
                         <div className="hud-column-2">Siege Tools</div>
                     </ControlledButton>
+                    <div className="mini-btns">
+                        <ControlledButton className="mini-btn hud-button">
+                            <div className="hud-row">
+                                <img
+                                    alt="botface"
+                                    src="assets/botface.png"
+                                    height="20px"
+                                    width="20px"
+                                />
+                            </div>
+                            <div className="hud-row-2">0</div>
+                        </ControlledButton>
+
+                        <ControlledButton className="mini-btn hud-button" />
+                        <ControlledButton className="mini-btn hud-button" />
+                    </div>
+
                     <ControlledButton
                         className="btm-btn hud-button"
                         addWindow={(callback) =>
