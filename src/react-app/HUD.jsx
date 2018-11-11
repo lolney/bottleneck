@@ -3,10 +3,10 @@ import { ButtonToolbar, Button } from 'react-bootstrap';
 import DefensesBrowser from './defenses/DefensesBrowser.jsx';
 import PropTypes from 'prop-types';
 import ControlledButton from './ControlledButton.jsx';
-import { resourceIcons } from '../config';
+import { resourceIcons, assaultBot } from '../config';
 import AnimateOnChange from 'react-animate-on-change';
 import withSocketFetch from './withSocketFetch.jsx';
-import { resourceUpdateHandler } from './common/resources';
+import { resourceUpdateHandler, canAfford } from './common/resources';
 
 class HUD extends React.Component {
     render() {
@@ -50,22 +50,11 @@ class HUD extends React.Component {
                         </div>
                         <div className="hud-column-2">Siege Tools</div>
                     </ControlledButton>
-                    <div className="mini-btns">
-                        <ControlledButton className="mini-btn hud-button">
-                            <div className="hud-row">
-                                <img
-                                    alt="botface"
-                                    src="assets/botface.png"
-                                    height="20px"
-                                    width="20px"
-                                />
-                            </div>
-                            <div className="hud-row-2">0</div>
-                        </ControlledButton>
-
-                        <ControlledButton className="mini-btn hud-button" />
-                        <ControlledButton className="mini-btn hud-button" />
-                    </div>
+                    <MiniButtons
+                        resources={this.props.resources}
+                        loading={this.props.loading}
+                        socket={this.props.socket}
+                    />
 
                     <ControlledButton
                         className="btm-btn hud-button"
@@ -77,6 +66,36 @@ class HUD extends React.Component {
                         Menu
                     </ControlledButton>
                 </ButtonToolbar>
+            </div>
+        );
+    }
+}
+
+class MiniButtons extends React.Component {
+    render() {
+        return (
+            <div className="mini-btns">
+                <Button
+                    className="mini-btn hud-button"
+                    onClick={() => this.props.socket.emit('makeAssaultBot')}
+                    disabled={
+                        this.props.loading ||
+                        !canAfford(this.props.resources, assaultBot.cost)
+                    }
+                >
+                    <div className="hud-row">
+                        <img
+                            alt="botface"
+                            src="assets/botface.png"
+                            height="20px"
+                            width="20px"
+                        />
+                    </div>
+                    <div className="hud-row-2">0</div>
+                </Button>
+
+                <Button className="mini-btn hud-button" />
+                <Button className="mini-btn hud-button" />
             </div>
         );
     }
@@ -106,7 +125,13 @@ HUD.propTypes = {
     addWindow: PropTypes.func.isRequired,
     removeWindow: PropTypes.func.isRequired,
     removeMenu: PropTypes.func.isRequired,
-    socket: PropTypes.object.isRequired
+    socket: PropTypes.object.isRequired,
+    resources: PropTypes.object.isRequired
+};
+
+MiniButtons.propTypes = {
+    socket: PropTypes.object.isRequired,
+    resources: PropTypes.object.isRequired
 };
 
 export default withSocketFetch(
