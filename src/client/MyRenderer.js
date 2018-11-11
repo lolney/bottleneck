@@ -17,7 +17,8 @@ export default class MyRenderer extends Renderer {
                 tree: 'assets/sprites/Rock2.json',
                 background: '/assets/grass.jpg',
                 defense: 'assets/sprites/tree1.png',
-                wall: 'assets/rock-wall-2.png'
+                wall: 'assets/rock-wall-2.png',
+                dirt: 'assets/dirt.png'
             },
             getAssetPaths()
         );

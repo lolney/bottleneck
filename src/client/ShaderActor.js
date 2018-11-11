@@ -1,4 +1,5 @@
 import Actor from './Actor';
+import TilingActor from './TilingActor';
 
 let PIXI = null;
 
@@ -9,13 +10,17 @@ export default class ShaderActor extends Actor {
     constructor(avatar, renderer, shader, shouldAttach = true) {
         super(avatar);
         PIXI = require('pixi.js');
+
+        // Create a tiling sprite
+        this.tilingActor = new TilingActor(avatar, renderer, 'dirt');
+
         // Create the sprite
         var rect = new PIXI.Graphics();
         rect.drawRect(
-            -avatar.width / 2,
-            -avatar.height / 2,
-            avatar.width,
-            avatar.height
+            -avatar.width / 2 + 4,
+            -avatar.height / 2 + 4,
+            avatar.width - 8,
+            avatar.height - 8
         );
 
         let getAdustment = () => [renderer.camera.x, renderer.camera.y];
@@ -43,5 +48,10 @@ export default class ShaderActor extends Actor {
         if (shouldAttach === true) {
             this.attach(renderer, avatar);
         }
+    }
+
+    destroy(id, renderer) {
+        super.destroy(id, renderer);
+        this.tilingActor.sprite.destroy();
     }
 }
