@@ -6,7 +6,6 @@
   pointer-events: none;
   .btn-toolbar {
     height: 100%;
-
     &:first-child {
       margin-top: 10%;
     }
@@ -69,6 +68,43 @@
       }
       .updateable {
         animation: animate-green 3s, pulse 2s;
+      }
+    }
+    .mini-btns {
+      width: 100%;
+      height: 45px;
+      display: flex;
+      margin-left: 5px;
+      .mini-btn {
+        border: none;
+        border-radius: 1px;
+        margin-right: 6%;
+        width: 26%;
+        height: 45px;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.8);
+        display: flex;
+        flex-direction: column;
+        pointer-events: all;
+        flex-wrap: nowrap;
+        .hud-row {
+          flex-direction: row;
+          min-width: 100%;
+          margin-top: 10%;
+          flex: 50%;
+          display: block;
+        }
+        .hud-row-2 {
+          flex-direction: row;
+          margin-bottom: 5%;
+          min-width: 100%;
+          text-align: center;
+          color: #000000;
+          display: block;
+          flex: 50%;
+          font: 300 1em/1.5em "Lato", sans-serif;
+          font-size: 1em;
+        }
       }
     }
 
