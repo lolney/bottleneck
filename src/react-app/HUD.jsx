@@ -71,13 +71,18 @@ class HUD extends React.Component {
     }
 }
 
+let botNum = 0;
+
 class MiniButtons extends React.Component {
     render() {
         return (
             <div className="mini-btns">
                 <Button
                     className="mini-btn hud-button"
-                    onClick={() => this.props.socket.emit('makeAssaultBot')}
+                    onClick={() => {
+                        this.props.socket.emit('makeAssaultBot');
+                        botNum++;
+                    }}
                     disabled={
                         this.props.loading ||
                         !canAfford(this.props.resources, assaultBot.cost)
@@ -91,7 +96,7 @@ class MiniButtons extends React.Component {
                             width="20px"
                         />
                     </div>
-                    <div className="hud-row-2">0</div>
+                    <div className="hud-row-2">{botNum}</div>
                 </Button>
 
                 <Button className="mini-btn hud-button" />

@@ -40,6 +40,19 @@
       float: right;
       flex: 50%;
     }
+    .defense-not-buyable {
+      white-space: normal;
+      margin: 0.5vw;
+      min-width: 40px;
+      min-height: 20px;
+      max-width: 80px;
+      max-height: 45%;
+      border: 1px solid #ddd;
+      color: black;
+      float: right;
+      flex: 50%;
+      opacity: 0.4;
+    }
     .column {
       margin-left: 1%;
       min-height: 20px;
