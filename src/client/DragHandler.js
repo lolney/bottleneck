@@ -106,6 +106,9 @@ class OffensiveDragObject {
         this.gameObject.setPlacable(false);
 
         this.start = (_, other) => {
+            if(other.isCountered()) {
+                return;
+            }
             console.log('attaching offensive item');
             if (this.attachedObject) {
                 this.resetAttachedObject();
@@ -150,7 +153,7 @@ class OffensiveDragObject {
     }
 
     resetAttachedObject() {
-        console.log('restting');
+        console.log('resetting');
         this.attachedObject.setLoading(false);
         this.attachedObject = null;
         this.gameObject.setPlacable(false);

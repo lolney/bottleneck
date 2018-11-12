@@ -71,9 +71,14 @@ class HUD extends React.Component {
     }
 }
 
-let botNum = 0;
-
 class MiniButtons extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            botNum: 0
+        };
+    }
+
     render() {
         return (
             <div className="mini-btns">
@@ -81,7 +86,7 @@ class MiniButtons extends React.Component {
                     className="mini-btn hud-button"
                     onClick={() => {
                         this.props.socket.emit('makeAssaultBot');
-                        botNum++;
+                        this.setState({ botNum: this.state.botNum + 1 });
                     }}
                     disabled={
                         this.props.loading ||
@@ -96,7 +101,7 @@ class MiniButtons extends React.Component {
                             width="20px"
                         />
                     </div>
-                    <div className="hud-row-2">{botNum}</div>
+                    <div className="hud-row-2">{this.state.botNum}</div>
                 </Button>
 
                 <Button className="mini-btn hud-button" />
@@ -131,12 +136,14 @@ HUD.propTypes = {
     removeWindow: PropTypes.func.isRequired,
     removeMenu: PropTypes.func.isRequired,
     socket: PropTypes.object.isRequired,
-    resources: PropTypes.object.isRequired
+    loading: PropTypes.bool.isRequired,
+    resources: PropTypes.object
 };
 
 MiniButtons.propTypes = {
     socket: PropTypes.object.isRequired,
-    resources: PropTypes.object.isRequired
+    loading: PropTypes.bool.isRequired,
+    resources: PropTypes.object
 };
 
 export default withSocketFetch(

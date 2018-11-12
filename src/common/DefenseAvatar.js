@@ -82,7 +82,7 @@ export default class DefenseAvatar extends DynamicObject {
     }
 
     get slows() {
-        return this.blockingBehavior == 'slows';
+        return this.blockingBehavior == 'slows' && !this.isCountered();
     }
 
     attachCounter(siegeItemId) {
