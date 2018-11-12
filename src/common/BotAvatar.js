@@ -4,6 +4,7 @@ import DynamicObject from 'lance/serialize/DynamicObject';
 import PlayerActor from '../client/PlayerActor.js';
 import Serializer from 'lance/serialize/Serializer';
 import TwoVector from 'lance/serialize/TwoVector';
+import Slowable from './Slowable';
 
 export const Status = {
     IDLE: Symbol('idle'),
@@ -59,6 +60,7 @@ export default class BotAvatar extends DynamicObject {
             this.position = props.position;
             this.velocity = new TwoVector(0, 0);
         }
+        this.speed = this.maxSpeed;
         this.isCalculating = false;
         this.class = BotAvatar;
         this.path = [];
@@ -66,6 +68,10 @@ export default class BotAvatar extends DynamicObject {
 
     get blocks() {
         return false;
+    }
+
+    get isKeyObject() {
+        return true;
     }
 
     static distance(a, b) {
@@ -98,7 +104,7 @@ export default class BotAvatar extends DynamicObject {
             this.velocity = next
                 .subtract(this.position)
                 .normalize()
-                .multiplyScalar(this.maxSpeed);
+                .multiplyScalar(this.speed);
             // console.log(`setting velocity to ${this.velocity}`);
         } else this.velocity = new TwoVector(0, 0);
     }
@@ -190,6 +196,7 @@ export default class BotAvatar extends DynamicObject {
     }
 
     onAddToWorld(gameEngine) {
+        this.behaviors = [new Slowable(gameEngine, this)];
         if (gameEngine.renderer) {
             this.actor = new PlayerActor(
                 this,
@@ -201,6 +208,9 @@ export default class BotAvatar extends DynamicObject {
     }
 
     onRemoveFromWorld(gameEngine) {
+        for (const behavior of this.behaviors) {
+            behavior.onRemove(gameEngine);
+        }
         this.status = Status.SHUTDOWN;
         if (gameEngine.renderer) {
             this.actor.destroy(this.id, gameEngine.renderer);

@@ -15,14 +15,12 @@ import WaterAvatar from './WaterAvatar';
 import TwoVector from 'lance/serialize/TwoVector';
 import { WIDTH, HEIGHT, getSiegeItemFromId } from '../config';
 
-const STEP = 5;
-
 /** This is only used server-side */
 export const Status = {
     INITIALIZING: Symbol('initializing'),
     IN_PROGRESS: Symbol('in progress'),
     DONE: Symbol('done')
-}
+};
 
 export default class MyGameEngine extends GameEngine {
     constructor(options) {
@@ -143,6 +141,7 @@ export default class MyGameEngine extends GameEngine {
             position: position,
             objectType: siegeItem.name,
             behaviorType: siegeItem.type,
+            blockingBehavior: siegeItem.behavior,
             width: siegeItem.width,
             height: siegeItem.height,
             dbId: defenseId,
@@ -243,7 +242,7 @@ export default class MyGameEngine extends GameEngine {
     }
 
     registerCollisionStart(condition1, condition2, handler) {
-        this.registerCollisionHandler(
+        return this.registerCollisionHandler(
             'collisionStart',
             condition1,
             condition2,
@@ -252,7 +251,7 @@ export default class MyGameEngine extends GameEngine {
     }
 
     registerCollisionStop(condition1, condition2, handler) {
-        this.registerCollisionHandler(
+        return this.registerCollisionHandler(
             'collisionStop',
             condition1,
             condition2,
@@ -260,11 +259,19 @@ export default class MyGameEngine extends GameEngine {
         );
     }
 
+    removeCollisionStop(handler) {
+        this.removeCollisionHandler('collisionStop', handler);
+    }
+
+    removeCollisionStart(handler) {
+        this.removeCollisionHandler('collisionStart', handler);
+    }
+
     /**
      * @private
      */
     registerCollisionHandler(verb, condition1, condition2, handler) {
-        this.on(verb, (e) => {
+        let registeredHandler = (e) => {
             let collisionObjects = Object.keys(e).map((k) => e[k]);
             let o1 = collisionObjects.find(condition1);
             let o2 = collisionObjects.find(condition2);
@@ -272,7 +279,16 @@ export default class MyGameEngine extends GameEngine {
             if (!o1 || !o2) return;
 
             handler(o1, o2);
-        });
+        };
+        this.on(verb, registeredHandler);
+        return registeredHandler;
+    }
+
+    /**
+     * @private
+     */
+    removeCollisionHandler(verb, handler) {
+        this.removeListener(verb, handler);
     }
 
     processInput(inputData, playerId) {
@@ -284,21 +300,22 @@ export default class MyGameEngine extends GameEngine {
                 () => `player ${playerId} pressed ${inputData.input}`
             );
             let { x, y } = player.position;
+            let step = player.speed;
 
             if (inputData.input === 'up') {
-                player.position.y -= STEP;
+                player.position.y -= step;
             } else if (inputData.input === 'down') {
-                player.position.y += STEP;
+                player.position.y += step;
             } else if (inputData.input === 'right') {
                 if (player.actor) {
                     player.actor.sprite.scale.set(1, 1);
                 }
-                player.position.x += STEP;
+                player.position.x += step;
             } else if (inputData.input === 'left') {
                 if (player.actor) {
                     player.actor.sprite.scale.set(-1, 1);
                 }
-                player.position.x -= STEP;
+                player.position.x -= step;
             }
 
             let shouldRevert = this.causesCollision();

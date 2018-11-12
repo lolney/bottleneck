@@ -479,7 +479,8 @@ export class WaterBuilder {
             collected: false,
             dbId: waterDummy.id,
             objectType: waterDummy.name,
-            behaviorType: waterDummy.type
+            behaviorType: waterDummy.type,
+            blockingBehavior: 'blocks'
         };
     }
 }

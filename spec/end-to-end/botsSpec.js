@@ -6,7 +6,7 @@ describe('BotAvatar', () => {
     let server;
     let socket;
 
-    beforeEach(async () => {
+    beforeAll(async () => {
         server = new TestServer();
         client = new TestClient(server.serverURL);
         socket = await client.start();

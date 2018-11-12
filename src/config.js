@@ -115,6 +115,7 @@ export const siegeItems = [
         type: 'defensive',
         width: 60,
         height: 20,
+        behavior: 'slows',
         cost: {
             wood: '2',
             stone: '2'
@@ -126,6 +127,7 @@ export const siegeItems = [
         type: 'defensive',
         width: 64,
         height: 34,
+        behavior: 'blocks',
         cost: {
             wood: '1',
             stone: '3'
@@ -137,6 +139,7 @@ export const siegeItems = [
         type: 'defensive',
         width: 32,
         height: 19,
+        behavior: 'blocks',
         cost: {
             wood: '4',
             stone: '0'
