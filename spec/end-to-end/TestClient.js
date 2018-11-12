@@ -1,5 +1,7 @@
 import ClientEngine from '../../src/client/MyClientEngine';
+import Router from '../../src/client/Router';
 import MyGameEngine from '../../src/common/MyGameEngine';
+import PlayerAvatar from '../../src/common/MyGameEngine';
 import { clientDefaults } from '../../src/config';
 
 class TestRenderer {
@@ -19,8 +21,16 @@ export default class TestClient {
         );
     }
 
+    get player() {
+        return this.gameEngine.queryObject(
+            { playerNumber: this.gameEngine.playerId },
+            PlayerAvatar
+        );
+    }
+
     async start() {
         this.socket = await this.clientEngine.start();
+        this.router = new Router(this.socket);
         return this.socket;
     }
 

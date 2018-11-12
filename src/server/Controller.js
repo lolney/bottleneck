@@ -10,9 +10,8 @@ import {
     decrementHP
 } from './db';
 import { getSolutions, solvedProblem, deletePlayerId } from './db/index';
-import { siegeItems, assaultBot } from '../config';
+import { siegeItems, assaultBot, getSiegeItemFromId } from '../config';
 import logger from './Logger';
-import { log } from 'util';
 import { Status } from '../common/MyGameEngine';
 
 function serialize(problem) {
@@ -32,6 +31,11 @@ function serialize(problem) {
 function handleAuth(socket) {
     // @unimplemented
     if (!socket.auth) throw new Error('User is not authenticated');
+}
+
+function err(socket, event, msg) {
+    logger.error(msg);
+    socket.emit(event, { type: 'ERROR', msg: msg });
 }
 
 /**
@@ -94,6 +98,15 @@ class Controller {
         });
 
         socket.on('makeDefense', async (data) => {
+            if (getSiegeItemFromId(data.defenseId).type != 'defensive') {
+                err(
+                    socket,
+                    'makeDefense',
+                    `Tried to add invalid defense: ${data}`
+                );
+                return;
+            }
+
             let resources = this.getDefenseCost(data.defenseId);
 
             await this.deductResourceCosts(playerId, resources);
@@ -108,19 +121,37 @@ class Controller {
         });
 
         socket.on('mergeDefenses', async (data) => {
+            if (getSiegeItemFromId(data.defenseId).type != 'offensive') {
+                err(
+                    socket,
+                    'mergeDefenses',
+                    `Tried to add invalid offense: ${data}`
+                );
+                return;
+            }
+
             let resources = this.getDefenseCost(data.defenseId);
 
             try {
-                await this.deductResourceCosts(playerId, resources);
-
                 let defense = this.gameEngine.queryObject({
                     id: data.gameObjectId
                 });
+
+                if(!defense) {
+                    throw new Error(`GameObject '${data.gameObjectId}' does not exist`);
+                }
+
+                await this.deductResourceCosts(playerId, resources);
+
                 defense.attachCounter(data.defenseId);
                 this.gameWorld.remove(defense);
                 this.gameEngine.resetBots();
             } catch (error) {
-                logger.error(`Could not merge defenses: ${error.message}`);
+                err(
+                    socket,
+                    'mergeDefenses',
+                    `Could not merge defenses: ${error.message}`
+                );
             }
         });
 
@@ -259,7 +290,7 @@ class Controller {
     }
 
     doWinGame(enemyPlayerId) {
-        if(this.gameEngine.status != Status.DONE) {
+        if (this.gameEngine.status != Status.DONE) {
             this.gameEngine.setStatus(Status.DONE);
 
             let winningPlayer = this.playerMap.getOtherPlayerId(enemyPlayerId);
