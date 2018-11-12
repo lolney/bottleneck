@@ -208,8 +208,10 @@ export default class BotAvatar extends DynamicObject {
     }
 
     onRemoveFromWorld(gameEngine) {
-        for (const behavior of this.behaviors) {
-            behavior.onRemove(gameEngine);
+        if (this.behaviors) {
+            for (const behavior of this.behaviors) {
+                behavior.onRemove(gameEngine);
+            }
         }
         this.status = Status.SHUTDOWN;
         if (gameEngine.renderer) {

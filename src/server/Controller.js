@@ -189,8 +189,6 @@ class Controller {
      * @param {string} problemId
      */
     addCollectorbot(playerId, playerNumber, problemId) {
-        // @temporary
-        this.addAssaultBot(playerId, playerNumber);
         let config = {
             type: 'collector',
             playerId: playerId,
