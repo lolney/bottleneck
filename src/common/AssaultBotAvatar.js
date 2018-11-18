@@ -20,12 +20,15 @@ export default class AssaultBotAvatar extends BotAvatar {
         return 1;
     }
 
+    get resource() {
+        return 'assaultBot';
+    }
+
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
         if (props) {
             this.opponentPlayerId = props.opponentPlayerId;
         }
-        this.resource = 'assaultBot';
         // @TODO: this may have to be set in props (if playerNumber is not one of these)
         this.opponentPlayerNumber = this.playerNumber == 1 ? 2 : 1;
         this.state = State.AT_BASE;
