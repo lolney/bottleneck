@@ -1,4 +1,5 @@
 import AnimatedActor from './AnimatedActor';
+import { Status } from '../common/BotAvatar';
 
 let PIXI = null;
 
@@ -41,6 +42,22 @@ export default class PlayerActor extends AnimatedActor {
             break;
         default:
             break;
+        }
+    }
+
+    handleStatusChange(status) {
+        if (status == Status.IDLE) {
+            if (!this.stuckIndicator) {
+                this.stuckIndicator = new PIXI.Sprite(
+                    PIXI.loader.resources['questionMark'].texture
+                );
+                this.stuckIndicator.anchor.set(0.5, 0.5);
+                this.stuckIndicator.y = -this.sprite.height / 2;
+                this.sprite.addChild(this.stuckIndicator);
+            }
+        } else if (this.stuckIndicator) {
+            this.sprite.removeChild(this.stuckIndicator);
+            this.stuckIndicator = null;
         }
     }
 

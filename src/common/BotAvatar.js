@@ -7,9 +7,9 @@ import TwoVector from 'lance/serialize/TwoVector';
 import Slowable from './Slowable';
 
 export const Status = {
-    IDLE: Symbol('idle'),
-    WORKING: Symbol('working'),
-    SHUTDOWN: Symbol('shutdown')
+    IDLE: 'idle',
+    WORKING: 'working',
+    SHUTDOWN: 'shutdown'
 };
 
 const radius = 4;
@@ -21,7 +21,10 @@ const radius = 4;
 export default class BotAvatar extends DynamicObject {
     static get netScheme() {
         return Object.assign(
-            { playerNumber: { type: Serializer.TYPES.INT32 } },
+            {
+                playerNumber: { type: Serializer.TYPES.INT32 },
+                status: { type: Serializer.TYPES.STRING }
+            },
             super.netScheme
         );
     }
@@ -30,7 +33,17 @@ export default class BotAvatar extends DynamicObject {
         return 5;
     }
 
+    get resource() {
+        return 'bot';
+    }
+
     syncTo(other) {
+        if (other.status != this.status) {
+            let target = other.actor ? other : this;
+            if (target.actor) {
+                target.actor.handleStatusChange(other.status);
+            }
+        }
         super.syncTo(other);
     }
 
@@ -201,7 +214,7 @@ export default class BotAvatar extends DynamicObject {
             this.actor = new PlayerActor(
                 this,
                 gameEngine.renderer,
-                this.resource ? this.resource : 'bot',
+                this.resource,
                 false
             );
         }
