@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DraggableDefense from './DraggableDefense.jsx';
+import { canAfford } from '../common/resources';
 
 const resources = [
     { name: 'wood', src: 'assets/low-log.png' },
@@ -23,15 +24,6 @@ export default class SiegeItemsWrapper extends React.Component {
         };
     }
 
-    isBuyable(siegeItem) {
-        for (const resource of this.state.resources) {
-            if (siegeItem.cost[resource.name] > resource.count) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     render() {
         return (
             <div className="results">
@@ -43,7 +35,10 @@ export default class SiegeItemsWrapper extends React.Component {
                 <div className="defenses-grid">
                     {this.props.data.map((siegeItem) => (
                         <SiegeItem
-                            isBuyable={this.isBuyable(siegeItem)}
+                            isBuyable={canAfford(
+                                this.props.resources,
+                                siegeItem.cost
+                            )}
                             item={siegeItem}
                             key={siegeItem.name}
                             resources={this.state.resources}

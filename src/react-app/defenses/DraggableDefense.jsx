@@ -6,7 +6,12 @@ export default class DraggableDefense extends React.Component {
     render() {
         return (
             <img
-                className="defense"
+                height="40px"
+                width="40px"
+                className={
+                    this.props.draggable ? 'defense' : 'defense-not-buyable'
+                }
+                //className="defense"
                 draggable={this.props.draggable}
                 src={this.props.src}
                 onDragStart={(event) => {

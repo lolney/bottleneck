@@ -46,7 +46,7 @@ export const assaultBot = {
 };
 
 export const playerBase = {
-    baseHP: 10,
+    baseHP: 50,
     height: 50,
     width: 50,
     name: 'Keep',
@@ -115,6 +115,7 @@ export const siegeItems = [
         type: 'defensive',
         width: 60,
         height: 20,
+        behavior: 'slows',
         cost: {
             wood: '2',
             stone: '2'
@@ -126,6 +127,7 @@ export const siegeItems = [
         type: 'defensive',
         width: 64,
         height: 34,
+        behavior: 'blocks',
         cost: {
             wood: '1',
             stone: '3'
@@ -137,6 +139,7 @@ export const siegeItems = [
         type: 'defensive',
         width: 32,
         height: 19,
+        behavior: 'blocks',
         cost: {
             wood: '4',
             stone: '0'
@@ -153,3 +156,25 @@ export const resourceIcons = [
         src: 'assets/rock-particle.png'
     }
 ];
+
+export const clientDefaults = {
+    traceLevel: 1,
+    delayInputCount: 3,
+    scheduler: 'render-schedule',
+    syncOptions: {
+        sync: 'extrapolate',
+        localObjBending: 0.0,
+        remoteObjBending: 0.0,
+        bendingIncrements: 6
+    },
+    auth: {
+        username: 'test',
+        password: 'secret'
+    },
+    collisionOptions: {
+        collisions: {
+            type: 'HSHG',
+            keyObjectDetection: true
+        }
+    }
+};

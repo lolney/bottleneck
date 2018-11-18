@@ -1,5 +1,6 @@
 import Instance from './Instance';
 import logger from './Logger';
+import { checkPassword, getUserId, setPlayerId } from './db';
 
 const MAX_QUEUE_LENGTH = 2;
 
@@ -7,6 +8,32 @@ export default class MatchMaker {
     constructor(io) {
         this.reset();
         io.on('connection', this.onPlayerConnected.bind(this));
+        this.handleAuth(io);
+    }
+
+    handleAuth(io) {
+        require('socketio-auth')(io, {
+            authenticate: async function(socket, data, callback) {
+                let username = data.username;
+                let password = data.password;
+
+                logger.info(`User is logging in: ${data.username}`);
+                let succeeded = await checkPassword(username, password);
+                logger.info(`Authentication succeeded: ${succeeded}`);
+
+                let userId = await getUserId(username);
+                socket.client.userId = userId;
+
+                logger.debug('got user id');
+
+                let player = await setPlayerId(userId, socket.playerId);
+                socket.client.playerDbId = player.id;
+
+                logger.debug('added player to db');
+                callback(null, succeeded);
+            },
+            timeout: 'none'
+        });
     }
 
     reset() {

@@ -3,7 +3,7 @@ import { siegeItems } from '../config';
 import DefenseAvatar from '../common/DefenseAvatar';
 import BotAvatar from '../common/BotAvatar';
 
-const DETACH_THRESHOLD = 50;
+const DETACH_THRESHOLD = 100;
 
 export default class DragHandler {
     constructor(canvas, gameEngine, renderer) {
@@ -29,7 +29,7 @@ export default class DragHandler {
 
             this.updateTempObject(ev);
             let id = ev.dataTransfer.getData('text/plain');
-            this.dragObject.handleDrop(id);
+            this.dragObject.handleDrop(renderer.clientEngine.router, id);
             this.removeTempObject();
         });
     }
@@ -106,14 +106,15 @@ class OffensiveDragObject {
         this.gameObject.setPlacable(false);
 
         this.start = (_, other) => {
-            console.log('attaching offensive item');
-            if (this.attachedObject) {
-                this.resetAttachedObject();
+            if (other.isCountered()) {
+                return;
             }
-            this.attachedObject = other;
-            this.attachedObject.setLoading(this.id);
-            this.gameObject.setPlacable(true);
-            this.gameObject.position = other.position;
+            console.log('attaching offensive item');
+            if (!this.attachedObjects[other.id]) {
+                this.attachedObjects[other.id] = other;
+            }
+
+            console.log('attached item:', this.attachedObject);
         };
 
         let gameObjectTest = (o) => o.id == gameObject.id;
@@ -128,52 +129,82 @@ class OffensiveDragObject {
             this.start
         );
 
-        /* Can include, but keeps from showing loading status after drop
-        this.nObjects = 0;
+        // Can include, but keeps from showing loading status after drop
+        this.attachedObjects = {};
 
-        this.stop = () => {
-            this.nObjects--;
-            if (this.nObjects == 0) {
+        this.stop = (_, object) => {
+            if (object == this.attachedObject) {
                 this.resetAttachedObject();
-            } else if (this.nObjects < 0) {
-                throw new Error(
-                    `Collision stop, but this.nObjects is < 0: ${this.nObjects}`
-                );
             }
+            delete this.attachedObjects[object.id];
         };
 
         this.gameEngine.registerCollisionStop(
             gameObjectTest,
-            (o) => this.attachedObject && this.attachedObject.id == o.id,
+            (o) => this.attachedObjects[o.id],
             this.stop
-        );*/
+        );
     }
 
     resetAttachedObject() {
-        console.log('restting');
+        console.log('resetting');
         this.attachedObject.setLoading(false);
         this.attachedObject = null;
         this.gameObject.setPlacable(false);
     }
 
-    update(position) {
-        if (this.attachedObject) {
-            if (
-                BotAvatar.distance(this.attachedObject.position, position) >
-                DETACH_THRESHOLD
-            ) {
-                this.resetAttachedObject();
+    initObject(other) {
+        this.attachedObject = other;
+        this.attachedObject.setLoading(this.id);
+        this.gameObject.setPlacable(true);
+        this.gameObject.position = other.position;
+    }
+
+    findClosestObject(position) {
+        let min = null;
+        let minDistance = null;
+
+        for (const object of Object.values(this.attachedObjects)) {
+            const distance = BotAvatar.distance(object.position, position);
+            if (min == null || distance < minDistance) {
+                min = object;
+                minDistance = distance;
             }
+        }
+
+        return min;
+    }
+
+    update(position) {
+        let closest = this.findClosestObject(position);
+        if (closest) {
+            if (this.attachedObject) {
+                if (this.attachedObject != closest) {
+                    this.resetAttachedObject();
+                    this.initObject(closest);
+                }
+            } else {
+                this.initObject(closest);
+            }
+        }
+
+        if (
+            this.attachedObject &&
+            BotAvatar.distance(this.attachedObject.position, position) >
+                DETACH_THRESHOLD
+        ) {
+            this.resetAttachedObject();
         }
         this.gameObject.position = position;
     }
 
-    handleDrop(id) {
+    handleDrop(router, id) {
         [this.start, this.stop].forEach((fn) =>
             this.gameEngine.removeListener(fn)
         );
         if (this.attachedObject != null) {
-            Router.mergeObjects(id, this.attachedObject.id);
+            this.attachedObject.setLoading(true);
+            router.mergeObjects(id, this.attachedObject.id);
         }
     }
 }
@@ -188,7 +219,7 @@ class DefensiveDragObject {
         this.gameObject.position = position;
     }
 
-    handleDrop(id) {
-        Router.makeDefense(id, this.gameObject.position);
+    handleDrop(router, id) {
+        router.makeDefense(id, this.gameObject.position);
     }
 }

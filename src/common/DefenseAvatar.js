@@ -10,6 +10,7 @@ export default class DefenseAvatar extends DynamicObject {
                 objectType: { type: Serializer.TYPES.STRING },
                 playerNumber: { type: Serializer.TYPES.INT32 },
                 behaviorType: { type: Serializer.TYPES.STRING },
+                blockingBehavior: { type: Serializer.TYPES.STRING },
                 dbId: { type: Serializer.TYPES.STRING },
                 collected: { type: Serializer.TYPES.STRING },
                 attachedSiegeItemId: { type: Serializer.TYPES.STRING }
@@ -54,6 +55,7 @@ export default class DefenseAvatar extends DynamicObject {
             this.playerNumber = props.playerNumber;
             this.width = props.width;
             this.height = props.height;
+            this.blockingBehavior = props.blockingBehavior;
         }
         this.attachedSiegeItemId = null;
         this.class = DefenseAvatar;
@@ -76,7 +78,11 @@ export default class DefenseAvatar extends DynamicObject {
     }
 
     get blocks() {
-        return !this.isCountered();
+        return this.blockingBehavior == 'blocks' && !this.isCountered();
+    }
+
+    get slows() {
+        return this.blockingBehavior == 'slows' && !this.isCountered();
     }
 
     attachCounter(siegeItemId) {

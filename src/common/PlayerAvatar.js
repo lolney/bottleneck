@@ -3,6 +3,7 @@
 import DynamicObject from 'lance/serialize/DynamicObject';
 import PlayerActor from '../client/PlayerActor.js';
 import Serializer from 'lance/serialize/Serializer';
+import Slowable from './Slowable';
 import { Player } from '../config';
 
 export default class PlayerAvatar extends DynamicObject {
@@ -35,6 +36,10 @@ export default class PlayerAvatar extends DynamicObject {
         }
     }
 
+    get maxSpeed() {
+        return 5;
+    }
+
     get isKeyObject() {
         return true;
     }
@@ -52,10 +57,12 @@ export default class PlayerAvatar extends DynamicObject {
         this.class = PlayerAvatar;
         this.width = Player.width;
         this.height = Player.height;
+        this.speed = this.maxSpeed;
     }
 
     onAddToWorld(gameEngine) {
         console.log(`adding player ${this.id}`);
+        this.behaviors = [new Slowable(gameEngine, this)];
         if (gameEngine.renderer) {
             this.actor = new PlayerActor(
                 this,
@@ -68,6 +75,9 @@ export default class PlayerAvatar extends DynamicObject {
 
     onRemoveFromWorld(gameEngine) {
         console.log(`removing player ${this.id}`);
+        for (const behavior of this.behaviors) {
+            behavior.onRemove(gameEngine);
+        }
         if (gameEngine.renderer) {
             this.actor.destroy(this.id, gameEngine.renderer);
         }

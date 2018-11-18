@@ -20,6 +20,10 @@ export default class AssaultBotAvatar extends BotAvatar {
         return 1;
     }
 
+    get resource() {
+        return 'assaultBot';
+    }
+
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
         if (props) {

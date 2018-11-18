@@ -1,5 +1,5 @@
-class Router {
-    init(socket) {
+export default class Router {
+    constructor(socket) {
         this.socket = socket;
     }
 
@@ -19,5 +19,3 @@ class Router {
         });
     }
 }
-
-export default new Router();

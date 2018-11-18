@@ -10,7 +10,7 @@ import {
     decrementHP
 } from './db';
 import { getSolutions, solvedProblem, deletePlayerId } from './db/index';
-import { siegeItems, assaultBot } from '../config';
+import { siegeItems, assaultBot, getSiegeItemFromId } from '../config';
 import logger from './Logger';
 import { Status } from '../common/MyGameEngine';
 
@@ -31,6 +31,15 @@ function serialize(problem) {
 function handleAuth(socket) {
     // @unimplemented
     if (!socket.auth) throw new Error('User is not authenticated');
+}
+
+function err(socket, event, msg) {
+    logger.error(msg);
+    socket.emit(event, { type: 'ERROR', msg });
+}
+
+function success(socket, event, data) {
+    socket.emit(event, { type: 'SUCCESS', data });
 }
 
 /**
@@ -93,6 +102,15 @@ class Controller {
         });
 
         socket.on('makeDefense', async (data) => {
+            if (getSiegeItemFromId(data.defenseId).type != 'defensive') {
+                err(
+                    socket,
+                    'makeDefense',
+                    `Tried to add invalid defense: ${data}`
+                );
+                return;
+            }
+
             let resources = this.getDefenseCost(data.defenseId);
 
             await this.deductResourceCosts(playerId, resources);
@@ -107,19 +125,39 @@ class Controller {
         });
 
         socket.on('mergeDefenses', async (data) => {
+            if (getSiegeItemFromId(data.defenseId).type != 'offensive') {
+                err(
+                    socket,
+                    'mergeDefenses',
+                    `Tried to add invalid offense: ${data}`
+                );
+                return;
+            }
+
             let resources = this.getDefenseCost(data.defenseId);
 
             try {
-                await this.deductResourceCosts(playerId, resources);
-
                 let defense = this.gameEngine.queryObject({
                     id: data.gameObjectId
                 });
+
+                if (!defense) {
+                    throw new Error(
+                        `GameObject '${data.gameObjectId}' does not exist`
+                    );
+                }
+
+                await this.deductResourceCosts(playerId, resources);
+
                 defense.attachCounter(data.defenseId);
                 this.gameWorld.remove(defense);
                 this.gameEngine.resetBots();
             } catch (error) {
-                logger.error(`Could not merge defenses: ${error.message}`);
+                err(
+                    socket,
+                    'mergeDefenses',
+                    `Could not merge defenses: ${error.message}`
+                );
             }
         });
 
@@ -128,9 +166,14 @@ class Controller {
 
             try {
                 await this.deductResourceCosts(playerId, resources);
-                this.addAssaultBot(playerId, playerNumber);
+                const botCount = this.addAssaultBot(playerId, playerNumber);
+                success(socket, 'makeAssaultBot', { botCount });
             } catch (error) {
-                logger.error(`Could not create Assault bot: ${error.message}`);
+                err(
+                    socket,
+                    'makeAssaultBot',
+                    `Could not create Assault bot: ${error.message}`
+                );
             }
         });
 
@@ -173,12 +216,16 @@ class Controller {
      * @param {number} config.playerNumber
      * @param {string} config.playerId
      * @param {string} config.type
+     * @returns {number} - the number of active bots of this type that this player has
      */
     addBot(config) {
         let position = this.gameWorld.getStartingPosition(config.playerNumber);
         config = Object.assign(config, { position: position });
+
         let bot = this.gameEngine.addBot(config);
         bot.attach(this, this.gameWorld, this.gameEngine);
+
+        return this.gameEngine.getNBots(config.playerNumber, config.type);
     }
 
     /**
@@ -186,23 +233,23 @@ class Controller {
      * @param {string} playerId
      * @param {number} playerNumber
      * @param {string} problemId
+     * @returns {number} - the number of active collector bots that this player has
      */
     addCollectorbot(playerId, playerNumber, problemId) {
-        // @temporary
-        this.addAssaultBot(playerId, playerNumber);
         let config = {
             type: 'collector',
             playerId: playerId,
             playerNumber: playerNumber,
             problemId: problemId
         };
-        this.addBot(config);
+        return this.addBot(config);
     }
 
     /**
      * @private
      * @param {string} playerId
      * @param {number} playerNumber
+     * @returns {number} - the number of active assault bots that this player has
      */
     addAssaultBot(playerId, playerNumber) {
         let opponentNumber = playerNumber == 1 ? 2 : 1;
@@ -215,9 +262,9 @@ class Controller {
                 opponentPlayerId: opponent.playerId,
                 playerNumber: playerNumber
             };
-            this.addBot(config);
+            return this.addBot(config);
         } else {
-            logger.error(
+            throw new Error(
                 `Attempted to add assault bot for player ${playerNumber}, but no opponent found`
             );
         }
@@ -260,7 +307,7 @@ class Controller {
     }
 
     doWinGame(enemyPlayerId) {
-        if(this.gameEngine.status != Status.DONE) {
+        if (this.gameEngine.status != Status.DONE) {
             this.gameEngine.setStatus(Status.DONE);
 
             let winningPlayer = this.playerMap.getOtherPlayerId(enemyPlayerId);

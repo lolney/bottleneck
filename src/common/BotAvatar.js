@@ -4,11 +4,12 @@ import DynamicObject from 'lance/serialize/DynamicObject';
 import PlayerActor from '../client/PlayerActor.js';
 import Serializer from 'lance/serialize/Serializer';
 import TwoVector from 'lance/serialize/TwoVector';
+import Slowable from './Slowable';
 
 export const Status = {
-    IDLE: Symbol('idle'),
-    WORKING: Symbol('working'),
-    SHUTDOWN: Symbol('shutdown')
+    IDLE: 'idle',
+    WORKING: 'working',
+    SHUTDOWN: 'shutdown'
 };
 
 const radius = 4;
@@ -20,7 +21,10 @@ const radius = 4;
 export default class BotAvatar extends DynamicObject {
     static get netScheme() {
         return Object.assign(
-            { playerNumber: { type: Serializer.TYPES.INT32 } },
+            {
+                playerNumber: { type: Serializer.TYPES.INT32 },
+                status: { type: Serializer.TYPES.STRING }
+            },
             super.netScheme
         );
     }
@@ -29,7 +33,17 @@ export default class BotAvatar extends DynamicObject {
         return 5;
     }
 
+    get resource() {
+        return 'bot';
+    }
+
     syncTo(other) {
+        if (other.status != this.status) {
+            let target = other.actor ? other : this;
+            if (target.actor) {
+                target.actor.handleStatusChange(other.status);
+            }
+        }
         super.syncTo(other);
     }
 
@@ -59,6 +73,7 @@ export default class BotAvatar extends DynamicObject {
             this.position = props.position;
             this.velocity = new TwoVector(0, 0);
         }
+        this.speed = this.maxSpeed;
         this.isCalculating = false;
         this.class = BotAvatar;
         this.path = [];
@@ -66,6 +81,10 @@ export default class BotAvatar extends DynamicObject {
 
     get blocks() {
         return false;
+    }
+
+    get isKeyObject() {
+        return true;
     }
 
     static distance(a, b) {
@@ -98,7 +117,7 @@ export default class BotAvatar extends DynamicObject {
             this.velocity = next
                 .subtract(this.position)
                 .normalize()
-                .multiplyScalar(this.maxSpeed);
+                .multiplyScalar(this.speed);
             // console.log(`setting velocity to ${this.velocity}`);
         } else this.velocity = new TwoVector(0, 0);
     }
@@ -190,17 +209,23 @@ export default class BotAvatar extends DynamicObject {
     }
 
     onAddToWorld(gameEngine) {
+        this.behaviors = [new Slowable(gameEngine, this)];
         if (gameEngine.renderer) {
             this.actor = new PlayerActor(
                 this,
                 gameEngine.renderer,
-                'bot',
+                this.resource,
                 false
             );
         }
     }
 
     onRemoveFromWorld(gameEngine) {
+        if (this.behaviors) {
+            for (const behavior of this.behaviors) {
+                behavior.onRemove(gameEngine);
+            }
+        }
         this.status = Status.SHUTDOWN;
         if (gameEngine.renderer) {
             this.actor.destroy(this.id, gameEngine.renderer);

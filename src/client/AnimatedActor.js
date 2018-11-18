@@ -31,8 +31,6 @@ export default class AnimatedActor {
         }
         // Store in the renderer and in PIXI's renderer
         renderer.sprites[avatar.id] = this.sprite;
-
-        window.setTimeout(() => this.playOnce(), 1000);
     }
 
     togglePlay() {

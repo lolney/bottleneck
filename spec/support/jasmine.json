@@ -5,6 +5,7 @@
     "server/*.js",
     "server/*/*.js",
     "react-app/*.js",
-    "game/*.js"
+    "game/*.js",
+    "end-to-end/*.js"
   ]
 }
