@@ -95,10 +95,10 @@ class MiniButtons extends React.Component {
                 >
                     <div className="hud-row">
                         <img
-                            alt="botface"
-                            src="assets/botface.png"
-                            height="20px"
-                            width="20px"
+                            alt="assault-botface"
+                            src="assets/assault-botface.png"
+                            height="21px"
+                            width="16px"
                         />
                     </div>
                     <div className="hud-row-2">{this.state.botNum}</div>
