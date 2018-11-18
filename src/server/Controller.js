@@ -35,7 +35,11 @@ function handleAuth(socket) {
 
 function err(socket, event, msg) {
     logger.error(msg);
-    socket.emit(event, { type: 'ERROR', msg: msg });
+    socket.emit(event, { type: 'ERROR', msg });
+}
+
+function success(socket, event, data) {
+    socket.emit(event, { type: 'SUCCESS', data });
 }
 
 /**
@@ -137,8 +141,10 @@ class Controller {
                     id: data.gameObjectId
                 });
 
-                if(!defense) {
-                    throw new Error(`GameObject '${data.gameObjectId}' does not exist`);
+                if (!defense) {
+                    throw new Error(
+                        `GameObject '${data.gameObjectId}' does not exist`
+                    );
                 }
 
                 await this.deductResourceCosts(playerId, resources);
@@ -160,9 +166,14 @@ class Controller {
 
             try {
                 await this.deductResourceCosts(playerId, resources);
-                this.addAssaultBot(playerId, playerNumber);
+                const botCount = this.addAssaultBot(playerId, playerNumber);
+                success(socket, 'makeAssaultBot', { botCount });
             } catch (error) {
-                logger.error(`Could not create Assault bot: ${error.message}`);
+                err(
+                    socket,
+                    'makeAssaultBot',
+                    `Could not create Assault bot: ${error.message}`
+                );
             }
         });
 
@@ -205,12 +216,16 @@ class Controller {
      * @param {number} config.playerNumber
      * @param {string} config.playerId
      * @param {string} config.type
+     * @returns {number} - the number of active bots of this type that this player has
      */
     addBot(config) {
         let position = this.gameWorld.getStartingPosition(config.playerNumber);
         config = Object.assign(config, { position: position });
+
         let bot = this.gameEngine.addBot(config);
         bot.attach(this, this.gameWorld, this.gameEngine);
+
+        return this.gameEngine.getNBots(config.playerNumber, config.type);
     }
 
     /**
@@ -218,6 +233,7 @@ class Controller {
      * @param {string} playerId
      * @param {number} playerNumber
      * @param {string} problemId
+     * @returns {number} - the number of active collector bots that this player has
      */
     addCollectorbot(playerId, playerNumber, problemId) {
         let config = {
@@ -226,13 +242,14 @@ class Controller {
             playerNumber: playerNumber,
             problemId: problemId
         };
-        this.addBot(config);
+        return this.addBot(config);
     }
 
     /**
      * @private
      * @param {string} playerId
      * @param {number} playerNumber
+     * @returns {number} - the number of active assault bots that this player has
      */
     addAssaultBot(playerId, playerNumber) {
         let opponentNumber = playerNumber == 1 ? 2 : 1;
@@ -245,9 +262,9 @@ class Controller {
                 opponentPlayerId: opponent.playerId,
                 playerNumber: playerNumber
             };
-            this.addBot(config);
+            return this.addBot(config);
         } else {
-            logger.error(
+            throw new Error(
                 `Attempted to add assault bot for player ${playerNumber}, but no opponent found`
             );
         }

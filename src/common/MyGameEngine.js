@@ -61,6 +61,17 @@ export default class MyGameEngine extends GameEngine {
         };
     }
 
+    static botTypeToAvatarClass(type) {
+        switch (type) {
+        case 'assault':
+            return AssaultBotAvatar;
+        case 'collector':
+            return CollectionBotAvatar;
+        default:
+            throw new Error('Unexpected type');
+        }
+    }
+
     makeTrees(objects) {
         for (let obj of objects) {
             obj.position = new TwoVector(obj.position[0], obj.position[1]);
@@ -91,17 +102,7 @@ export default class MyGameEngine extends GameEngine {
     }
 
     addBot(options) {
-        let Type;
-        switch (options.type) {
-        case 'assault':
-            Type = AssaultBotAvatar;
-            break;
-        case 'collector':
-            Type = CollectionBotAvatar;
-            break;
-        default:
-            throw new Error('Unexpected type');
-        }
+        let Type = MyGameEngine.botTypeToAvatarClass(options.type);
         return this.addObjectToWorld(new Type(this, null, options));
     }
 
@@ -209,6 +210,18 @@ export default class MyGameEngine extends GameEngine {
 
     getPlayerByNumber(playerNumber) {
         return this.queryObject({ playerNumber: playerNumber }, PlayerAvatar);
+    }
+
+    /**
+     * @param {number} playerNumber
+     * @param {string} type
+     * @returns {number} - The number of bots of `type` belonging to `player`
+     */
+    getNBots(playerNumber, type) {
+        return this.queryObjects(
+            { playerNumber: playerNumber },
+            MyGameEngine.botTypeToAvatarClass(type)
+        ).length;
     }
 
     queryObjects(query, targetType, returnSingle = false) {

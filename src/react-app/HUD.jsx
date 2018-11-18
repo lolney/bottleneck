@@ -6,6 +6,7 @@ import ControlledButton from './ControlledButton.jsx';
 import { resourceIcons, assaultBot } from '../config';
 import AnimateOnChange from 'react-animate-on-change';
 import withSocketFetch from './withSocketFetch.jsx';
+import withSocketReq from './withSocketReq.jsx';
 import { resourceUpdateHandler, canAfford } from './common/resources';
 
 class HUD extends React.Component {
@@ -52,7 +53,7 @@ class HUD extends React.Component {
                     </ControlledButton>
                     <MiniButtons
                         resources={this.props.resources}
-                        loading={this.props.loading}
+                        initialLoading={this.props.loading}
                         socket={this.props.socket}
                     />
 
@@ -71,45 +72,37 @@ class HUD extends React.Component {
     }
 }
 
-class MiniButtons extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            botNum: 0
-        };
-    }
+const MiniButtons = withSocketReq(
+    (props) => (
+        <div className="mini-btns">
+            <Button
+                className="mini-btn hud-button"
+                onClick={() => {
+                    props.fetch('makeAssaultBot');
+                }}
+                disabled={
+                    props.initialLoading ||
+                    props.loading ||
+                    !canAfford(props.resources, assaultBot.cost)
+                }
+            >
+                <div className="hud-row">
+                    <img
+                        alt="assault-botface"
+                        src="assets/assault-botface.png"
+                        height="21px"
+                        width="16px"
+                    />
+                </div>
+                <div className="hud-row-2">{props.botCount}</div>
+            </Button>
 
-    render() {
-        return (
-            <div className="mini-btns">
-                <Button
-                    className="mini-btn hud-button"
-                    onClick={() => {
-                        this.props.socket.emit('makeAssaultBot');
-                        this.setState({ botNum: this.state.botNum + 1 });
-                    }}
-                    disabled={
-                        this.props.loading ||
-                        !canAfford(this.props.resources, assaultBot.cost)
-                    }
-                >
-                    <div className="hud-row">
-                        <img
-                            alt="assault-botface"
-                            src="assets/assault-botface.png"
-                            height="21px"
-                            width="16px"
-                        />
-                    </div>
-                    <div className="hud-row-2">{this.state.botNum}</div>
-                </Button>
-
-                <Button className="mini-btn hud-button" />
-                <Button className="mini-btn hud-button" />
-            </div>
-        );
-    }
-}
+            <Button className="mini-btn hud-button" />
+            <Button className="mini-btn hud-button" />
+        </div>
+    ),
+    () => ({ botCount: 0 })
+);
 
 const ResourceButton = ({ name, src, height, width, count }) => (
     <Button className="hud-button">
@@ -141,8 +134,8 @@ HUD.propTypes = {
 };
 
 MiniButtons.propTypes = {
-    socket: PropTypes.object.isRequired,
-    loading: PropTypes.bool.isRequired,
+    initialLoading: PropTypes.bool.isRequired,
+    botCount: PropTypes.number.isRequired,
     resources: PropTypes.object
 };
 
