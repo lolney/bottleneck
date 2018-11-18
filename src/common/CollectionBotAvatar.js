@@ -23,6 +23,7 @@ export default class CollectionBotAvatar extends BotAvatar {
 
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
+        this.resouce = 'collectionBot';
         this.state = State.AT_BASE;
         this.class = CollectionBotAvatar;
         this.width = 25;

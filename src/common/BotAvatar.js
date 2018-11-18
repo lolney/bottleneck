@@ -60,6 +60,7 @@ export default class BotAvatar extends DynamicObject {
             this.position = props.position;
             this.velocity = new TwoVector(0, 0);
         }
+        this.resource = 'bot';
         this.speed = this.maxSpeed;
         this.isCalculating = false;
         this.class = BotAvatar;
@@ -201,7 +202,7 @@ export default class BotAvatar extends DynamicObject {
             this.actor = new PlayerActor(
                 this,
                 gameEngine.renderer,
-                'bot',
+                this.resource,
                 false
             );
         }
