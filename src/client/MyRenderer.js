@@ -13,8 +13,8 @@ export default class MyRenderer extends Renderer {
         return Object.assign(
             {
                 player: 'assets/sprites/walking.json',
-                collectorbot: 'assets/sprites/botwalk.json',
-                assaultbot: 'assets/sprites/assault-botwalk.json',
+                collectionBot: 'assets/sprites/botwalk.json',
+                assaultBot: 'assets/sprites/assault-botwalk.json',
                 tree: 'assets/sprites/Rock2.json',
                 background: '/assets/grass.jpg',
                 defense: 'assets/sprites/tree1.png',
