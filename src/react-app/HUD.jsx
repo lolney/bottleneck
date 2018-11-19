@@ -73,34 +73,44 @@ class HUD extends React.Component {
 }
 
 const MiniButtons = withSocketReq(
-    (props) => (
-        <div className="mini-btns">
-            <Button
-                className="mini-btn hud-button"
-                onClick={() => {
-                    props.fetch('makeAssaultBot');
-                }}
-                disabled={
-                    props.initialLoading ||
-                    props.loading ||
-                    !canAfford(props.resources, assaultBot.cost)
-                }
-            >
-                <div className="hud-row">
-                    <img
-                        alt="assault-botface"
-                        src="assets/assault-botface.png"
-                        height="21px"
-                        width="16px"
-                    />
-                </div>
-                <div className="hud-row-2">{props.botCount}</div>
-            </Button>
+    class MiniButtons extends React.Component {
+        constructor(props) {
+            super(props);
+            this.container = React.createRef();
+        }
 
-            <Button className="mini-btn hud-button" />
-            <Button className="mini-btn hud-button" />
-        </div>
-    ),
+        render() {
+            const props = this.props;
+            return (
+                <div ref={this.container} className="mini-btns">
+                    <Button
+                        className="mini-btn hud-button"
+                        onClick={() => {
+                            props.fetch('makeAssaultBot');
+                        }}
+                        disabled={
+                            props.initialLoading ||
+                            props.loading ||
+                            !canAfford(props.resources, assaultBot.cost)
+                        }
+                    >
+                        <div className="hud-row">
+                            <img
+                                alt="assault-botface"
+                                src="assets/assault-botface.png"
+                                height="21px"
+                                width="16px"
+                            />
+                        </div>
+                        <div className="hud-row-2">{props.botCount}</div>
+                    </Button>
+
+                    <Button className="mini-btn hud-button" />
+                    <Button className="mini-btn hud-button" />
+                </div>
+            );
+        }
+    },
     () => ({ botCount: 0 })
 );
 

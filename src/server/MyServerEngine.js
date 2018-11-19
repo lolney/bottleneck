@@ -13,6 +13,11 @@ export default class MyServerEngine extends ServerEngine {
         super(io, gameEngine, inputOptions);
         this.gameWorld = GameWorld.generate();
         this.controller = new Controller(gameEngine, this.gameWorld);
+
+        this.players = {
+            1: undefined,
+            2: undefined
+        };
     }
 
     async start() {
@@ -65,5 +70,18 @@ export default class MyServerEngine extends ServerEngine {
                 this.controller.removePlayer(obj.playerId);
             }
         });
+
+        this.players[playerNumber] = undefined;
+    }
+
+    getPlayerId(socket) {
+        console.log('assigning number');
+        for (const [num, player] of Object.entries(this.players)) {
+            if (player == undefined) {
+                this.players[num] = socket;
+                return num;
+            }
+        }
+        throw new Error('Could not assign playerNumber to new player');
     }
 }
