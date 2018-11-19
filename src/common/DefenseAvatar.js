@@ -1,5 +1,5 @@
 import DynamicObject from 'lance/serialize/DynamicObject';
-import Serializer from 'lance/serialize/Serializer';
+import BaseTypes from 'lance/serialize/BaseTypes';
 import StaticActor from '../client/StaticActor.js';
 import { Player, getSiegeItemFromId } from '../config';
 
@@ -7,13 +7,13 @@ export default class DefenseAvatar extends DynamicObject {
     static get netScheme() {
         return Object.assign(
             {
-                objectType: { type: Serializer.TYPES.STRING },
-                playerNumber: { type: Serializer.TYPES.INT32 },
-                behaviorType: { type: Serializer.TYPES.STRING },
-                blockingBehavior: { type: Serializer.TYPES.STRING },
-                dbId: { type: Serializer.TYPES.STRING },
-                collected: { type: Serializer.TYPES.STRING },
-                attachedSiegeItemId: { type: Serializer.TYPES.STRING }
+                objectType: { type: BaseTypes.TYPES.STRING },
+                playerNumber: { type: BaseTypes.TYPES.INT32 },
+                behaviorType: { type: BaseTypes.TYPES.STRING },
+                blockingBehavior: { type: BaseTypes.TYPES.STRING },
+                dbId: { type: BaseTypes.TYPES.STRING },
+                collected: { type: BaseTypes.TYPES.STRING },
+                attachedSiegeItemId: { type: BaseTypes.TYPES.STRING }
             },
             super.netScheme
         );

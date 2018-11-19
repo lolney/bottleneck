@@ -1,14 +1,14 @@
 'use strict';
 
 import DynamicObject from 'lance/serialize/DynamicObject';
-import Serializer from 'lance/serialize/Serializer';
+import BaseTypes from 'lance/serialize/BaseTypes';
 import StaticActor from '../client/StaticActor.js';
 import { playerBase } from '../config';
 
 export default class PlayerBaseAvatar extends DynamicObject {
     static get netScheme() {
         return Object.assign(
-            { playerNumber: { type: Serializer.TYPES.INT32 } },
+            { playerNumber: { type: BaseTypes.TYPES.INT32 } },
             super.netScheme
         );
     }
