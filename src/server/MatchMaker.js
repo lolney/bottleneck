@@ -1,6 +1,7 @@
 import Instance from './Instance';
 import logger from './Logger';
-import { checkPassword, getUserId, setPlayerId } from './db';
+import { checkPassword, getUserId } from './db/views/user';
+import { setPlayerId } from './db/views/player';
 
 const MAX_QUEUE_LENGTH = 2;
 

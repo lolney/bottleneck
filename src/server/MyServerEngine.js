@@ -4,7 +4,7 @@ import ServerEngine from 'lance/ServerEngine';
 import Avatar from '../common/Avatar';
 import PlayerAvatar from '../common/PlayerAvatar';
 import Controller from './Controller';
-import { objects } from './db';
+import { objects } from './db/views/gameObject';
 import GameWorld from './GameWorld';
 import logger from './Logger';
 
