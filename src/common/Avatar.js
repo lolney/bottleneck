@@ -1,7 +1,7 @@
 'use strict';
 
 import DynamicObject from 'lance/serialize/DynamicObject';
-import Serializer from 'lance/serialize/Serializer';
+import BaseTypes from 'lance/serialize/BaseTypes';
 import GameObjectActor from '../client/GameObjectActor.js';
 import { Player } from '../config';
 
@@ -9,12 +9,12 @@ export default class Avatar extends DynamicObject {
     static get netScheme() {
         return Object.assign(
             {
-                objectType: { type: Serializer.TYPES.STRING },
-                behaviorType: { type: Serializer.TYPES.STRING },
-                dbId: { type: Serializer.TYPES.STRING },
-                solvedBy: { type: Serializer.TYPES.STRING },
-                collected: { type: Serializer.TYPES.STRING },
-                problemId: { type: Serializer.TYPES.STRING }
+                objectType: { type: BaseTypes.TYPES.STRING },
+                behaviorType: { type: BaseTypes.TYPES.STRING },
+                dbId: { type: BaseTypes.TYPES.STRING },
+                solvedBy: { type: BaseTypes.TYPES.STRING },
+                collected: { type: BaseTypes.TYPES.STRING },
+                problemId: { type: BaseTypes.TYPES.STRING }
             },
             super.netScheme
         );

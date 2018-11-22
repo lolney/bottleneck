@@ -86,9 +86,7 @@ export class App extends React.Component {
     onReceiveSocket(socket) {
         new EditorSocketWatcher(socket, this.windows.current.addWindow);
 
-        socket.addEventListener('authenticated', (event) => {
-            this.setState({ socket: socket });
-        });
+        this.setState({ socket: socket });
     }
 
     onCameraMove() {
@@ -119,7 +117,7 @@ export class App extends React.Component {
 
                     <Windows ref={this.windows} />
 
-                    {this.state.camera && (
+                    {this.state.socket && this.state.camera && (
                         <HUD
                             addMenu={this.addMenu}
                             removeMenu={this.removeMenu}

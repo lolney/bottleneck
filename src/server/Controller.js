@@ -1,15 +1,23 @@
 import ImageProblem from '../problem-engine/ImageProblem';
 import BinaryTreeProblem from '../problem-engine/BinaryTreeProblem';
+
 import {
     problem,
-    addSolution,
     getObjectResources,
+    markAsCollected
+} from './db/views/gameObject';
+import {
     addToResourceCount,
-    markAsCollected,
-    getPlayerResources,
-    decrementHP
-} from './db';
-import { getSolutions, solvedProblem, deletePlayerId } from './db/index';
+    decrementHP,
+    deletePlayerId,
+    getPlayerResources
+} from './db/views/player';
+import {
+    addSolution,
+    getSolutions,
+    solvedProblem
+} from './db/views/solvedProblem';
+
 import { siegeItems, assaultBot, getSiegeItemFromId } from '../config';
 import logger from './Logger';
 import { Status } from '../common/MyGameEngine';

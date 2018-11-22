@@ -40,15 +40,15 @@ export default class MyGameEngine extends GameEngine {
         return this.playerId == object.playerNumber;
     }
 
-    registerClasses(serializer) {
-        serializer.registerClass(PlayerAvatar);
-        serializer.registerClass(Avatar);
-        serializer.registerClass(DefenseAvatar);
-        serializer.registerClass(WallAvatar);
-        serializer.registerClass(CollectionBotAvatar);
-        serializer.registerClass(AssaultBotAvatar);
-        serializer.registerClass(PlayerBaseAvatar);
-        serializer.registerClass(WaterAvatar);
+    registerClasses(BaseTypes) {
+        BaseTypes.registerClass(PlayerAvatar);
+        BaseTypes.registerClass(Avatar);
+        BaseTypes.registerClass(DefenseAvatar);
+        BaseTypes.registerClass(WallAvatar);
+        BaseTypes.registerClass(CollectionBotAvatar);
+        BaseTypes.registerClass(AssaultBotAvatar);
+        BaseTypes.registerClass(PlayerBaseAvatar);
+        BaseTypes.registerClass(WaterAvatar);
     }
 
     start() {

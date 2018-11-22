@@ -1,17 +1,23 @@
+import { chainIncludes } from '../../../src/server/db';
 import {
     objects,
     problem,
-    checkPassword,
-    createUser,
+    getObjectResources,
+    markAsCollected
+} from '../../../src/server/db/views/gameObject';
+import {
+    setPlayerId,
+    addToResourceCount,
+    decrementHP,
+    getPlayerResources
+} from '../../../src/server/db/views/player';
+import { checkPassword, createUser } from '../../../src/server/db/views/user';
+import {
     addSolution,
     getSolutions,
-    chainIncludes,
-    setPlayerId,
-    getUserId,
-    addToResourceCount,
-    getObjectResources,
-    decrementHP
-} from '../../../src/server/db';
+    solvedProblem
+} from '../../../src/server/db/views/solvedProblem';
+
 import models from '../../../src/server/db/models';
 import TwoVector from 'lance/serialize/TwoVector';
 import { assaultBot, playerBase } from '../../../src/config';
@@ -47,6 +53,20 @@ describe('objects', () => {
                 done();
             })
             .catch(done.fail);
+    });
+
+    fit('can be marked as collected', async () => {
+        let objs = await objects();
+
+        expect(objs.length).toBeGreaterThan(0);
+
+        await markAsCollected(objs[0].dbId);
+        let obj = await models.gameObject.findOne(
+            { collected: true },
+            { where: { id: objs[0].dbId } }
+        );
+
+        expect(obj.collected).toEqual(!objs[0].collected);
     });
 });
 
@@ -225,6 +245,15 @@ describe('addSolution', () => {
                 done();
             })
         );
+    });
+
+    it('can be found by solvedProblem', async () => {
+        for (const solution of solutions) {
+            const other = await solvedProblem(solution.id);
+
+            expect(other.code).toEqual(solution.code);
+            expect(other.problemId).toEqual(solution.problemId);
+        }
     });
 
     it('correctly adds the code', () => {

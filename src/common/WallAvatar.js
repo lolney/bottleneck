@@ -1,14 +1,14 @@
 import DynamicObject from 'lance/serialize/DynamicObject';
 import TilingActor from '../client/TilingActor';
-import Serializer from 'lance/serialize/Serializer';
+import BaseTypes from 'lance/serialize/BaseTypes';
 import { horizontalWall, verticalWall } from '../config';
 
 export default class WallAvatar extends DynamicObject {
     static get netScheme() {
         return Object.assign(
             {
-                width: { type: Serializer.TYPES.FLOAT32 },
-                height: { type: Serializer.TYPES.FLOAT32 }
+                width: { type: BaseTypes.TYPES.FLOAT32 },
+                height: { type: BaseTypes.TYPES.FLOAT32 }
             },
             super.netScheme
         );

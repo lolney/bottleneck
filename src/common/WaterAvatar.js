@@ -1,14 +1,14 @@
 import DynamicObject from 'lance/serialize/DynamicObject';
 import ShaderActor from '../client/ShaderActor';
-import Serializer from 'lance/serialize/Serializer';
+import BaseTypes from 'lance/serialize/BaseTypes';
 import { water as waterShader } from '../shaders';
 
 export default class WaterAvatar extends DynamicObject {
     static get netScheme() {
         return Object.assign(
             {
-                width: { type: Serializer.TYPES.FLOAT32 },
-                height: { type: Serializer.TYPES.FLOAT32 }
+                width: { type: BaseTypes.TYPES.FLOAT32 },
+                height: { type: BaseTypes.TYPES.FLOAT32 }
             },
             super.netScheme
         );
