@@ -86,6 +86,7 @@ const MiniButtons = withSocketReq(
             super(props);
             this.container = React.createRef();
         }
+<<<<<<< HEAD
 
         componentDidMount() {
             //ReactDOM.findDOMNode(this.ref.current).getBoundingClientRect();
@@ -138,6 +139,35 @@ const MiniButtons = withSocketReq(
                         </Button>
                     </OverlayTrigger>
 
+=======
+
+        render() {
+            const props = this.props;
+            return (
+                <div ref={this.container} className="mini-btns">
+                    <Button
+                        className="mini-btn hud-button"
+                        onClick={() => {
+                            props.fetch('makeAssaultBot');
+                        }}
+                        disabled={
+                            props.initialLoading ||
+                            props.loading ||
+                            !canAfford(props.resources, assaultBot.cost)
+                        }
+                    >
+                        <div className="hud-row">
+                            <img
+                                alt="assault-botface"
+                                src="assets/assault-botface.png"
+                                height="21px"
+                                width="16px"
+                            />
+                        </div>
+                        <div className="hud-row-2">{props.botCount}</div>
+                    </Button>
+
+>>>>>>> origin/dev
                     <Button className="mini-btn hud-button" />
                     <Button className="mini-btn hud-button" />
                 </div>
