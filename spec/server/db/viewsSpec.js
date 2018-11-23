@@ -55,7 +55,7 @@ describe('objects', () => {
             .catch(done.fail);
     });
 
-    fit('can be marked as collected', async () => {
+    it('can be marked as collected', async () => {
         let objs = await objects();
 
         expect(objs.length).toBeGreaterThan(0);

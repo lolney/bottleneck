@@ -12,6 +12,12 @@ export default class MatchMaker {
         this.handleAuth(io);
     }
 
+    static async addPlayer(username, playerNumber) {
+        let userId = await getUserId(username);
+        let player = await setPlayerId(userId, playerNumber);
+        return { userId, player };
+    }
+
     handleAuth(io) {
         require('socketio-auth')(io, {
             authenticate: async function(socket, data, callback) {
@@ -22,15 +28,14 @@ export default class MatchMaker {
                 let succeeded = await checkPassword(username, password);
                 logger.info(`Authentication succeeded: ${succeeded}`);
 
-                let userId = await getUserId(username);
+                let { userId, player } = await MatchMaker.addPlayer(
+                    username,
+                    socket.playerId
+                );
                 socket.client.userId = userId;
-
-                logger.debug('got user id');
-
-                let player = await setPlayerId(userId, socket.playerId);
                 socket.client.playerDbId = player.id;
 
-                logger.debug('added player to db');
+                logger.debug(`added player to db: ${player.id}`);
                 callback(null, succeeded);
             },
             timeout: 'none'

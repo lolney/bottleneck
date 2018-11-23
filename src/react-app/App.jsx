@@ -10,6 +10,7 @@ import HealthBarContainer from './HealthBarContainer.jsx';
 import Game from './Game.jsx';
 import Windows from './Windows.jsx';
 import SocketContext from './SocketContext';
+import Matchmaking from './matchmaking/Matchmaking.jsx';
 
 import './CSS/Defenses.scss';
 import './CSS/HUD.scss';
@@ -139,8 +140,19 @@ export class App extends React.Component {
     }
 }
 
+// @TODO: codesplitting
 export default function createApp() {
     window.addEventListener('DOMContentLoaded', () => {
-        ReactDOM.render(<App />, document.getElementById('app'));
+        const elem = document.getElementsByClassName('app')[0];
+        switch (elem.id) {
+        case 'game':
+            ReactDOM.render(<App />, elem);
+            break;
+        case 'matchmaking':
+            ReactDOM.render(<Matchmaking />, elem);
+            break;
+        default:
+            break;
+        }
     });
 }
