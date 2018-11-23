@@ -1,8 +1,8 @@
 import React from 'react';
-import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import DraggableDefense from './DraggableDefense.jsx';
 import { canAfford } from '../common/resources';
+import TooltipWrapper from '../common/TooltipWrapper.jsx';
 
 const resources = [
     { name: 'wood', src: 'assets/low-log.png' },
@@ -54,19 +54,11 @@ export default class SiegeItemsWrapper extends React.Component {
 class SiegeItem extends React.Component {
     render() {
         let siegeItem = this.props.item;
-        const tooltip = (
-            <div
-                style={{
-                    position: 'absolute'
-                }}
-            >
-                <Tooltip id="tooltip" className="tooltip">
-                    <strong>Holy guacamole!</strong> Check this info.
-                </Tooltip>
-            </div>
-        );
         return (
-            <OverlayTrigger placement="top" overlay={tooltip}>
+            <TooltipWrapper
+                triggerProps={{ placement: 'top' }}
+                text={'Holy guac!'}
+            >
                 <div>
                     <div className="column">
                         <DraggableDefense
@@ -90,7 +82,7 @@ class SiegeItem extends React.Component {
                         ))}
                     </div>
                 </div>
-            </OverlayTrigger>
+            </TooltipWrapper>
         );
     }
 }

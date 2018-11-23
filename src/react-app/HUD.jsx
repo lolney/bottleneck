@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { ButtonToolbar, Button } from 'react-bootstrap';
-import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import TooltipWrapper from './common/TooltipWrapper.jsx';
 import DefensesBrowser from './defenses/DefensesBrowser.jsx';
 import PropTypes from 'prop-types';
 import ControlledButton from './ControlledButton.jsx';
@@ -95,24 +95,11 @@ const MiniButtons = withSocketReq(
 
         render() {
             const props = this.props;
-            const tooltip = (
-                <div
-                    style={{
-                        position: 'absolute'
-                    }}
-                >
-                    <Tooltip id="tooltip" className="tooltip">
-                        <strong>Holy guacamole!</strong> Check this info.
-                    </Tooltip>
-                </div>
-            );
             return (
                 <div className="mini-btns">
-                    <OverlayTrigger
-                        placement="left"
-                        overlay={tooltip}
-                        delayHide="0"
-                        container={this.container.current}
+                    <TooltipWrapper
+                        triggerProps={{ placement: 'left' }}
+                        text={'Holy moly!'}
                     >
                         <Button
                             ref={this.container}
@@ -136,7 +123,7 @@ const MiniButtons = withSocketReq(
                             </div>
                             <div className="hud-row-2">{props.botCount}</div>
                         </Button>
-                    </OverlayTrigger>
+                    </TooltipWrapper>
 
                     <Button className="mini-btn hud-button" />
                     <Button className="mini-btn hud-button" />
