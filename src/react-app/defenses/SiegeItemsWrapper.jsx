@@ -54,10 +54,17 @@ export default class SiegeItemsWrapper extends React.Component {
 class SiegeItem extends React.Component {
     render() {
         let siegeItem = this.props.item;
+        const tooltipText = (
+            <MyTooltipText
+                name={siegeItem.name}
+                behavior={siegeItem.behavior}
+                type={siegeItem.type}
+            />
+        );
         return (
             <TooltipWrapper
                 triggerProps={{ placement: 'top' }}
-                text={'Holy guac!'}
+                text={tooltipText}
             >
                 <div>
                     <div className="column">
@@ -84,6 +91,21 @@ class SiegeItem extends React.Component {
                 </div>
             </TooltipWrapper>
         );
+    }
+}
+
+class MyTooltipText extends React.Component {
+    render() {
+        if (this.props.type == 'defensive') {
+            return (
+                <div>
+                    <strong>{this.props.name}</strong>
+                    <span>{': ' + this.props.behavior + ' opponents'}</span>
+                </div>
+            );
+        } else {
+            return <div>{<strong>{this.props.name}</strong>}</div>;
+        }
     }
 }
 

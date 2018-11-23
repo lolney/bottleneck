@@ -111,7 +111,13 @@ class MiniButtons extends React.Component {
                     </Button>
                 </TooltipWrapper>
 
-                <Button className="mini-btn hud-button" />
+                <TooltipWrapper
+                    triggerProps={{ placement: 'left' }}
+                    text={'Holy moly!'}
+                >
+                    <Button className="mini-btn hud-button" />
+                </TooltipWrapper>
+
                 <Button className="mini-btn hud-button" />
             </div>
         );
