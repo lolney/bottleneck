@@ -4,7 +4,11 @@ import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 const TooltipWrapper = function(props) {
     const tooltip = <MyTooltip text={props.text} />;
     return (
-        <OverlayTrigger {...props.triggerProps} overlay={tooltip}>
+        <OverlayTrigger
+            {...props.triggerProps}
+            delayShow={240}
+            overlay={tooltip}
+        >
             {props.children}
         </OverlayTrigger>
     );
