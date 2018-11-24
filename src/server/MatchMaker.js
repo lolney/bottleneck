@@ -16,10 +16,10 @@ export default class MatchMaker {
         return { status: 'ok', serverURL: `/?gameid=${token}` };
     }
 
-    finalize() {
+    async finalize() {
         logger.info('Enough players have joined. Starting the game.');
 
-        const id = this.instanceManager.createInstance();
+        const id = await this.instanceManager.createInstance();
         for (const callback of this.queuedPlayers) {
             callback(MatchMaker.createResponse(id));
         }
@@ -32,10 +32,12 @@ export default class MatchMaker {
         this.queuedPlayers.splice(index, 1);
     }
 
-    createPractice() {
+    async createPractice() {
         logger.info('Creating practice mode server');
 
-        const id = this.instanceManager.createInstance({ practice: true });
+        const id = await this.instanceManager.createInstance({
+            practice: true
+        });
         return MatchMaker.createResponse(id);
     }
 

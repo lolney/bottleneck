@@ -32,15 +32,13 @@ server.post('/find_game', async (req, res) => {
         var callback = (resp) => {
             res.json(resp);
         };
-
         matchmaker.queue(callback);
         req.on('close', () => {
             matchmaker.cancel(callback);
         });
-
         break;
     case 'practice':
-        var resp = matchmaker.createPractice();
+        var resp = await matchmaker.createPractice();
         res.json(resp);
         break;
     default:

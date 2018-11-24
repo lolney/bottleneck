@@ -5,7 +5,7 @@ import MyGameEngine, { Status } from '../common/MyGameEngine';
 
 export default class Instance {
     // Game Instances
-    constructor(stopCallback) {
+    constructor() {
         this.gameEngine = new MyGameEngine({
             traceLevel: Trace.TRACE_NONE,
             collisionOptions: {
@@ -34,18 +34,19 @@ export default class Instance {
             ondc(socketId, playerId);
             this.onPlayerDisconnected();
         };
-        this.stopCallback = stopCallback;
+
         this.currentPlyers = [];
         this.serverEngine.start();
     }
 
-    launch() {
+    launch(stopCallback) {
+        this.stopCallback = stopCallback;
         this.gameEngine.setStatus(Status.IN_PROGRESS);
     }
 
     stop() {
         console.log('Stopping instance');
-        this.stopCallback();
+        if (this.stopCallback) this.stopCallback();
         this.gameEngine.stop();
         this.serverEngine.scheduler.stop();
     }
