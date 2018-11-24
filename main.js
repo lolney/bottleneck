@@ -33,7 +33,7 @@ server.post('/find_game', async (req, res) => {
             res.json(resp);
         };
         matchmaker.queue(callback);
-        req.on('close', () => {
+        req.on('aborted', () => {
             matchmaker.cancel(callback);
         });
         break;
