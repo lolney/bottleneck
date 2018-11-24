@@ -2,7 +2,7 @@
 
 import DynamicObject from 'lance/serialize/DynamicObject';
 import PlayerActor from '../client/PlayerActor.js';
-import Serializer from 'lance/serialize/Serializer';
+import BaseTypes from 'lance/serialize/BaseTypes';
 import TwoVector from 'lance/serialize/TwoVector';
 import Slowable from './Slowable';
 
@@ -22,8 +22,8 @@ export default class BotAvatar extends DynamicObject {
     static get netScheme() {
         return Object.assign(
             {
-                playerNumber: { type: Serializer.TYPES.INT32 },
-                status: { type: Serializer.TYPES.STRING }
+                playerNumber: { type: BaseTypes.TYPES.INT32 },
+                status: { type: BaseTypes.TYPES.STRING }
             },
             super.netScheme
         );

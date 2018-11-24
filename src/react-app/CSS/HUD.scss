@@ -1,9 +1,18 @@
+body {
+  @import "./Common.scss";
+
+  #tooltip {
+    z-index: 2000;
+  }
+}
+
 .hud-buttons {
   right: 0;
   position: absolute;
   width: 15%;
   height: 100%;
   pointer-events: none;
+
   .btn-toolbar {
     height: 100%;
     &:first-child {

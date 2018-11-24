@@ -1,15 +1,23 @@
 import ImageProblem from '../problem-engine/ImageProblem';
 import BinaryTreeProblem from '../problem-engine/BinaryTreeProblem';
+
 import {
     problem,
-    addSolution,
     getObjectResources,
+    markAsCollected
+} from './db/views/gameObject';
+import {
     addToResourceCount,
-    markAsCollected,
-    getPlayerResources,
-    decrementHP
-} from './db';
-import { getSolutions, solvedProblem, deletePlayerId } from './db/index';
+    decrementHP,
+    deletePlayerId,
+    getPlayerResources
+} from './db/views/player';
+import {
+    addSolution,
+    getSolutions,
+    solvedProblem
+} from './db/views/solvedProblem';
+
 import { siegeItems, assaultBot, getSiegeItemFromId } from '../config';
 import logger from './Logger';
 import { Status } from '../common/MyGameEngine';
@@ -312,8 +320,11 @@ class Controller {
 
             let winningPlayer = this.playerMap.getOtherPlayerId(enemyPlayerId);
             logger.info(`Player ${winningPlayer} has won the game`);
+
             this.playerMap.publish(winningPlayer, 'gameWin', {});
-            this.playerMap.publish(enemyPlayerId, 'gameLose', {});
+            // If in practice mode, other player doesn't exist
+            if (this.playerMap.getPlayer(enemyPlayerId))
+                this.playerMap.publish(enemyPlayerId, 'gameLose', {});
         }
     }
 

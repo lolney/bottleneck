@@ -1,5 +1,5 @@
 import BotAvatar from './BotAvatar';
-import Serializer from 'lance/serialize/Serializer';
+import BaseTypes from 'lance/serialize/BaseTypes';
 
 export const State = {
     COLLECTING: Symbol('collecting'),

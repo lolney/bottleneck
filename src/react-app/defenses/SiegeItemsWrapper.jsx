@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DraggableDefense from './DraggableDefense.jsx';
 import { canAfford } from '../common/resources';
+import TooltipWrapper from '../common/TooltipWrapper.jsx';
 
 const resources = [
     { name: 'wood', src: 'assets/low-log.png' },
@@ -53,29 +54,58 @@ export default class SiegeItemsWrapper extends React.Component {
 class SiegeItem extends React.Component {
     render() {
         let siegeItem = this.props.item;
-        return (
-            <div>
-                <div className="column">
-                    <DraggableDefense
-                        key={siegeItem.id}
-                        src={siegeItem.image}
-                        id={siegeItem.id}
-                        draggable={this.props.isBuyable}
-                        className="defense"
-                    />
-                </div>
-                <div className="column">
-                    {this.props.resources.map((res) => (
-                        <ResourceDisplay
-                            isLimiting={siegeItem.cost[res.name] <= res.count}
-                            key={res.name}
-                            src={res.src}
-                            cost={siegeItem.cost[res.name]}
-                        />
-                    ))}
-                </div>
-            </div>
+        const tooltipText = (
+            <MyTooltipText
+                name={siegeItem.name}
+                behavior={siegeItem.behavior}
+                type={siegeItem.type}
+            />
         );
+        return (
+            <TooltipWrapper
+                triggerProps={{ placement: 'top' }}
+                text={tooltipText}
+            >
+                <div>
+                    <div className="column">
+                        <DraggableDefense
+                            key={siegeItem.id}
+                            src={siegeItem.image}
+                            id={siegeItem.id}
+                            draggable={this.props.isBuyable}
+                            className="defense"
+                        />
+                    </div>
+                    <div className="column">
+                        {this.props.resources.map((res) => (
+                            <ResourceDisplay
+                                isLimiting={
+                                    siegeItem.cost[res.name] <= res.count
+                                }
+                                key={res.name}
+                                src={res.src}
+                                cost={siegeItem.cost[res.name]}
+                            />
+                        ))}
+                    </div>
+                </div>
+            </TooltipWrapper>
+        );
+    }
+}
+
+class MyTooltipText extends React.Component {
+    render() {
+        if (this.props.type == 'defensive') {
+            return (
+                <div>
+                    <strong>{this.props.name}</strong>
+                    <span>{': ' + this.props.behavior + ' opponents'}</span>
+                </div>
+            );
+        } else {
+            return <div>{<strong>{this.props.name}</strong>}</div>;
+        }
     }
 }
 

@@ -34,16 +34,19 @@ export default class Instance {
             ondc(socketId, playerId);
             this.onPlayerDisconnected();
         };
+
         this.currentPlyers = [];
         this.serverEngine.start();
     }
 
-    launch() {
+    launch(stopCallback) {
+        this.stopCallback = stopCallback;
         this.gameEngine.setStatus(Status.IN_PROGRESS);
     }
 
     stop() {
         console.log('Stopping instance');
+        if (this.stopCallback) this.stopCallback();
         this.gameEngine.stop();
         this.serverEngine.scheduler.stop();
     }

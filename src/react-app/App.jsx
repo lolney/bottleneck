@@ -10,6 +10,7 @@ import HealthBarContainer from './HealthBarContainer.jsx';
 import Game from './Game.jsx';
 import Windows from './Windows.jsx';
 import SocketContext from './SocketContext';
+import ModeSelect from './modeSelect/ModeSelect.jsx';
 
 import './CSS/Defenses.scss';
 import './CSS/HUD.scss';
@@ -86,9 +87,7 @@ export class App extends React.Component {
     onReceiveSocket(socket) {
         new EditorSocketWatcher(socket, this.windows.current.addWindow);
 
-        socket.addEventListener('authenticated', (event) => {
-            this.setState({ socket: socket });
-        });
+        this.setState({ socket: socket });
     }
 
     onCameraMove() {
@@ -119,7 +118,7 @@ export class App extends React.Component {
 
                     <Windows ref={this.windows} />
 
-                    {this.state.camera && (
+                    {this.state.socket && this.state.camera && (
                         <HUD
                             addMenu={this.addMenu}
                             removeMenu={this.removeMenu}
@@ -141,8 +140,19 @@ export class App extends React.Component {
     }
 }
 
+// @TODO: codesplitting
 export default function createApp() {
     window.addEventListener('DOMContentLoaded', () => {
-        ReactDOM.render(<App />, document.getElementById('app'));
+        const elem = document.getElementsByClassName('app')[0];
+        switch (elem.id) {
+        case 'game':
+            ReactDOM.render(<App />, elem);
+            break;
+        case 'mode_select':
+            ReactDOM.render(<ModeSelect />, elem);
+            break;
+        default:
+            break;
+        }
     });
 }

@@ -53,7 +53,12 @@ class Menu extends React.Component {
                             Solution History
                         </ControlledButton>
                         <Button className="menu-button">Settings</Button>
-                        <Button className="menu-button">Exit Game</Button>
+                        <Button
+                            className="menu-button"
+                            onClick={() => window.location.assign('index.html')}
+                        >
+                            Exit Game
+                        </Button>
                     </ButtonToolbar>
                 </div>
             </div>
