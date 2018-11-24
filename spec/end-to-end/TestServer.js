@@ -1,6 +1,7 @@
 import express from 'express';
 import socketIO from 'socket.io';
 import MatchMaker from '../../src/server/MatchMaker';
+import InstanceManager from '../../src/server/InstanceManager';
 import logger from '../../src/server/Logger';
 
 let _PORT = 6000;
@@ -20,12 +21,16 @@ export default class TestServer {
             logger.info(`Listening on ${PORT}`)
         );
 
-        this.serverURL = `http://localhost:${PORT}`;
         const io = socketIO(requestHandler);
-        this.matchMaker = new MatchMaker(io);
+
+        this.instanceManager = new InstanceManager(io);
+        this.matchMaker = new MatchMaker(this.instanceManager);
+
+        this.gameId = this.instanceManager.createInstance();
+        this.serverURL = `http://localhost:${PORT}/?gameid=${this.gameId}`;
     }
 
     get gameEngine() {
-        return this.matchMaker.instance.gameEngine;
+        return this.instanceManager.instances[this.gameId].gameEngine;
     }
 }

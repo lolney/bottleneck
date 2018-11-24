@@ -75,7 +75,7 @@ export default class MyServerEngine extends ServerEngine {
     }
 
     getPlayerId(socket) {
-        console.log('assigning number');
+        logger.info('Assigning player number');
         for (const [num, player] of Object.entries(this.players)) {
             if (player == undefined) {
                 this.players[num] = socket;

@@ -8,7 +8,10 @@ import { clientDefaults } from '../config';
 export default class Game extends React.Component {
     componentDidMount() {
         const qsOptions = querystring.parse(location.search);
-        let options = Object.assign(clientDefaults, qsOptions);
+        const mode = qsOptions.mode ? qsOptions.mode : 'practice';
+        let options = Object.assign(clientDefaults, {
+            matchmaker: `find_game?mode=${mode}`
+        });
 
         // create a client engine and a game engine
         const gameEngine = new MyGameEngine(options);

@@ -11,9 +11,7 @@ describe('BotAvatar', () => {
         client = new TestClient(server.serverURL);
         socket = await client.start();
         await new Promise((resolve) =>
-            server.matchMaker.instance.gameEngine.on('playerAdded', () =>
-                resolve()
-            )
+            server.gameEngine.on('playerAdded', () => resolve())
         );
     });
 
