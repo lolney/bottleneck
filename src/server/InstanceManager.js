@@ -30,7 +30,6 @@ export default class InstanceManager {
                 let succeeded = await checkPassword(username, password);
                 logger.info(`Authentication succeeded: ${succeeded}`);
 
-                console.log(socket.playerId);
                 let { userId, player } = await InstanceManager.addPlayer(
                     username,
                     socket.playerId

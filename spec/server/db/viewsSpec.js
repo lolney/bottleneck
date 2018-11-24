@@ -59,14 +59,17 @@ describe('objects', () => {
         let objs = await objects();
 
         expect(objs.length).toBeGreaterThan(0);
+        const id = objs[0].dbId;
 
-        await markAsCollected(objs[0].dbId);
-        let obj = await models.gameObject.findOne(
-            { collected: true },
-            { where: { id: objs[0].dbId } }
-        );
+        await markAsCollected(id);
+        let obj = await models.gameObject.findOne({
+            where: { id: id }
+        });
 
-        expect(obj.collected).toEqual(!objs[0].collected);
+        expect(obj.collected).toEqual(true);
+
+        // revert
+        await obj.update({ collected: objs[0].collected });
     });
 });
 

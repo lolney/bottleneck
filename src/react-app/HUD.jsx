@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { ButtonToolbar, Button } from 'react-bootstrap';
 import TooltipWrapper from './common/TooltipWrapper.jsx';
 import DefensesBrowser from './defenses/DefensesBrowser.jsx';
@@ -85,7 +84,7 @@ class MiniButtons extends React.Component {
             <div className="mini-btns">
                 <TooltipWrapper
                     triggerProps={{ placement: 'left' }}
-                    text={'Holy moly!'}
+                    text={`Buy an assault creep for ${assaultBot.cost}`}
                 >
                     <Button
                         ref={this.container}
@@ -111,10 +110,7 @@ class MiniButtons extends React.Component {
                     </Button>
                 </TooltipWrapper>
 
-                <TooltipWrapper
-                    triggerProps={{ placement: 'left' }}
-                    text={'Holy moly!'}
-                >
+                <TooltipWrapper triggerProps={{ placement: 'left' }} text={''}>
                     <Button className="mini-btn hud-button" />
                 </TooltipWrapper>
 
