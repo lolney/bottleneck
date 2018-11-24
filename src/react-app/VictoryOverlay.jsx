@@ -33,7 +33,16 @@ export default class VictoryOverlay extends React.Component {
                         </div>
                         <div className="bootstrap-styles">
                             <ButtonToolbar>
-                                <Button className="menu-button">OK</Button>
+                                <Button
+                                    className="menu-button"
+                                    onClick={() =>
+                                        window.location.assign(
+                                            'http://localhost:3000/matchmaking.html'
+                                        )
+                                    }
+                                >
+                                        OK
+                                </Button>
                             </ButtonToolbar>
                         </div>
                     </div>
