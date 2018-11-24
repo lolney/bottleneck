@@ -8,7 +8,7 @@ describe('siegeItems', () => {
     let socket;
 
     beforeAll(async () => {
-        server = new TestServer();
+        server = await TestServer.create();
         client = new TestClient(server.serverURL);
         socket = await client.start();
         await new Promise((resolve) =>

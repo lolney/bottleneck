@@ -15,25 +15,25 @@ describe('MatchMaker', () => {
         matchMaker = new MatchMaker(instanceManager);
     });
 
-    it('launches instance after two players connect', () => {
-        matchMaker.queue(() => {});
+    it('launches instance after two players connect', async () => {
+        await matchMaker.queue(() => {});
 
         expect(created).toBe(false);
         expect(matchMaker.queuedPlayers.length).toEqual(1);
 
-        matchMaker.queue(() => {});
+        await matchMaker.queue(() => {});
 
         expect(created).toBe(true);
         expect(matchMaker.queuedPlayers.length).toEqual(0);
     });
 
-    it('removes players from queue on cancel', () => {
+    it('removes players from queue on cancel', async () => {
         let called = false;
         let cb = () => {
             called = true;
         };
 
-        matchMaker.queue(cb);
+        await matchMaker.queue(cb);
         matchMaker.cancel(cb);
 
         expect(matchMaker.queuedPlayers.length).toEqual(0);

@@ -13,21 +13,27 @@ function getPort() {
 // define routes and socket
 
 export default class TestServer {
-    constructor() {
+    constructor(gameId, port, instanceManager) {
+        this.instanceManager = instanceManager;
+        this.matchMaker = new MatchMaker(this.instanceManager);
+
+        this.gameId = gameId;
+        this.serverURL = `http://localhost:${port}/?gameid=${this.gameId}`;
+    }
+
+    static async create() {
         const server = express();
         const PORT = getPort();
 
         let requestHandler = server.listen(PORT, () =>
             logger.info(`Listening on ${PORT}`)
         );
-
         const io = socketIO(requestHandler);
 
-        this.instanceManager = new InstanceManager(io);
-        this.matchMaker = new MatchMaker(this.instanceManager);
+        const instanceManager = new InstanceManager(io);
+        const gameId = await instanceManager.createInstance();
 
-        this.gameId = this.instanceManager.createInstance();
-        this.serverURL = `http://localhost:${PORT}/?gameid=${this.gameId}`;
+        return new TestServer(gameId, PORT, instanceManager);
     }
 
     get gameEngine() {

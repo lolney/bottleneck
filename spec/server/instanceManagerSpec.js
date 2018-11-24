@@ -3,12 +3,12 @@ import InstanceManager from '../../src/server/InstanceManager';
 describe('InstanceManager', () => {
     let instanceManager;
 
-    beforeAll(async () => {
+    beforeEach(async () => {
         instanceManager = new InstanceManager();
     });
 
-    it('adds player to created instance', () => {
-        const id = instanceManager.createInstance();
+    it('adds player to created instance', async () => {
+        const id = await instanceManager.createInstance();
 
         const socket = {
             handshake: { query: { gameid: id } },
@@ -27,8 +27,8 @@ describe('InstanceManager', () => {
 
     it('returns an error if instance not found', () => {});
 
-    it('removes instance when shut down', () => {
-        const id = instanceManager.createInstance();
+    it('removes instance when shut down', async () => {
+        const id = await instanceManager.createInstance();
         instanceManager.instances[id].stop();
 
         expect(Object.values(instanceManager.instances).length).toEqual(0);

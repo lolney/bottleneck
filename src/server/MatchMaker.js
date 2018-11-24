@@ -53,7 +53,7 @@ export default class MatchMaker {
         }
     }
 
-    queue(callback) {
+    async queue(callback) {
         let qp = this.queuedPlayers;
 
         if (qp.length < MAX_QUEUE_LENGTH) {
@@ -64,7 +64,7 @@ export default class MatchMaker {
 
         logger.info(`Player joined the queue. Queue length: ${qp.length}`);
         if (qp.length == MAX_QUEUE_LENGTH) {
-            this.finalize();
+            await this.finalize();
         }
     }
 }

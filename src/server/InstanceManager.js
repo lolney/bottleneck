@@ -72,46 +72,12 @@ export default class InstanceManager {
     }
 }
 
+/**
+ * Can be adapted later if instances are moved to another process
+ */
 class InstanceQueue {
     constructor() {
-        this.onDeck = null;
-        this.queue = [];
-
-        this.prepareDeck();
-    }
-
-    async processQueue() {
-        while (this.queue.length > 0) {
-            const callback = this.queue.pop();
-            const obj = await this.createInstance();
-            callback(obj);
-        }
-    }
-
-    async createInstance() {
-        this.creatingInstance = true;
-        const obj = await new Promise((resolve) => {
-            resolve(this._createInstance());
-        });
-        this.creatingInstance = false;
-
-        this.processQueue();
-
-        return obj;
-    }
-
-    async prepareDeck() {
-        this.onDeck = null;
-        this.onDeck = await this.createInstance();
-        logger.info('Finished pre-loading new instance');
-    }
-
-    async awaitInstanceCreation() {
-        return await new Promise((resolve) => {
-            this.queue.push((obj) => {
-                resolve(obj);
-            });
-        });
+        this.onDeck = this._createInstance();
     }
 
     /**
@@ -126,12 +92,10 @@ class InstanceQueue {
     async getInstance() {
         if (this.onDeck) {
             const val = this.onDeck;
-            this.prepareDeck();
+            this.onDeck = null;
             return val;
-        } else if (!this.creatingInstance) {
-            return await this.createInstance();
         } else {
-            return await this.awaitInstanceCreation();
+            return this._createInstance();
         }
     }
 }
