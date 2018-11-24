@@ -43,19 +43,23 @@ export default class MyServerEngine extends ServerEngine {
                 const id = socket.client.playerDbId;
                 const number = socket.playerId;
 
-                this.gameEngine.makePlayer(
-                    id,
-                    number,
-                    this.gameWorld.getStartingPosition(socket.playerId)
-                );
+                this.createPlayer(id, number);
                 this.controller.addPlayer(id, number, socket);
-                this.gameEngine.emit('playerAdded', {
-                    playerId: id,
-                    playerNumber: number
-                });
             } else setTimeout(waitForAuth, 100);
         };
         waitForAuth();
+    }
+
+    createPlayer(id, number) {
+        this.gameEngine.makePlayer(
+            id,
+            number,
+            this.gameWorld.getStartingPosition(number)
+        );
+        this.gameEngine.emit('playerAdded', {
+            playerId: id,
+            playerNumber: number
+        });
     }
 
     onPlayerDisconnected(socketId, playerNumber) {

@@ -56,9 +56,7 @@ class Menu extends React.Component {
                         <Button
                             className="menu-button"
                             onClick={() =>
-                                window.location.assign(
-                                    'http://localhost:3000/matchmaking.html'
-                                )
+                                window.location.assign('matchmaking.html')
                             }
                         >
                             Exit Game

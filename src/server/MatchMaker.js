@@ -35,7 +35,7 @@ export default class MatchMaker {
     createPractice() {
         logger.info('Creating practice mode server');
 
-        const id = this.instanceManager.createInstance();
+        const id = this.instanceManager.createInstance({ practice: true });
         return MatchMaker.createResponse(id);
     }
 

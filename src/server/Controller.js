@@ -320,8 +320,11 @@ class Controller {
 
             let winningPlayer = this.playerMap.getOtherPlayerId(enemyPlayerId);
             logger.info(`Player ${winningPlayer} has won the game`);
+
             this.playerMap.publish(winningPlayer, 'gameWin', {});
-            this.playerMap.publish(enemyPlayerId, 'gameLose', {});
+            // If in practice mode, other player doesn't exist
+            if (this.playerMap.getPlayer(enemyPlayerId))
+                this.playerMap.publish(enemyPlayerId, 'gameLose', {});
         }
     }
 

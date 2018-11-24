@@ -43,13 +43,21 @@ export default class InstanceManager {
         });
     }
 
-    createInstance() {
+    createInstance(options) {
         const id = Math.random();
         const instance = new Instance(() => {
             delete this.instances[id];
         });
         this.instances[id] = instance;
         instance.launch();
+
+        // @TODO: consider injecting database dependency?
+        if (options.practice) {
+            const number = instance.serverEngine.getPlayerId({});
+            InstanceManager.addPlayer('_botuser', number).then(({ player }) => {
+                instance.serverEngine.createPlayer(player.id, number);
+            });
+        }
         return id;
     }
 
