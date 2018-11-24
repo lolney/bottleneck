@@ -10,7 +10,7 @@ import HealthBarContainer from './HealthBarContainer.jsx';
 import Game from './Game.jsx';
 import Windows from './Windows.jsx';
 import SocketContext from './SocketContext';
-import Matchmaking from './matchmaking/Matchmaking.jsx';
+import ModeSelect from './modeSelect/ModeSelect.jsx';
 
 import './CSS/Defenses.scss';
 import './CSS/HUD.scss';
@@ -148,8 +148,8 @@ export default function createApp() {
         case 'game':
             ReactDOM.render(<App />, elem);
             break;
-        case 'matchmaking':
-            ReactDOM.render(<Matchmaking />, elem);
+        case 'mode_select':
+            ReactDOM.render(<ModeSelect />, elem);
             break;
         default:
             break;

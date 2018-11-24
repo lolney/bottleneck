@@ -25,7 +25,7 @@ server.use(express.static(INDEX));
 server.use('/assets', express.static(ASSETS));
 server.use('/dist', express.static(DIST));
 
-server.get('/find_game', (req, res) => {
+server.post('/find_game', async (req, res) => {
     const mode = req.query.mode;
     switch (mode) {
     case 'vs':

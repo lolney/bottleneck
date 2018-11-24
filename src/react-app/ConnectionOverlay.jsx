@@ -7,7 +7,8 @@ const State = Object.freeze({
     Connecting: 'connecting',
     Loading: 'loading',
     Authenticating: 'authenticating',
-    Finishing: 'finishing'
+    Finishing: 'finishing',
+    Matchmaking: 'matchmaking'
 });
 
 const SocketFilter = function({ socket, camera }) {
@@ -37,6 +38,7 @@ const SocketFilter = function({ socket, camera }) {
             () => ({
                 connected: socket.connected,
                 authenticated: true,
+                matchmaking: false,
                 camera: camera
             })
         );
@@ -44,6 +46,7 @@ const SocketFilter = function({ socket, camera }) {
     } else {
         return (
             <ConnectionOverlayContainer
+                matchmaking={true}
                 connected={false}
                 authenticated={false}
                 camera={camera}
@@ -55,10 +58,13 @@ const SocketFilter = function({ socket, camera }) {
 const ConnectionOverlayContainer = function({
     connected,
     authenticated,
-    camera
+    camera,
+    matchmaking
 }) {
     let state;
-    if (camera && connected && authenticated) {
+    if (matchmaking) {
+        state = State.Matchmaking;
+    } else if (camera && connected && authenticated) {
         state = State.Connected;
     } else if (connected && authenticated) {
         state = State.Finishing;

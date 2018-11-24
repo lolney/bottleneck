@@ -36,9 +36,7 @@ export default class VictoryOverlay extends React.Component {
                                 <Button
                                     className="menu-button"
                                     onClick={() =>
-                                        window.location.assign(
-                                            'matchmaking.html'
-                                        )
+                                        window.location.assign('index.html')
                                     }
                                 >
                                         OK

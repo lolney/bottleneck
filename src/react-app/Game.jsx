@@ -10,7 +10,8 @@ export default class Game extends React.Component {
         const qsOptions = querystring.parse(location.search);
         const mode = qsOptions.mode ? qsOptions.mode : 'practice';
         let options = Object.assign(clientDefaults, {
-            matchmaker: `find_game?mode=${mode}`
+            matchmaker: `find_game?mode=${mode}`,
+            matchmakerMethod: 'POST'
         });
 
         // create a client engine and a game engine

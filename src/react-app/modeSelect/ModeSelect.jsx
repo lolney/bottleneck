@@ -1,10 +1,9 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 
-import './Matchmaking.scss';
-import '';
+import './ModeSelect.scss';
 
-export default class Matchmaking extends React.Component {
+export default class ModeSelect extends React.Component {
     render() {
         return (
             <div className="matchmaking">
@@ -25,12 +24,14 @@ export default class Matchmaking extends React.Component {
                             {
                                 title: 'Practice',
                                 src: 'assets/noun_boxing.png',
-                                url: '/?mode=practice'
+                                url: 'game.html?mode=practice',
+                                alt: 'Join a sandbox game without other players'
                             },
                             {
                                 title: 'VS',
                                 src: 'assets/noun_fighting.png',
-                                url: '/?mode=vs'
+                                url: 'game.html?mode=vs',
+                                alt: 'Play against another human'
                             }
                         ].map((config, i) => ModeButton(config, i))}
                     </div>
@@ -42,17 +43,11 @@ export default class Matchmaking extends React.Component {
 
 const ModeButton = (config, i) => (
     <div key={config.title} className="btn-cont">
-        <Button
-            className={`btn-${i + 1} hud-button`}
-            onClick={() => window.location.assign(config.url)}
-        >
-            <img
-                className="btn-row"
-                alt="practice icon"
-                src={config.src}
-                width="50px"
-            />
-            <div className="btn-row">{config.title}</div>
-        </Button>
+        <a href={config.url} title={config.alt}>
+            <Button className={`btn-${i + 1} hud-button`}>
+                <img className="btn-row" src={config.src} width="50px" />
+                <div className="btn-row">{config.title}</div>
+            </Button>
+        </a>
     </div>
 );
