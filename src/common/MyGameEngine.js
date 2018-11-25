@@ -63,12 +63,12 @@ export default class MyGameEngine extends GameEngine {
 
     static botTypeToAvatarClass(type) {
         switch (type) {
-        case 'assault':
+        case 'assaultBot':
             return AssaultBotAvatar;
-        case 'collector':
+        case 'collectionBot':
             return CollectionBotAvatar;
         default:
-            throw new Error('Unexpected type');
+            throw new Error(`Unexpected type: ${type}`);
         }
     }
 

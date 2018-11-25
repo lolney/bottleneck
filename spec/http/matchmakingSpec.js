@@ -1,14 +1,16 @@
-import matchmakingRouter from '../../src/server/routers/matchmaking';
+import { MatchmakingRouter } from '../../src/server/routers/matchmaking';
 import request from 'supertest';
 import express from 'express';
 
 describe('Matchmaking', () => {
     let router;
+    let routerObject;
     let app;
 
     beforeEach(() => {
         app = express();
-        router = matchmakingRouter();
+        routerObject = new MatchmakingRouter();
+        router = routerObject.router;
         app.use(router);
     });
 
@@ -25,6 +27,7 @@ describe('Matchmaking', () => {
             .timeout(100)
             .expect(200, (err) => {
                 expect(err.code).toEqual('ECONNABORTED');
+                expect(routerObject.matchmaker.queuedPlayers.length).toEqual(0);
                 done();
             });
     });

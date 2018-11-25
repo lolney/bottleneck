@@ -206,6 +206,11 @@ export default class BotAvatar extends DynamicObject {
     detach() {
         console.log('Bot detaching');
         this.serverState.gameEngine.removeObjectFromWorld(this.id);
+        this.serverState.controller.onRemoveBot(
+            this.resource,
+            this.playerId,
+            this.playerNumber
+        );
     }
 
     onAddToWorld(gameEngine) {

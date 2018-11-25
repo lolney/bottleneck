@@ -16,6 +16,10 @@ export const getSiegeItemFromId = (id) => {
     return siegeItems.find((item) => item.id == id);
 };
 
+export const formatResourceCost = (obj) => {
+    return `${obj.wood} wood, ${obj.stone} stone`;
+};
+
 export const getAssetPaths = () => {
     let items = siegeItems.concat([
         playerBase,

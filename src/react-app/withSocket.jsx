@@ -30,8 +30,35 @@ export default function withSocket(
             }
             this.handlers = [];
             this.state = {
+                props: { ...props },
                 data: getInitialState(this.socket)
             };
+        }
+
+        /**
+         * Reconcile state with new upstream props -
+         * where props are new, as determined by the _nonce prop
+         *
+         * Note: cannot simply compare props with prev props,
+         * since we may want to switch to using an upstream value
+         * even if it's the same
+         *
+         * Also can't just prevent the component from updating
+         * if we don't want the upstream value pushed, since
+         * we may still want props to propagate through
+         */
+        static getDerivedStateFromProps(props, state) {
+            const prevProps = state.props;
+            if (prevProps._nonce != props._nonce) {
+                const data = { ...state.data };
+                for (const key of Object.keys(props)) {
+                    if (data[key] != undefined) {
+                        data[key] = props[key];
+                    }
+                }
+                return { props: { ...props }, data };
+            }
+            return state;
         }
 
         componentDidMount() {
@@ -56,7 +83,7 @@ export default function withSocket(
         }
 
         render() {
-            return <WrappedComponent {...this.state.data} {...this.props} />;
+            return <WrappedComponent {...this.props} {...this.state.data} />;
         }
     }
     WithSocket.contextType = SocketContext;

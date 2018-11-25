@@ -4,7 +4,7 @@ import TooltipWrapper from './common/TooltipWrapper.jsx';
 import DefensesBrowser from './defenses/DefensesBrowser.jsx';
 import PropTypes from 'prop-types';
 import ControlledButton from './ControlledButton.jsx';
-import { resourceIcons, assaultBot } from '../config';
+import { resourceIcons, assaultBot, formatResourceCost } from '../config';
 import AnimateOnChange from 'react-animate-on-change';
 import withSocketFetch from './withSocketFetch.jsx';
 import withSocketReq from './withSocketReq.jsx';
@@ -84,12 +84,14 @@ class MiniButtons extends React.Component {
             <div className="mini-btns">
                 <TooltipWrapper
                     triggerProps={{ placement: 'left' }}
-                    text={`Buy an assault creep for ${assaultBot.cost}`}
                     disabled={
                         props.initialLoading ||
                         props.loading ||
                         !canAfford(props.resources, assaultBot.cost)
                     }
+                    text={`Buy an assault creep for ${formatResourceCost(
+                        assaultBot.cost
+                    )}`}
                 >
                     <Button
                         ref={this.container}
@@ -160,7 +162,11 @@ MiniButtons.propTypes = {
     resources: PropTypes.object
 };
 
-const WrappedMiniButtons = withSocketReq(MiniButtons, () => ({ botCount: 0 }));
+const WrappedMiniButtons = withSocketReq(
+    MiniButtons,
+    [['assaultBotCount', (data) => data]],
+    () => ({ botCount: 0 })
+);
 
 export default withSocketFetch(
     HUD,

@@ -32,7 +32,7 @@ export default class PlayerActor extends AnimatedActor {
     applyFilters(identity, renderer, avatar) {
         switch (identity) {
         case 'assaultBot':
-        case 'collectorBot':
+        case 'collectionBot':
         case 'bot':
             if (renderer.gameEngine.isOwnedByPlayer(avatar)) {
                 this.sprite.tint = '0x467998'; // blue

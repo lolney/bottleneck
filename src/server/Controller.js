@@ -245,7 +245,7 @@ class Controller {
      */
     addCollectorbot(playerId, playerNumber, problemId) {
         let config = {
-            type: 'collector',
+            type: 'collectionBot',
             playerId: playerId,
             playerNumber: playerNumber,
             problemId: problemId
@@ -265,7 +265,7 @@ class Controller {
 
         if (opponent) {
             let config = {
-                type: 'assault',
+                type: 'assaultBot',
                 playerId: playerId,
                 opponentPlayerId: opponent.playerId,
                 playerNumber: playerNumber
@@ -276,6 +276,11 @@ class Controller {
                 `Attempted to add assault bot for player ${playerNumber}, but no opponent found`
             );
         }
+    }
+
+    onRemoveBot(botType, playerId, playerNumber) {
+        const botCount = this.gameEngine.getNBots(playerNumber, botType);
+        this.playerMap.publish(playerId, `${botType}Count`, { botCount });
     }
 
     async addToResourceCount(playerId, gameObjectId) {

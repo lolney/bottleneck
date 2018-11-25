@@ -1,5 +1,6 @@
 import SocketContext from './SocketContext';
 import React from 'react';
+import withSocket from './withSocket.jsx';
 
 /**
  * Handles socket events with request-response pattern
@@ -7,8 +8,13 @@ import React from 'react';
  * Backed by the Socket context, but can be replaced for testing by a socket prop.
  * @param {React.Component} WrappedComponent
  * @param {function} initialState - (socket) => state
+ * @param {*} handlers - an array of event, handler pairs, where handler is a fn from data -> state, passed to withSocket
  */
-export default function withSocketReq(WrappedComponent, getInitialState) {
+export default function withSocketReq(
+    WrappedComponent,
+    handlers,
+    getInitialState
+) {
     class WithSocketReq extends React.Component {
         constructor(props) {
             super(props);
@@ -27,6 +33,20 @@ export default function withSocketReq(WrappedComponent, getInitialState) {
                 activeRequests: 0,
                 data: getInitialState(this.socket)
             };
+            this.Component = withSocket(WrappedComponent, handlers, () => {
+                return this.state.data;
+            });
+        }
+
+        shouldComponentUpdate(props, state) {
+            console.log(
+                'component is updating:',
+                this.state,
+                this.props,
+                props,
+                state
+            );
+            return true;
         }
 
         fetch(event, req) {
@@ -34,7 +54,11 @@ export default function withSocketReq(WrappedComponent, getInitialState) {
                 if (resp.type == 'SUCCESS') {
                     this.setState({
                         activeRequests: this.state.activeRequests - 1,
-                        data: { ...this.state.data, ...resp.data }
+                        data: {
+                            ...this.state.data,
+                            ...resp.data,
+                            _nonce: Math.random()
+                        }
                     });
                 } else {
                     console.error(
@@ -52,7 +76,7 @@ export default function withSocketReq(WrappedComponent, getInitialState) {
 
         render() {
             return (
-                <WrappedComponent
+                <this.Component
                     loading={this.state.activeRequests > 0}
                     fetch={this.fetch}
                     {...this.state.data}
