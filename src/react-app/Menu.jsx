@@ -25,7 +25,7 @@ class Menu extends React.Component {
                 <div className="header">
                     <h1>Main Menu</h1>
                 </div>
-                <div className="menuElements bootstrap-styles">
+                <div className="menuElements">
                     <ButtonToolbar>
                         <ControlledButton
                             className="menu-button"

@@ -85,6 +85,11 @@ class MiniButtons extends React.Component {
                 <TooltipWrapper
                     triggerProps={{ placement: 'left' }}
                     text={`Buy an assault creep for ${assaultBot.cost}`}
+                    disabled={
+                        props.initialLoading ||
+                        props.loading ||
+                        !canAfford(props.resources, assaultBot.cost)
+                    }
                 >
                     <Button
                         ref={this.container}
