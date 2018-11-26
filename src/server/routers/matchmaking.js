@@ -26,7 +26,7 @@ export class MatchmakingRouter {
     get router() {
         const router = express.Router();
 
-        router.post('/find_game', async (req, res) => {
+        router.post('/match', async (req, res) => {
             if (!req.query) {
                 res.status(500).send('Must include querystring');
             } else {

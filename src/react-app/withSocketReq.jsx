@@ -38,17 +38,6 @@ export default function withSocketReq(
             });
         }
 
-        shouldComponentUpdate(props, state) {
-            console.log(
-                'component is updating:',
-                this.state,
-                this.props,
-                props,
-                state
-            );
-            return true;
-        }
-
         fetch(event, req) {
             this.socket.once(event, (resp) => {
                 if (resp.type == 'SUCCESS') {

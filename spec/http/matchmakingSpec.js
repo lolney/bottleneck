@@ -16,14 +16,14 @@ describe('Matchmaking', () => {
 
     it('responds with error when querystring not supplied', (done) => {
         request(app)
-            .post('/find_game')
+            .post('/match')
             .expect(500)
             .end(done);
     });
 
     it('terminates properly', (done) => {
         request(app)
-            .post('/find_game?mode=vs')
+            .post('/match?mode=vs')
             .timeout(100)
             .expect(200, (err) => {
                 expect(err.code).toEqual('ECONNABORTED');
@@ -36,7 +36,7 @@ describe('Matchmaking', () => {
         let reqs = await Promise.all(
             [0, 1].map((i) =>
                 request(app)
-                    .post('/find_game?mode=vs')
+                    .post('/match?mode=vs')
                     .expect(200)
             )
         );
