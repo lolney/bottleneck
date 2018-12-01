@@ -63,6 +63,9 @@ class Controller {
 
     /**
      * Register the routes for `socket`
+     *
+     * See readme for documentation.
+     *
      * @param {socketIO} socket
      */
     addPlayer(playerId, playerNumber, socket) {
