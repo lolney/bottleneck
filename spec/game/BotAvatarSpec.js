@@ -112,7 +112,8 @@ describe('AssaultBotAvatar', () => {
         let controller = {
             doAssault: () => {
                 assaulted = true;
-            }
+            },
+            onRemoveBot: () => {}
         };
 
         avatar.attach(controller, gameWorld, gameEngine);
