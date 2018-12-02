@@ -3,11 +3,11 @@ dist: trusty
 services:
   - postgresql
 addons:
-  postgresql: "9.6"
+  postgresql: "9.5"
 sudo: true
 before_install:
-  - sudo apt-get install postgresql-9.6-postgis-2.4 postgis -y -q
-  - sudo service postgresql start 9.6
+  - sudo apt-get install -y postgresql-9.5-postgis-2.3
+  - sudo service postgresql restart
   - psql -c 'create database bottleneck_development;' -U postgres
   - psql -U postgres -c "create extension postgis"
 env:
