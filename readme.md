@@ -1,4 +1,5 @@
 [![Waffle.io - Columns and their card count](https://badge.waffle.io/lolney/bottleneck.svg?columns=all)](https://waffle.io/lolney/bottleneck)
+![build](https://travis-ci.org/lolney/bottleneck.svg?branch=master)
 
 # Bottleneck
 

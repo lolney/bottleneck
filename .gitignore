@@ -26,3 +26,5 @@ src/index.js
 dist/*
 
 *.log
+
+\.nyc_output/
