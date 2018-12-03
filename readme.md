@@ -20,6 +20,8 @@ Communication between the game server and client is handled with a websockets (s
 
 Like event subscriptions, but response is intended only for a single target. A per-pair hash ensures that, even in the event of multiple requests on the same event socket -- plus pipelining or server-side delays that mean requests are returned out-of-order -- each request makes it to the correct target.
 
+Whether this should be done over websockets instead of HTTP is questionable, but there is [precedent](https://github.com/swagger-api/swagger-socket/wiki/SwaggerSocket-Protocol) for this sort of usage. It means forgoing the tools available for HTTP APIs in favor of simplifying connection management (using the same websocket for all communication).
+
 Usage:
 
 ```
@@ -34,7 +36,7 @@ Response format:
 ```
 {
     hash: string;
-    status: 'ERROR' || 'SUCCESS';
+    status: 'ERROR' | 'SUCCESS';
     data?: {};
     msg?: string;
 }

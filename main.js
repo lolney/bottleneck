@@ -3,6 +3,15 @@ import socketIO from 'socket.io';
 import path from 'path';
 import matchmakingRouter from './src/server/routers/matchmaking';
 import logger from './src/server/Logger';
+import * as Sentry from '@sentry/node';
+
+if (process.env.SENTRY_DSN) {
+    Sentry.init({
+        dsn: process.env.SENTRY_DSN
+    });
+} else {
+    logger.warn('SENTRY_DSN env variable not set');
+}
 
 const PORT = process.env.PORT || 3000;
 const INDEX = path.join(__dirname, '/static');
