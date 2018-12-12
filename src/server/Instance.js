@@ -2,6 +2,7 @@
 import Trace from 'lance/lib/Trace';
 import MyServerEngine from './MyServerEngine';
 import MyGameEngine, { Status } from '../common/MyGameEngine';
+import logger from './Logger';
 
 export default class Instance {
     // Game Instances
@@ -41,14 +42,29 @@ export default class Instance {
 
     launch(stopCallback) {
         this.stopCallback = stopCallback;
-        this.gameEngine.setStatus(Status.IN_PROGRESS);
+        this.setState(Status.IN_PROGRESS);
     }
 
     stop() {
-        console.log('Stopping instance');
+        logger.info('Stopping instance');
         if (this.stopCallback) this.stopCallback();
         this.gameEngine.stop();
         this.serverEngine.scheduler.stop();
+    }
+
+    suspend() {
+        const state = Status.SUSPENDED;
+        this.setState(state);
+    }
+
+    start() {
+        const state = Status.IN_PROGRESS;
+        this.setState(state);
+    }
+
+    setState(state) {
+        this.gameEngine.setStatus(state);
+        this.serverEngine.controller.broadcastGameState(state);
     }
 
     onPlayerDisconnected() {
@@ -57,10 +73,15 @@ export default class Instance {
             Object.keys(this.serverEngine.connectedPlayers).length == 0
         ) {
             this.stop();
+        } else {
+            this.suspend();
         }
     }
 
     onPlayerConnected(socket) {
+        if (Object.keys(this.serverEngine.connectedPlayers).length == 0) {
+            this.start();
+        }
         this.serverEngine.onPlayerConnected(socket);
     }
 }

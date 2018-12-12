@@ -336,6 +336,10 @@ class Controller {
         }
     }
 
+    broadcastGameState(state) {
+        this.playerMap.publishAll('gameState', { state });
+    }
+
     async pushCount(playerId, name, count, shouldReset = false) {
         this.playerMap.publish(playerId, 'resourceUpdate', {
             name: name,

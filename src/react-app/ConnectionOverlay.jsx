@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withSocket from './withSocket.jsx';
+import { Status } from '../common/MyGameEngine';
 
 const State = Object.freeze({
     Connected: 'connected',
     Connecting: 'connecting',
+    OpponentConnecting: 'opponent connecting',
     Loading: 'loading',
     Authenticating: 'authenticating',
     Finishing: 'finishing',
@@ -20,6 +22,12 @@ const SocketFilter = function({ socket, camera }) {
                     'connect',
                     () => ({
                         connected: true
+                    })
+                ],
+                [
+                    'gameState',
+                    (data) => ({
+                        opponentConnected: data.state != Status.SUSPENDED
                     })
                 ],
                 [
@@ -39,7 +47,8 @@ const SocketFilter = function({ socket, camera }) {
                 connected: socket.connected,
                 authenticated: true,
                 matchmaking: false,
-                camera: camera
+                camera: camera,
+                opponentConnected: true
             })
         );
         return <Wrapped socket={socket} />;
@@ -50,20 +59,25 @@ const SocketFilter = function({ socket, camera }) {
                 connected={false}
                 authenticated={false}
                 camera={camera}
+                opponentConnected={false}
             />
         );
     }
 };
 
+// TODO: consider treating this as a state machine
 const ConnectionOverlayContainer = function({
     connected,
     authenticated,
     camera,
-    matchmaking
+    matchmaking,
+    opponentConnected
 }) {
     let state;
     if (matchmaking) {
         state = State.Matchmaking;
+    } else if (!opponentConnected) {
+        state = State.OpponentConnecting;
     } else if (camera && connected && authenticated) {
         state = State.Connected;
     } else if (connected && authenticated) {

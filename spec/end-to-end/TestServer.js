@@ -39,4 +39,8 @@ export default class TestServer {
     get gameEngine() {
         return this.instanceManager.instances[this.gameId].gameEngine;
     }
+
+    get instance() {
+        return this.instanceManager.instances[this.gameId];
+    }
 }

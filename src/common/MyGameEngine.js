@@ -17,9 +17,10 @@ import { WIDTH, HEIGHT, getSiegeItemFromId } from '../config';
 
 /** This is only used server-side */
 export const Status = {
-    INITIALIZING: Symbol('initializing'),
-    IN_PROGRESS: Symbol('in progress'),
-    DONE: Symbol('done')
+    INITIALIZING: 'initializing',
+    IN_PROGRESS: 'inProgress',
+    SUSPENDED: 'suspended',
+    DONE: 'done'
 };
 
 export default class MyGameEngine extends GameEngine {
