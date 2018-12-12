@@ -11,6 +11,7 @@ function loadStories() {
     require('../stories/defenses.js');
     require('../stories/hud.js');
     require('../stories/menu.js');
+    require('../stories/connectionOverlay.js');
 
     // You can require as many stories as you need.
 }
