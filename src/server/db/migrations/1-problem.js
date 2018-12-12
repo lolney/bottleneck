@@ -70,7 +70,10 @@ let migrationCommands = [
                 objectType: {
                     type: Sequelize.TEXT
                 },
-                behaviorType: { type: Sequelize.ENUM('resource', 'defence') },
+                behaviorType: { type: Sequelize.ENUM('resource', 'defense') },
+                collected: {
+                    type: Sequelize.BOOLEAN
+                },
                 problemId: {
                     type: Sequelize.UUID,
                     references: {
@@ -204,6 +207,131 @@ let migrationCommands = [
             },
             {}
         ]
+    },
+    {
+        fn: 'createTable',
+        params: [
+            'players',
+            {
+                id: {
+                    type: Sequelize.UUID,
+                    primaryKey: true,
+                    defaultValue: Sequelize.UUIDV4
+                },
+                playerNumber: {
+                    type: Sequelize.INTEGER
+                },
+                location: {
+                    allowNull: true,
+                    type: Sequelize.GEOMETRY('POINT')
+                },
+                userId: {
+                    type: Sequelize.UUID,
+                    references: {
+                        model: 'users',
+                        key: 'id'
+                    }
+                },
+                createdAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                },
+                updatedAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                }
+            },
+            {}
+        ]
+    },
+    {
+        fn: 'createTable',
+        params: [
+            'resources',
+            {
+                id: {
+                    type: Sequelize.UUID,
+                    primaryKey: true,
+                    defaultValue: Sequelize.UUIDV4
+                },
+                parent: {
+                    type: Sequelize.TEXT
+                },
+                name: {
+                    type: Sequelize.TEXT
+                },
+                count: {
+                    type: Sequelize.INTEGER
+                },
+                playerId: {
+                    allowNull: true,
+                    type: Sequelize.UUID,
+                    references: {
+                        model: 'players',
+                        key: 'id'
+                    }
+                },
+                gameObjectId: {
+                    allowNull: true,
+                    type: Sequelize.UUID,
+                    references: {
+                        model: 'gameObjects',
+                        key: 'id'
+                    }
+                },
+                createdAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                },
+                updatedAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                }
+            },
+            {}
+        ]
+    },
+    {
+        fn: 'createTable',
+        params: [
+            'bases',
+            {
+                id: {
+                    type: Sequelize.UUID,
+                    primaryKey: true,
+                    defaultValue: Sequelize.UUIDV4
+                },
+                location: {
+                    type: Sequelize.GEOMETRY('POINT')
+                },
+                hp: {
+                    type: Sequelize.INTEGER
+                },
+                playerId: {
+                    allowNull: true,
+                    type: Sequelize.UUID,
+                    references: {
+                        model: 'players',
+                        key: 'id'
+                    }
+                },
+                createdAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                },
+                updatedAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                }
+            },
+            {}
+        ]
     }
 ];
 
@@ -238,7 +366,16 @@ module.exports = {
                 cascade: true
             }),
             queryInterface.dropTable('problems'),
-            queryInterface.dropTable('users')
+            queryInterface.dropTable('resources'),
+            queryInterface.dropTable('bases'),
+            queryInterface.dropTable('players', {
+                force: true,
+                cascade: true
+            }),
+            queryInterface.dropTable('users', {
+                force: true,
+                cascade: true
+            })
         ]);
     }
 };

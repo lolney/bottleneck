@@ -42,7 +42,6 @@ module.exports = (sequelize, DataTypes) => {
             hooks: {
                 beforeCreate: (user, options) => {
                     return encryptPassword(user.password).then((success) => {
-                        console.log('Encrypted password');
                         user.password = success;
                     });
                 }
@@ -71,6 +70,7 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'userId',
             constraints: false
         });
+        User.hasOne(models.player);
     };
 
     return User;

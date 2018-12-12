@@ -4,6 +4,9 @@ module.exports = {
     },
 
     down: function(queryInterface, Sequelize) {
-        return queryInterface.sequelize.query('DROP EXTENSION postgis;');
+        return queryInterface.sequelize.query('DROP EXTENSION postgis;', {
+            force: true,
+            cascade: true
+        });
     }
 };

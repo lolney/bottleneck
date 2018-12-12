@@ -1,17 +1,20 @@
 'use strict';
 
 import DynamicObject from 'lance/serialize/DynamicObject';
-import Serializer from 'lance/serialize/Serializer';
+import BaseTypes from 'lance/serialize/BaseTypes';
 import GameObjectActor from '../client/GameObjectActor.js';
+import { Player } from '../config';
 
 export default class Avatar extends DynamicObject {
     static get netScheme() {
         return Object.assign(
             {
-                objectType: { type: Serializer.TYPES.STRING },
-                dbId: { type: Serializer.TYPES.STRING },
-                solvedBy: { type: Serializer.TYPES.STRING },
-                problemId: { type: Serializer.TYPES.STRING }
+                objectType: { type: BaseTypes.TYPES.STRING },
+                behaviorType: { type: BaseTypes.TYPES.STRING },
+                dbId: { type: BaseTypes.TYPES.STRING },
+                solvedBy: { type: BaseTypes.TYPES.STRING },
+                collected: { type: BaseTypes.TYPES.STRING },
+                problemId: { type: BaseTypes.TYPES.STRING }
             },
             super.netScheme
         );
@@ -23,12 +26,28 @@ export default class Avatar extends DynamicObject {
             this.objectType = props.objectType;
             this.dbId = props.dbId;
             this.solvedBy = props.solvedBy;
+            this.collected = props.collected.toString();
             this.problemId = props.problemId;
+            this.behaviorType = props.behaviorType;
         }
         this.class = Avatar;
-        // TODO: add this to a config
-        this.width = 100;
-        this.height = 25;
+        this.width = Player.width;
+        this.height = Player.height;
+    }
+
+    get blocks() {
+        return this.behaviorType == 'defense';
+    }
+
+    syncTo(other) {
+        super.syncTo(other);
+        if (this.collected != other.collected) {
+            console.log('setting resource to collected');
+            let target = other.actor ? other : this;
+            target.actor.handleSolutionFromPlayer(other.solvedBy, true);
+        }
+        this.collected = other.collected;
+        this.solvedBy = other.solvedBy;
     }
 
     onAddToWorld(gameEngine) {
@@ -39,7 +58,8 @@ export default class Avatar extends DynamicObject {
                 this.objectType,
                 this.problemId,
                 gameEngine.playerId,
-                this.solvedBy
+                this.solvedBy,
+                this.collected === 'true'
             );
         }
     }

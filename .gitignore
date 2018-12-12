@@ -13,6 +13,7 @@ notes\.txt
 \.vscode/
 
 test\.bmp
+blank\.bmp
 *.DS_Store
 .env
 dist/bundle\.js\.map
@@ -23,3 +24,7 @@ dist/main.js
 
 src/index.js
 dist/*
+
+*.log
+
+\.nyc_output/

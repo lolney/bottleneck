@@ -1,20 +1,29 @@
 'use strict';
 
 import Renderer from 'lance/render/Renderer';
-import { WIDTH, HEIGHT } from '../common/MyGameEngine';
+import { WIDTH, HEIGHT } from '../config';
 import TwoVector from 'lance/serialize/TwoVector';
 import DragHandler from './DragHandler';
+import { getAssetPaths } from '../config';
 
 let PIXI = null;
 
 export default class MyRenderer extends Renderer {
     get ASSETPATHS() {
-        return {
-            player: 'assets/sprites/walking.json',
-            tree: 'assets/sprites/Rock1.png',
-            background: '/assets/grass.jpg',
-            google: 'assets/sprites/tree1.png'
-        };
+        return Object.assign(
+            {
+                player: 'assets/sprites/walking.json',
+                collectionBot: 'assets/sprites/botwalk.json',
+                assaultBot: 'assets/sprites/assault-botwalk.json',
+                tree: 'assets/sprites/Rock2.json',
+                background: '/assets/grass.jpg',
+                defense: 'assets/sprites/tree1.png',
+                wall: 'assets/rock-wall-2.png',
+                dirt: 'assets/dirt.png',
+                questionMark: 'assets/questionMark.png'
+            },
+            getAssetPaths()
+        );
     }
 
     constructor(gameEngine, clientEngine) {
@@ -33,8 +42,6 @@ export default class MyRenderer extends Renderer {
     }
 
     init() {
-        console.log('init renderer');
-
         this.viewportWidth = window.innerWidth;
         this.viewportHeight = window.innerHeight;
 
@@ -78,6 +85,16 @@ export default class MyRenderer extends Renderer {
             this.viewportHeight
         );
 
+        window.onresize = (event) => {
+            let w = window.innerWidth;
+            let h = window.innerHeight;
+
+            this.renderer.view.style.width = w + 'px';
+            this.renderer.view.style.height = h + 'px';
+
+            this.renderer.resize(w, h);
+        };
+
         document.body
             .querySelector('.pixiContainer')
             .appendChild(this.renderer.view);
@@ -110,6 +127,7 @@ export default class MyRenderer extends Renderer {
             this.camera.x += this.viewportWidth / 2 - position.x;
             this.camera.y += this.viewportHeight / 2 - position.y;
             this.prev = position.clone();
+            this.gameEngine.emit('cameraMoved');
         }
     }
 
@@ -118,7 +136,7 @@ export default class MyRenderer extends Renderer {
      */
     onReceiveSolution(problemId, playerId) {
         for (const actor of this.gameObjectActors[problemId]) {
-            actor.handleSolutionFromPlayer(playerId);
+            actor.handleSolutionFromPlayer(playerId, false);
         }
     }
 

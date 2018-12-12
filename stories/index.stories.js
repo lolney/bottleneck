@@ -2,7 +2,7 @@ import React from 'react';
 
 import { storiesOf } from '@storybook/react';
 
-import { VisualTreeComponent } from '../src/react-app/BinaryTreeComponent.jsx';
+import { VisualTreeComponent } from '../src/react-app/problems/BinaryTreeComponent.jsx';
 import EditorSocketWatcher from '../src/react-app/EditorSocketWatcher.jsx';
 import ImageProblem from '../src/problem-engine/ImageProblem';
 import BinaryTreeProblem from '../src/problem-engine/BinaryTreeProblem';
@@ -10,6 +10,7 @@ import Windows from '../src/react-app/Windows.jsx';
 
 const mockEngine = (data) => ({
     socket: {
+        removeListener: () => {},
         on: (event, callback) => {
             window.setTimeout(() => {
                 callback(data);
@@ -54,7 +55,6 @@ storiesOf('BinaryTreeComponent', module)
         let fetchProps = async () => {
             let problem = new BinaryTreeProblem();
             let serialized = await problem.serialize();
-            console.log(serialized);
             return { socket: mockEngine({ problem: serialized }).socket };
         };
         return <AsyncComponent fetchProps={fetchProps} />;

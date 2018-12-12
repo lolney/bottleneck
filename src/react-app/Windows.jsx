@@ -1,6 +1,7 @@
 import React from 'react';
 import Window from './Window.jsx';
 import PropTypes from 'prop-types';
+import Menu from './Menu.jsx';
 
 export default class Windows extends React.Component {
     constructor(props) {
@@ -17,6 +18,11 @@ export default class Windows extends React.Component {
         this.getTopKey = this.getTopKey.bind(this);
         this.getTopOffset = this.getTopOffset.bind(this);
 
+        this.addMenu = this.addMenu.bind(this);
+        this.removeMenu = this.removeMenu.bind(this);
+        this.addObject = this.addObject.bind(this);
+        this.createMenu = this.createMenu.bind(this);
+
         let windows = {};
         if (props.children) {
             let children = props.children.length
@@ -30,7 +36,8 @@ export default class Windows extends React.Component {
 
         this.state = {
             windows: windows,
-            order: Object.keys(windows)
+            order: Object.keys(windows),
+            callbacks: {}
         };
     }
 
@@ -45,7 +52,7 @@ export default class Windows extends React.Component {
     removeTop(event) {
         if (event.code != 'Escape') return;
 
-        let topKey = this.getTopKey();
+        let topKey = this.getTopKey(true);
         if (topKey != undefined) {
             this.removeWindow(topKey);
         }
@@ -70,9 +77,14 @@ export default class Windows extends React.Component {
         });
     }
 
-    getTopKey() {
+    getTopKey(includeMenu = false) {
         let length = this.state.order.length;
-        return this.state.order[length - 1];
+        let top = this.state.order[length - 1];
+        if (top === 'menu' && !includeMenu) {
+            return this.state.order[length - 2];
+        } else {
+            return top;
+        }
     }
 
     getTopOffset() {
@@ -105,16 +117,54 @@ export default class Windows extends React.Component {
         return { key: key, window: window, ref: ref };
     }
 
-    addWindow(child, userKey) {
-        if (userKey in this.state.windows) return false;
+    createMenu(socket) {
+        return (
+            <Menu
+                key="menu"
+                socket={socket}
+                addWindow={this.addWindow}
+                removeWindow={this.removeWindow}
+            />
+        );
+    }
+
+    addMenu(callback, socket) {
+        if ('menu' in this.state.windows) return false;
+
+        let menu = this.createMenu(socket);
+        return this.addObject('menu', menu, callback);
+    }
+
+    removeMenu() {
+        this.removeWindow('menu');
+    }
+
+    /**
+     * Add a window that contains the element `child`
+     * @param {React.Element} child
+     * @param {*} userKey - optional - unique key used to identify the window
+     * @param {*} callback  - optional - called when the window is removed
+     */
+    addWindow(child, userKey, callback) {
+        if (userKey in this.state.windows || userKey === 'menu') return false;
 
         let { key, window } = this.createWindow(child, userKey);
+        return this.addObject(key, window, callback);
+    }
+
+    addObject(key, object, callback) {
         let windows = { ...this.state.windows };
-        windows[key] = window;
+        windows[key] = object;
+
+        let callbacks = { ...this.state.callbacks };
+        if (callback) {
+            callbacks[key] = callback;
+        }
 
         this.setState({
             windows: windows,
-            order: [...this.state.order, key]
+            order: [...this.state.order, key],
+            callbacks: callbacks
         });
         return true;
     }
@@ -124,12 +174,19 @@ export default class Windows extends React.Component {
         let windows = { ...this.state.windows };
         delete windows[key];
 
+        let callbacks = { ...this.state.callbacks };
+        if (callbacks[key]) {
+            callbacks[key]();
+            delete callbacks[key];
+        }
+
         this.setState({
             windows: windows,
             order: [
                 ...this.state.order.slice(0, i),
                 ...this.state.order.slice(i + 1)
-            ]
+            ],
+            callbacks: callbacks
         });
     }
 

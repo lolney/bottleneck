@@ -1,51 +1,105 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import withSocket from './withSocket.jsx';
 
 const State = Object.freeze({
     Connected: 'connected',
     Connecting: 'connecting',
     Loading: 'loading',
-    Authenticating: 'authenticating'
+    Authenticating: 'authenticating',
+    Finishing: 'finishing',
+    Matchmaking: 'matchmaking'
 });
 
-export default class ConnectionOverlay extends React.Component {
-    constructor(props) {
-        super(props);
-        if (this.props.socket) {
-            this.state = {
-                authenticated: false,
-                state: this.props.socket.connected
-                    ? State.Connected
-                    : State.Connecting
-            };
-            this.props.socket.addEventListener('connect', (event) => {
-                console.log('connected');
-                if (this.state.authenticated)
-                    this.setState({ state: State.Connected });
-                else this.setState({ state: State.Authenticating });
-            });
-            this.props.socket.addEventListener('disconnect', (event) => {
-                console.log('disconnected');
-                this.setState({
-                    state: State.Connecting,
-                    authenticated: false
-                });
-            });
-            this.props.socket.addEventListener('authenticated', (event) => {
-                console.log('authenticated');
-                this.setState({ state: State.Connected, authenticated: true });
-            });
-        } else {
-            this.state = { state: State.Loading };
-        }
+const SocketFilter = function({ socket, camera }) {
+    if (socket) {
+        let Wrapped = withSocket(
+            ConnectionOverlayContainer,
+            [
+                [
+                    'connect',
+                    () => ({
+                        connected: true
+                    })
+                ],
+                [
+                    'disconnect',
+                    () => ({
+                        connected: false
+                    })
+                ],
+                [
+                    'authenticated',
+                    () => ({
+                        authenticated: true
+                    })
+                ]
+            ],
+            () => ({
+                connected: socket.connected,
+                authenticated: true,
+                matchmaking: false,
+                camera: camera
+            })
+        );
+        return <Wrapped socket={socket} />;
+    } else {
+        return (
+            <ConnectionOverlayContainer
+                matchmaking={true}
+                connected={false}
+                authenticated={false}
+                camera={camera}
+            />
+        );
     }
+};
 
-    render() {
-        switch (this.state.state) {
-            case State.Connected:
-                return null;
-            default:
-                return <div> {this.state.state} </div>;
-        }
+const ConnectionOverlayContainer = function({
+    connected,
+    authenticated,
+    camera,
+    matchmaking
+}) {
+    let state;
+    if (matchmaking) {
+        state = State.Matchmaking;
+    } else if (camera && connected && authenticated) {
+        state = State.Connected;
+    } else if (connected && authenticated) {
+        state = State.Finishing;
+    } else if (connected) {
+        state = State.Authenticating;
+    } else if (camera) {
+        state = State.Connecting; // hit this if not connected, even if authenticated
+    } else {
+        state = State.Loading;
     }
-}
+    return <ConnectionOverlay state={state} />;
+};
+
+const ConnectionOverlay = ({ state }) => {
+    switch (state) {
+    case State.Connected:
+        return null;
+    default:
+        return (
+            <div className="loading-screen">
+                <div id="spinner" className="spinner">
+                    <div className="loader-wrapper">
+                        <div className="loader">
+                            {[...Array(8).keys()].map((i) => (
+                                <div key={i} />
+                            ))}
+                        </div>
+                    </div>
+                    <div className="text-container">
+                        <div className="loading-text">{state}</div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+};
+
+export default SocketFilter;

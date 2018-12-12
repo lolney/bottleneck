@@ -2,37 +2,57 @@ import React from 'react';
 import EditorModal from './EditorModal.jsx';
 import PropTypes from 'prop-types';
 import Windows from './Windows.jsx';
+import { Provider } from 'react-alert';
+import AlertTemplate from 'react-alert-template-basic';
+
+const options = {
+    timeout: 0,
+    position: 'bottom center'
+};
 
 /**
- * Handles socket interactions
+ * Handles socket interactions for all editor windows
+ * Keeps track of which problems are currently open, declining to add
+ * them until the window has been closed.
  */
 export default class EditorSocketWatcher {
     constructor(socket, addWindow) {
         this.socket = socket;
+        this.addWindow = addWindow;
+        this.openProblems = {};
 
         this.onSolution = this.onSolution.bind(this);
-        socket.on('problem', (data) => {
-            let solved = data.isSolved;
-            let problem = data.problem;
-            addWindow(
-                <EditorModal
-                    onSolution={solved ? () => {} : this.onSolution}
-                    problem={problem}
-                    code={solved ? data.code : problem.code}
-                />,
-                data.id
-            );
-        });
 
-        socket.on('solvedProblem', (data) => {
-            this.windows.current.addWindow(
+        socket.on('problem', this.receiveProblem.bind(this));
+
+        socket.on('solvedProblem', this.receiveSolvedProblem.bind(this));
+    }
+
+    /**
+     * @private
+     */
+    receiveProblem({ id, isSolved, problem, code }) {
+        if (!this.openProblems[problem.id]) {
+            this.addWindow(
                 <EditorModal
-                    onSolution={() => {}}
-                    problem={data.problem}
-                    code={data.code}
-                />
+                    onSolution={isSolved ? () => {} : this.onSolution}
+                    problem={problem}
+                    code={isSolved ? code : problem.code}
+                />,
+                id,
+                () => delete this.openProblems[problem.id]
             );
-        });
+        }
+        this.openProblems[problem.id] = true;
+    }
+
+    /**
+     * @private
+     */
+    receiveSolvedProblem({ problem, code }) {
+        this.addWindow(
+            <EditorModal onSolution={() => {}} problem={problem} code={code} />
+        );
     }
 
     onSolution(problemId, generator) {

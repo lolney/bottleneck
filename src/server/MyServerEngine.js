@@ -4,50 +4,88 @@ import ServerEngine from 'lance/ServerEngine';
 import Avatar from '../common/Avatar';
 import PlayerAvatar from '../common/PlayerAvatar';
 import Controller from './Controller';
-import { objects } from './db';
+import { objects } from './db/views/gameObject';
+import GameWorld from './GameWorld';
+import logger from './Logger';
 
 export default class MyServerEngine extends ServerEngine {
     constructor(io, gameEngine, inputOptions) {
         super(io, gameEngine, inputOptions);
-        Controller.attachGameEngine(gameEngine);
+        this.gameWorld = GameWorld.generate();
+        this.controller = new Controller(gameEngine, this.gameWorld);
+
+        this.players = {
+            1: undefined,
+            2: undefined
+        };
     }
 
     async start() {
         super.start();
         let objs = await objects();
         this.gameEngine.makeTrees(objs);
-        this.gameEngine.makeWalls();
-        this.gameEngine.on('collisionStart', MyServerEngine.collision);
-    }
+        this.gameEngine.addObjects(this.gameWorld.getObjects());
 
-    static collision(e) {
-        let collisionObjects = Object.keys(e).map((k) => e[k]);
-        let object = collisionObjects.find((o) => o instanceof Avatar);
-        let player = collisionObjects.find((o) => o instanceof PlayerAvatar);
-
-        if (!object || !player) return;
-
-        console.log('Emitting problem:display event: ', player.playerId);
-        console.log('Object id: ', object.dbId);
-
-        Controller.pushProblem(player.playerId, object.dbId);
+        this.gameEngine.registerCollisionStart(
+            (o) => o instanceof Avatar && o.behaviorType == 'resource',
+            (o) => o instanceof PlayerAvatar,
+            (object, player) =>
+                this.controller.pushProblem(player.playerId, object.dbId)
+        );
     }
 
     onPlayerConnected(socket) {
         super.onPlayerConnected(socket);
-        Controller.addPlayer(socket.playerId, socket);
-        this.gameEngine.makePlayer(socket.playerId);
+        let waitForAuth = () => {
+            if (socket.auth) {
+                logger.info('Authenticated. Creating player.');
+
+                const id = socket.client.playerDbId;
+                const number = socket.playerId;
+
+                this.createPlayer(id, number);
+                this.controller.addPlayer(id, number, socket);
+            } else setTimeout(waitForAuth, 100);
+        };
+        waitForAuth();
     }
 
-    onPlayerDisconnected(socketId, playerId) {
-        super.onPlayerDisconnected(socketId, playerId);
-        console.log(`removing player ${playerId}`);
-        let playerObjects = this.gameEngine.world.queryObjects({
-            playerId: playerId
+    createPlayer(id, number) {
+        this.gameEngine.makePlayer(
+            id,
+            number,
+            this.gameWorld.getStartingPosition(number)
+        );
+        this.gameEngine.emit('playerAdded', {
+            playerId: id,
+            playerNumber: number
+        });
+    }
+
+    onPlayerDisconnected(socketId, playerNumber) {
+        super.onPlayerDisconnected(socketId, playerNumber);
+        logger.info(`Removing player ${playerNumber}`);
+        let playerObjects = this.gameEngine.queryObjects({
+            playerNumber: playerNumber
         });
         playerObjects.forEach((obj) => {
             this.gameEngine.removeObjectFromWorld(obj.id);
+            if (obj.playerId) {
+                this.controller.removePlayer(obj.playerId);
+            }
         });
-        Controller.removePlayer(playerId);
+
+        this.players[playerNumber] = undefined;
+    }
+
+    getPlayerId(socket) {
+        logger.info('Assigning player number');
+        for (const [num, player] of Object.entries(this.players)) {
+            if (player == undefined) {
+                this.players[num] = socket;
+                return num;
+            }
+        }
+        throw new Error('Could not assign playerNumber to new player');
     }
 }

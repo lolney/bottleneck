@@ -1,15 +1,26 @@
+import { chainIncludes } from '../../../src/server/db';
 import {
     objects,
     problem,
-    checkPassword,
-    createUser,
+    getObjectResources,
+    markAsCollected
+} from '../../../src/server/db/views/gameObject';
+import {
+    setPlayerId,
+    addToResourceCount,
+    decrementHP,
+    getPlayerResources
+} from '../../../src/server/db/views/player';
+import { checkPassword, createUser } from '../../../src/server/db/views/user';
+import {
     addSolution,
     getSolutions,
-    chainIncludes,
-    setPlayerId,
-    getUserId
-} from '../../../src/server/db';
+    solvedProblem
+} from '../../../src/server/db/views/solvedProblem';
+
 import models from '../../../src/server/db/models';
+import TwoVector from 'lance/serialize/TwoVector';
+import { assaultBot, playerBase } from '../../../src/config';
 
 describe('chainIncludes', () => {
     it('returns the correct answer for a single include', () => {
@@ -35,12 +46,30 @@ describe('objects', () => {
                     expect(obj.dbId).toEqual(jasmine.any(String));
                     expect(obj.position.length).toEqual(2);
                     expect(obj.objectType).toEqual('tree');
+                    expect(obj.behaviorType).toEqual('resource');
                     expect(obj.problemId).toEqual(jasmine.any(String));
                     expect(obj.solvedBy).toBeDefined();
                 }
                 done();
             })
             .catch(done.fail);
+    });
+
+    it('can be marked as collected', async () => {
+        let objs = await objects();
+
+        expect(objs.length).toBeGreaterThan(0);
+        const id = objs[0].dbId;
+
+        await markAsCollected(id);
+        let obj = await models.gameObject.findOne({
+            where: { id: id }
+        });
+
+        expect(obj.collected).toEqual(true);
+
+        // revert
+        await obj.update({ collected: objs[0].collected });
     });
 });
 
@@ -221,6 +250,15 @@ describe('addSolution', () => {
         );
     });
 
+    it('can be found by solvedProblem', async () => {
+        for (const solution of solutions) {
+            const other = await solvedProblem(solution.id);
+
+            expect(other.code).toEqual(solution.code);
+            expect(other.problemId).toEqual(solution.problemId);
+        }
+    });
+
     it('correctly adds the code', () => {
         for (const solution of solutions) {
             expect(solution.code).toEqual(code);
@@ -247,15 +285,90 @@ describe('addSolution', () => {
 });
 
 describe('setPlayerId', () => {
-    it('correctly sets the user id', async () => {
-        let user = await models.user.findOne();
+    let user;
+    let player;
 
+    beforeAll(async () => {
+        user = await createUser('test4', 'test4', 'test4@test.com');
+    });
+
+    afterAll(async () => {
+        await player.destroy();
+        await user.destroy();
+    });
+
+    it('correctly sets the user id', async () => {
         expect(user.playerId).toEqual(null);
 
-        await setPlayerId(user.id, '1');
-        user = await models.user.findOne({ where: { id: user.id } });
+        player = await setPlayerId(user.id, 1, new TwoVector(0, 0));
 
-        expect(user.playerId).toEqual('1');
-        await setPlayerId(user.id, null);
+        expect(player.playerNumber).toEqual(1);
+
+        let base = await player.getBase();
+
+        expect(base.hp).toEqual(playerBase.baseHP);
+    });
+});
+
+describe('addToResourceCount', () => {
+    let user;
+    let player;
+
+    beforeAll(async () => {
+        user = await createUser('test3', 'test3', 'test3@test.com');
+        player = await setPlayerId(user.id, 0, new TwoVector(0, 0));
+    });
+
+    afterAll(async () => {
+        await player.destroy();
+        await user.destroy();
+    });
+
+    it('correctly adds resource count to newly-initialized player', async () => {
+        let gameObjects = await objects(); // get a random gameObject
+        let resources = gameObjects[0].resources;
+        let counts = resources.map((o) => o.count); // find resource count of
+
+        let newCount0 = await addToResourceCount(
+            player.id,
+            resources[0].name,
+            10
+        );
+        let newCount1 = await addToResourceCount(
+            player.id,
+            resources[1].name,
+            15
+        );
+
+        expect(newCount0).toEqual(10 + counts[0]);
+        expect(newCount1).toEqual(15 + counts[1]);
+    });
+
+    it('decrementHP correctly updates db', async () => {
+        let hp = await decrementHP(player.id);
+
+        expect(hp).toEqual(playerBase.baseHP - assaultBot.damage);
+
+        let base = await player.getBase();
+
+        expect(base.hp).toEqual(hp);
+
+        while (hp > 0) {
+            hp = await decrementHP(player.id);
+        }
+
+        expect(hp).toEqual(0);
+    });
+});
+
+describe('getObjectResources', () => {
+    it('returns a list of resources', async () => {
+        let gameObjects = await objects(); // get a random gameObject
+        let obj = gameObjects[0];
+
+        let resources = await getObjectResources(obj.dbId);
+
+        expect(resources.length).toEqual(2);
+        expect(resources[0].count).not.toBe(null);
     });
 });

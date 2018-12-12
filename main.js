@@ -1,69 +1,35 @@
-'use strict';
-
 import express from 'express';
 import socketIO from 'socket.io';
 import path from 'path';
-import { checkPassword, getUserId, setPlayerId } from './src/server/db';
+import matchmakingRouter from './src/server/routers/matchmaking';
+import logger from './src/server/Logger';
+import * as Sentry from '@sentry/node';
+
+if (process.env.SENTRY_DSN) {
+    Sentry.init({
+        dsn: process.env.SENTRY_DSN
+    });
+} else {
+    logger.warn('SENTRY_DSN env variable not set');
+}
 
 const PORT = process.env.PORT || 3000;
-const INDEX = path.join(__dirname, './index.html');
+const INDEX = path.join(__dirname, '/static');
+const ASSETS = path.join(__dirname, '/assets');
+const DIST = path.join(__dirname, '/dist');
 
 // define routes and socket
 const server = express();
-server.get('/', function(req, res) {
-    res.sendFile(INDEX);
-});
-server.use('/', express.static(path.join(__dirname, '.')));
 let requestHandler = server.listen(PORT, () =>
-    console.log(`Listening on ${PORT}`)
+    logger.info(`Listening on ${PORT}`)
 );
 
-/*
-import bodyParser from 'body-parser';
-server.use(bodyParser);
-server.post('/solution', function(req, res) {
-    addSolution(req.user, req.query.problemId, req.body);
-});*/
-
-// Socket auth
 const io = socketIO(requestHandler);
-require('socketio-auth')(io, {
-    authenticate: async function(socket, data, callback) {
-        let username = data.username;
-        let password = data.password;
 
-        console.log(`User is logging in: ${data.username}`);
-        let succeeded = await checkPassword(username, password);
-        console.log(`Authentication succeeded: ${succeeded}`);
+server.use(express.static(INDEX));
+server.use('/assets', express.static(ASSETS));
+server.use('/dist', express.static(DIST));
 
-        let userId = await getUserId(username);
-        socket.client.userId = userId;
-        callback(null, succeeded);
+server.use(matchmakingRouter(io));
 
-        await setPlayerId(userId, socket.playerId);
-    },
-    timeout: 'none'
-});
-
-// Game Server
-import Trace from 'lance/lib/Trace';
-import MyServerEngine from './src/server/MyServerEngine';
-import MyGameEngine from './src/common/MyGameEngine';
-
-// Game Instances
-const gameEngine = new MyGameEngine({
-    traceLevel: Trace.TRACE_NONE,
-    collisionOptions: {
-        collisions: {
-            type: 'HSHG'
-        }
-    }
-});
-const serverEngine = new MyServerEngine(io, gameEngine, {
-    debug: {},
-    updateRate: 6,
-    timeoutInterval: 0
-});
-
-// start the game
-serverEngine.start();
+export default server;

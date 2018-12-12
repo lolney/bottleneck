@@ -1,17 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ENGINE_METHOD_DIGESTS } from 'constants';
 
 import EditorSocketWatcher from './EditorSocketWatcher.jsx';
 import ConnectionOverlay from './ConnectionOverlay.jsx';
+import VictoryOverlay from './VictoryOverlay.jsx';
 import Login from './Login.jsx';
 import HUD from './HUD.jsx';
+import HealthBarContainer from './HealthBarContainer.jsx';
 import Game from './Game.jsx';
 import Windows from './Windows.jsx';
+import SocketContext from './SocketContext';
+import ModeSelect from './modeSelect/ModeSelect.jsx';
 
-import DefencesBrowser from './defences/DefencesBrowser.jsx';
-import './CSS/Defences.scss';
-import MenuContainer from './MenuContainer.jsx';
+import './CSS/Defenses.scss';
+import './CSS/HUD.scss';
+import './CSS/Defenses.scss';
+import './CSS/Solutions.scss';
+import './CSS/Menu.scss';
+import './CSS/MenuWindow.scss';
+import './CSS/LoadingScreen.scss';
+import './CSS/VictoryOverlay.scss';
+import './CSS/HealthBar.scss';
 
 /*
 \ App
@@ -40,6 +49,7 @@ export class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            camera: false,
             token: true, // TODO: initialize as null and get from login
             socket: null
         };
@@ -48,11 +58,22 @@ export class App extends React.Component {
 
         this.windows = React.createRef();
         this.addWindow = this.addWindow.bind(this);
+        this.addMenu = this.addMenu.bind(this);
+        this.removeMenu = this.removeMenu.bind(this);
         this.removeWindow = this.removeWindow.bind(this);
+        this.onCameraMove = this.onCameraMove.bind(this);
     }
 
-    addWindow(elem, key) {
-        this.windows.current.addWindow(elem, key);
+    addWindow(elem, key, callback) {
+        this.windows.current.addWindow(elem, key, callback);
+    }
+
+    addMenu(callback, socket) {
+        this.windows.current.addMenu(callback, socket);
+    }
+
+    removeMenu() {
+        this.windows.current.removeMenu();
     }
 
     removeWindow(key) {
@@ -66,46 +87,72 @@ export class App extends React.Component {
     onReceiveSocket(socket) {
         new EditorSocketWatcher(socket, this.windows.current.addWindow);
 
-        socket.addEventListener('authenticated', (event) => {
-            this.setState({ socket: socket });
-        });
+        this.setState({ socket: socket });
+    }
+
+    onCameraMove() {
+        this.setState({ camera: true });
     }
 
     render() {
         return (
-            <div>
-                {!this.state.token && (
-                    <Login onReceiveToken={this.onReceiveToken} />
-                )}
-                {this.state.token && (
-                    <ConnectionOverlay
-                        key={this.state.socket == null}
-                        socket={this.state.socket}
-                    />
-                )}
-                <Windows ref={this.windows}>
-                    <DefencesBrowser imageSrcs={['assets/sprites/tree1.png']} />
-                </Windows>
-                {this.state.socket && (
-                    <MenuContainer
-                        addWindow={this.addWindow}
-                        removeWindow={this.removeWindow}
-                        socket={this.state.socket}
-                    />
-                )}
-                {this.state.token && (
-                    <Game
-                        onReceiveSocket={this.onReceiveSocket}
-                        token={this.state.token}
-                    />
-                )}
-            </div>
+            <SocketContext.Provider value={this.state.socket}>
+                <div>
+                    {!this.state.token && (
+                        <Login onReceiveToken={this.onReceiveToken} />
+                    )}
+                    {this.state.token && (
+                        <ConnectionOverlay
+                            key={this.state.socket == null}
+                            socket={this.state.socket}
+                            camera={this.state.camera}
+                        />
+                    )}
+                    {this.state.socket && (
+                        <VictoryOverlay socket={this.state.socket} />
+                    )}
+
+                    {this.state.socket && (
+                        <HealthBarContainer socket={this.state.socket} />
+                    )}
+
+                    <Windows ref={this.windows} />
+
+                    {this.state.socket && this.state.camera && (
+                        <HUD
+                            addMenu={this.addMenu}
+                            removeMenu={this.removeMenu}
+                            addWindow={this.addWindow}
+                            removeWindow={this.removeWindow}
+                            socket={this.state.socket}
+                        />
+                    )}
+                    {this.state.token && (
+                        <Game
+                            onReceiveSocket={this.onReceiveSocket}
+                            onCameraMove={this.onCameraMove}
+                            token={this.state.token}
+                        />
+                    )}
+                </div>
+            </SocketContext.Provider>
         );
     }
 }
 
+// @TODO: codesplitting
 export default function createApp() {
     window.addEventListener('DOMContentLoaded', () => {
-        ReactDOM.render(<App />, document.getElementById('app'));
+        const elem = document.getElementsByClassName('app')[0];
+        switch (elem.id) {
+        case 'game':
+            ReactDOM.render(<App />, elem);
+            break;
+        case 'mode_select':
+            ReactDOM.render(<ModeSelect />, elem);
+            break;
+        default:
+            break;
+        }
     });
 }

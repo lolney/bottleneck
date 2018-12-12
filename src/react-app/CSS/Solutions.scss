@@ -1,97 +1,40 @@
 .solutions {
-  .fieldset {
-    background: #f1f1f1;
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    padding: 1em 1em 1.5em;
-    width: 100%;
-    min-height: 20px;
-    text-align: center;
-    h1 {
-      margin-left: 1%;
-      margin-top: 1%;
-      color: black;
-      display: block;
+  @import "./Common.scss";
+  .solutions-container {
+    width: 75%;
+    .dropdown {
+      min-width: 100%;
       font: 300 1em/1.5em "Lato", sans-serif;
-      font-size: 3em;
+      font-size: 1em;
     }
-    input {
-      width: 50%;
+    .dropdown-menu {
+      min-width: 100%;
     }
-  }
-  .searchResults {
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    width: 100%;
-    text-align: center;
-    display: flex;
-    .sidebar {
-      background: #f1f1f1;
-      border: 1px solid #ddd;
-      padding: 1em;
-      height: 100%;
-      width: 25%;
-      min-height: 20px;
-      .bootstrap-styles {
-        .btn {
-          border: 1px solid #ddd;
-          min-width: 40px;
-          min-height: 80px;
-          margin-top: 0.5em;
-          margin-bottom: 0.5em;
-          padding: 0.25em;
-          display: flex;
-          width: 100%;
-          flex-wrap: wrap;
-          .column {
-            margin-left: 1%;
-            min-height: 100%;
-            margin-top: 1%;
-            flex: 50%;
-            color: black;
-            display: block;
-            font: 300 1em/1.5em "Lato", sans-serif;
-            font-size: 1em;
-            flex-wrap: wrap;
-          }
-        }
-      }
+    .btn {
+      width: 100%;
+      font: 300 1em/1.5em "Lato", sans-serif;
+      font-size: 1.25em;
     }
 
-    .solutions-container {
-      width: 75%;
-      .dropdown {
-        min-width: 100%;
-        font: 300 1em/1.5em "Lato", sans-serif;
-        font-size: 1em;
-      }
-      .dropdown-menu {
-        min-width: 100%;
-      }
+    .solution-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 5vh;
+      @import "./Common.scss";
+
       .btn {
-        width: 100%;
-        font: 300 1em/1.5em "Lato", sans-serif;
-        font-size: 1.25em;
-      }
-
-      .solution-grid {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin: 5vh;
-        .btn {
-          white-space: normal;
-          margin: 0.5vw;
-          min-width: 40px;
-          min-height: 20px;
-          max-width: fit-content;
-          max-height: 45%;
-          border: 1px solid #ddd;
-          color: black;
-          float: right;
-          flex: 50%;
-        }
+        white-space: normal;
+        margin: 0.5vw;
+        min-width: 40px;
+        min-height: 20px;
+        max-width: fit-content;
+        max-height: 45%;
+        border: 1px solid #ddd;
+        color: black;
+        float: right;
+        flex: 50%;
+        box-shadow: none;
       }
     }
   }
@@ -99,4 +42,6 @@
   .bootstrap-styles {
     @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap.scss";
   }
+
+  @import "./SelectMenu.scss";
 }

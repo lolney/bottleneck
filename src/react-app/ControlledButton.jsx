@@ -1,9 +1,10 @@
 import React from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
-import './CSS/HUD.scss';
-import DefencesBrowser from './defences/DefencesBrowser.jsx';
 import PropTypes from 'prop-types';
 
+/**
+ * Toggleable button with toggle-on and toggle-off handlers
+ */
 export default class ControlledButton extends React.Component {
     constructor(props) {
         super(props);
@@ -20,20 +21,16 @@ export default class ControlledButton extends React.Component {
     render() {
         return (
             <Button
+                className={this.props.className}
                 onClick={() => {
                     if (this.state.selected == false) {
-                        this.props.addWindow();
+                        this.props.addWindow(() => this.toggleSelect());
                         this.toggleSelect();
                     } else {
-                        try {
-                            this.props.removeWindow();
-                            this.toggleSelect();
-                        } catch (error) {
-                            console.log(error);
-                            this.props.addWindow();
-                        }
+                        this.props.removeWindow();
                     }
                 }}
+                active={this.state.selected}
             >
                 {this.props.children}
             </Button>
@@ -44,8 +41,8 @@ export default class ControlledButton extends React.Component {
 ControlledButton.propTypes = {
     addWindow: PropTypes.func.isRequired,
     removeWindow: PropTypes.func.isRequired,
-    children: PropTypes.oneOfType(
+    children: PropTypes.oneOfType([
         PropTypes.arrayOf(PropTypes.node),
         PropTypes.node
-    )
+    ])
 };

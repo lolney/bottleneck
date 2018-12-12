@@ -1,16 +1,15 @@
 {
-  "presets": [
-    "env",
-    "react",
-    "stage-3"
-  ],
+  "presets": ["env", "react", "stage-3"],
+  "env": {
+    "test": {
+      "plugins": ["istanbul"]
+    }
+  },
   "plugins": [
     [
       "module-resolver",
       {
-        "root": [
-          "./src"
-        ],
+        "root": ["./src"],
         "alias": {
           "lance": "./node_modules/lance-gg/es5"
         }

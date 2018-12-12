@@ -1,11 +1,23 @@
+body {
+  @import "./Common.scss";
+
+  #tooltip {
+    z-index: 2000;
+  }
+}
+
 .hud-buttons {
   right: 0;
   position: absolute;
   width: 15%;
   height: 100%;
   pointer-events: none;
+
   .btn-toolbar {
     height: 100%;
+    &:first-child {
+      margin-top: 10%;
+    }
     .btn {
       border: none;
       border-radius: 1px;
@@ -15,32 +27,105 @@
       width: 90%;
       height: 30px;
       text-align: center;
-      background-color: rgba(241, 241, 241, 0.7);
+      background-color: rgba(255, 255, 255, 0.8);
       display: flex;
       padding: 0px;
       pointer-events: all;
+
       .hud-column {
         min-height: 100%;
         text-align: center;
-        flex: 50%;
-        color: black;
+        flex: 30%;
+        color: #000000;
         display: block;
         font: 300 1em/1.5em "Lato", sans-serif;
         font-size: 1em;
         flex-wrap: wrap;
       }
+      .hud-column-2 {
+        min-height: 100%;
+        text-align: center;
+        flex: 70%;
+        color: #000000;
+        display: block;
+        font: 300 1em/1.5em "Lato", sans-serif;
+        font-size: 1em;
+        flex-wrap: wrap;
+      }
+      @keyframes animate-green {
+        from {
+          color: black;
+        }
+        50% {
+          color: green;
+        }
+        to {
+          color: black;
+        }
+      }
+      @keyframes pulse {
+        from,
+        50%,
+        to {
+          opacity: 1;
+        }
+
+        25%,
+        75% {
+          opacity: 0;
+        }
+      }
+      .updateable {
+        animation: animate-green 3s, pulse 2s;
+      }
     }
-    .top-btn {
-      margin-top: 10%;
+    .mini-btns {
+      width: 100%;
+      height: 45px;
+      display: flex;
+      margin-left: 5px;
+      .mini-btn {
+        border: none;
+        border-radius: 1px;
+        margin-right: 6%;
+        width: 26%;
+        height: 45px;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.8);
+        display: flex;
+        flex-direction: column;
+        pointer-events: all;
+        flex-wrap: nowrap;
+        .hud-row {
+          flex-direction: row;
+          min-width: 100%;
+          margin-top: 20%;
+          flex: 50%;
+          display: block;
+        }
+        .hud-row-2 {
+          flex-direction: row;
+          margin-bottom: 5%;
+          min-width: 100%;
+          text-align: center;
+          color: #000000;
+          display: block;
+          flex: 50%;
+          font: 300 1em/1.5em "Lato", sans-serif;
+          font-size: 1em;
+        }
+      }
     }
+
     .btm-btn {
       bottom: 0;
       position: absolute;
       margin-bottom: 10%;
       font: 300 1em/1.5em "Lato", sans-serif;
       font-size: 1em;
-      color: black;
+      color: #000000;
       display: block;
     }
+    @import "./Common.scss";
   }
 }

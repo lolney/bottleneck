@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme, { mount, shallow } from 'enzyme';
-import ImageComponent from '../../src/react-app/ImageComponent';
+import ImageComponent from '../../src/react-app/problems/ImageComponent';
 import sinon from 'sinon';
 import Adapter from 'enzyme-adapter-react-16';
 import ImageProblem, { Image } from '../../src/problem-engine/ImageProblem';

@@ -2,7 +2,8 @@ import React from 'react';
 import Enzyme, { mount, shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 
-import SelectMenu from '../../src/react-app/solution-history/SelectMenu.jsx';
+import SelectMenu from '../../src/react-app/common/SelectMenu.jsx';
+import buttonConfig from '../../src/react-app/solution-history/buttonConfig';
 import Grid from '../../src/react-app/solution-history/Grid.jsx';
 import Problem, { bin } from '../../src/react-app/solution-history/Problem.jsx';
 import { MenuItem } from 'react-bootstrap';
@@ -17,7 +18,15 @@ const subtypes = ['none', 'gradient', 'sin'];
 
 describe('SelectMenu', () => {
     it('When type x selected, items show up iff they\'re type x', () => {
-        let selectMenu = mount(<SelectMenu solvedProblems={solvedProblems} />);
+        let selectMenu = mount(
+            <SelectMenu
+                data={solvedProblems}
+                buttonConfig={buttonConfig}
+                getType={(e) => e.problem.type}
+            >
+                <Problem />
+            </SelectMenu>
+        );
         selectMenu.setState({ selected: 'image' });
         let selected = selectMenu.state('selected');
         let grid = selectMenu.find(Grid);
@@ -30,7 +39,7 @@ describe('SelectMenu', () => {
     });
 
     it('All subtypes appear in the menu', () => {
-        let problem = mount(<Problem solvedProblems={solvedProblems} />);
+        let problem = mount(<Problem data={solvedProblems} />);
 
         let menuItems = problem.find(MenuItem);
 
@@ -39,7 +48,7 @@ describe('SelectMenu', () => {
 
     // Subtypes for type x show up (including 'none')
     it('When type x, subtype y selected, items show up iff they\'re type x.y (including "none")', () => {
-        let problem = mount(<Problem solvedProblems={solvedProblems} />);
+        let problem = mount(<Problem data={solvedProblems} />);
         let grid = problem.find(Grid);
 
         let subtype = problem.state('selected');
