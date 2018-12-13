@@ -13,7 +13,7 @@ export const State = {
  */
 export default class AssaultBotAvatar extends BotAvatar {
     static get netScheme() {
-        return Object.assign({}, super.netScheme);
+        return Object.assign({}, BotAvatar.netScheme);
     }
 
     get maxSpeed() {

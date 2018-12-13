@@ -5,6 +5,7 @@ import PlayerActor from '../client/PlayerActor.js';
 import BaseTypes from 'lance/serialize/BaseTypes';
 import TwoVector from 'lance/serialize/TwoVector';
 import Slowable from './Slowable';
+import { GameStatus } from './types';
 
 export const Status = {
     IDLE: 'idle',
@@ -110,6 +111,10 @@ export default class BotAvatar extends DynamicObject {
     }
 
     async followWaypoint() {
+        if (this.serverState.gameEngine.status == GameStatus.SUSPENDED) {
+            return;
+        }
+
         await this.checkPath();
         if (this.path.length > 0) {
             let next = this.getNextPosition();

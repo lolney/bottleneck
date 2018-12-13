@@ -11,17 +11,10 @@ import DefenseAvatar from './DefenseAvatar';
 import AssaultBotAvatar from './AssaultBotAvatar';
 import PlayerBaseAvatar from './PlayerBaseAvatar';
 import WaterAvatar from './WaterAvatar';
+import { GameStatus as Status } from './types';
 
 import TwoVector from 'lance/serialize/TwoVector';
 import { WIDTH, HEIGHT, getSiegeItemFromId } from '../config';
-
-/** This is only used server-side */
-export const Status = {
-    INITIALIZING: 'initializing',
-    IN_PROGRESS: 'inProgress',
-    SUSPENDED: 'suspended',
-    DONE: 'done'
-};
 
 export default class MyGameEngine extends GameEngine {
     constructor(options) {
@@ -306,6 +299,10 @@ export default class MyGameEngine extends GameEngine {
     }
 
     processInput(inputData, playerId) {
+        if (this.status == Status.SUSPENDED) {
+            return;
+        }
+
         super.processInput(inputData, playerId);
         // get the player's primary object
         let player = this.queryObject({ playerNumber: playerId }, PlayerAvatar);

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withSocket from './withSocket.jsx';
-import { Status } from '../common/MyGameEngine';
+import { GameStatus as Status } from '../common/types';
 
 const State = Object.freeze({
     Connected: 'connected',

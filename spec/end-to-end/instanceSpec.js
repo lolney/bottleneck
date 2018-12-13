@@ -1,6 +1,6 @@
 import TestClient from './TestClient';
 import TestServer from './TestServer';
-import { Status } from '../../src/common/MyGameEngine';
+import { GameStatus as Status } from '../../src/common/types';
 
 describe('Instance', () => {
     let clients;

@@ -1,7 +1,8 @@
 // Game Server
 import Trace from 'lance/lib/Trace';
 import MyServerEngine from './MyServerEngine';
-import MyGameEngine, { Status } from '../common/MyGameEngine';
+import MyGameEngine from '../common/MyGameEngine';
+import { GameStatus as Status } from '../common/types';
 import logger from './Logger';
 
 export default class Instance {

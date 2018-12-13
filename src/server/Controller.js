@@ -20,7 +20,7 @@ import {
 
 import { siegeItems, assaultBot, getSiegeItemFromId } from '../config';
 import logger from './Logger';
-import { Status } from '../common/MyGameEngine';
+import { GameStatus as Status } from '../common/types';
 
 function serialize(problem) {
     switch (problem.type) {

@@ -21,7 +21,7 @@ export default class TestServer {
         this.serverURL = `http://localhost:${port}/?gameid=${this.gameId}`;
     }
 
-    static async create() {
+    static async create(options = {}) {
         const server = express();
         const PORT = getPort();
 
@@ -31,7 +31,7 @@ export default class TestServer {
         const io = socketIO(requestHandler);
 
         const instanceManager = new InstanceManager(io);
-        const gameId = await instanceManager.createInstance();
+        const gameId = await instanceManager.createInstance(options);
 
         return new TestServer(gameId, PORT, instanceManager);
     }
