@@ -29,16 +29,20 @@ export default class Instance {
             }
         );
         // Proxy onPlayerDisconnected
-        let ondc = this.serverEngine.onPlayerDisconnected.bind(
+        let serverEngineOnDc = this.serverEngine.onPlayerDisconnected.bind(
             this.serverEngine
         );
         this.serverEngine.onPlayerDisconnected = (socketId, playerId) => {
-            ondc(socketId, playerId);
+            serverEngineOnDc(socketId, playerId);
             this.onPlayerDisconnected();
         };
 
         this.currentPlyers = [];
         this.serverEngine.start();
+    }
+
+    get isFull() {
+        return this.serverEngine.nConnectedPlayers == 2;
     }
 
     launch(stopCallback) {
@@ -48,7 +52,9 @@ export default class Instance {
 
     stop() {
         logger.info('Stopping instance');
-        if (this.stopCallback) this.stopCallback();
+        if (this.stopCallback) {
+            this.stopCallback();
+        }
         this.gameEngine.stop();
         this.serverEngine.scheduler.stop();
     }
@@ -71,18 +77,32 @@ export default class Instance {
     onPlayerDisconnected() {
         if (
             this.gameEngine.status != Status.INITIALIZING &&
-            Object.keys(this.serverEngine.connectedPlayers).length == 0
+            this.serverEngine.nConnectedPlayers == 0
         ) {
             this.stop();
         } else {
+            logger.info('Player disconnected. Suspending.');
             this.suspend();
         }
     }
 
+    /**
+     * Called before authentication to assign a player number
+     * @param {*} socket
+     */
     onPlayerConnected(socket) {
-        if (Object.keys(this.serverEngine.connectedPlayers).length == 0) {
+        this.serverEngine.onPlayerConnected(socket);
+    }
+
+    /**
+     * Called after authentication
+     * @param {*} socket
+     */
+    addPlayer(socket) {
+        this.serverEngine.addPlayer(socket);
+        if (this.serverEngine.nConnectedPlayers == 2) {
+            logger.info('Enough players in the game. Resuming.');
             this.start();
         }
-        this.serverEngine.onPlayerConnected(socket);
     }
 }

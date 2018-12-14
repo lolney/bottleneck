@@ -1,6 +1,5 @@
 import TestClient from './TestClient';
 import TestServer from './TestServer';
-import { GameStatus as Status } from '../../src/common/types';
 import AssaultBotAvatar from '../../src/common/AssaultBotAvatar';
 
 describe('BotAvatar', () => {
@@ -10,11 +9,12 @@ describe('BotAvatar', () => {
 
     beforeAll(async () => {
         server = await TestServer.create({ practice: true });
-        client = new TestClient(server.serverURL);
-        socket = await client.start();
-        await new Promise((resolve) =>
+        let promise = new Promise((resolve) =>
             server.gameEngine.on('playerAdded', () => resolve())
         );
+        client = new TestClient(server.serverURL);
+        socket = await client.start();
+        await promise;
     });
 
     it('initializes correctly', (done) => {

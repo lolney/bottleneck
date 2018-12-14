@@ -308,6 +308,10 @@ describe('setPlayerId', () => {
 
         expect(base.hp).toEqual(playerBase.baseHP);
     });
+
+    it('if existing game provided, returns existing player', async () => {});
+
+    it('if incorrect game provided, throws error', async () => {});
 });
 
 describe('addToResourceCount', () => {

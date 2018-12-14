@@ -112,6 +112,7 @@ export default class BotAvatar extends DynamicObject {
 
     async followWaypoint() {
         if (this.serverState.gameEngine.status == GameStatus.SUSPENDED) {
+            this.velocity = new TwoVector(0, 0);
             return;
         }
 

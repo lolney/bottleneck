@@ -20,6 +20,10 @@ export default class MyServerEngine extends ServerEngine {
         };
     }
 
+    get nConnectedPlayers() {
+        return Object.keys(this.connectedPlayers).length;
+    }
+
     async start() {
         super.start();
         let objs = await objects();
@@ -34,20 +38,18 @@ export default class MyServerEngine extends ServerEngine {
         );
     }
 
-    onPlayerConnected(socket) {
-        super.onPlayerConnected(socket);
-        let waitForAuth = () => {
-            if (socket.auth) {
-                logger.info('Authenticated. Creating player.');
+    addPlayer(socket) {
+        if (!socket.auth) {
+            throw new Error('Player not authenticated');
+        }
 
-                const id = socket.client.playerDbId;
-                const number = socket.playerId;
+        logger.info('Authenticated. Creating player.');
 
-                this.createPlayer(id, number);
-                this.controller.addPlayer(id, number, socket);
-            } else setTimeout(waitForAuth, 100);
-        };
-        waitForAuth();
+        const id = socket.client.playerDbId;
+        const number = socket.playerId;
+
+        this.createPlayer(id, number);
+        this.controller.addPlayer(id, number, socket);
     }
 
     createPlayer(id, number) {

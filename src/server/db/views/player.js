@@ -6,18 +6,34 @@ import { playerBase, assaultBot } from '../../../config';
 /**
  * Cteates player with the provided number and associates it with user,
  * returning the newly-created player
- * @param {*} userId
- * @param {*} number
- * @param {TwoVector} location
+ * @param {string} userId
+ * @param {number} number
+ * @param {TwoVector} options.location
+ * @param {string} options.gameId
  * @returns {*} - the player
  */
-export async function setPlayerId(userId, number, location) {
+export async function setPlayerId(userId, number, options = {}) {
+    let player;
+
+    if (options.gameId) {
+        player = await models.player.find({
+            where: { gameId: options.gameId }
+        });
+    } else {
+        player = await createPlayer(userId, number, options.location);
+    }
+
+    return player;
+}
+
+export async function createPlayer(userId, number, location) {
     let sequelizeLocation = !location
         ? null
         : db.Sequelize.fn(
             'ST_GeomFromText',
             `POINT(${location.x} ${location.y})`
         );
+
     let player = await models.player.create({
         playerNumber: Number(number),
         location: sequelizeLocation

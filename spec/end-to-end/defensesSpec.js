@@ -8,12 +8,13 @@ describe('siegeItems', () => {
     let socket;
 
     beforeAll(async () => {
-        server = await TestServer.create();
-        client = new TestClient(server.serverURL);
-        socket = await client.start();
-        await new Promise((resolve) =>
+        server = await TestServer.create({ practice: true });
+        let promise = new Promise((resolve) =>
             server.gameEngine.on('playerAdded', () => resolve())
         );
+        client = new TestClient(server.serverURL);
+        socket = await client.start();
+        await promise;
     });
 
     it('correct defenses placed correctly', (done) => {
