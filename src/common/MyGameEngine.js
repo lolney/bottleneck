@@ -55,6 +55,11 @@ export default class MyGameEngine extends GameEngine {
         };
     }
 
+    stop() {
+        super.stop();
+        this.world.forEachObject((id) => this.removeObjectFromWorld(id));
+    }
+
     static botTypeToAvatarClass(type) {
         switch (type) {
         case 'assaultBot':
