@@ -3,18 +3,14 @@ import TestServer from './TestServer';
 import AssaultBotAvatar from '../../src/common/AssaultBotAvatar';
 
 describe('BotAvatar', () => {
-    let client;
     let server;
     let socket;
 
     beforeAll(async () => {
-        server = await TestServer.create({ practice: true });
-        let promise = new Promise((resolve) =>
-            server.gameEngine.on('playerAdded', () => resolve())
-        );
-        client = new TestClient(server.serverURL);
-        socket = await client.start();
-        await promise;
+        var obj = await TestServer.createPracticeServer();
+
+        server = obj.server;
+        socket = obj.socket;
     });
 
     it('initializes correctly', (done) => {

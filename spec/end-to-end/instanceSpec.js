@@ -53,18 +53,16 @@ describe('Instance', () => {
         describe('when one player disconnects and reconnects', async () => {
             let disconnectAndReconnect = async (client) => {
                 // create game. client closes socket.
-                let disconnect = eventPromise(client.socket, 'disconnect');
+                let disconnect = eventPromise(
+                    clients[1].socket,
+                    'gameState',
+                    (data) => data.state == Status.SUSPENDED
+                );
                 client.socket.close();
 
                 await disconnect;
 
-                // client reopens socket. reconnect to same game
-                // game state resumed for both players
-                client.socket.connect();
-            };
-
-            it('game resumes', async () => {
-                let stateChanges = clients.map((client) =>
+                let connections = clients.map((client, i) =>
                     eventPromise(
                         client.socket,
                         'gameState',
@@ -72,8 +70,23 @@ describe('Instance', () => {
                     )
                 );
 
+                // client reopens socket. reconnect to same game
+                // game state resumed for both players
+                client.socket.connect();
+
+                await Promise.all(connections);
+            };
+
+            it('game resumes', async () => {
                 await disconnectAndReconnect(clients[0]);
-                await Promise.all(stateChanges);
+            });
+
+            it('playerIds are the same', async () => {
+                let ids = server.playerIds;
+
+                await disconnectAndReconnect(clients[0]);
+
+                expect(server.playerIds).toEqual(ids);
             });
 
             it('previous state restored', async () => {
@@ -88,13 +101,7 @@ describe('Instance', () => {
                 client.socket.emit('makeAssaultBot');
                 await makeAssaultBot;
 
-                let playerAdded = eventPromise(
-                    server.gameEngine,
-                    'playerAdded'
-                );
-
                 await disconnectAndReconnect(clients[0]);
-                await playerAdded;
 
                 let resourceBroadcast = eventPromise(
                     client.socket,
@@ -110,9 +117,7 @@ describe('Instance', () => {
         });
 
         it('results in error when both players have disconnected', async () => {
-            const disconnects = clients.map((client) =>
-                eventPromise(client.socket, 'disconnect')
-            );
+            const disconnects = eventPromise(server.events, 'instanceStopped');
 
             const connects = clients.map((client) =>
                 eventPromise(client.socket, 'connect')
@@ -121,7 +126,7 @@ describe('Instance', () => {
             // create game. both clients close socket.
             clients.map((client) => client.socket.close());
 
-            await Promise.all(disconnects);
+            await disconnects;
 
             // both clients reconnect. not put in a game.
             clients.map((client) => client.socket.connect());
@@ -132,5 +137,27 @@ describe('Instance', () => {
                 Object.keys(server.instanceManager.instances).length
             ).toEqual(0);
         });
+    });
+});
+
+describe('practice Instance', () => {
+    let server;
+    let socket;
+
+    beforeAll(async () => {
+        var obj = await TestServer.createPracticeServer();
+
+        server = obj.server;
+        socket = obj.socket;
+    });
+
+    it('shuts down when player disconnects', async () => {
+        let disconnect = eventPromise(server.events, 'instanceStopped');
+
+        socket.close();
+
+        await disconnect;
+
+        expect(Object.keys(server.instanceManager.instances).length).toEqual(0);
     });
 });

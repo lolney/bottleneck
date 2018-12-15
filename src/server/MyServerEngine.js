@@ -38,7 +38,7 @@ export default class MyServerEngine extends ServerEngine {
         );
     }
 
-    addPlayer(socket) {
+    addPlayer(socket, isNew = true) {
         if (!socket.auth) {
             throw new Error('Player not authenticated');
         }
@@ -48,10 +48,17 @@ export default class MyServerEngine extends ServerEngine {
         const id = socket.client.playerDbId;
         const number = socket.playerId;
 
-        this.createPlayer(id, number);
+        if (isNew) {
+            this.createPlayer(id, number);
+        }
         this.controller.addPlayer(id, number, socket);
     }
 
+    /**
+     * @private
+     * @param {*} id
+     * @param {*} number
+     */
     createPlayer(id, number) {
         this.gameEngine.makePlayer(
             id,

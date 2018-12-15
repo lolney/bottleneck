@@ -115,8 +115,8 @@ export default class Instance {
      * Called after authentication
      * @param {*} socket
      */
-    addPlayer(socket) {
-        this.serverEngine.addPlayer(socket);
+    addPlayer(socket, isNew) {
+        this.serverEngine.addPlayer(socket, isNew);
     }
 
     maybeStartGame() {

@@ -11,15 +11,20 @@ import { playerBase, assaultBot } from '../../../config';
  * @param {TwoVector} options.location
  * @returns {*} - the player
  */
-export async function getPlayer(userId, number, gameId, options = {}) {
+export async function getPlayer(userId, playerNumber, gameId, options = {}) {
     let player;
 
     player = await models.player.find({
-        where: { gameId, userId }
+        where: { gameId, playerNumber, userId }
     });
 
     if (!player) {
-        player = await createPlayer(userId, number, gameId, options.location);
+        player = await createPlayer(
+            userId,
+            playerNumber,
+            gameId,
+            options.location
+        );
     }
 
     return player;

@@ -1,14 +1,16 @@
 import Instance from './Instance';
-import { checkPassword, getUserId } from './db/views/user';
+import { checkPassword, getUserId, getBotUserId } from './db/views/user';
 import { createGame } from './db/views/game';
 import { getPlayer, doesPlayerExist } from './db/views/player';
 import logger from './Logger';
 import socketioAuth from 'socketio-auth';
+import { EventEmitter } from 'events';
 
 export default class InstanceManager {
     constructor(io) {
         this.instances = {};
         this.instanceQueue = new InstanceQueue();
+        this.eventEmitter = new EventEmitter();
 
         if (io) {
             this.handleAuth(io);
@@ -46,9 +48,7 @@ export default class InstanceManager {
                 logger.debug(`added player to db: ${player.id}`);
                 callback(null, succeeded);
 
-                if (!playerExists) {
-                    this.instances[gameId].addPlayer(socket);
-                }
+                this.instances[gameId].addPlayer(socket, !playerExists);
                 this.instances[gameId].maybeStartGame();
             },
             timeout: 'none'
@@ -66,14 +66,17 @@ export default class InstanceManager {
     async createInstance(options) {
         const { instance, id } = await this.instanceQueue.getInstance();
         this.instances[id] = instance;
+
         instance.launch(() => {
+            this.eventEmitter.emit('instanceStopped', id);
             delete this.instances[id];
         });
 
         // @TODO: consider injecting database dependency?
         if (options && options.practice) {
             const number = instance.serverEngine.getPlayerId({});
-            InstanceManager.addPlayer('_botuser', number).then(({ player }) => {
+            const botUserId = await getBotUserId();
+            getPlayer(botUserId, number, id).then((player) => {
                 instance.serverEngine.createPlayer(player.id, number);
             });
         }
