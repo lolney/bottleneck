@@ -1,60 +1,82 @@
 import Instance from './Instance';
-import { checkPassword, getUserId } from './db/views/user';
-import { setPlayerId } from './db/views/player';
+import { checkPassword, getUserId, getBotUserId } from './db/views/user';
+import { createGame } from './db/views/game';
+import { getPlayer, doesPlayerExist } from './db/views/player';
 import logger from './Logger';
+import socketioAuth from 'socketio-auth';
+import { EventEmitter } from 'events';
 
 export default class InstanceManager {
     constructor(io) {
         this.instances = {};
         this.instanceQueue = new InstanceQueue();
+        this.eventEmitter = new EventEmitter();
 
         if (io) {
-            io.on('connection', this.onPlayerConnected.bind(this));
             this.handleAuth(io);
         }
     }
 
-    static async addPlayer(username, playerNumber) {
-        let userId = await getUserId(username);
-        let player = await setPlayerId(userId, playerNumber);
-        return { userId, player };
-    }
-
     handleAuth(io) {
-        require('socketio-auth')(io, {
-            authenticate: async function(socket, data, callback) {
+        socketioAuth(io, {
+            authenticate: async (socket, data, callback) => {
+                try {
+                    this.onPlayerConnected(socket);
+                } catch (error) {
+                    logger.error(`Error adding player to game: ${error}`);
+                    callback(null, false);
+                    return;
+                }
+
                 let username = data.username;
                 let password = data.password;
+                let gameId = socket.handshake.query.gameid;
+                let playerNumber = socket.playerId;
+
+                let userId = await getUserId(username);
 
                 logger.info(`User is logging in: ${data.username}`);
                 let succeeded = await checkPassword(username, password);
                 logger.info(`Authentication succeeded: ${succeeded}`);
 
-                let { userId, player } = await InstanceManager.addPlayer(
-                    username,
-                    socket.playerId
-                );
+                let playerExists = await doesPlayerExist(userId, gameId);
+                let player = await getPlayer(userId, playerNumber, gameId);
+
                 socket.client.userId = userId;
                 socket.client.playerDbId = player.id;
 
                 logger.debug(`added player to db: ${player.id}`);
                 callback(null, succeeded);
+
+                this.instances[gameId].addPlayer(socket, !playerExists);
+                this.instances[gameId].maybeStartGame();
             },
             timeout: 'none'
         });
     }
 
+    gameExists(gameId) {
+        return this.instances[gameId] != undefined;
+    }
+
+    gameIsFull(gameId) {
+        return this.instances[gameId].isFull;
+    }
+
     async createInstance(options) {
         const { instance, id } = await this.instanceQueue.getInstance();
         this.instances[id] = instance;
+
         instance.launch(() => {
+            this.eventEmitter.emit('instanceStopped', id);
             delete this.instances[id];
         });
 
         // @TODO: consider injecting database dependency?
         if (options && options.practice) {
             const number = instance.serverEngine.getPlayerId({});
-            InstanceManager.addPlayer('_botuser', number).then(({ player }) => {
+            const botUserId = await getBotUserId();
+            getPlayer(botUserId, number, id).then((player) => {
                 instance.serverEngine.createPlayer(player.id, number);
             });
         }
@@ -64,7 +86,9 @@ export default class InstanceManager {
     onPlayerConnected(socket) {
         const id = socket.handshake.query.gameid;
         if (!id || !this.instances[id]) {
-            logger.error(`Socket does not have valid gameId param: ${id}`);
+            throw new Error(`Socket does not have valid gameId param: ${id}`);
+        } else if (this.instances[id].isFull) {
+            throw new Error('Socket attempted to connect to full game');
         } else {
             this.instances[id].onPlayerConnected(socket);
         }
@@ -82,9 +106,10 @@ class InstanceQueue {
     /**
      * @private
      */
-    _createInstance() {
-        const id = Math.random();
-        const instance = new Instance();
+    async _createInstance() {
+        const game = await createGame();
+        const id = game.id;
+        const instance = new Instance(id);
         return { instance, id };
     }
 

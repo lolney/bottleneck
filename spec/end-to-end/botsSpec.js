@@ -1,18 +1,16 @@
 import TestClient from './TestClient';
 import TestServer from './TestServer';
+import AssaultBotAvatar from '../../src/common/AssaultBotAvatar';
 
 describe('BotAvatar', () => {
-    let client;
     let server;
     let socket;
 
     beforeAll(async () => {
-        server = await TestServer.create();
-        client = new TestClient(server.serverURL);
-        socket = await client.start();
-        await new Promise((resolve) =>
-            server.gameEngine.on('playerAdded', () => resolve())
-        );
+        var obj = await TestServer.createPracticeServer();
+
+        server = obj.server;
+        socket = obj.socket;
     });
 
     it('initializes correctly', (done) => {
@@ -20,5 +18,16 @@ describe('BotAvatar', () => {
             done();
         });
         socket.emit('resourceInitial');
+    });
+
+    it('can add an assault bot', async () => {
+        await new Promise((resolve) => {
+            server.gameEngine.on('objectAdded', (obj) => {
+                if (obj.class == AssaultBotAvatar) {
+                    resolve();
+                }
+            });
+            socket.emit('makeAssaultBot');
+        });
     });
 });

@@ -20,7 +20,7 @@ import {
 
 import { siegeItems, assaultBot, getSiegeItemFromId } from '../config';
 import logger from './Logger';
-import { Status } from '../common/MyGameEngine';
+import { GameStatus as Status } from '../common/types';
 
 function serialize(problem) {
     switch (problem.type) {
@@ -334,6 +334,10 @@ class Controller {
             if (this.playerMap.getPlayer(enemyPlayerId))
                 this.playerMap.publish(enemyPlayerId, 'gameLose', {});
         }
+    }
+
+    broadcastGameState(state) {
+        this.playerMap.publishAll('gameState', { state });
     }
 
     async pushCount(playerId, name, count, shouldReset = false) {

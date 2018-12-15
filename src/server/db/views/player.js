@@ -4,20 +4,58 @@ import { getDataValues } from '..';
 import { playerBase, assaultBot } from '../../../config';
 
 /**
- * Cteates player with the provided number and associates it with user,
+ * Gets player, created it if not yet created
+ * @param {string} userId
+ * @param {number} number
+ * @param {string} gameId
+ * @param {TwoVector} options.location
+ * @returns {*} - the player
+ */
+export async function getPlayer(userId, playerNumber, gameId, options = {}) {
+    let player;
+
+    player = await models.player.find({
+        where: { gameId, playerNumber, userId }
+    });
+
+    if (!player) {
+        player = await createPlayer(
+            userId,
+            playerNumber,
+            gameId,
+            options.location
+        );
+    }
+
+    return player;
+}
+
+export async function doesPlayerExist(userId, gameId) {
+    let player = await models.player.find({
+        where: { gameId, userId }
+    });
+
+    return player != undefined;
+}
+
+/**
+ * Creates player with the provided number and associates it with user,
  * returning the newly-created player
  * @param {*} userId
  * @param {*} number
- * @param {TwoVector} location
- * @returns {*} - the player
+ * @param {*} gameId
+ * @param {*} location
  */
-export async function setPlayerId(userId, number, location) {
+export async function createPlayer(userId, number, gameId, location) {
     let sequelizeLocation = !location
         ? null
         : db.Sequelize.fn(
             'ST_GeomFromText',
             `POINT(${location.x} ${location.y})`
         );
+
+    let game = await models.game.find({ where: { id: gameId } });
+
     let player = await models.player.create({
         playerNumber: Number(number),
         location: sequelizeLocation
@@ -41,6 +79,7 @@ export async function setPlayerId(userId, number, location) {
     await Promise.all([
         player.setUser(user),
         player.setBase(base),
+        player.setGame(game),
         await wood.setPlayer(player),
         await stone.setPlayer(player)
     ]);

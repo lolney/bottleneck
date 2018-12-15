@@ -1,6 +1,7 @@
 import express from 'express';
 import MatchMaker from '../MatchMaker';
 import InstanceManager from '../InstanceManager';
+import cookieParser from 'cookie-parser';
 
 export class MatchmakingRouter {
     constructor(io) {
@@ -10,12 +11,27 @@ export class MatchmakingRouter {
 
     handleVs(res, req) {
         const callback = (resp) => {
+            res.cookie('gameId', resp.gameId, {
+                sameSite: true,
+                maxAge: 24 * 60 * 60 * 1000
+            });
             res.json(resp);
         };
-        this.matchmaker.queue(callback);
-        req.on('aborted', () => {
-            this.matchmaker.cancel(callback);
-        });
+
+        const gameId = req.cookies.gameId;
+
+        if (
+            gameId &&
+            this.manager.gameExists(gameId) &&
+            !this.manager.gameIsFull(gameId)
+        ) {
+            callback(MatchMaker.createResponse(gameId));
+        } else {
+            this.matchmaker.queue(callback);
+            req.on('aborted', () => {
+                this.matchmaker.cancel(callback);
+            });
+        }
     }
 
     async handlePractice(res, req) {
@@ -25,6 +41,7 @@ export class MatchmakingRouter {
 
     get router() {
         const router = express.Router();
+        router.use(cookieParser());
 
         router.post('/match', async (req, res) => {
             if (!req.query) {

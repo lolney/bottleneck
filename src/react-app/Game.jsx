@@ -26,6 +26,12 @@ export default class Game extends React.Component {
                     data.playerId
                 );
             });
+
+            // Sync server game status with client
+            socket.on('gameState', (data) => {
+                console.log(data);
+                gameEngine.setStatus(data.state);
+            });
         });
 
         gameEngine.on('cameraMoved', () => this.props.onCameraMove());

@@ -57,6 +57,30 @@ let migrationCommands = [
     {
         fn: 'createTable',
         params: [
+            'games',
+            {
+                id: {
+                    type: Sequelize.UUID,
+                    primaryKey: true,
+                    defaultValue: Sequelize.UUIDV4
+                },
+                createdAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                },
+                updatedAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                }
+            },
+            {}
+        ]
+    },
+    {
+        fn: 'createTable',
+        params: [
             'gameObjects',
             {
                 id: {
@@ -232,6 +256,13 @@ let migrationCommands = [
                         key: 'id'
                     }
                 },
+                gameId: {
+                    type: Sequelize.UUID,
+                    references: {
+                        model: 'games',
+                        key: 'id'
+                    }
+                },
                 createdAt: {
                     allowNull: false,
                     type: Sequelize.DATE,
@@ -373,6 +404,10 @@ module.exports = {
                 cascade: true
             }),
             queryInterface.dropTable('users', {
+                force: true,
+                cascade: true
+            }),
+            queryInterface.dropTable('games', {
                 force: true,
                 cascade: true
             })

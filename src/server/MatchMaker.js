@@ -13,7 +13,8 @@ export default class MatchMaker {
     }
 
     static createResponse(token) {
-        return { status: 'ok', serverURL: `/?gameid=${token}` };
+        // status: 'ok' is needed by the lance matchmaker
+        return { status: 'ok', serverURL: `/?gameid=${token}`, gameId: token };
     }
 
     async finalize() {

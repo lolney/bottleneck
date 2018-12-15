@@ -32,7 +32,7 @@ describe('Matchmaking', () => {
             });
     });
 
-    it('responds to requests after two players join', async () => {
+    it('responds with gameId after two players join', async () => {
         let reqs = await Promise.all(
             [0, 1].map((i) =>
                 request(app)
@@ -41,7 +41,11 @@ describe('Matchmaking', () => {
             )
         );
         let urls = reqs.map((res) => res.body.serverURL);
+        let cookies = reqs.map((res) => res.headers['set-cookie']);
 
         expect(urls[0]).toEqual(urls[1]);
+        expect(cookies[0]).toEqual(cookies[1]);
+
+        expect(cookies[0][0]).toContain('gameId');
     });
 });

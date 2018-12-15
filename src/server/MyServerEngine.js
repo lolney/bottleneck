@@ -20,6 +20,10 @@ export default class MyServerEngine extends ServerEngine {
         };
     }
 
+    get nConnectedPlayers() {
+        return Object.keys(this.connectedPlayers).length;
+    }
+
     async start() {
         super.start();
         let objs = await objects();
@@ -34,22 +38,27 @@ export default class MyServerEngine extends ServerEngine {
         );
     }
 
-    onPlayerConnected(socket) {
-        super.onPlayerConnected(socket);
-        let waitForAuth = () => {
-            if (socket.auth) {
-                logger.info('Authenticated. Creating player.');
+    addPlayer(socket, isNew = true) {
+        if (!socket.auth) {
+            throw new Error('Player not authenticated');
+        }
 
-                const id = socket.client.playerDbId;
-                const number = socket.playerId;
+        logger.info('Authenticated. Creating player.');
 
-                this.createPlayer(id, number);
-                this.controller.addPlayer(id, number, socket);
-            } else setTimeout(waitForAuth, 100);
-        };
-        waitForAuth();
+        const id = socket.client.playerDbId;
+        const number = socket.playerId;
+
+        if (isNew) {
+            this.createPlayer(id, number);
+        }
+        this.controller.addPlayer(id, number, socket);
     }
 
+    /**
+     * @private
+     * @param {*} id
+     * @param {*} number
+     */
     createPlayer(id, number) {
         this.gameEngine.makePlayer(
             id,
@@ -62,19 +71,14 @@ export default class MyServerEngine extends ServerEngine {
         });
     }
 
+    /**
+     * Don't remove players; just temporarily remove socket.
+     * Players are removed on stopping the game instance instead.
+     * @param {*} socketId
+     * @param {*} playerNumber
+     */
     onPlayerDisconnected(socketId, playerNumber) {
         super.onPlayerDisconnected(socketId, playerNumber);
-        logger.info(`Removing player ${playerNumber}`);
-        let playerObjects = this.gameEngine.queryObjects({
-            playerNumber: playerNumber
-        });
-        playerObjects.forEach((obj) => {
-            this.gameEngine.removeObjectFromWorld(obj.id);
-            if (obj.playerId) {
-                this.controller.removePlayer(obj.playerId);
-            }
-        });
-
         this.players[playerNumber] = undefined;
     }
 

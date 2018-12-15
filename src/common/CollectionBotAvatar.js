@@ -1,5 +1,4 @@
 import BotAvatar from './BotAvatar';
-import BaseTypes from 'lance/serialize/BaseTypes';
 
 export const State = {
     COLLECTING: Symbol('collecting'),
@@ -14,7 +13,7 @@ export const State = {
  */
 export default class CollectionBotAvatar extends BotAvatar {
     static get netScheme() {
-        return Object.assign({}, super.netScheme);
+        return Object.assign({}, BotAvatar.netScheme);
     }
 
     get maxSpeed() {

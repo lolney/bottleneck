@@ -162,6 +162,13 @@ Reflects a problem that a player can solve, sent when the player approaches a re
 - target: `targeted`
 - data: `BinaryTreeProblem | ImageProblem`
 
+`gameState`
+
+Reflects a change in the game state, as described by the state field.
+
+- target: `broadcast`
+- data: `state: 'initializing' | 'suspended' | 'inProgress' | 'done'`
+
 ### Server-side Event Subscriptions:
 
 The server listens for theses events.

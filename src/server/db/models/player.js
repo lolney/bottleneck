@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     Player.associate = function(models) {
         Player.belongsTo(models.user);
+        Player.belongsTo(models.game);
         Player.hasMany(models.resource, { onDelete: 'CASCADE', hooks: true });
         Player.hasOne(models.base, { onDelete: 'CASCADE', hooks: true });
     };
