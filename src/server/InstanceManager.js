@@ -1,6 +1,7 @@
 import Instance from './Instance';
 import { checkPassword, getUserId } from './db/views/user';
-import { setPlayerId } from './db/views/player';
+import { createGame } from './db/views/game';
+import { getPlayer, doesPlayerExist } from './db/views/player';
 import logger from './Logger';
 import socketioAuth from 'socketio-auth';
 
@@ -12,12 +13,6 @@ export default class InstanceManager {
         if (io) {
             this.handleAuth(io);
         }
-    }
-
-    static async addPlayer(username, playerNumber, gameId) {
-        let userId = await getUserId(username);
-        let player = await setPlayerId(userId, playerNumber, gameId);
-        return { userId, player };
     }
 
     handleAuth(io) {
@@ -34,23 +29,27 @@ export default class InstanceManager {
                 let username = data.username;
                 let password = data.password;
                 let gameId = socket.handshake.query.gameid;
+                let playerNumber = socket.playerId;
+
+                let userId = await getUserId(username);
 
                 logger.info(`User is logging in: ${data.username}`);
                 let succeeded = await checkPassword(username, password);
                 logger.info(`Authentication succeeded: ${succeeded}`);
 
-                let { userId, player } = await InstanceManager.addPlayer(
-                    username,
-                    socket.playerId,
-                    gameId
-                );
+                let playerExists = await doesPlayerExist(userId, gameId);
+                let player = await getPlayer(userId, playerNumber, gameId);
+
                 socket.client.userId = userId;
                 socket.client.playerDbId = player.id;
 
                 logger.debug(`added player to db: ${player.id}`);
                 callback(null, succeeded);
 
-                this.instances[gameId].addPlayer(socket);
+                if (!playerExists) {
+                    this.instances[gameId].addPlayer(socket);
+                }
+                this.instances[gameId].maybeStartGame();
             },
             timeout: 'none'
         });
@@ -104,9 +103,10 @@ class InstanceQueue {
     /**
      * @private
      */
-    _createInstance() {
-        const id = Math.random();
-        const instance = new Instance();
+    async _createInstance() {
+        const game = await createGame();
+        const id = game.id;
+        const instance = new Instance(id);
         return { instance, id };
     }
 

@@ -6,10 +6,10 @@ import {
     markAsCollected
 } from '../../../src/server/db/views/gameObject';
 import {
-    setPlayerId,
     addToResourceCount,
     decrementHP,
-    getPlayerResources
+    createPlayer,
+    getPlayer
 } from '../../../src/server/db/views/player';
 import { checkPassword, createUser } from '../../../src/server/db/views/user';
 import {
@@ -17,10 +17,18 @@ import {
     getSolutions,
     solvedProblem
 } from '../../../src/server/db/views/solvedProblem';
+import { createGame, destroyGame } from '../../../src/server/db/views/game';
 
 import models from '../../../src/server/db/models';
 import TwoVector from 'lance/serialize/TwoVector';
 import { assaultBot, playerBase } from '../../../src/config';
+
+let userCount = 0;
+
+async function createUniqueUser() {
+    userCount++;
+    return createUser(`test${userCount}`, 'secret', `${userCount}@example.com`);
+}
 
 describe('chainIncludes', () => {
     it('returns the correct answer for a single include', () => {
@@ -125,7 +133,7 @@ describe('checkPassword', () => {
     let user;
 
     beforeAll((done) => {
-        createUser('test1', 'secret', 'test1@example.com').then((u) => {
+        createUniqueUser().then((u) => {
             user = u;
             done();
         });
@@ -147,7 +155,7 @@ describe('checkPassword', () => {
     });
 
     it('returns true with the correct password', (done) => {
-        checkPassword('test1', 'secret')
+        checkPassword(user.username, 'secret')
             .then((result) => {
                 expect(result).toEqual(true);
                 done();
@@ -156,7 +164,7 @@ describe('checkPassword', () => {
     });
 
     it('returns false with the incorrect password', (done) => {
-        checkPassword('test1', '')
+        checkPassword(user.username, '')
             .then((result) => {
                 expect(result).toEqual(false);
                 done();
@@ -169,7 +177,7 @@ describe('createUser', () => {
     let user;
 
     beforeAll((done) => {
-        createUser('test2', 'secret', 'test2@example.com').then((u) => {
+        createUser('taken', 'secret', 'taken@example.com').then((u) => {
             user = u;
             done();
         });
@@ -182,7 +190,7 @@ describe('createUser', () => {
     });
 
     it('returns error if username already exists', (done) => {
-        createUser('test2', 'secret', 'unique@example.com')
+        createUser('taken', 'secret', 'unique@example.com')
             .then(() => {
                 done(new Error('should not succeed'));
             })
@@ -193,7 +201,7 @@ describe('createUser', () => {
     });
 
     it('returns error if email already exists', (done) => {
-        createUser('unique', 'secret', 'test2@example.com')
+        createUser('unique1', 'secret', 'taken@example.com')
             .then(() => {
                 done(new Error('should not succeed'));
             })
@@ -204,7 +212,7 @@ describe('createUser', () => {
     });
 
     it('returns error if email is invalid', (done) => {
-        createUser('unique', 'secret', 'unique')
+        createUser('unique2', 'secret', 'unique')
             .then(() => {
                 done(new Error('should not succeed'));
             })
@@ -284,48 +292,58 @@ describe('addSolution', () => {
     });
 });
 
-describe('setPlayerId', () => {
+describe('getPlayer', () => {
     let user;
     let player;
+    let game;
 
     beforeAll(async () => {
-        user = await createUser('test4', 'test4', 'test4@test.com');
+        game = await createGame();
+        user = await createUniqueUser();
+
+        expect(user.playerId).toBe(null);
+
+        player = await createPlayer(user.id, 1, game.id, new TwoVector(0, 0));
     });
 
     afterAll(async () => {
         await player.destroy();
         await user.destroy();
+        await game.destroy();
     });
 
     it('correctly sets the user id', async () => {
-        expect(user.playerId).toEqual(null);
+        expect(player.userId).toEqual(user.id);
+    });
 
-        player = await setPlayerId(user.id, 1, new TwoVector(0, 0));
-
-        expect(player.playerNumber).toEqual(1);
-
+    it('correctly creates the base', async () => {
         let base = await player.getBase();
 
         expect(base.hp).toEqual(playerBase.baseHP);
     });
 
-    it('if existing game provided, returns existing player', async () => {});
+    it('if existing user id provided, returns existing player', async () => {
+        let otherPlayer = await getPlayer(user.id, 1, game.id);
 
-    it('if incorrect game provided, throws error', async () => {});
+        expect(otherPlayer.id).toEqual(player.id);
+    });
 });
 
 describe('addToResourceCount', () => {
     let user;
     let player;
+    let game;
 
     beforeAll(async () => {
-        user = await createUser('test3', 'test3', 'test3@test.com');
-        player = await setPlayerId(user.id, 0, new TwoVector(0, 0));
+        game = await createGame();
+        user = await createUniqueUser();
+        player = await createPlayer(user.id, 0, game.id, new TwoVector(0, 0));
     });
 
     afterAll(async () => {
         await player.destroy();
         await user.destroy();
+        await game.destroy();
     });
 
     it('correctly adds resource count to newly-initialized player', async () => {
@@ -374,5 +392,33 @@ describe('getObjectResources', () => {
 
         expect(resources.length).toEqual(2);
         expect(resources[0].count).not.toBe(null);
+    });
+});
+
+describe('game', () => {
+    let game;
+    let user;
+    let player;
+
+    beforeEach(async () => {
+        user = await createUniqueUser();
+        game = await createGame();
+        player = await createPlayer(user.id, 1, game.id);
+    });
+
+    afterEach(async () => {
+        user.destroy();
+        player.destroy();
+        game.destroy();
+    });
+
+    it('destroy also destroys players', async () => {
+        expect(player).toBeDefined();
+
+        await destroyGame(game.id);
+
+        let after = await models.player.find({ where: { id: player.id } });
+
+        expect(after).toBe(null);
     });
 });

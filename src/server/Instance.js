@@ -3,11 +3,14 @@ import Trace from 'lance/lib/Trace';
 import MyServerEngine from './MyServerEngine';
 import MyGameEngine from '../common/MyGameEngine';
 import { GameStatus as Status } from '../common/types';
+import { destroyGame } from './db/views/game';
 import logger from './Logger';
 
 export default class Instance {
-    // Game Instances
-    constructor() {
+    constructor(gameId) {
+        this.gameId = gameId;
+        this.currentPlyers = [];
+
         this.gameEngine = new MyGameEngine({
             traceLevel: Trace.TRACE_NONE,
             collisionOptions: {
@@ -28,16 +31,12 @@ export default class Instance {
                 timeoutInterval: 0
             }
         );
-        // Proxy onPlayerDisconnected
-        let serverEngineOnDc = this.serverEngine.onPlayerDisconnected.bind(
-            this.serverEngine
-        );
-        this.serverEngine.onPlayerDisconnected = (socketId, playerId) => {
-            serverEngineOnDc(socketId, playerId);
-            this.onPlayerDisconnected();
-        };
 
-        this.currentPlyers = [];
+        this.proxyOnPlayerDisconnected(this.serverEngine);
+
+        this.onProcessExit = this.stop.bind(this);
+        process.on('exit', this.onProcessExit);
+
         this.serverEngine.start();
     }
 
@@ -45,18 +44,36 @@ export default class Instance {
         return this.serverEngine.nConnectedPlayers == 2;
     }
 
+    /**
+     * @private
+     * @param {*} serverEngine
+     */
+    proxyOnPlayerDisconnected(serverEngine) {
+        let serverEngineOnDc = serverEngine.onPlayerDisconnected.bind(
+            serverEngine
+        );
+        serverEngine.onPlayerDisconnected = (socketId, playerId) => {
+            serverEngineOnDc(socketId, playerId);
+            this.onPlayerDisconnected();
+        };
+    }
+
     launch(stopCallback) {
         this.stopCallback = stopCallback;
         this.setState(Status.IN_PROGRESS);
     }
 
-    stop() {
+    async stop() {
         logger.info('Stopping instance');
         if (this.stopCallback) {
             this.stopCallback();
         }
         this.gameEngine.stop();
         this.serverEngine.scheduler.stop();
+        // @TODO: consider separating database logic, process logic
+        await destroyGame(this.gameId);
+
+        process.removeListener('exit', this.onProcessExit);
     }
 
     suspend() {
@@ -100,6 +117,9 @@ export default class Instance {
      */
     addPlayer(socket) {
         this.serverEngine.addPlayer(socket);
+    }
+
+    maybeStartGame() {
         if (this.serverEngine.nConnectedPlayers == 2) {
             logger.info('Enough players in the game. Resuming.');
             this.start();

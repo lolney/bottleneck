@@ -64,19 +64,14 @@ export default class MyServerEngine extends ServerEngine {
         });
     }
 
+    /**
+     * Don't remove players; just temporarily remove socket.
+     * Players are removed on stopping the game instance instead.
+     * @param {*} socketId
+     * @param {*} playerNumber
+     */
     onPlayerDisconnected(socketId, playerNumber) {
         super.onPlayerDisconnected(socketId, playerNumber);
-        logger.info(`Removing player ${playerNumber}`);
-        let playerObjects = this.gameEngine.queryObjects({
-            playerNumber: playerNumber
-        });
-        playerObjects.forEach((obj) => {
-            this.gameEngine.removeObjectFromWorld(obj.id);
-            if (obj.playerId) {
-                this.controller.removePlayer(obj.playerId);
-            }
-        });
-
         this.players[playerNumber] = undefined;
     }
 

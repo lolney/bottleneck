@@ -4,35 +4,52 @@ import { getDataValues } from '..';
 import { playerBase, assaultBot } from '../../../config';
 
 /**
- * Cteates player with the provided number and associates it with user,
- * returning the newly-created player
+ * Gets player, created it if not yet created
  * @param {string} userId
  * @param {number} number
+ * @param {string} gameId
  * @param {TwoVector} options.location
- * @param {string} options.gameId
  * @returns {*} - the player
  */
-export async function setPlayerId(userId, number, options = {}) {
+export async function getPlayer(userId, number, gameId, options = {}) {
     let player;
 
-    if (options.gameId) {
-        player = await models.player.find({
-            where: { gameId: options.gameId }
-        });
-    } else {
-        player = await createPlayer(userId, number, options.location);
+    player = await models.player.find({
+        where: { gameId, userId }
+    });
+
+    if (!player) {
+        player = await createPlayer(userId, number, gameId, options.location);
     }
 
     return player;
 }
 
-export async function createPlayer(userId, number, location) {
+export async function doesPlayerExist(userId, gameId) {
+    let player = await models.player.find({
+        where: { gameId, userId }
+    });
+
+    return player != undefined;
+}
+
+/**
+ * Creates player with the provided number and associates it with user,
+ * returning the newly-created player
+ * @param {*} userId
+ * @param {*} number
+ * @param {*} gameId
+ * @param {*} location
+ */
+export async function createPlayer(userId, number, gameId, location) {
     let sequelizeLocation = !location
         ? null
         : db.Sequelize.fn(
             'ST_GeomFromText',
             `POINT(${location.x} ${location.y})`
         );
+
+    let game = await models.game.find({ where: { id: gameId } });
 
     let player = await models.player.create({
         playerNumber: Number(number),
@@ -57,6 +74,7 @@ export async function createPlayer(userId, number, location) {
     await Promise.all([
         player.setUser(user),
         player.setBase(base),
+        player.setGame(game),
         await wood.setPlayer(player),
         await stone.setPlayer(player)
     ]);

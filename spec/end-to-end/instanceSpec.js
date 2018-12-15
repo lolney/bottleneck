@@ -2,7 +2,7 @@ import TestClient from './TestClient';
 import TestServer from './TestServer';
 import { GameStatus as Status } from '../../src/common/types';
 
-function on(socket, event, handler = () => true) {
+function eventPromise(socket, event, handler = () => true) {
     return new Promise((resolve) => {
         socket.on(event, (data) => {
             if (handler(data)) {
@@ -19,7 +19,7 @@ describe('Instance', () => {
     beforeEach(async () => {
         server = await TestServer.create();
         let playersAdded = [0, 1].map(() =>
-            on(server.gameEngine, 'playerAdded')
+            eventPromise(server.gameEngine, 'playerAdded')
         );
 
         clients = await Promise.all(
@@ -49,35 +49,73 @@ describe('Instance', () => {
         clients[1].socket.close();
     });
 
-    describe('reconnect', () => {
-        it('attempted if one player disconnects and reconnects', async () => {
-            let stateChanges = clients.map((client) =>
-                on(
+    describe('on reconnect', () => {
+        describe('when one player disconnects and reconnects', async () => {
+            let disconnectAndReconnect = async (client) => {
+                // create game. client closes socket.
+                let disconnect = eventPromise(client.socket, 'disconnect');
+                client.socket.close();
+
+                await disconnect;
+
+                // client reopens socket. reconnect to same game
+                // game state resumed for both players
+                client.socket.connect();
+            };
+
+            it('game resumes', async () => {
+                let stateChanges = clients.map((client) =>
+                    eventPromise(
+                        client.socket,
+                        'gameState',
+                        (data) => data.state == Status.IN_PROGRESS
+                    )
+                );
+
+                await disconnectAndReconnect(clients[0]);
+                await Promise.all(stateChanges);
+            });
+
+            it('previous state restored', async () => {
+                const client = clients[0];
+
+                let makeAssaultBot = eventPromise(
                     client.socket,
-                    'gameState',
-                    (data) => data.state == Status.IN_PROGRESS
-                )
-            );
+                    'makeAssaultBot',
+                    (resp) => resp.type == 'SUCCESS'
+                );
 
-            // create game. client closes socket.
-            let disconnect = on(clients[0].socket, 'disconnect');
-            clients[0].socket.close();
+                client.socket.emit('makeAssaultBot');
+                await makeAssaultBot;
 
-            await disconnect;
-            // client reopens socket. reconnect to same game
-            // game state resumed for both players
-            clients[0].socket.connect();
+                let playerAdded = eventPromise(
+                    server.gameEngine,
+                    'playerAdded'
+                );
 
-            await Promise.all(stateChanges);
+                await disconnectAndReconnect(clients[0]);
+                await playerAdded;
+
+                let resourceBroadcast = eventPromise(
+                    client.socket,
+                    'resourceInitial',
+                    (data) => {
+                        console.log('initial');
+                        return data['wood'] == 0;
+                    }
+                );
+                client.socket.emit('resourceInitial');
+                await resourceBroadcast;
+            });
         });
 
-        it('result in error when both players have disconnected', async () => {
+        it('results in error when both players have disconnected', async () => {
             const disconnects = clients.map((client) =>
-                on(client.socket, 'disconnect')
+                eventPromise(client.socket, 'disconnect')
             );
 
             const connects = clients.map((client) =>
-                on(client.socket, 'connect')
+                eventPromise(client.socket, 'connect')
             );
 
             // create game. both clients close socket.
