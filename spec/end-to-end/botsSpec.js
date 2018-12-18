@@ -27,7 +27,7 @@ describe('BotAvatar', () => {
                     resolve();
                 }
             });
-            socket.emit('makeAssaultBot');
+            socket.request('makeAssaultBot');
         });
     });
 });

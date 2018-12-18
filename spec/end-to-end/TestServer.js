@@ -67,6 +67,10 @@ export default class TestServer {
         return this.instanceManager.instances[this.gameId];
     }
 
+    socket(i) {
+        return this.instance.serverEngine.players[i];
+    }
+
     get events() {
         return this.instanceManager.eventEmitter;
     }

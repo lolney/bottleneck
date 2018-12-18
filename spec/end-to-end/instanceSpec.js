@@ -1,6 +1,7 @@
 import TestClient from './TestClient';
 import TestServer from './TestServer';
 import { GameStatus as Status } from '../../src/common/types';
+import { Response } from '../../src/common/Socket';
 
 function eventPromise(socket, event, handler = () => true) {
     return new Promise((resolve) => {
@@ -39,22 +40,38 @@ describe('Instance', () => {
         expect(server.gameEngine.status).toEqual(Status.IN_PROGRESS);
     });
 
-    it('correctly broadcasts suspend when a player disconnects', (done) => {
-        clients[0].socket.on('gameState', (data) => {
-            if (data.state == Status.SUSPENDED) {
-                done();
-            }
+    describe('on disconnect', () => {
+        it('correctly broadcasts suspend', async () => {
+            let client = clients[0];
+            let other = clients[1];
+
+            let disconnect = eventPromise(
+                other.socket,
+                'gameState',
+                (data) => data.state == Status.SUSPENDED
+            );
+            client.socket.close();
+
+            await disconnect;
         });
 
-        clients[1].socket.close();
+        /*it('correctly prevents all socket interactions', () => {
+            let client = clients[0];
+
+            // map over api events. try them. done should work.
+            let resp = await client.socket.request('makeAssaultBot');
+
+            expect(resp.type).toEqual(Response.ERROR);
+            expect(resp.msg).toEqual('Game suspended');
+        });*/
     });
 
     describe('on reconnect', () => {
         describe('when one player disconnects and reconnects', async () => {
-            let disconnectAndReconnect = async (client) => {
+            let disconnectAndReconnect = async (client, other) => {
                 // create game. client closes socket.
                 let disconnect = eventPromise(
-                    clients[1].socket,
+                    other.socket,
                     'gameState',
                     (data) => data.state == Status.SUSPENDED
                 );
@@ -78,38 +95,44 @@ describe('Instance', () => {
             };
 
             it('game resumes', async () => {
-                await disconnectAndReconnect(clients[0]);
+                await disconnectAndReconnect(clients[0], clients[1]);
             });
 
             it('playerIds are the same', async () => {
                 let ids = server.playerIds;
 
-                await disconnectAndReconnect(clients[0]);
+                await disconnectAndReconnect(clients[0], clients[1]);
 
                 expect(server.playerIds).toEqual(ids);
             });
 
+            /* // Doesn't work in test environment
+            it('can move again', async () => {
+                const client = clients[0];
+
+                const promise = eventPromise(server.gameEngine, 'move');
+                client.client.clientEngine.sendInput('up');
+
+                await promise;
+
+                await disconnectAndReconnect(client, clients[1]);
+            });*/
+
             it('previous state restored', async () => {
                 const client = clients[0];
 
-                let makeAssaultBot = eventPromise(
-                    client.socket,
-                    'makeAssaultBot',
-                    (resp) => resp.type == 'SUCCESS'
-                );
+                const resp = await client.socket.request('makeAssaultBot');
 
-                client.socket.emit('makeAssaultBot');
-                await makeAssaultBot;
+                console.log(resp);
 
-                await disconnectAndReconnect(clients[0]);
+                expect(resp.type).toEqual(Response.SUCCESS);
+
+                await disconnectAndReconnect(client, clients[1]);
 
                 let resourceBroadcast = eventPromise(
                     client.socket,
                     'resourceInitial',
-                    (data) => {
-                        console.log('initial');
-                        return data['wood'] == 0;
-                    }
+                    (data) => data['wood'] == 0
                 );
                 client.socket.emit('resourceInitial');
                 await resourceBroadcast;

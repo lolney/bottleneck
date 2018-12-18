@@ -3,6 +3,7 @@ import Router from '../../src/client/Router';
 import MyGameEngine from '../../src/common/MyGameEngine';
 import PlayerAvatar from '../../src/common/MyGameEngine';
 import { clientDefaults } from '../../src/config';
+import Socket from '../../src/common/Socket';
 
 class TestRenderer {
     draw() {}
@@ -16,6 +17,8 @@ export default class TestClient {
         this.gameEngine = new MyGameEngine(clientDefaults);
         this.clientEngine = new ClientEngine(
             this.gameEngine,
+            // can set `scheduler: 'fixed'` to get network updates,
+            // but this doesn't work in the node environment
             { ...clientDefaults, serverURL: url },
             TestRenderer
         );
@@ -29,7 +32,7 @@ export default class TestClient {
     }
 
     async start() {
-        this.socket = await this.clientEngine.start();
+        this.socket = new Socket(await this.clientEngine.start(), false);
         this.router = new Router(this.socket);
         return this.socket;
     }
