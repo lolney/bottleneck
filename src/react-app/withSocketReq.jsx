@@ -39,7 +39,7 @@ export default function withSocketReq(
         }
 
         fetch(event, req) {
-            this.socket.once(event, (resp) => {
+            this.socket.emit(event, req, (resp) => {
                 if (resp.type == 'SUCCESS') {
                     this.setState({
                         activeRequests: this.state.activeRequests - 1,
@@ -59,7 +59,6 @@ export default function withSocketReq(
                 }
             });
 
-            this.socket.emit(event, req);
             this.setState({ activeRequests: this.state.activeRequests + 1 });
         }
 

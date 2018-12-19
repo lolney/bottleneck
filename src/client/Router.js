@@ -1,11 +1,13 @@
+import Socket from '../common/Socket';
+
 export default class Router {
     constructor(socket) {
-        this.socket = socket;
+        this.socket = new Socket(socket, false);
     }
 
     makeDefense(defenseId, position) {
         console.log('making defense permanent');
-        this.socket.emit('makeDefense', {
+        return this.socket.request('makeDefense', {
             defenseId: defenseId,
             position: position
         });
@@ -13,7 +15,7 @@ export default class Router {
 
     mergeObjects(defenseId, attachedObjectId) {
         console.log(`merging defense ${defenseId} with ${attachedObjectId}`);
-        this.socket.emit('mergeDefenses', {
+        return this.socket.request('mergeDefenses', {
             defenseId: defenseId,
             gameObjectId: attachedObjectId
         });

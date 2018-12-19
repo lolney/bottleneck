@@ -21,6 +21,7 @@ import {
 import { siegeItems, assaultBot, getSiegeItemFromId } from '../config';
 import logger from './Logger';
 import { GameStatus as Status } from '../common/types';
+import Socket, { Response } from '../common/Socket';
 
 function serialize(problem) {
     switch (problem.type) {
@@ -34,20 +35,6 @@ function serialize(problem) {
     default:
         throw new TypeError(`Unexpected type: ${problem.type}`);
     }
-}
-
-function handleAuth(socket) {
-    // @unimplemented
-    if (!socket.auth) throw new Error('User is not authenticated');
-}
-
-function err(socket, event, msg) {
-    logger.error(msg);
-    socket.emit(event, { type: 'ERROR', msg });
-}
-
-function success(socket, event, data) {
-    socket.emit(event, { type: 'SUCCESS', data });
 }
 
 /**
@@ -69,10 +56,10 @@ class Controller {
      * @param {socketIO} socket
      */
     addPlayer(playerId, playerNumber, socket) {
-        socket.on('solution', async (data) => {
-            handleAuth(socket);
+        socket = new Socket(socket);
 
-            let userId = socket.client.userId;
+        socket.on('solution', async (data) => {
+            let userId = socket.userId;
             await addSolution(userId, data.problemId, data.code);
 
             let solutions = await getSolutions(userId);
@@ -87,9 +74,7 @@ class Controller {
         });
 
         socket.on('solvedProblems', async () => {
-            handleAuth(socket);
-
-            let userId = socket.client.userId;
+            let userId = socket.userId;
             let solutions = await getSolutions(userId);
             socket.emit('solvedProblems', solutions);
         });
@@ -112,14 +97,9 @@ class Controller {
             socket.emit('resourceInitial', dict);
         });
 
-        socket.on('makeDefense', async (data) => {
+        socket.transaction('makeDefense', async (data) => {
             if (getSiegeItemFromId(data.defenseId).type != 'defensive') {
-                err(
-                    socket,
-                    'makeDefense',
-                    `Tried to add invalid defense: ${data}`
-                );
-                return;
+                return Response.err(`Tried to add invalid defense: ${data}`);
             }
 
             let resources = this.getDefenseCost(data.defenseId);
@@ -133,16 +113,16 @@ class Controller {
             );
             this.gameWorld.update(defense);
             this.gameEngine.resetBots();
+
+            return Response.ok({
+                dbId: defense.dbId,
+                position: defense.position
+            });
         });
 
-        socket.on('mergeDefenses', async (data) => {
+        socket.transaction('mergeDefenses', async (data) => {
             if (getSiegeItemFromId(data.defenseId).type != 'offensive') {
-                err(
-                    socket,
-                    'mergeDefenses',
-                    `Tried to add invalid offense: ${data}`
-                );
-                return;
+                return Response.err(`Tried to add invalid offense: ${data}`);
             }
 
             let resources = this.getDefenseCost(data.defenseId);
@@ -164,25 +144,21 @@ class Controller {
                 this.gameWorld.remove(defense);
                 this.gameEngine.resetBots();
             } catch (error) {
-                err(
-                    socket,
-                    'mergeDefenses',
+                return Response.err(
                     `Could not merge defenses: ${error.message}`
                 );
             }
         });
 
-        socket.on('makeAssaultBot', async (data) => {
+        socket.transaction('makeAssaultBot', async (data) => {
             let resources = assaultBot.cost;
 
             try {
                 await this.deductResourceCosts(playerId, resources);
                 const botCount = this.addAssaultBot(playerId, playerNumber);
-                success(socket, 'makeAssaultBot', { botCount });
+                return Response.ok('makeAssaultBot', { botCount });
             } catch (error) {
-                err(
-                    socket,
-                    'makeAssaultBot',
+                return Response.err(
                     `Could not create Assault bot: ${error.message}`
                 );
             }
@@ -337,6 +313,12 @@ class Controller {
     }
 
     broadcastGameState(state) {
+        if (state == Status.SUSPENDED) {
+            this.playerMap.setSuspended(true);
+        } else {
+            this.playerMap.setSuspended(false);
+        }
+
         this.playerMap.publishAll('gameState', { state });
     }
 
@@ -418,7 +400,6 @@ class PlayerMap {
      */
     publish(playerId, eventName, data) {
         let socket = this.getPlayer(playerId);
-        handleAuth(socket);
 
         socket.emit(eventName, data);
     }
@@ -436,14 +417,20 @@ class PlayerMap {
         }
     }
 
+    setSuspended(bool) {
+        for (const sock of Object.values(this.socketsMap)) {
+            sock.suspended = bool;
+        }
+    }
+
     getPlayerNumber(playerId) {
         let socket = this.getPlayer(playerId);
-        return socket.playerId;
+        return socket.playerNumber;
     }
 
     getUserId(playerId) {
         let socket = this.getPlayer(playerId);
-        return socket.client.userId;
+        return socket.userId;
     }
 
     botExists(playerId) {
@@ -459,7 +446,7 @@ class PlayerMap {
     removePlayer(playerId) {
         let socket = this.getPlayer(playerId);
         if (socket) {
-            deletePlayerId(socket.client.userId, playerId);
+            deletePlayerId(socket.userId, playerId);
             delete this.socketsMap[playerId];
         }
     }
