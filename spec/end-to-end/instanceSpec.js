@@ -41,29 +41,35 @@ describe('Instance', () => {
     });
 
     describe('on disconnect', () => {
-        it('correctly broadcasts suspend', async () => {
-            let client = clients[0];
-            let other = clients[1];
+        let client;
+        let other;
+        let disconnect;
 
-            let disconnect = eventPromise(
+        beforeEach(() => {
+            client = clients[0];
+            other = clients[1];
+
+            disconnect = eventPromise(
                 other.socket,
                 'gameState',
                 (data) => data.state == Status.SUSPENDED
             );
             client.socket.close();
+        });
 
+        it('correctly broadcasts suspend', async () => {
             await disconnect;
         });
 
-        /*it('correctly prevents all socket interactions', () => {
-            let client = clients[0];
+        it('correctly prevents all socket interactions', async () => {
+            await disconnect;
 
             // map over api events. try them. done should work.
-            let resp = await client.socket.request('makeAssaultBot');
+            let resp = await other.socket.request('makeAssaultBot');
 
             expect(resp.type).toEqual(Response.ERROR);
-            expect(resp.msg).toEqual('Game suspended');
-        });*/
+            expect(resp.msg).toEqual('Application state is suspended');
+        });
     });
 
     describe('on reconnect', () => {

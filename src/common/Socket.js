@@ -6,6 +6,8 @@ export default class Socket {
         if (requireAuth) {
             Socket.handleAuth(socket);
         }
+        this.suspended = false;
+
         this.socket = socket;
         this.connect = this.open;
         this.disconnect = this.close;
@@ -37,7 +39,9 @@ export default class Socket {
     }
 
     on(event, handler) {
-        this.socket.on(event, handler);
+        this.socket.on(event, (data) => {
+            if (!this.suspended) handler(data);
+        });
     }
 
     close() {
@@ -73,8 +77,12 @@ export default class Socket {
      */
     transaction(event, handler) {
         this.socket.on(event, async (data, fn) => {
-            let resp = await handler(data);
-            fn(resp);
+            if (!this.suspended) {
+                let resp = await handler(data);
+                fn(resp);
+            } else {
+                fn(Response.err('Application state is suspended'));
+            }
         });
     }
 

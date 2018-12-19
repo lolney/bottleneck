@@ -313,6 +313,12 @@ class Controller {
     }
 
     broadcastGameState(state) {
+        if (state == Status.SUSPENDED) {
+            this.playerMap.setSuspended(true);
+        } else {
+            this.playerMap.setSuspended(false);
+        }
+
         this.playerMap.publishAll('gameState', { state });
     }
 
@@ -408,6 +414,12 @@ class PlayerMap {
 
         for (const [id, sock] of Object.entries(this.socketsMap)) {
             sock.emit(eventName, getData(id));
+        }
+    }
+
+    setSuspended(bool) {
+        for (const sock of Object.values(this.socketsMap)) {
+            sock.suspended = bool;
         }
     }
 
