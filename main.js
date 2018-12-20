@@ -27,8 +27,13 @@ let requestHandler = server.listen(PORT, () =>
 
 const io = socketIO(requestHandler);
 
+const handler = (req, res) => res.sendFile(path.join(INDEX, 'index.html'));
+
 server.use(express.static(INDEX));
 server.use('/assets', express.static(ASSETS));
+['/implicit/callback', '/', '/login'].map((route) =>
+    server.get(route, handler)
+);
 server.use('/dist', express.static(DIST));
 
 server.use(matchmakingRouter(io));

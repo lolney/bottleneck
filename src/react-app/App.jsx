@@ -4,13 +4,13 @@ import ReactDOM from 'react-dom';
 import EditorSocketWatcher from './EditorSocketWatcher.jsx';
 import ConnectionOverlay from './ConnectionOverlay.jsx';
 import VictoryOverlay from './VictoryOverlay.jsx';
-import Login from './Login.jsx';
 import HUD from './HUD.jsx';
 import HealthBarContainer from './HealthBarContainer.jsx';
 import Game from './Game.jsx';
 import Windows from './Windows.jsx';
 import SocketContext from './SocketContext';
-import ModeSelect from './modeSelect/ModeSelect.jsx';
+import ModeSelect from './modeSelect/App.jsx';
+import Login from './login/Login.jsx';
 
 import './CSS/Defenses.scss';
 import './CSS/HUD.scss';

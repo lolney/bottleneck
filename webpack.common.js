@@ -3,7 +3,7 @@ const fs = require('fs');
 const webpack = require('webpack');
 
 module.exports = {
-    entry: ['babel-polyfill', './src/client/clientEntryPoint.js'],
+    entry: ['idempotent-babel-polyfill', './src/client/clientEntryPoint.js'],
     output: {
         path: path.join(__dirname, 'dist'),
         filename: 'bundle.js'
@@ -53,6 +53,19 @@ module.exports = {
                 options: {
                     publicPath: 'dist/'
                 }
+            },
+            {
+                test: /\.(gif|png|jpe?g|svg)$/i,
+                use: [
+                    'file-loader',
+                    {
+                        loader: 'image-webpack-loader',
+                        options: {
+                            bypassOnDebug: true, // webpack@1.x
+                            disable: true // webpack@2.x and newer
+                        }
+                    }
+                ]
             },
             { test: /\.tsx?$/, loader: 'awesome-typescript-loader' }
         ]
