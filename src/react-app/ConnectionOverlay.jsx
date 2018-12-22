@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import withSocket from './withSocket.jsx';
 import { GameStatus as Status } from '../common/types';
+import 'semantic-ui-css/semantic.min.css';
+import { Dimmer, Loader, Image, Segment } from 'semantic-ui-react';
 
 const State = Object.freeze({
     Connected: 'connected',
@@ -99,18 +101,9 @@ const ConnectionOverlay = ({ state }) => {
     default:
         return (
             <div className="loading-screen">
-                <div id="spinner" className="spinner">
-                    <div className="loader-wrapper">
-                        <div className="loader">
-                            {[...Array(8).keys()].map((i) => (
-                                <div key={i} />
-                            ))}
-                        </div>
-                    </div>
-                    <div className="text-container">
-                        <div className="loading-text">{state}</div>
-                    </div>
-                </div>
+                <Dimmer active inverted>
+                    <Loader size="big" inverted content={state} />
+                </Dimmer>
             </div>
         );
     }
