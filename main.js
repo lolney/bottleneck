@@ -11,7 +11,7 @@ if (process.env.SENTRY_DSN) {
         dsn: process.env.SENTRY_DSN
     });
 } else {
-    logger.warn('SENTRY_DSN env variable not set');
+    logger.warning('SENTRY_DSN env variable not set');
 }
 
 const PORT = process.env.PORT || 3000;

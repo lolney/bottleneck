@@ -7,6 +7,7 @@ export default class MockSocket {
             once: this.on.bind(this),
             addEventListener: this.on.bind(this),
             removeListener: () => {},
+            off: () => {},
             emit: () => {}
         };
     }
