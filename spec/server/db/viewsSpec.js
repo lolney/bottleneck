@@ -11,7 +11,7 @@ import {
     createPlayer,
     getPlayer
 } from '../../../src/server/db/views/player';
-import { checkPassword, createUser } from '../../../src/server/db/views/user';
+import { createUser, getUserId } from '../../../src/server/db/views/user';
 import {
     addSolution,
     getSolutions,
@@ -27,7 +27,7 @@ let userCount = 0;
 
 async function createUniqueUser() {
     userCount++;
-    return createUser(`test${userCount}`, 'secret', `${userCount}@example.com`);
+    return createUser(`test${userCount}`);
 }
 
 describe('chainIncludes', () => {
@@ -129,68 +129,23 @@ describe('problem', () => {
     });
 });
 
-describe('checkPassword', () => {
-    let user;
-
-    beforeAll((done) => {
-        createUniqueUser().then((u) => {
-            user = u;
-            done();
-        });
-    });
-
-    afterAll((done) => {
-        user.destroy().then(() => {
-            done();
-        });
-    });
-
-    it('returns false with an incorrect username', (done) => {
-        checkPassword('incorrect', 'secret')
-            .then((result) => {
-                expect(result).toEqual(false);
-                done();
-            })
-            .catch(done.fail);
-    });
-
-    it('returns true with the correct password', (done) => {
-        checkPassword(user.username, 'secret')
-            .then((result) => {
-                expect(result).toEqual(true);
-                done();
-            })
-            .catch(done.fail);
-    });
-
-    it('returns false with the incorrect password', (done) => {
-        checkPassword(user.username, '')
-            .then((result) => {
-                expect(result).toEqual(false);
-                done();
-            })
-            .catch(done.fail);
-    });
-});
-
 describe('createUser', () => {
     let user;
+    let newUser;
 
     beforeAll((done) => {
-        createUser('taken', 'secret', 'taken@example.com').then((u) => {
+        createUser('taken').then((u) => {
             user = u;
             done();
         });
     });
 
-    afterAll((done) => {
-        user.destroy().then(() => {
-            done();
-        });
+    afterAll(async () => {
+        await Promise.all([newUser, user].map((u) => u.destroy()));
     });
 
     it('returns error if username already exists', (done) => {
-        createUser('taken', 'secret', 'unique@example.com')
+        createUser('taken')
             .then(() => {
                 done(new Error('should not succeed'));
             })
@@ -200,31 +155,13 @@ describe('createUser', () => {
             });
     });
 
-    it('returns error if email already exists', (done) => {
-        createUser('unique1', 'secret', 'taken@example.com')
-            .then(() => {
-                done(new Error('should not succeed'));
-            })
-            .catch((e) => {
-                expect(e.errors[0].message).toEqual('email must be unique');
-                done();
-            });
-    });
+    it('creates user if user does not exist', async () => {
+        let id = await getUserId('not-taken');
 
-    it('returns error if email is invalid', (done) => {
-        createUser('unique2', 'secret', 'unique')
-            .then(() => {
-                done(new Error('should not succeed'));
-            })
-            .catch((e) => {
-                expect(e.errors[0].message).toEqual('Must be a valid email.');
-                done();
-            });
-    });
+        newUser = await models.user.find({ where: { id } });
 
-    it('create user hashes password', () => {
-        expect(user.password).not.toEqual('secret');
-        expect(user.validPassword('secret')).toEqual(true);
+        expect(id).toBeDefined();
+        expect(newUser.id).toEqual(id);
     });
 });
 

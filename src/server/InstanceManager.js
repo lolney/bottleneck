@@ -41,7 +41,7 @@ export default class InstanceManager {
                     return;
                 }
 
-                let username = 'test'; // TODO: replace token.sub;
+                let username = token.claims.sub;
                 let gameId = socket.handshake.query.gameid;
                 let playerNumber = socket.playerId;
 
