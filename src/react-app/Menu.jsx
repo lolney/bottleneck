@@ -55,7 +55,7 @@ class Menu extends React.Component {
                         <Button className="menu-button">Settings</Button>
                         <Button
                             className="menu-button"
-                            onClick={() => window.location.assign('index.html')}
+                            onClick={() => window.location.assign('/')}
                         >
                             Exit Game
                         </Button>
