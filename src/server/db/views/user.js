@@ -20,6 +20,10 @@ export async function getUserId(username) {
     return obj.dataValues.id;
 }
 
+export async function getBotUserId() {
+    return getUserId('_botuser');
+}
+
 export function createUser(username, password, email) {
     return models.user.create({
         username: username,

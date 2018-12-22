@@ -5,14 +5,17 @@
   margin: auto;
 }
 
+#header .navbar {
+  margin: 0px;
+}
+
 .matchmaking {
   background-color: black;
-  width: 100vw;
-  height: 100vh;
+  height: calc(100vh - 50px);
+
   .matchmaking-box {
     @include center;
     display: flex;
-    position: absolute;
     width: 60%;
     max-width: 80%;
     min-width: 300px;
@@ -23,7 +26,6 @@
 
   .title-box {
     display: flex;
-    max-height: 30vh;
     width: 60vw;
     max-width: 80vw;
     min-width: 300px;
@@ -81,31 +83,25 @@
     font-size: 2em;
   }
 
+  .large-btn {
+    position: relative;
+    margin: auto;
+    top: 10%;
+    width: 50%;
+    min-height: 100px;
+    height: 35%;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
   .btn-1 {
-    position: relative;
-    margin: auto;
-    top: 10%;
     left: 40%;
-    width: 50%;
-    height: 30%;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    // font: 300 1em/1.5em "Lato", sans-serif;   not necessary unless we don't use icons
-    // font-size: 2em;
   }
+
   .btn-2 {
-    position: relative;
-    margin: auto;
-    top: 10%;
     left: 10%;
-    width: 50%;
-    height: 30%;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    //font: 300 1em/1.5em "Lato", sans-serif;  not necessary unless we don't use icons
-    //font-size: 2em;
   }
+
   @import "../CSS/Common.scss";
 }

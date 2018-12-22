@@ -18,27 +18,30 @@ Communication between the game server and client is handled with a websockets (s
 
 ### Request/Response
 
-Like event subscriptions, but response is intended only for a single target. A per-pair hash ensures that, even in the event of multiple requests on the same event socket -- plus pipelining or server-side delays that mean requests are returned out-of-order -- each request makes it to the correct target.
-
-Whether this should be done over websockets instead of HTTP is questionable, but there is [precedent](https://github.com/swagger-api/swagger-socket/wiki/SwaggerSocket-Protocol) for this sort of usage. It means forgoing the tools available for HTTP APIs in favor of simplifying connection management (using the same websocket for all communication).
+Like event subscriptions, but response is intended only for a single target. Responses are returned through socket.io acks.
 
 Usage:
 
 ```
-import api from 'react-app/common/api';
+// initiating end
+const response = await socket.request(eventname: string, data?: any)
+if(response.type == Response.SUCCESS) {
+    const {type, data} = response;
+}
+```
 
-const response = api.request(socket, [eventname: string], [data?: {}])
-const {status, data} = await response;
+```
+// responding end
+socket.transaction(eventname: string, (data?: any) => Response)
 ```
 
 Response format:
 
 ```
 {
-    hash: string;
-    status: 'ERROR' | 'SUCCESS';
-    data?: {};
-    msg?: string;
+    type: 'ERROR' | 'SUCCESS';
+    data?: {}; // if 'ERROR'
+    msg?: string; // if 'SUCCESS'
 }
 ```
 
@@ -88,7 +91,7 @@ Post a new defense.
 
 - request data: `{}`
 - errors: `InvalidDefenseError | NotEnoughResourcesError`
-- response data: `{}`
+- response data: `{position: {x: number; y: number;}, dbId: string;}`
 
 `mergeDefenses`
 
@@ -161,6 +164,13 @@ Reflects a problem that a player can solve, sent when the player approaches a re
 
 - target: `targeted`
 - data: `BinaryTreeProblem | ImageProblem`
+
+`gameState`
+
+Reflects a change in the game state, as described by the state field.
+
+- target: `broadcast`
+- data: `state: 'initializing' | 'suspended' | 'inProgress' | 'done'`
 
 ### Server-side Event Subscriptions:
 

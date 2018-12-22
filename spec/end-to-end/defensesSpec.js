@@ -1,40 +1,33 @@
-import TestClient from './TestClient';
 import TestServer from './TestServer';
 import TwoVector from 'lance/serialize/TwoVector';
 
 describe('siegeItems', () => {
     let client;
     let server;
-    let socket;
 
     beforeAll(async () => {
-        server = await TestServer.create();
-        client = new TestClient(server.serverURL);
-        socket = await client.start();
-        await new Promise((resolve) =>
-            server.gameEngine.on('playerAdded', () => resolve())
-        );
+        var obj = await TestServer.createPracticeServer();
+
+        client = obj.client;
+        server = obj.server;
     });
 
-    it('correct defenses placed correctly', (done) => {
+    it('correct defenses placed correctly', async () => {
         const pos = new TwoVector(0, 0);
 
-        client.router.makeDefense('4', pos);
-        server.gameEngine.once('objectAdded', (object) => {
-            expect(object.dbId).toEqual('4');
-            expect(object.position).toEqual(pos);
-            done();
-        });
+        const { data } = await client.router.makeDefense('4', pos);
+
+        expect(data.dbId).toEqual('4');
+        expect(data.position.x).toEqual(pos.x);
+        expect(data.position.y).toEqual(pos.y);
     });
 
-    it('incorrect defenses return error', (done) => {
+    it('incorrect defenses return error', async () => {
         const pos = new TwoVector(0, 0);
 
-        socket.once('makeDefense', (resp) => {
-            expect(resp.type).toEqual('ERROR');
-            done();
-        });
-        client.router.makeDefense('1', pos);
+        const resp = await client.router.makeDefense('1', pos);
+
+        expect(resp.type).toEqual('ERROR');
     });
 
     it('correct offenses placed correctly', (done) => {
@@ -56,24 +49,18 @@ describe('siegeItems', () => {
         });
     });
 
-    it('incorrect offenses return error', (done) => {
+    it('incorrect offenses return error', async () => {
         const pos = new TwoVector(0, 0);
 
-        client.router.makeDefense('4', pos);
-        server.gameEngine.once('objectAdded', (object) => {
-            socket.once('mergeDefenses', (resp) => {
-                expect(resp.type).toEqual('ERROR');
-                done();
-            });
-            client.router.mergeObjects('4', object.id);
-        });
+        const object = await client.router.makeDefense('4', pos);
+        const resp = await client.router.mergeObjects('4', object.data.id);
+
+        expect(resp.type).toEqual('ERROR');
     });
 
-    it('offenses with incorrect gameObjectId return error', (done) => {
-        socket.once('mergeDefenses', (resp) => {
-            expect(resp.type).toEqual('ERROR');
-            done();
-        });
-        client.router.mergeObjects('1', 'invalidId');
+    it('offenses with incorrect gameObjectId return error', async () => {
+        const resp = await client.router.mergeObjects('1', 'invalidId');
+
+        expect(resp.type).toEqual('ERROR');
     });
 });
