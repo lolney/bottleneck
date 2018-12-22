@@ -2,6 +2,7 @@ import express from 'express';
 import socketIO from 'socket.io';
 import path from 'path';
 import matchmakingRouter from './src/server/routers/matchmaking';
+import { oktaJwtVerifier } from './src/server/auth/auth';
 import logger from './src/server/Logger';
 import * as Sentry from '@sentry/node';
 import 'newrelic';

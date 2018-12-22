@@ -1,10 +1,12 @@
 import Instance from './Instance';
-import { checkPassword, getUserId, getBotUserId } from './db/views/user';
+import { getUserId, getBotUserId } from './db/views/user';
 import { createGame } from './db/views/game';
 import { getPlayer, doesPlayerExist } from './db/views/player';
 import logger from './Logger';
 import socketioAuth from 'socketio-auth';
 import { EventEmitter } from 'events';
+
+import * as auth from './auth/auth';
 
 export default class InstanceManager {
     constructor(io) {
@@ -20,6 +22,7 @@ export default class InstanceManager {
     handleAuth(io) {
         socketioAuth(io, {
             authenticate: async (socket, data, callback) => {
+                console.log('connecting');
                 try {
                     this.onPlayerConnected(socket);
                 } catch (error) {
@@ -28,16 +31,23 @@ export default class InstanceManager {
                     return;
                 }
 
-                let username = data.username;
-                let password = data.password;
+                let token;
+
+                try {
+                    token = await auth.verifyToken(data.token);
+                } catch (error) {
+                    logger.info(`Invalid token: ${data.token}`);
+                    callback(null, false);
+                    return;
+                }
+
+                let username = 'test'; // TODO: replace token.sub;
                 let gameId = socket.handshake.query.gameid;
                 let playerNumber = socket.playerId;
 
                 let userId = await getUserId(username);
 
-                logger.info(`User is logging in: ${data.username}`);
-                let succeeded = await checkPassword(username, password);
-                logger.info(`Authentication succeeded: ${succeeded}`);
+                logger.info(`User is logging in: ${username}`);
 
                 let playerExists = await doesPlayerExist(userId, gameId);
                 let player = await getPlayer(userId, playerNumber, gameId);
@@ -46,7 +56,7 @@ export default class InstanceManager {
                 socket.client.playerDbId = player.id;
 
                 logger.debug(`added player to db: ${player.id}`);
-                callback(null, succeeded);
+                callback(null, true);
 
                 this.instances[gameId].addPlayer(socket, !playerExists);
                 this.instances[gameId].maybeStartGame();

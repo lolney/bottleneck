@@ -3,6 +3,8 @@ import MatchMaker from '../MatchMaker';
 import InstanceManager from '../InstanceManager';
 import cookieParser from 'cookie-parser';
 
+import { authRequired } from '../auth/auth';
+
 export class MatchmakingRouter {
     constructor(io) {
         this.manager = new InstanceManager(io);
@@ -43,7 +45,7 @@ export class MatchmakingRouter {
         const router = express.Router();
         router.use(cookieParser());
 
-        router.post('/match', async (req, res) => {
+        router.post('/match', authRequired, async (req, res) => {
             if (!req.query) {
                 res.status(500).send('Must include querystring');
             } else {

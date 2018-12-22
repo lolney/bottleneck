@@ -10,7 +10,7 @@ import Game from './Game.jsx';
 import Windows from './Windows.jsx';
 import SocketContext from './SocketContext';
 import ModeSelect from './modeSelect/App.jsx';
-import Login from './login/Login.jsx';
+import withLogin from './login/withLogin.jsx';
 
 import './CSS/Defenses.scss';
 import './CSS/HUD.scss';
@@ -100,9 +100,6 @@ export class App extends React.Component {
         return (
             <SocketContext.Provider value={this.state.socket}>
                 <div>
-                    {!this.state.token && (
-                        <Login onReceiveToken={this.onReceiveToken} />
-                    )}
                     {this.state.token && (
                         <ConnectionOverlay
                             key={this.state.socket == null}
@@ -142,13 +139,15 @@ export class App extends React.Component {
     }
 }
 
+const GameContainer = withLogin(App, '/game.html');
+
 // @TODO: codesplitting
 export default function createApp() {
     window.addEventListener('DOMContentLoaded', () => {
         const elem = document.getElementsByClassName('app')[0];
         switch (elem.id) {
         case 'game':
-            ReactDOM.render(<App />, elem);
+            ReactDOM.render(<GameContainer />, elem);
             break;
         case 'mode_select':
             ReactDOM.render(<ModeSelect />, elem);
