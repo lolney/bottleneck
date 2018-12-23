@@ -2,8 +2,8 @@ import express from 'express';
 import socketIO from 'socket.io';
 import path from 'path';
 import matchmakingRouter from './src/server/routers/matchmaking';
-import { oktaJwtVerifier } from './src/server/auth/auth';
 import logger from './src/server/Logger';
+import Auth from './src/server/auth/flow';
 import * as Sentry from '@sentry/node';
 import 'newrelic';
 
@@ -37,6 +37,6 @@ server.use('/assets', express.static(ASSETS));
 );
 server.use('/dist', express.static(DIST));
 
-server.use(matchmakingRouter(io));
+server.use(matchmakingRouter(io, Auth));
 
 export default server;

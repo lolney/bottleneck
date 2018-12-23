@@ -11,8 +11,10 @@ function getPort() {
     return _PORT++;
 }
 
-// define routes and socket
-
+/**
+ * A fully-functional test server, except that no HTTP API exists
+ * and no authetication is required.
+ */
 export default class TestServer {
     constructor(gameId, port, instanceManager) {
         this.instanceManager = instanceManager;
@@ -26,12 +28,12 @@ export default class TestServer {
         const server = express();
         const PORT = getPort();
 
-        let requestHandler = server.listen(PORT, () =>
-            logger.info(`Listening on ${PORT}`)
-        );
+        let requestHandler = server.listen(PORT, () => {
+            logger.info(`Listening on ${PORT}`);
+        });
         const io = socketIO(requestHandler);
 
-        const instanceManager = new InstanceManager(io);
+        const instanceManager = new InstanceManager(io, MockAuth);
         const gameId = await instanceManager.createInstance(options);
 
         return new TestServer(gameId, PORT, instanceManager);
@@ -75,3 +77,32 @@ export default class TestServer {
         return this.instanceManager.eventEmitter;
     }
 }
+
+import { getUserId } from '../../src/server/db/views/user';
+import Auth from '../../src/server/auth/flow';
+
+class MockAuth {
+    static async getUsername(data) {
+        const { socket } = data;
+
+        let username = 'test';
+        let gameId = socket.handshake.query.gameid;
+        let playerNumber = socket.playerId;
+
+        let userId = await getUserId(username);
+
+        return {
+            userId,
+            gameId,
+            playerNumber,
+            socket
+        };
+    }
+
+    static async authRequired() {}
+}
+
+MockAuth.getPlayerId = Auth.getPlayerId;
+MockAuth.getPlayer = Auth.getPlayer;
+MockAuth.setId = Auth.setId;
+MockAuth.postAuth = Auth.postAuth;
