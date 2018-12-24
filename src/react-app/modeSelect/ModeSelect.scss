@@ -7,6 +7,27 @@
 
 #header .navbar {
   margin: 0px;
+  background-color: black;
+  border-color: #ff87c7;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-radius: 0px;
+  display: flex;
+  flex-wrap: nowrap;
+  max-height: 53.53px;
+
+  #image {
+    vertical-align: top;
+  }
+
+  #text {
+    color: white;
+  }
+
+  #signin {
+    margin: 0 auto;
+  }
 }
 
 .matchmaking {
@@ -27,6 +48,7 @@
   .title-box {
     display: flex;
     width: 60vw;
+    max-height: 15vw;
     max-width: 80vw;
     min-width: 300px;
     flex-direction: row;
@@ -35,8 +57,6 @@
 
   .img-container {
     min-height: 100%;
-    min-width: 7em;
-    min-height: 7em;
     flex: 30%;
     display: block;
     flex-wrap: wrap;
@@ -44,16 +64,15 @@
 
   .player-img {
     display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 1.3em;
-    width: 7em;
+    text-align: center;
+    margin: auto;
+    width: 9vw;
   }
 
   .title {
     color: #ff87c7;
-    font: 300 1em/1.5em "Lato", sans-serif;
-    font-size: 8em;
+    font: 300 1em "Lato", sans-serif;
+    font-size: 10vw;
     text-align: center;
     flex: 70%;
     flex-wrap: wrap;
@@ -72,24 +91,33 @@
     margin-bottom: 20vh;
   }
 
-  .btn-row {
+  .btn-row-1 {
+    display: block;
+    width: 4vw;
+    margin-left: auto;
+    margin-right: auto;
+    flex: 50%;
+    flex-direction: row;
+  }
+
+  .btn-row-2 {
     display: block;
     margin-left: auto;
     margin-right: auto;
     flex: 50%;
     flex-direction: row;
     text-align: center;
-    font: 300 1em/1.5em "Lato", sans-serif;
-    font-size: 2em;
+    font: 300 2vw "Lato", sans-serif;
   }
 
   .large-btn {
     position: relative;
     margin: auto;
     top: 10%;
-    width: 50%;
+    width: 15vw;
+    min-width: 50px;
     min-height: 100px;
-    height: 35%;
+    height: 25vh;
     border: none;
     border-radius: 6px;
     cursor: pointer;

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navbar, Button } from 'react-bootstrap';
 import { withAuth } from '@okta/okta-react';
+import './ModeSelect.scss';
 
 const GUEST_USER = { preferred_username: 'Guest' };
 
@@ -57,9 +58,16 @@ class HeaderAuth extends React.Component {
 const Header = (props) => (
     <div id="header" className="bootstrap-styles">
         <Navbar>
-            <Navbar.Text>
-                Signed in as
-                <Navbar.Link href="#">
+            <Navbar.Header />
+            <Navbar.Text pullRight>
+                <img
+                    id="image"
+                    alt="guest-user"
+                    src="assets/noun_unknown user_102994.png"
+                    height="20px"
+                    width="20px"
+                />
+                <Navbar.Link href="#" id="text">
                     {' '}
                     {props.user.preferred_username}
                 </Navbar.Link>
@@ -73,9 +81,13 @@ const Header = (props) => (
 
 const SignIn = ({ user, login, logout }) =>
     user.preferred_username == 'Guest' || user === undefined ? (
-        <Button onClick={login}>Sign in</Button>
+        <Button className="hud-button" onClick={login}>
+            Sign in
+        </Button>
     ) : (
-        <Button onClick={logout}>Sign out</Button>
+        <Button className="hud-button" onClick={logout}>
+            Sign out
+        </Button>
     );
 
 export default withAuth(HeaderAuth);

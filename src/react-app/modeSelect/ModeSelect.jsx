@@ -12,7 +12,7 @@ export default class ModeSelect extends React.Component {
                 <div className="matchmaking">
                     <div className="matchmaking-box">
                         <div className="title-box">
-                            <div className="image-container">
+                            <div className="img-container">
                                 <img
                                     className="player-img"
                                     alt="player icon"
@@ -50,8 +50,8 @@ const ModeButton = (config, i) => (
     <div key={config.title} className="btn-cont">
         <a href={config.url} title={config.alt}>
             <Button className={`large-btn btn-${i + 1} hud-button`}>
-                <img className="btn-row" src={config.src} width="50px" />
-                <div className="btn-row">{config.title}</div>
+                <img className="btn-row-1" src={config.src} width="50px" />
+                <div className="btn-row-2">{config.title}</div>
             </Button>
         </a>
     </div>
