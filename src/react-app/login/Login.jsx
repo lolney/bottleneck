@@ -31,7 +31,8 @@ export default class LoginPage extends Component {
             },
             features: {
                 registration: true
-            }
+            },
+            idps: [{ type: 'GOOGLE', id: '0oaik6ac46Vofsk9n0h7' }]
         });
     }
     componentDidMount() {

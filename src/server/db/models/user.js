@@ -30,10 +30,14 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     User.associate = function(models) {
-        User.hasMany(models.solvedProblem, {
-            foreignKey: 'userId',
-            constraints: false
-        });
+        User.hasMany(
+            models.solvedProblem,
+            {
+                foreignKey: 'userId',
+                constraints: false
+            },
+            { onDelete: 'CASCADE', hooks: true }
+        );
         User.hasOne(models.player, { onDelete: 'CASCADE', hooks: true });
     };
 
