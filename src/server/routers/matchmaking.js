@@ -49,9 +49,8 @@ export class MatchmakingRouter {
     get router() {
         const router = express.Router();
         router.use(cookieParser());
-        const authRequired = this.Auth.authRequired;
 
-        router.post('/match', authRequired, async (req, res) => {
+        router.post('/match', async (req, res) => {
             if (!req.query) {
                 res.status(500).send('Must include querystring');
             } else {

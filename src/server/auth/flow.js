@@ -1,4 +1,4 @@
-import { getUserId } from '../db/views/user';
+import { getUserId, createGuest } from '../db/views/user';
 import { getPlayer, doesPlayerExist } from '../db/views/player';
 import logger from '../Logger';
 
@@ -18,21 +18,27 @@ class AuthFlow {
     static async getUsername(data) {
         const { socket, req } = data;
         let token;
+        let userId;
+        let gameId = socket.handshake.query.gameid;
+        let playerNumber = socket.playerId;
 
         try {
             token = await auth.verifyToken(req.token);
         } catch (error) {
             logger.info(`Invalid token: ${req.token}`);
-            throw error;
         }
 
-        let username = token.claims.sub;
-        let gameId = socket.handshake.query.gameid;
-        let playerNumber = socket.playerId;
+        if (!token) {
+            let user = await createGuest();
+            userId = user.id;
 
-        let userId = await getUserId(username);
+            logger.info(`Creating guest user: ${userId}`);
+        } else {
+            let username = token.claims.sub;
 
-        logger.info(`User is logging in: ${username}`);
+            userId = await getUserId(username);
+            logger.info(`User is logging in: ${username}`);
+        }
 
         return {
             userId,

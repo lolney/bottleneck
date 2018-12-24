@@ -11,7 +11,11 @@ import {
     createPlayer,
     getPlayer
 } from '../../../src/server/db/views/player';
-import { createUser, getUserId } from '../../../src/server/db/views/user';
+import {
+    createUser,
+    getUserId,
+    createGuest
+} from '../../../src/server/db/views/user';
 import {
     addSolution,
     getSolutions,
@@ -162,6 +166,21 @@ describe('createUser', () => {
 
         expect(id).toBeDefined();
         expect(newUser.id).toEqual(id);
+    });
+});
+
+describe('createGuest', () => {
+    let user;
+
+    afterAll(async () => {
+        await user.destroy();
+    });
+
+    it('creates guest user properly', async () => {
+        user = await createGuest();
+
+        expect(user.username).toBeDefined();
+        expect(user.isGuest).toBe(true);
     });
 });
 
@@ -338,7 +357,7 @@ describe('game', () => {
     let player;
 
     beforeEach(async () => {
-        user = await createUniqueUser();
+        user = await createGuest();
         game = await createGame();
         player = await createPlayer(user.id, 1, game.id);
     });
@@ -355,6 +374,16 @@ describe('game', () => {
         await destroyGame(game.id);
 
         let after = await models.player.find({ where: { id: player.id } });
+
+        expect(after).toBe(null);
+    });
+
+    it('destroy also destroys test users', async () => {
+        expect(user).toBeDefined();
+
+        await destroyGame(game.id);
+
+        let after = await models.user.find({ where: { id: user.id } });
 
         expect(after).toBe(null);
     });

@@ -6,7 +6,6 @@ import { clientDefaults } from '../config';
 import resolver from './login/resolver';
 import { withAuth } from '@okta/okta-react';
 
-// TODO: replace auth with token
 class Game extends React.Component {
     componentDidMount() {
         const qsOptions = querystring.parse(location.search);

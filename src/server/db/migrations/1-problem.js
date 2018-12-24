@@ -131,8 +131,14 @@ let migrationCommands = [
                 },
                 username: {
                     type: Sequelize.STRING,
+                    defaultValue: Sequelize.UUIDV4,
                     allowNull: false,
                     unique: true
+                },
+                isGuest: {
+                    type: Sequelize.BOOLEAN,
+                    defaultValue: true,
+                    allowNull: false
                 },
                 playerId: {
                     type: Sequelize.STRING,

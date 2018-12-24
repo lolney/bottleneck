@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         username: {
             type: DataTypes.STRING(50),
+            defaultValue: DataTypes.UUIDV4,
             allowNull: false,
             unique: true,
             validate: {
@@ -17,6 +18,11 @@ module.exports = (sequelize, DataTypes) => {
                     msg: 'Too many characters'
                 }
             }
+        },
+        isGuest: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true,
+            allowNull: false
         },
         playerId: {
             type: DataTypes.STRING
@@ -28,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'userId',
             constraints: false
         });
-        User.hasOne(models.player);
+        User.hasOne(models.player, { onDelete: 'CASCADE', hooks: true });
     };
 
     return User;

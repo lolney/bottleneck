@@ -15,6 +15,12 @@ export async function getBotUserId() {
     return getUserId('_botuser');
 }
 
+export async function createGuest() {
+    return models.user.create({
+        isGuest: true
+    });
+}
+
 export function createUser(username) {
     return models.user.create({
         username: username
