@@ -1,4 +1,4 @@
-$image-width: 49%;
+$image-width: 100%;
 
 .imageProblem {
   .wrapper {
@@ -42,7 +42,8 @@ $image-width: 49%;
   }
   @mixin image {
     width: $image-width;
-    height: $image-width; // equal to width
+    height: $image-width;
+    object-fit: contain;
     background: #666;
     background-size: contain;
   }

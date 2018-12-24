@@ -4,8 +4,15 @@ import InstanceManager from '../InstanceManager';
 import cookieParser from 'cookie-parser';
 
 export class MatchmakingRouter {
-    constructor(io) {
-        this.manager = new InstanceManager(io);
+    /**
+     *
+     * @param {*} io
+     * @param {*} Auth - injectable auth dependency
+     */
+    constructor(io, Auth) {
+        this.Auth = Auth;
+
+        this.manager = new InstanceManager(io, Auth);
         this.matchmaker = new MatchMaker(this.manager);
     }
 
@@ -66,6 +73,6 @@ export class MatchmakingRouter {
     }
 }
 
-export default function makeRouter(io) {
-    return new MatchmakingRouter(io).router;
+export default function makeRouter(io, Auth) {
+    return new MatchmakingRouter(io, Auth).router;
 }
