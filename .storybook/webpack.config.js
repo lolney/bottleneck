@@ -15,6 +15,19 @@ module.exports = {
         rules: [
             { test: /\.css$/, loader: 'style-loader!css-loader' },
             {
+                test: /\.(gif|png|jpe?g|svg)$/i,
+                use: [
+                    'file-loader',
+                    {
+                        loader: 'image-webpack-loader',
+                        options: {
+                            bypassOnDebug: true, // webpack@1.x
+                            disable: true // webpack@2.x and newer
+                        }
+                    }
+                ]
+            },
+            {
                 test: /\.jsx$/,
                 include: [path.resolve(__dirname, '../src/react-app')],
                 loader: 'babel-loader',

@@ -52,6 +52,13 @@ body {
         font-size: 1em;
         flex-wrap: wrap;
       }
+
+      .column-interior {
+        position: relative;
+        top: 20%;
+        display: inline-block;
+      }
+
       @keyframes animate-green {
         from {
           color: black;
@@ -99,7 +106,7 @@ body {
         .hud-row {
           flex-direction: row;
           min-width: 100%;
-          margin-top: 20%;
+          margin-top: 3px;
           flex: 50%;
           display: block;
         }

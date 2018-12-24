@@ -31,6 +31,9 @@ module.exports = {
         'newline-after-if-condition/rule': ['error']
     },
     env: {
-        jasmine: true
+        jasmine: true,
+        es6: true,
+        node: true,
+        browser: true
     }
 };

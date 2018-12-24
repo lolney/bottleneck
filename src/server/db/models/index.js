@@ -23,6 +23,7 @@ if (process.env.DATABASE_URL) {
     // the application is executed on Heroku ... use the postgres database
     var sequelize = new Sequelize(process.env.DATABASE_URL, config);
 } else if (config.use_env_variable) {
+    console.log(process.env);
     var sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
     var sequelize = new Sequelize(

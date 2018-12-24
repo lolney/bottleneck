@@ -4,13 +4,13 @@ import ReactDOM from 'react-dom';
 import EditorSocketWatcher from './EditorSocketWatcher.jsx';
 import ConnectionOverlay from './ConnectionOverlay.jsx';
 import VictoryOverlay from './VictoryOverlay.jsx';
-import Login from './Login.jsx';
 import HUD from './HUD.jsx';
 import HealthBarContainer from './HealthBarContainer.jsx';
 import Game from './Game.jsx';
 import Windows from './Windows.jsx';
 import SocketContext from './SocketContext';
-import ModeSelect from './modeSelect/ModeSelect.jsx';
+import ModeSelect from './modeSelect/App.jsx';
+import withLogin from './login/withLogin.jsx';
 
 import './CSS/Defenses.scss';
 import './CSS/HUD.scss';
@@ -21,6 +21,8 @@ import './CSS/MenuWindow.scss';
 import './CSS/LoadingScreen.scss';
 import './CSS/VictoryOverlay.scss';
 import './CSS/HealthBar.scss';
+import 'semantic-ui-css/semantic.min.css';
+
 
 /*
 \ App
@@ -98,9 +100,6 @@ export class App extends React.Component {
         return (
             <SocketContext.Provider value={this.state.socket}>
                 <div>
-                    {!this.state.token && (
-                        <Login onReceiveToken={this.onReceiveToken} />
-                    )}
                     {this.state.token && (
                         <ConnectionOverlay
                             key={this.state.socket == null}
@@ -140,13 +139,15 @@ export class App extends React.Component {
     }
 }
 
+const GameContainer = withLogin(App, '/game.html');
+
 // @TODO: codesplitting
 export default function createApp() {
     window.addEventListener('DOMContentLoaded', () => {
         const elem = document.getElementsByClassName('app')[0];
         switch (elem.id) {
         case 'game':
-            ReactDOM.render(<App />, elem);
+            ReactDOM.render(<GameContainer />, elem);
             break;
         case 'mode_select':
             ReactDOM.render(<ModeSelect />, elem);

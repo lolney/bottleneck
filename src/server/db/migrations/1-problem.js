@@ -131,16 +131,13 @@ let migrationCommands = [
                 },
                 username: {
                     type: Sequelize.STRING,
+                    defaultValue: Sequelize.UUIDV4,
                     allowNull: false,
                     unique: true
                 },
-                email: {
-                    type: Sequelize.STRING,
-                    allowNull: false,
-                    unique: true
-                },
-                password: {
-                    type: Sequelize.STRING,
+                isGuest: {
+                    type: Sequelize.BOOLEAN,
+                    defaultValue: true,
                     allowNull: false
                 },
                 playerId: {

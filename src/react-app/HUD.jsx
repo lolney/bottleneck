@@ -43,14 +43,18 @@ class HUD extends React.Component {
                         }
                     >
                         <div className="hud-column">
-                            <img
-                                alt="defense icon"
-                                src="assets/noun_rook_3679.svg"
-                                height="20px"
-                                width="20px"
-                            />
+                            <div className="column-interior">
+                                <img
+                                    alt="defense icon"
+                                    src="assets/noun_rook_3679.svg"
+                                    height="20px"
+                                    width="20px"
+                                />
+                            </div>
                         </div>
-                        <div className="hud-column-2">Siege Tools</div>
+                        <div className="hud-column-2">
+                            <div className="column-interior">Siege Tools</div>
+                        </div>
                     </ControlledButton>
                     <WrappedMiniButtons
                         resources={this.props.resources}
@@ -130,18 +134,22 @@ class MiniButtons extends React.Component {
 const ResourceButton = ({ name, src, height, width, count }) => (
     <Button className="hud-button">
         <div className="hud-column">
-            <img alt={name} src={src} height={height} width={width} />
+            <div className="column-interior">
+                <img alt={name} src={src} height={height} width={width} />
+            </div>
         </div>
         {count == null ? (
             'loading'
         ) : (
-            <AnimateOnChange
-                baseClassName="hud-column-2"
-                animationClassName="updateable"
-                animate={true}
-            >
-                {count}
-            </AnimateOnChange>
+            <div className="hud-column-2">
+                <AnimateOnChange
+                    baseClassName="column-interior"
+                    animationClassName="updateable"
+                    animate={true}
+                >
+                    {count}
+                </AnimateOnChange>
+            </div>
         )}
     </Button>
 );

@@ -11,8 +11,7 @@ const windowStyle = {
     border: '1px solid rgba(0,0,0,.2)',
     borderRadius: '6px',
     width: `${width}px`,
-    height: '75vh',
-    maxHeight: '1000px',
+    maxHeight: '75vh',
     background: 'white'
 };
 
@@ -26,7 +25,7 @@ const barStyle = {
 
 const bodyStyle = {
     overflowY: 'scroll',
-    height: `calc(100% - ${barStyle.height})`
+    maxHeight: `calc(${windowStyle.maxHeight} - ${barStyle.height})`
 };
 
 export default class Window extends React.Component {
