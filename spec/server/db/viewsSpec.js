@@ -357,9 +357,7 @@ describe('game', () => {
     let player;
 
     beforeEach(async () => {
-        user = await createGuest();
         game = await createGame();
-        player = await createPlayer(user.id, 1, game.id);
     });
 
     afterEach(async () => {
@@ -369,6 +367,9 @@ describe('game', () => {
     });
 
     it('destroy also destroys players', async () => {
+        user = await createUniqueUser();
+        player = await createPlayer(user.id, 1, game.id);
+
         expect(player).toBeDefined();
 
         await destroyGame(game.id);
@@ -379,6 +380,9 @@ describe('game', () => {
     });
 
     it('destroy also destroys test users', async () => {
+        user = await createGuest();
+        player = await createPlayer(user.id, 1, game.id);
+
         expect(user).toBeDefined();
 
         await destroyGame(game.id);
@@ -386,5 +390,16 @@ describe('game', () => {
         let after = await models.user.find({ where: { id: user.id } });
 
         expect(after).toBe(null);
+    });
+
+    it('destroy does not destroy normal users', async () => {
+        user = await createUniqueUser();
+        player = await createPlayer(user.id, 1, game.id);
+
+        await destroyGame(game.id);
+
+        let after = await models.user.find({ where: { id: user.id } });
+
+        expect(after).toBeDefined();
     });
 });
