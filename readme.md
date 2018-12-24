@@ -8,7 +8,7 @@ Bottleneck is an open source, RTS-inspired game based around efficiently automat
 Preview:
 ![](https://i.imgur.com/d3UhZJu.jpg)
 
-Alpha demo at [bottleneck-production.herokuapp.com](http://bottleneck-production.herokuapp.com/).
+Alpha demo at [www.bottleneck.world](https://www.bottleneck.world/).
 
 Latest build at [scripting-rpg.herokuapp.com](http://scripting-rpg.herokuapp.com/).
 
