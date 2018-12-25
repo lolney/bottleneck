@@ -21,6 +21,7 @@ export default class ControlledButton extends React.Component {
     render() {
         return (
             <Button
+                id="btn-mrgn"
                 className={this.props.className}
                 onClick={() => {
                     if (this.state.selected == false) {

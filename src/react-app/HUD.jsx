@@ -27,6 +27,7 @@ class HUD extends React.Component {
                         />
                     ))}
                     <ControlledButton
+                        id="btn-mrgn"
                         className="hud-button"
                         addWindow={(callback) =>
                             this.props.addWindow(
@@ -63,6 +64,7 @@ class HUD extends React.Component {
                     />
 
                     <ControlledButton
+                        id="btm-btn-mrgn"
                         className="btm-btn hud-button"
                         addWindow={(callback) =>
                             this.props.addMenu(callback, this.props.socket)
@@ -132,7 +134,7 @@ class MiniButtons extends React.Component {
 }
 
 const ResourceButton = ({ name, src, height, width, count }) => (
-    <Button className="hud-button">
+    <Button className="hud-button" id="btn-mrgn">
         <div className="hud-column">
             <div className="column-interior">
                 <img alt={name} src={src} height={height} width={width} />

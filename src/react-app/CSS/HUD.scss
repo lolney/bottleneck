@@ -6,6 +6,13 @@ body {
   }
 }
 
+#btn-mrgn {
+  margin-left: 0px;
+}
+#btm-btn-mrgn {
+  margin-left: 5px;
+}
+
 .hud-buttons {
   right: 0;
   position: absolute;
@@ -90,7 +97,7 @@ body {
       width: 100%;
       height: 45px;
       display: flex;
-      margin-left: 5px;
+      margin-left: 0px;
       .mini-btn {
         border: none;
         border-radius: 1px;
