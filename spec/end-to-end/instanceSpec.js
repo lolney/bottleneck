@@ -169,24 +169,40 @@ describe('Instance', () => {
     });
 });
 
+import models from '../../src/server/db/models';
+
 describe('practice Instance', () => {
     let server;
     let socket;
 
-    beforeAll(async () => {
+    beforeEach(async () => {
         var obj = await TestServer.createPracticeServer();
 
         server = obj.server;
         socket = obj.socket;
     });
 
-    it('shuts down when player disconnects', async () => {
-        let disconnect = eventPromise(server.events, 'instanceStopped');
+    function disconnect() {
+        let dc = eventPromise(server.events, 'instanceStopped');
 
         socket.close();
 
-        await disconnect;
+        return dc;
+    }
+
+    it('shuts down when player disconnects', async () => {
+        await disconnect();
 
         expect(Object.keys(server.instanceManager.instances).length).toEqual(0);
+    });
+
+    it('does not delete bot user when player disconnects', async () => {
+        await disconnect();
+
+        let botUser = await models.user.findOne({
+            where: { username: '_botuser' }
+        });
+
+        expect(botUser).toBeDefined();
     });
 });

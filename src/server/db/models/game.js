@@ -16,8 +16,9 @@ module.exports = (sequelize, DataTypes) => {
                     const players = await game.getPlayers();
                     for (const player of players) {
                         let user = await player.getUser();
-                        if (user.isGuest) {
-                            user.destroy();
+                        await player.destroy();
+                        if (user.isGuest && user.username != '_botuser') {
+                            await user.destroy();
                         }
                     }
                 }
@@ -26,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     );
     Game.associate = function(models) {
         Game.hasMany(models.player, { onDelete: 'CASCADE', hooks: true });
+        Game.hasMany(models.user, { onDelete: 'CASCADE', hooks: true });
     };
     return Game;
 };

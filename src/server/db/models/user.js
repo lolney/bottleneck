@@ -1,5 +1,3 @@
-import bcrypt from 'bcrypt-nodejs';
-
 module.exports = (sequelize, DataTypes) => {
     let User = sequelize.define('user', {
         id: {
@@ -21,23 +19,27 @@ module.exports = (sequelize, DataTypes) => {
         },
         isGuest: {
             type: DataTypes.BOOLEAN,
-            defaultValue: true,
+            defaultValue: false,
             allowNull: false
         },
-        playerId: {
-            type: DataTypes.STRING
+        isIdle: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+            allowNull: false
         }
     });
 
     User.associate = function(models) {
-        User.hasMany(
-            models.solvedProblem,
-            {
-                foreignKey: 'userId',
-                constraints: false
-            },
-            { onDelete: 'CASCADE', hooks: true }
-        );
+        User.hasMany(models.solvedProblem, {
+            foreignKey: 'userId',
+            constraints: false,
+            onDelete: 'CASCADE',
+            hooks: true
+        });
+        User.belongsTo(models.game, {
+            foreignKey: 'gameId',
+            constraints: false
+        });
         User.hasOne(models.player, { onDelete: 'CASCADE', hooks: true });
     };
 
