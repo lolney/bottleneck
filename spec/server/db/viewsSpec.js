@@ -14,7 +14,8 @@ import {
 import {
     createUser,
     getUserId,
-    createGuest
+    createGuest,
+    setGuestIdle
 } from '../../../src/server/db/views/user';
 import {
     addSolution,
@@ -118,7 +119,7 @@ describe('problem', () => {
     });
 
     it('marks solved problems as solved', async () => {
-        let user = await models.user.findOne();
+        let user = await createUniqueUser();
         let obj = await models.gameObject.findOne();
         let prob = await problem(obj.id);
         const code = '() => 1;';
@@ -129,7 +130,9 @@ describe('problem', () => {
 
         expect(prob.isSolved).toBe(true);
         expect(prob.code).toBeDefined();
+
         await solution.destroy();
+        await user.destroy();
     });
 });
 
@@ -146,6 +149,10 @@ describe('createUser', () => {
 
     afterAll(async () => {
         await Promise.all([newUser, user].map((u) => u.destroy()));
+    });
+
+    it('isGuest is false', () => {
+        expect(user.isGuest).toBe(false);
     });
 
     it('returns error if username already exists', (done) => {
@@ -171,16 +178,30 @@ describe('createUser', () => {
 
 describe('createGuest', () => {
     let user;
+    let game;
+
+    beforeAll(async () => {
+        game = await createGame();
+        user = await createGuest(game.id);
+    });
 
     afterAll(async () => {
         await user.destroy();
+        await game.destroy();
     });
 
     it('creates guest user properly', async () => {
-        user = await createGuest();
-
         expect(user.username).toBeDefined();
         expect(user.isGuest).toBe(true);
+    });
+
+    it('retrieves existing guest if an existing guest is idle', async () => {
+        await setGuestIdle(user.id);
+
+        let user2 = await createGuest(game.id);
+
+        expect(user2.id).toEqual(user.id);
+        expect(user2.isIdle).toBe(false);
     });
 });
 
@@ -192,7 +213,7 @@ describe('addSolution', () => {
     let user;
 
     beforeAll(async (done) => {
-        user = await models.user.findOne();
+        user = await createUniqueUser();
         let problems = await models.problem.findAll({ limit: limit });
 
         let solvedProblems = await getSolutions(user.id);
@@ -206,12 +227,9 @@ describe('addSolution', () => {
         done();
     });
 
-    afterAll((done) => {
-        solutions.forEach((solution) =>
-            solution.destroy().then(() => {
-                done();
-            })
-        );
+    afterAll(async () => {
+        await solutions.map((solution) => solution.destroy());
+        await user.destroy();
     });
 
     it('can be found by solvedProblem', async () => {
@@ -256,8 +274,6 @@ describe('getPlayer', () => {
     beforeAll(async () => {
         game = await createGame();
         user = await createUniqueUser();
-
-        expect(user.playerId).toBe(null);
 
         player = await createPlayer(user.id, 1, game.id, new TwoVector(0, 0));
     });
@@ -379,8 +395,8 @@ describe('game', () => {
         expect(after).toBe(null);
     });
 
-    it('destroy also destroys test users', async () => {
-        user = await createGuest();
+    it('destroy also destroys guest users', async () => {
+        user = await createGuest(game.id);
         player = await createPlayer(user.id, 1, game.id);
 
         expect(user).toBeDefined();

@@ -4,6 +4,7 @@ import MatchMaker from '../../src/server/MatchMaker';
 import InstanceManager from '../../src/server/InstanceManager';
 import logger from '../../src/server/Logger';
 import TestClient from './TestClient';
+import Auth from '../../src/server/auth/flow';
 
 let _PORT = 6000;
 
@@ -33,7 +34,7 @@ export default class TestServer {
         });
         const io = socketIO(requestHandler);
 
-        const instanceManager = new InstanceManager(io, MockAuth);
+        const instanceManager = new InstanceManager(io, Auth);
         const gameId = await instanceManager.createInstance(options);
 
         return new TestServer(gameId, PORT, instanceManager);
@@ -77,32 +78,3 @@ export default class TestServer {
         return this.instanceManager.eventEmitter;
     }
 }
-
-import { getUserId } from '../../src/server/db/views/user';
-import Auth from '../../src/server/auth/flow';
-
-class MockAuth {
-    static async getUsername(data) {
-        const { socket } = data;
-
-        let username = 'test';
-        let gameId = socket.handshake.query.gameid;
-        let playerNumber = socket.playerId;
-
-        let userId = await getUserId(username);
-
-        return {
-            userId,
-            gameId,
-            playerNumber,
-            socket
-        };
-    }
-
-    static async authRequired() {}
-}
-
-MockAuth.getPlayerId = Auth.getPlayerId;
-MockAuth.getPlayer = Auth.getPlayer;
-MockAuth.setId = Auth.setId;
-MockAuth.postAuth = Auth.postAuth;
