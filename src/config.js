@@ -171,10 +171,6 @@ export const clientDefaults = {
         remoteObjBending: 0.0,
         bendingIncrements: 6
     },
-    auth: {
-        username: 'test',
-        password: 'secret'
-    },
     collisionOptions: {
         collisions: {
             type: 'HSHG',

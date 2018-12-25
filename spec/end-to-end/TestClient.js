@@ -19,7 +19,7 @@ export default class TestClient {
             this.gameEngine,
             // can set `scheduler: 'fixed'` to get network updates,
             // but this doesn't work in the node environment
-            { ...clientDefaults, serverURL: url },
+            { ...clientDefaults, serverURL: url, auth: { token: 'token' } },
             TestRenderer
         );
     }
@@ -32,7 +32,8 @@ export default class TestClient {
     }
 
     async start() {
-        this.socket = new Socket(await this.clientEngine.start(), false);
+        const socket = await this.clientEngine.start();
+        this.socket = new Socket(socket, false);
         this.router = new Router(this.socket);
         return this.socket;
     }

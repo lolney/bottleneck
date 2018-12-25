@@ -11,7 +11,11 @@ import {
     createPlayer,
     getPlayer
 } from '../../../src/server/db/views/player';
-import { checkPassword, createUser } from '../../../src/server/db/views/user';
+import {
+    createUser,
+    getUserId,
+    createGuest
+} from '../../../src/server/db/views/user';
 import {
     addSolution,
     getSolutions,
@@ -27,7 +31,7 @@ let userCount = 0;
 
 async function createUniqueUser() {
     userCount++;
-    return createUser(`test${userCount}`, 'secret', `${userCount}@example.com`);
+    return createUser(`test${userCount}`);
 }
 
 describe('chainIncludes', () => {
@@ -129,68 +133,23 @@ describe('problem', () => {
     });
 });
 
-describe('checkPassword', () => {
-    let user;
-
-    beforeAll((done) => {
-        createUniqueUser().then((u) => {
-            user = u;
-            done();
-        });
-    });
-
-    afterAll((done) => {
-        user.destroy().then(() => {
-            done();
-        });
-    });
-
-    it('returns false with an incorrect username', (done) => {
-        checkPassword('incorrect', 'secret')
-            .then((result) => {
-                expect(result).toEqual(false);
-                done();
-            })
-            .catch(done.fail);
-    });
-
-    it('returns true with the correct password', (done) => {
-        checkPassword(user.username, 'secret')
-            .then((result) => {
-                expect(result).toEqual(true);
-                done();
-            })
-            .catch(done.fail);
-    });
-
-    it('returns false with the incorrect password', (done) => {
-        checkPassword(user.username, '')
-            .then((result) => {
-                expect(result).toEqual(false);
-                done();
-            })
-            .catch(done.fail);
-    });
-});
-
 describe('createUser', () => {
     let user;
+    let newUser;
 
     beforeAll((done) => {
-        createUser('taken', 'secret', 'taken@example.com').then((u) => {
+        createUser('taken').then((u) => {
             user = u;
             done();
         });
     });
 
-    afterAll((done) => {
-        user.destroy().then(() => {
-            done();
-        });
+    afterAll(async () => {
+        await Promise.all([newUser, user].map((u) => u.destroy()));
     });
 
     it('returns error if username already exists', (done) => {
-        createUser('taken', 'secret', 'unique@example.com')
+        createUser('taken')
             .then(() => {
                 done(new Error('should not succeed'));
             })
@@ -200,31 +159,28 @@ describe('createUser', () => {
             });
     });
 
-    it('returns error if email already exists', (done) => {
-        createUser('unique1', 'secret', 'taken@example.com')
-            .then(() => {
-                done(new Error('should not succeed'));
-            })
-            .catch((e) => {
-                expect(e.errors[0].message).toEqual('email must be unique');
-                done();
-            });
+    it('creates user if user does not exist', async () => {
+        let id = await getUserId('not-taken');
+
+        newUser = await models.user.find({ where: { id } });
+
+        expect(id).toBeDefined();
+        expect(newUser.id).toEqual(id);
+    });
+});
+
+describe('createGuest', () => {
+    let user;
+
+    afterAll(async () => {
+        await user.destroy();
     });
 
-    it('returns error if email is invalid', (done) => {
-        createUser('unique2', 'secret', 'unique')
-            .then(() => {
-                done(new Error('should not succeed'));
-            })
-            .catch((e) => {
-                expect(e.errors[0].message).toEqual('Must be a valid email.');
-                done();
-            });
-    });
+    it('creates guest user properly', async () => {
+        user = await createGuest();
 
-    it('create user hashes password', () => {
-        expect(user.password).not.toEqual('secret');
-        expect(user.validPassword('secret')).toEqual(true);
+        expect(user.username).toBeDefined();
+        expect(user.isGuest).toBe(true);
     });
 });
 
@@ -401,9 +357,7 @@ describe('game', () => {
     let player;
 
     beforeEach(async () => {
-        user = await createUniqueUser();
         game = await createGame();
-        player = await createPlayer(user.id, 1, game.id);
     });
 
     afterEach(async () => {
@@ -413,6 +367,9 @@ describe('game', () => {
     });
 
     it('destroy also destroys players', async () => {
+        user = await createUniqueUser();
+        player = await createPlayer(user.id, 1, game.id);
+
         expect(player).toBeDefined();
 
         await destroyGame(game.id);
@@ -420,5 +377,29 @@ describe('game', () => {
         let after = await models.player.find({ where: { id: player.id } });
 
         expect(after).toBe(null);
+    });
+
+    it('destroy also destroys test users', async () => {
+        user = await createGuest();
+        player = await createPlayer(user.id, 1, game.id);
+
+        expect(user).toBeDefined();
+
+        await destroyGame(game.id);
+
+        let after = await models.user.find({ where: { id: user.id } });
+
+        expect(after).toBe(null);
+    });
+
+    it('destroy does not destroy normal users', async () => {
+        user = await createUniqueUser();
+        player = await createPlayer(user.id, 1, game.id);
+
+        await destroyGame(game.id);
+
+        let after = await models.user.find({ where: { id: user.id } });
+
+        expect(after).toBeDefined();
     });
 });

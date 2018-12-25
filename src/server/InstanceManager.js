@@ -1,57 +1,41 @@
 import Instance from './Instance';
-import { checkPassword, getUserId, getBotUserId } from './db/views/user';
+import { getBotUserId } from './db/views/user';
 import { createGame } from './db/views/game';
-import { getPlayer, doesPlayerExist } from './db/views/player';
-import logger from './Logger';
+import { getPlayer } from './db/views/player';
 import socketioAuth from 'socketio-auth';
 import { EventEmitter } from 'events';
+import logger from './Logger';
 
 export default class InstanceManager {
-    constructor(io) {
+    constructor(io, Auth) {
         this.instances = {};
         this.instanceQueue = new InstanceQueue();
         this.eventEmitter = new EventEmitter();
 
         if (io) {
-            this.handleAuth(io);
+            this.handleAuth(io, Auth);
         }
     }
 
-    handleAuth(io) {
+    handleAuth(io, Auth) {
+        const onPlayerConnected = this.onPlayerConnected.bind(this);
         socketioAuth(io, {
             authenticate: async (socket, data, callback) => {
-                try {
-                    this.onPlayerConnected(socket);
-                } catch (error) {
-                    logger.error(`Error adding player to game: ${error}`);
-                    callback(null, false);
-                    return;
-                }
-
-                let username = data.username;
-                let password = data.password;
-                let gameId = socket.handshake.query.gameid;
-                let playerNumber = socket.playerId;
-
-                let userId = await getUserId(username);
-
-                logger.info(`User is logging in: ${data.username}`);
-                let succeeded = await checkPassword(username, password);
-                logger.info(`Authentication succeeded: ${succeeded}`);
-
-                let playerExists = await doesPlayerExist(userId, gameId);
-                let player = await getPlayer(userId, playerNumber, gameId);
-
-                socket.client.userId = userId;
-                socket.client.playerDbId = player.id;
-
-                logger.debug(`added player to db: ${player.id}`);
-                callback(null, succeeded);
-
-                this.instances[gameId].addPlayer(socket, !playerExists);
-                this.instances[gameId].maybeStartGame();
+                Auth.getPlayerId(socket, data, onPlayerConnected)
+                    .then(Auth.getUsername)
+                    .then(Auth.getPlayer)
+                    .then(Auth.setId)
+                    .then(async (data) => {
+                        callback(null, true);
+                        return data;
+                    })
+                    .then(async (data) => Auth.postAuth(data, this.instances))
+                    .catch((err) => {
+                        logger.warning(`Auth failed: ${err}`);
+                        callback(null, false);
+                    });
             },
-            timeout: 'none'
+            timeout: 5000
         });
     }
 
