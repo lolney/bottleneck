@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
 import TooltipWrapper from './common/TooltipWrapper.jsx';
 import DefensesBrowser from './defenses/DefensesBrowser.jsx';
@@ -79,59 +79,62 @@ class HUD extends React.Component {
     }
 }
 
-class MiniButtons extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+const MiniButtons = (props) => (
+    <div className="mini-btns">
+        <TooltipWrapper
+            triggerProps={{ placement: 'left' }}
+            disabled={
+                props.initialLoading ||
+                props.loading ||
+                !canAfford(props.resources, assaultBot.cost)
+            }
+            text={`Buy an assault creep for ${formatResourceCost(
+                assaultBot.cost
+            )}`}
+        >
+            <Button
+                className="mini-btn hud-button"
+                onClick={() => {
+                    props.fetch('makeAssaultBot', {}, ({ botCount }) => ({
+                        assaultBotCount: botCount
+                    }));
+                }}
+                disabled={
+                    props.initialLoading ||
+                    props.loading ||
+                    !canAfford(props.resources, assaultBot.cost)
+                }
+            >
+                <BotButton count={props.assaultBotCount} />
+            </Button>
+        </TooltipWrapper>
 
-    render() {
-        const props = this.props;
-        return (
-            <div className="mini-btns">
-                <TooltipWrapper
-                    triggerProps={{ placement: 'left' }}
-                    disabled={
-                        props.initialLoading ||
-                        props.loading ||
-                        !canAfford(props.resources, assaultBot.cost)
-                    }
-                    text={`Buy an assault creep for ${formatResourceCost(
-                        assaultBot.cost
-                    )}`}
-                >
-                    <Button
-                        ref={this.container}
-                        className="mini-btn hud-button"
-                        onClick={() => {
-                            props.fetch('makeAssaultBot');
-                        }}
-                        disabled={
-                            props.initialLoading ||
-                            props.loading ||
-                            !canAfford(props.resources, assaultBot.cost)
-                        }
-                    >
-                        <div className="hud-row">
-                            <img
-                                alt="assault-botface"
-                                src="assets/assault-botface.png"
-                                height="21px"
-                                width="16px"
-                            />
-                        </div>
-                        <div className="hud-row-2">{props.botCount}</div>
-                    </Button>
-                </TooltipWrapper>
+        <TooltipWrapper
+            triggerProps={{ placement: 'left' }}
+            text={'Active collection bots'}
+        >
+            <Button className="mini-btn hud-button">
+                <BotButton count={props.collectionBotCount} />
+            </Button>
+        </TooltipWrapper>
 
-                <TooltipWrapper triggerProps={{ placement: 'left' }} text={''}>
-                    <Button className="mini-btn hud-button" />
-                </TooltipWrapper>
+        <Button className="mini-btn hud-button" />
+    </div>
+);
 
-                <Button className="mini-btn hud-button" />
-            </div>
-        );
-    }
-}
+const BotButton = ({ count }) => (
+    <Fragment>
+        <div className="hud-row">
+            <img
+                alt="assault-botface"
+                src="assets/assault-botface.png"
+                height="21px"
+                width="16px"
+            />
+        </div>
+        <div className="hud-row-2">{count}</div>
+    </Fragment>
+);
 
 const ResourceButton = ({ name, src, height, width, count }) => (
     <Button className="hud-button" id="btn-mrgn">
@@ -168,14 +171,28 @@ HUD.propTypes = {
 
 MiniButtons.propTypes = {
     initialLoading: PropTypes.bool.isRequired,
-    botCount: PropTypes.number.isRequired,
+    assaultBotCount: PropTypes.number.isRequired,
+    collectionBotCount: PropTypes.number.isRequired,
     resources: PropTypes.object
 };
 
 const WrappedMiniButtons = withSocketReq(
     MiniButtons,
-    [['assaultBotCount', (data) => data]],
-    () => ({ botCount: 0 })
+    [
+        [
+            'assaultBotCount',
+            ({ botCount }) => ({
+                assaultBotCount: botCount
+            })
+        ],
+        [
+            'collectionBotCount',
+            ({ botCount }) => ({
+                collectionBotCount: botCount
+            })
+        ]
+    ],
+    () => ({ collectionBotCount: 0, assaultBotCount: 0 })
 );
 
 export default withSocketFetch(
