@@ -38,14 +38,15 @@ export default function withSocketReq(
             });
         }
 
-        fetch(event, req) {
+        fetch(event, req, handler) {
             this.socket.emit(event, req, (resp) => {
                 if (resp.type == 'SUCCESS') {
+                    handler = handler ? handler : (data) => data;
                     this.setState({
                         activeRequests: this.state.activeRequests - 1,
                         data: {
                             ...this.state.data,
-                            ...resp.data,
+                            ...handler(resp.data),
                             _nonce: Math.random()
                         }
                     });

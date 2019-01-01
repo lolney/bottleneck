@@ -8,7 +8,7 @@ Bottleneck is an open source, RTS-inspired game based around efficiently automat
 Preview:
 ![](https://i.imgur.com/d3UhZJu.jpg)
 
-Alpha demo at [bottleneck-production.herokuapp.com](http://bottleneck-production.herokuapp.com/).
+Alpha demo at [www.bottleneck.world](https://www.bottleneck.world/).
 
 Latest build at [scripting-rpg.herokuapp.com](http://scripting-rpg.herokuapp.com/).
 
@@ -171,6 +171,14 @@ Reflects a change in the game state, as described by the state field.
 
 - target: `broadcast`
 - data: `state: 'initializing' | 'suspended' | 'inProgress' | 'done'`
+
+`assaultBotCount`
+`collectionBotCount`
+
+Reflects the current player's bot count (of, respectively, assault bots or collection bots), broadcast on change.
+
+- target: `targeted`
+- data: `{ botCount: number; }`
 
 ### Server-side Event Subscriptions:
 

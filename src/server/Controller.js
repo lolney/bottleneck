@@ -156,7 +156,7 @@ class Controller {
             try {
                 await this.deductResourceCosts(playerId, resources);
                 const botCount = this.addAssaultBot(playerId, playerNumber);
-                return Response.ok('makeAssaultBot', { botCount });
+                return Response.ok({ botCount });
             } catch (error) {
                 return Response.err(
                     `Could not create Assault bot: ${error.message}`
@@ -229,7 +229,10 @@ class Controller {
             playerNumber: playerNumber,
             problemId: problemId
         };
-        return this.addBot(config);
+        const nBots = this.addBot(config);
+        this.publishBotCount('collectionBot', playerId, nBots);
+
+        return nBots;
     }
 
     /**
@@ -259,6 +262,10 @@ class Controller {
 
     onRemoveBot(botType, playerId, playerNumber) {
         const botCount = this.gameEngine.getNBots(playerNumber, botType);
+        this.publishBotCount(botType, playerId, botCount);
+    }
+
+    publishBotCount(botType, playerId, botCount) {
         this.playerMap.publish(playerId, `${botType}Count`, { botCount });
     }
 

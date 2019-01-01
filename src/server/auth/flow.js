@@ -1,4 +1,4 @@
-import { getUserId, createGuest } from '../db/views/user';
+import { getUserId, createGuest, setGuestIdle } from '../db/views/user';
 import { getPlayer, doesPlayerExist } from '../db/views/player';
 import logger from '../Logger';
 
@@ -29,8 +29,10 @@ class AuthFlow {
         }
 
         if (!token) {
-            let user = await createGuest();
+            let user = await createGuest(gameId);
             userId = user.id;
+
+            socket.on('disconnect', async () => setGuestIdle(userId));
 
             logger.info(`Creating guest user: ${userId}`);
         } else {

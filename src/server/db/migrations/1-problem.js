@@ -137,12 +137,21 @@ let migrationCommands = [
                 },
                 isGuest: {
                     type: Sequelize.BOOLEAN,
-                    defaultValue: true,
+                    defaultValue: false,
                     allowNull: false
                 },
-                playerId: {
-                    type: Sequelize.STRING,
-                    allowNull: true
+                isIdle: {
+                    type: Sequelize.BOOLEAN,
+                    defaultValue: false,
+                    allowNull: false
+                },
+                gameId: {
+                    type: Sequelize.UUID,
+                    allowNull: true,
+                    references: {
+                        model: 'games',
+                        key: 'id'
+                    }
                 },
                 createdAt: {
                     allowNull: false,
