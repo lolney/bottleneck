@@ -3,10 +3,9 @@ import Editor from './Editor.jsx';
 import ProblemComponent from './problems/ProblemComponent.jsx';
 import PropTypes from 'prop-types';
 import { withAlert } from 'react-alert';
-import NewAlertTemplate, { alertOptions } from './common/TutorialAlerts';
+import NewAlertTemplate, { alertOptions } from './common/TutorialAlerts.jsx';
 
 import { Provider } from 'react-alert';
-//import AlertTemplate from 'react-alert-template-basic';
 
 import './CSS/Modal.scss';
 

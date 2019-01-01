@@ -1,8 +1,4 @@
 import React from 'react';
-import { render } from 'react-dom';
-import { Provider } from 'react-alert';
-import { Component, Fragment } from 'react';
-import { withAlert } from 'react-alert';
 import AlertTemplate from 'react-alert-template-basic';
 
 const NewAlertTemplate = (props) => (
