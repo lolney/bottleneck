@@ -47,11 +47,15 @@ export default class ImageComponent extends React.Component {
                         <aside className="caption-second">Target</aside>
                     </div>
                     <div className="row-2">
-                        <img
-                            src={this.props.problem.original}
-                            className="image-first"
-                        />
-                        <img src={this.state.target} className="image-second" />
+                        <div className="image-container">
+                            <img
+                                src={this.props.problem.original}
+                                className="image"
+                            />
+                        </div>
+                        <div className="image-container">
+                            <img src={this.state.target} className="image" />
+                        </div>
                     </div>
                 </section>
             </div>
