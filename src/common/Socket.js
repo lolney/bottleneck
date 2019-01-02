@@ -8,13 +8,13 @@ export default class Socket {
         }
         this.suspended = false;
 
+        this.middleware = [];
         this.socket = socket;
         this.connect = this.open;
         this.disconnect = this.close;
     }
 
     static handleAuth(socket) {
-        // @unimplemented
         if (!socket.auth) throw new Error('User is not authenticated');
     }
 
@@ -34,8 +34,32 @@ export default class Socket {
         this.socket.bot = bool;
     }
 
-    emit(event, data, fn) {
-        this.socket.emit(event, data, fn);
+    use(middleware) {
+        this.middleware.push(middleware);
+    }
+
+    /**
+     * @private
+     */
+    async run(handler, event, data) {
+        for (const fn of this.middleware) {
+            const shouldContinue = await fn(event, data);
+            if (!shouldContinue) {
+                return false;
+            }
+        }
+        handler(data);
+        return true;
+    }
+
+    async emit(event, data, fn) {
+        return this.run(
+            () => {
+                this.socket.emit(event, data, fn);
+            },
+            event,
+            data
+        );
     }
 
     on(event, handler) {
@@ -92,10 +116,13 @@ export default class Socket {
      * @returns promise containing the response
      */
     async request(event, data) {
-        return new Promise((resolve) => {
-            this.socket.emit(event, data, (resp) => {
+        return new Promise(async (resolve, reject) => {
+            const result = await this.emit(event, data, (resp) => {
                 resolve(resp);
             });
+            if (!result) {
+                reject('Middleware prevented request from being sent');
+            }
         });
     }
 }
