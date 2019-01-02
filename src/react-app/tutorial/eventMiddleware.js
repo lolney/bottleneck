@@ -32,4 +32,10 @@ export default class EventMiddleware {
             });
         }
     }
+
+    forward(event, data) {
+        if (this.active) {
+            this.emitter.emit(event, data);
+        }
+    }
 }

@@ -88,7 +88,7 @@ describe('Socket', () => {
     describe('middleware', () => {
         beforeAll(async () => {
             await setup();
-            clientSocket.use(() => false);
+            clientSocket.use({ handle: () => false, forward: () => {} });
         });
 
         it('should abort request', async (done) => {
@@ -132,7 +132,7 @@ describe('Socket', () => {
                 ok = _ok;
                 cancel = _cancel;
             });
-            clientSocket.use(eventMiddleware.handle);
+            clientSocket.use(eventMiddleware);
         });
 
         it('if ok is called, emit should go through', async () => {
@@ -180,6 +180,26 @@ describe('Socket', () => {
             ok();
 
             expect(await result).toBe(true);
+        });
+
+        it('should forward events to once', (done) => {
+            const data = { data: 1 };
+            eventMiddleware.emitter.once('testEvent', (_data) => {
+                expect(_data).toEqual(data);
+                done();
+            });
+            clientSocket.once('testEvent', () => {});
+            serverSocket.emit('testEvent', data);
+        });
+
+        it('should forward events to on', (done) => {
+            const data = { data: 1 };
+            eventMiddleware.emitter.on('testEvent', (_data) => {
+                expect(_data).toEqual(data);
+                done();
+            });
+            clientSocket.once('testEvent', () => {});
+            serverSocket.emit('testEvent', data);
         });
     });
 });

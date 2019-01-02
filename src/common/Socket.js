@@ -42,7 +42,8 @@ export default class Socket {
      * @private
      */
     async run(handler, event, data) {
-        for (const fn of this.middleware) {
+        for (const mw of this.middleware) {
+            const fn = mw.handle;
             const shouldContinue = await fn(event, data);
             if (!shouldContinue) {
                 return false;
@@ -64,7 +65,12 @@ export default class Socket {
 
     on(event, handler) {
         this.socket.on(event, (data) => {
-            if (!this.suspended) handler(data);
+            if (!this.suspended) {
+                for (const mw of this.middleware) {
+                    mw.forward(event, data);
+                }
+                handler(data);
+            }
         });
     }
 
@@ -85,6 +91,9 @@ export default class Socket {
     async once(event, fn) {
         return new Promise((resolve) => {
             this.socket.once(event, (data) => {
+                for (const mw of this.middleware) {
+                    mw.forward(event, data);
+                }
                 const result = fn ? fn(data) : data;
                 resolve(result);
             });
