@@ -1,5 +1,5 @@
 import React from 'react';
-import Enzyme, { mount, shallow } from 'enzyme';
+import Enzyme, { mount } from 'enzyme';
 import Windows from '../../src/react-app/Windows';
 import Adapter from 'enzyme-adapter-react-16';
 
