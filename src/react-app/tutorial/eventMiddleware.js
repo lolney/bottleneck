@@ -1,5 +1,11 @@
 import EventEmitter from 'eventemitter3';
 
+const allowedEvents = new Set([
+    'resourceInitial',
+    'solvedProblems',
+    'siegeItems'
+]);
+
 export default class EventMiddleware {
     constructor(openModal) {
         this.emitter = new EventEmitter();
@@ -15,7 +21,7 @@ export default class EventMiddleware {
             return true;
         }
 
-        if (event === this.allowedEvent) {
+        if (event === this.allowedEvent || allowedEvents.has(event)) {
             this.emitter.emit(event);
             return true;
         } else {

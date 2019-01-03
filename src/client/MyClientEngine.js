@@ -2,6 +2,7 @@ import ClientEngine from 'lance/ClientEngine';
 import MyRenderer from './MyRenderer';
 import KeyboardControls from 'lance/controls/KeyboardControls';
 import Router from './Router';
+import Socket from '../common/Socket';
 
 export default class MyClientEngine extends ClientEngine {
     constructor(gameEngine, options, renderer = MyRenderer) {
@@ -16,7 +17,8 @@ export default class MyClientEngine extends ClientEngine {
 
     async start() {
         await super.start();
-        this.router = new Router(this.socket);
-        return this.socket;
+        const socket = new Socket(this.socket, false);
+        this.router = new Router(socket);
+        return socket;
     }
 }

@@ -2,16 +2,14 @@ import StorybookConsole from 'react-storybook-console';
 import { storiesOf } from '@storybook/react';
 
 import React from 'react';
-import { render } from 'react-dom';
 import { Provider } from 'react-alert';
-import { Component, Fragment } from 'react';
-import AlertTemplate from 'react-alert-template-basic';
+import { Fragment } from 'react';
 import { withAlert } from 'react-alert';
 import AlertContents from '../src/react-app/tutorial/AlertContents.jsx';
 import '../src/react-app/tutorial/AlertContents.scss';
 
 const options = {
-    timeout: 5000,
+    timeout: 0,
     position: 'bottom center'
 };
 
@@ -25,32 +23,32 @@ const InnerAlertComponent = withAlert((props) => (
     <Fragment>
         <button
             onClick={() => {
-                props.alert.show(<AlertContents />);
+                props.alert.show(
+                    <AlertContents
+                        msg={
+                            'This is an alert that waits for an event before continuing'
+                        }
+                    />
+                );
             }}
         >
-            Show Alert
+            Alert w/ wait
         </button>
         <button
             onClick={() => {
                 const onProceed = () => {};
-                props.alert.show(<AlertContents onProceed={onProceed} />);
+                props.alert.show(
+                    <AlertContents
+                        msg={'This is an alert that waits for you to proceed'}
+                        onProceed={onProceed}
+                    />
+                );
             }}
         >
-            Oops, an error
-        </button>
-        <button
-            onClick={() => {
-                props.alert.success('It\'s ok now!');
-            }}
-        >
-            Success!
+            Alert w/ proceed
         </button>
     </Fragment>
 ));
-
-const style = {
-    font: 'italic bold 0.75em arial,serif'
-};
 
 const Wrapper = (props) => props.message;
 

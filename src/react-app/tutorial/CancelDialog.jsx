@@ -9,7 +9,8 @@ const CancelDialog = ({ cancel, ok }) => (
             </Modal.Header>
 
             <Modal.Body>
-                Doing that will stop the tutorial. Do you still want to do it?
+                Doing that will stop the tutorial. Do you still want to
+                continue?
             </Modal.Body>
 
             <Modal.Footer>

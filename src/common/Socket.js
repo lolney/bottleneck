@@ -34,6 +34,18 @@ export default class Socket {
         this.socket.bot = bool;
     }
 
+    get connected() {
+        return this.socket.connected;
+    }
+
+    off(event, handler) {
+        this.socket.off(event, handler);
+    }
+
+    addEventListener(event, handler) {
+        this.on(event, handler);
+    }
+
     use(middleware) {
         this.middleware.push(middleware);
     }

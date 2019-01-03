@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { playerBase } from '../config.js';
-import MyArrow from './common/TutorialArrow.jsx';
 
 export default class HealthBar extends React.Component {
     constructor(props) {
@@ -30,7 +29,6 @@ export default class HealthBar extends React.Component {
                 <div className="health-bar">
                     {['myHp', 'enemyHp'].map(this.createBar)}
                 </div>
-                <MyArrow />
             </div>
         );
     }

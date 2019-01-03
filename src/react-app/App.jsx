@@ -11,6 +11,9 @@ import Windows from './Windows.jsx';
 import SocketContext from './SocketContext';
 import ModeSelect from './modeSelect/App.jsx';
 import withLogin from './login/withLogin.jsx';
+import Tutorial from './tutorial/Tutorial.jsx';
+
+import { Provider } from 'react-alert';
 
 import './CSS/Defenses.scss';
 import './CSS/HUD.scss';
@@ -22,7 +25,7 @@ import './CSS/LoadingScreen.scss';
 import './CSS/VictoryOverlay.scss';
 import './CSS/HealthBar.scss';
 import 'semantic-ui-css/semantic.min.css';
-
+import './tutorial/AlertContents.scss';
 
 /*
 \ App
@@ -113,6 +116,18 @@ export class App extends React.Component {
 
                     {this.state.socket && (
                         <HealthBarContainer socket={this.state.socket} />
+                    )}
+
+                    {this.state.socket && (
+                        <Provider
+                            template={(props) => props.message}
+                            {...{
+                                timeout: 0,
+                                position: 'bottom center'
+                            }}
+                        >
+                            <Tutorial socket={this.state.socket} />
+                        </Provider>
                     )}
 
                     <Windows ref={this.windows} />
