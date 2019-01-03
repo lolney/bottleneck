@@ -7,6 +7,8 @@ import { Provider } from 'react-alert';
 import { Component, Fragment } from 'react';
 import AlertTemplate from 'react-alert-template-basic';
 import { withAlert } from 'react-alert';
+import AlertContents from '../src/react-app/tutorial/AlertContents.jsx';
+import '../src/react-app/tutorial/AlertContents.scss';
 
 const options = {
     timeout: 5000,
@@ -23,16 +25,15 @@ const InnerAlertComponent = withAlert((props) => (
     <Fragment>
         <button
             onClick={() => {
-                props.alert.show(
-                    'Oh look, an alert! You just broke something! It\'s ok now!'
-                );
+                props.alert.show(<AlertContents />);
             }}
         >
             Show Alert
         </button>
         <button
             onClick={() => {
-                props.alert.error('You just broke something!');
+                const onProceed = () => {};
+                props.alert.show(<AlertContents onProceed={onProceed} />);
             }}
         >
             Oops, an error
@@ -51,9 +52,7 @@ const style = {
     font: 'italic bold 0.75em arial,serif'
 };
 
-const Wrapper = (props) => (
-    <AlertTemplate {...props} style={{ ...props.style, ...style }} />
-);
+const Wrapper = (props) => props.message;
 
 storiesOf('TutorialAlerts', module)
     .addDecorator(StorybookConsole)

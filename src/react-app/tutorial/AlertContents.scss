@@ -1,0 +1,58 @@
+.alert-contents {
+  height: 15vh;
+  background-color: rgba(255, 255, 255, 0.8);
+  width: 25vw;
+  display: flex;
+  margin: 10px;
+  display: flex;
+  flex-direction: row;
+
+  .icon-container {
+    background-color: rgba(241, 241, 241, 0.8);
+    flex: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    img {
+      height: 40px;
+      width: 40px;
+    }
+  }
+
+  .message-container {
+    background-color: rgba(255, 255, 255, 0.8);
+    flex: 65%;
+    display: flex;
+  }
+
+  p {
+    margin: auto;
+    text-align: center; // May not want to by vertically centered.
+  }
+
+  .btn-container {
+    background-color: rgba(255, 255, 255, 0.8);
+    flex: 15%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .close-btn-container {
+    flex: 50%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    .close-btn {
+      margin: auto;
+      text-align: center;
+    }
+  }
+  .proceed-btn-container {
+    flex: 50%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    .proceed-btn {
+      margin: auto;
+      text-align: center;
+    }
+  }
+}
