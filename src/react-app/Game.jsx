@@ -1,5 +1,4 @@
 import React from 'react';
-import querystring from 'query-string';
 import MyClientEngine from '../client/MyClientEngine';
 import MyGameEngine from '../common/MyGameEngine';
 import { clientDefaults } from '../config';
@@ -9,13 +8,10 @@ import propTypes from 'prop-types';
 
 class Game extends React.Component {
     componentDidMount() {
-        const qsOptions = querystring.parse(location.search);
-        const mode = qsOptions.mode ? qsOptions.mode : 'practice';
-
         this.props.auth.getAccessToken().then((token) => {
             let options = Object.assign(clientDefaults, {
                 auth: { token },
-                matchmaker: `match?mode=${mode}`,
+                matchmaker: `match?mode=${this.props.mode}`,
                 matchmakerMethod: 'POST',
                 resolver: resolver(this.props.auth)
             });
@@ -50,6 +46,7 @@ class Game extends React.Component {
 }
 
 Game.propTypes = {
+    mode: propTypes.oneOf(['vs', 'practice']).isRequired,
     auth: propTypes.object.isRequired,
     onStart: propTypes.func.isRequired,
     onCameraMove: propTypes.func.isRequired

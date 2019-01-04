@@ -14,6 +14,7 @@ import withLogin from './login/withLogin.jsx';
 import Tutorial from './tutorial/Tutorial.jsx';
 
 import { Provider } from 'react-alert';
+import querystring from 'query-string';
 
 import './CSS/Defenses.scss';
 import './CSS/HUD.scss';
@@ -61,6 +62,8 @@ export class App extends React.Component {
         this.onReceiveToken = this.onReceiveToken.bind(this);
         this.onStart = this.onStart.bind(this);
 
+        const qsOptions = querystring.parse(location.search);
+        this.mode = qsOptions.mode ? qsOptions.mode : 'practice';
         this.windows = React.createRef();
         this.addWindow = this.addWindow.bind(this);
         this.addMenu = this.addMenu.bind(this);
@@ -116,7 +119,7 @@ export class App extends React.Component {
                         <HealthBarContainer socket={this.state.socket} />
                     )}
 
-                    {this.state.socket && (
+                    {this.state.socket && this.mode == 'practice' && (
                         <Provider
                             template={(props) => props.message}
                             {...{
@@ -143,6 +146,7 @@ export class App extends React.Component {
                         />
                     )}
                     <Game
+                        mode={this.mode}
                         onStart={this.onStart}
                         onCameraMove={this.onCameraMove}
                         token={this.state.token}
