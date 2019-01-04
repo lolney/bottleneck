@@ -91,7 +91,7 @@ const MiniButtons = (props) => (
             triggerProps={{ placement: 'left' }}
             text={'Active collection bots'}
         >
-            <Button className="mini-btn hud-button">
+            <Button className="mini-btn">
                 <IndicatorBot count={props.collectionBotCount} />
             </Button>
         </TooltipWrapper>
@@ -104,7 +104,7 @@ const IndicatorResource = ({ name, src, height, width, count }) => (
         text={`Amount of ${name} you have collected`}
         disabled={false}
     >
-        <Button className="mini-btn hud-button" id="btn-mrgn">
+        <Button className="mini-btn" id="btn-mrgn">
             <div className="hud-row">
                 <img alt={name} src={src} height={height} width={width} />
             </div>

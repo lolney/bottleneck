@@ -109,8 +109,9 @@ body {
         background-color: rgba(255, 255, 255, 0.8);
         display: flex;
         flex-direction: column;
-        pointer-events: all;
         flex-wrap: nowrap;
+        outline: none;
+        cursor: default;
         .hud-row {
           flex-direction: row;
           min-width: 100%;
