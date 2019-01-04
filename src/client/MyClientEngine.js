@@ -3,6 +3,8 @@ import MyRenderer from './MyRenderer';
 import KeyboardControls from 'lance/controls/KeyboardControls';
 import Router from './Router';
 import Socket from '../common/Socket';
+import Avatar from '../common/Avatar';
+import BotAvatar from '../common/BotAvatar';
 
 export default class MyClientEngine extends ClientEngine {
     constructor(gameEngine, options, renderer = MyRenderer) {
@@ -19,6 +21,44 @@ export default class MyClientEngine extends ClientEngine {
         await super.start();
         const socket = new Socket(this.socket, false);
         this.router = new Router(socket);
-        return socket;
+        const gameApi = new GameAPI(this.gameEngine, this.renderer);
+
+        return { socket, gameApi };
+    }
+}
+
+class GameAPI {
+    constructor(gameEngine, renderer) {
+        this.gameEngine = gameEngine;
+        this.renderer = renderer;
+    }
+
+    queryObject(query) {
+        const objects = this.gameEngine.queryObjects(query, Avatar);
+        const playerPosition = this.renderer.playerPosition;
+        const distances = {};
+        for (const obj of objects) {
+            distances[obj.id] = BotAvatar.distance(
+                playerPosition,
+                obj.position
+            );
+        }
+        const sorted = objects.sort(
+            (a, b) => distances[a.id] - distances[b.id]
+        );
+        return sorted[0];
+    }
+
+    coordsInBounds(vec) {
+        return (
+            vec.x > 0 &&
+            vec.y > 0 &&
+            vec.x < this.renderer.viewportWidth &&
+            vec.y < this.renderer.viewportHeight
+        );
+    }
+
+    worldToCanvasCoordinates(x, y) {
+        return this.renderer.worldToCanvasCoordinates(x, y);
     }
 }

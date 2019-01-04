@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Draggable from 'react-draggable';
 
 export default class DraggableDefense extends React.Component {
     render() {
@@ -11,7 +10,6 @@ export default class DraggableDefense extends React.Component {
                 className={
                     this.props.draggable ? 'defense' : 'defense-not-buyable'
                 }
-                //className="defense"
                 draggable={this.props.draggable}
                 src={this.props.src}
                 onDragStart={(event) => {
@@ -29,6 +27,7 @@ export default class DraggableDefense extends React.Component {
 }
 
 DraggableDefense.propTypes = {
+    id: PropTypes.string.isRequired,
     src: PropTypes.string.isRequired,
     draggable: PropTypes.bool.isRequired
 };

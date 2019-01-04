@@ -10,10 +10,22 @@ export default class EventMiddleware {
     constructor(openModal) {
         this.emitter = new EventEmitter();
         this.active = true;
-        this.allowedEvent = undefined;
+        this.allowedEvents = [];
         this.openModal = openModal;
 
         this.handle = this.handle.bind(this);
+    }
+
+    addAllowedEvents(events) {
+        if (Array.isArray(events)) {
+            this.allowedEvents = this.allowedEvents.concat(events);
+        } else {
+            this.allowedEvents.push(events);
+        }
+    }
+
+    resetAllowedEvents() {
+        this.allowedEvents = [];
     }
 
     async handle(event) {
@@ -21,7 +33,7 @@ export default class EventMiddleware {
             return true;
         }
 
-        if (event === this.allowedEvent || allowedEvents.has(event)) {
+        if (this.allowedEvents.includes(event) || allowedEvents.has(event)) {
             this.emitter.emit(event);
             return true;
         } else {

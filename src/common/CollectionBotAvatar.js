@@ -46,7 +46,7 @@ export default class CollectionBotAvatar extends BotAvatar {
                 resource.position
             );
         }
-        return resources.sort((a, b) => distances[b.dbId] > distances[a.dbId]);
+        return resources.sort((a, b) => distances[b.dbId] - distances[a.dbId]);
     }
 
     attach(controller, gameWorld, gameEngine) {

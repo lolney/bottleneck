@@ -42,6 +42,14 @@ export default class Socket {
         this.socket.off(event, handler);
     }
 
+    close() {
+        this.socket.close();
+    }
+
+    open() {
+        this.socket.open();
+    }
+
     addEventListener(event, handler) {
         this.on(event, handler);
     }
@@ -84,14 +92,6 @@ export default class Socket {
                 handler(data);
             }
         });
-    }
-
-    close() {
-        this.socket.close();
-    }
-
-    open() {
-        this.socket.open();
     }
 
     /**

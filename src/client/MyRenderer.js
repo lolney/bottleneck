@@ -71,12 +71,24 @@ export default class MyRenderer extends Renderer {
         });
     }
 
+    get center() {
+        return new TwoVector(this.viewportWidth / 2, this.viewportHeight / 2);
+    }
+
+    get playerPosition() {
+        return this.prev;
+    }
+
     canvasToWorldCoordinates(x, y) {
-        let center = new TwoVector(
-            this.viewportWidth / 2,
-            this.viewportHeight / 2
-        );
+        let center = this.center;
         return this.prev.clone().add(new TwoVector(x, y).subtract(center));
+    }
+
+    worldToCanvasCoordinates(x, y) {
+        let center = this.center;
+        let world = new TwoVector(x, y);
+
+        return world.subtract(this.prev).add(center);
     }
 
     attachRenderer() {

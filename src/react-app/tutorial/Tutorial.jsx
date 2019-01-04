@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import CancelDialog from './CancelDialog.jsx';
 import TutorialStateMachine from './StateMachine.jsx';
 import EventMiddleware from './eventMiddleware.js';
@@ -6,6 +6,7 @@ import states from './tutorial.json';
 import propTypes from 'prop-types';
 import { withAlert } from 'react-alert';
 import AlertContents from './AlertContents.jsx';
+import TutorialArrow from './TutorialArrow.jsx';
 
 class Tutorial extends React.Component {
     constructor(props) {
@@ -13,6 +14,7 @@ class Tutorial extends React.Component {
 
         this.state = {
             modal: null,
+            arrow: null,
             isActive: true
         };
 
@@ -48,12 +50,14 @@ class Tutorial extends React.Component {
     }
 
     showArrow(arrowConfig) {
-        // @unimplemented
-        // show create an arrow component and return the ref to it
-        // (or perhaps should the function to remove)
+        this.setState({
+            arrow: (
+                <TutorialArrow {...arrowConfig} gameApi={this.props.gameApi} />
+            )
+        });
         return {
             remove: () => {
-                console.error('unimplemented');
+                this.setState({ arrow: null });
             }
         };
     }
@@ -82,13 +86,19 @@ class Tutorial extends React.Component {
     }
 
     render() {
-        return this.state.modal;
+        return (
+            <Fragment>
+                {this.state.modal}
+                {this.state.arrow}
+            </Fragment>
+        );
     }
 }
 
 Tutorial.propTypes = {
     socket: propTypes.object.isRequired,
-    alert: propTypes.object.isRequired
+    alert: propTypes.object.isRequired,
+    gameApi: propTypes.object.isRequired
 };
 
 export default withAlert(Tutorial);

@@ -180,9 +180,16 @@ Reflects the current player's bot count (of, respectively, assault bots or colle
 - target: `targeted`
 - data: `{ botCount: number; }`
 
+`hp`
+
+Reflects a change in the HP of a base.
+
+- target: `broadcast`
+- data: `{myHp: number;} | {enemyHp: number;}`
+
 ### Server-side Event Subscriptions:
 
-The server listens for theses events.
+The server listens for these events.
 
 Client emits with `socket.emit(<eventName>, data)`
 

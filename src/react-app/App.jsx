@@ -55,11 +55,11 @@ export class App extends React.Component {
         super(props);
         this.state = {
             camera: false,
-            token: true, // TODO: initialize as null and get from login
-            socket: null
+            socket: null,
+            gameApi: null
         };
         this.onReceiveToken = this.onReceiveToken.bind(this);
-        this.onReceiveSocket = this.onReceiveSocket.bind(this);
+        this.onStart = this.onStart.bind(this);
 
         this.windows = React.createRef();
         this.addWindow = this.addWindow.bind(this);
@@ -89,10 +89,10 @@ export class App extends React.Component {
         this.setState({ token: token });
     }
 
-    onReceiveSocket(socket) {
+    onStart(socket, gameApi) {
         new EditorSocketWatcher(socket, this.windows.current.addWindow);
 
-        this.setState({ socket: socket });
+        this.setState({ socket, gameApi });
     }
 
     onCameraMove() {
@@ -103,13 +103,11 @@ export class App extends React.Component {
         return (
             <SocketContext.Provider value={this.state.socket}>
                 <div>
-                    {this.state.token && (
-                        <ConnectionOverlay
-                            key={this.state.socket == null}
-                            socket={this.state.socket}
-                            camera={this.state.camera}
-                        />
-                    )}
+                    <ConnectionOverlay
+                        key={this.state.socket == null}
+                        socket={this.state.socket}
+                        camera={this.state.camera}
+                    />
                     {this.state.socket && (
                         <VictoryOverlay socket={this.state.socket} />
                     )}
@@ -126,7 +124,10 @@ export class App extends React.Component {
                                 position: 'bottom center'
                             }}
                         >
-                            <Tutorial socket={this.state.socket} />
+                            <Tutorial
+                                socket={this.state.socket}
+                                gameApi={this.state.gameApi}
+                            />
                         </Provider>
                     )}
 
@@ -141,13 +142,11 @@ export class App extends React.Component {
                             socket={this.state.socket}
                         />
                     )}
-                    {this.state.token && (
-                        <Game
-                            onReceiveSocket={this.onReceiveSocket}
-                            onCameraMove={this.onCameraMove}
-                            token={this.state.token}
-                        />
-                    )}
+                    <Game
+                        onStart={this.onStart}
+                        onCameraMove={this.onCameraMove}
+                        token={this.state.token}
+                    />
                 </div>
             </SocketContext.Provider>
         );

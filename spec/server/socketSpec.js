@@ -144,7 +144,7 @@ describe('Socket', () => {
 
         it('if event is allowed, emit should go through', async () => {
             const eventName = 'testEvent';
-            eventMiddleware.allowedEvent = eventName;
+            eventMiddleware.addAllowedEvents(eventName);
             const result = clientSocket.emit(eventName, {});
 
             expect(await result).toBe(true);
@@ -166,7 +166,7 @@ describe('Socket', () => {
 
         it('if event is not allowed and cancel called, emit should not go through', async () => {
             const eventName = 'testEvent';
-            eventMiddleware.allowedEvent = eventName;
+            eventMiddleware.addAllowedEvents(eventName);
             const result = clientSocket.emit('notTestEvent', {});
             cancel();
 
@@ -175,7 +175,7 @@ describe('Socket', () => {
 
         it('if event is not allowed and ok called, emit should go through', async () => {
             const eventName = 'testEvent';
-            eventMiddleware.allowedEvent = eventName;
+            eventMiddleware.addAllowedEvents(eventName);
             const result = clientSocket.emit('notTestEvent', {});
             ok();
 

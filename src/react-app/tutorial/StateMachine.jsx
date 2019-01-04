@@ -39,7 +39,7 @@ export default class TutorialStateMachine {
             proceed = this.createWait(next, eventName);
         } else {
             // create alert on closes on proceeding
-            proceed = this.createProceed(next.text);
+            proceed = this.createProceed(next);
         }
 
         return await proceed;
@@ -61,16 +61,23 @@ export default class TutorialStateMachine {
      * is rejected on the user canceling
      * @param {*} msg
      */
-    createProceed(msg) {
+    createProceed(next) {
+        if (next.arrow) {
+            var arrow = this.props.showArrow(next.arrow);
+        }
+
         return new Promise((resolve, reject) => {
             const onEnd = (status) => {
+                if (arrow) {
+                    arrow.remove();
+                }
                 this.props.alert.remove(alert);
                 this.props.eventMiddleware.emitter.removeAllListeners();
                 resolve(status);
             };
 
             const Component = this.props.renderProceed({
-                msg,
+                msg: next.text,
                 onProceed: () => onEnd(Status.CONTINUE),
                 onClose: () => this.onClose(onEnd)
             });
@@ -87,12 +94,16 @@ export default class TutorialStateMachine {
      * @param {*} msg
      */
     createWait(next, eventName) {
-        let arrow;
-        if (next.nextTrigger.arrow) {
-            arrow = this.props.showArrow(next.nextTrigger.arrow);
+        if (next.arrow) {
+            var arrow = this.props.showArrow(next.arrow);
         }
         if (next.nextTrigger.eventType !== 'server') {
-            this.props.eventMiddleware.allowedEvent = eventName;
+            this.props.eventMiddleware.addAllowedEvents(eventName);
+        }
+        if (next.nextTrigger.allowedEvents) {
+            this.props.eventMiddleware.addAllowedEvents(
+                next.nextTrigger.allowedEvents
+            );
         }
 
         return new Promise((resolve) => {
@@ -101,7 +112,7 @@ export default class TutorialStateMachine {
                     arrow.remove();
                 }
                 this.props.eventMiddleware.emitter.removeAllListeners();
-                this.props.eventMiddleware.allowedEvent = undefined;
+                this.props.eventMiddleware.resetAllowedEvents();
                 this.props.alert.remove(alert);
                 resolve(status);
             };

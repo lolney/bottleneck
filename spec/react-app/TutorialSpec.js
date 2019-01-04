@@ -40,6 +40,9 @@ describe('StateMachine', () => {
                 }
             },
             openModal: () => {},
+            showArrow: () => {
+                () => {};
+            },
             eventMiddleware,
             states: [fixtures.close, fixtures.event],
             renderWait: () => 'msg',

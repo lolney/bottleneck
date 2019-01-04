@@ -27,7 +27,8 @@
     "text": "Buy an assault bot by clicking on the button to the right.",
     "arrow": {
       "type": "dom object",
-      "target": ".btn-assault-bot"
+      "target": "btn-assault-bot",
+      "direction": "right"
     },
     "nextTrigger": {
       "type": "event",
@@ -51,7 +52,10 @@
     "text": "Buy a bridge from the siege tools shop by dragging it to the gap in the center.",
     "arrow": {
       "type": "coordinates",
-      "target": "center"
+      "target": {
+        "x": 1000,
+        "y": 600
+      }
     },
     "nextTrigger": {
       "type": "event",
@@ -60,7 +64,20 @@
     }
   },
   {
-    "text": "You did it! You can also use your resources to place your own defences, which can slow down or stop your opponent’s bots.",
+    "text": "You did it! Now you can wait for the bot to reach your opponent's base.",
+    "nextTrigger": {
+      "type": "event",
+      "eventName": "hp",
+      "eventType": "server"
+    }
+  },
+  {
+    "text": "The bot got to the base! It reduced your opponent's HP by a bit.",
+    "arrow": {
+      "type": "dom object",
+      "target": "enemyHp-bar",
+      "direction": "bottom"
+    },
     "nextTrigger": {
       "type": "close"
     }
@@ -70,6 +87,7 @@
     "nextTrigger": {
       "type": "event",
       "eventName": "gameWin",
+      "allowedEvents": ["makeAssaultBot", "solution"],
       "eventType": "server"
     }
   },

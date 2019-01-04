@@ -5,6 +5,7 @@ import MyGameEngine from '../common/MyGameEngine';
 import { clientDefaults } from '../config';
 import resolver from './login/resolver';
 import { withAuth } from '@okta/okta-react';
+import propTypes from 'prop-types';
 
 class Game extends React.Component {
     componentDidMount() {
@@ -25,8 +26,8 @@ class Game extends React.Component {
 
             gameEngine.on('cameraMoved', () => this.props.onCameraMove());
 
-            clientEngine.start().then((socket) => {
-                this.props.onReceiveSocket(socket);
+            clientEngine.start().then(({ socket, gameApi }) => {
+                this.props.onStart(socket, gameApi);
                 clientEngine.socket.on('solution', (data) => {
                     gameEngine.renderer.onReceiveSolution(
                         data.problemId,
@@ -47,5 +48,11 @@ class Game extends React.Component {
         return <div className="pixiContainer" />;
     }
 }
+
+Game.propTypes = {
+    auth: propTypes.object.isRequired,
+    onStart: propTypes.func.isRequired,
+    onCameraMove: propTypes.func.isRequired
+};
 
 export default withAuth(Game);

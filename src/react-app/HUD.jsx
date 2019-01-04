@@ -162,6 +162,7 @@ const AssaultBotButton = (props) => (
                 props.loading ||
                 !canAfford(props.resources, assaultBot.cost)
             }
+            id="btn-assault-bot"
         >
             <div className="hud-column">
                 <div className="column-interior">
@@ -177,49 +178,6 @@ const AssaultBotButton = (props) => (
         </Button>
     </TooltipWrapper>
 );
-
-/*
-const ResourceButton = ({ name, src, height, width, count }) => (
-    <Button className="hud-button" id="btn-mrgn">
-        <div className="hud-column">
-            <div className="column-interior">
-                <img alt={name} src={src} height={height} width={width} />
-            </div>
-        </div>
-        {count == null ? (
-            'loading'
-        ) : (
-            <div className="hud-column-2">
-                <AnimateOnChange
-                    baseClassName="column-interior"
-                    animationClassName="updateable"
-                    animate={true}
-                >
-                    {count}
-                </AnimateOnChange>
-            </div>
-        )}
-    </Button>
-);
-*/
-
-/*
-<Button
-className="mini-btn hud-button"
-onClick={() => {
-    props.fetch('makeAssaultBot', {}, ({ botCount }) => ({
-        assaultBotCount: botCount
-    }));
-}}
-disabled={
-    props.initialLoading ||
-    props.loading ||
-    !canAfford(props.resources, assaultBot.cost)
-}
->
-<IndicatorBot count={props.assaultBotCount} />
-</Button>
-*/
 
 HUD.propTypes = {
     addMenu: PropTypes.func.isRequired,
