@@ -15,17 +15,12 @@ class HUD extends React.Component {
         return (
             <div className="hud-buttons bootstrap-styles">
                 <ButtonToolbar>
-                    {resourceIcons.map((resource) => (
-                        <ResourceButton
-                            key={resource.name}
-                            {...resource}
-                            count={
-                                this.props.loading
-                                    ? null
-                                    : this.props.resources[resource.name]
-                            }
-                        />
-                    ))}
+                    <WrappedMiniButtons
+                        resources={this.props.resources}
+                        initialLoading={this.props.loading}
+                        socket={this.props.socket}
+                    />
+
                     <ControlledButton
                         id="btn-mrgn"
                         className="hud-button"
@@ -57,7 +52,8 @@ class HUD extends React.Component {
                             <div className="column-interior">Siege Tools</div>
                         </div>
                     </ControlledButton>
-                    <WrappedMiniButtons
+
+                    <WrappedAssaultButton
                         resources={this.props.resources}
                         initialLoading={this.props.loading}
                         socket={this.props.socket}
@@ -81,48 +77,55 @@ class HUD extends React.Component {
 
 const MiniButtons = (props) => (
     <div className="mini-btns">
-        <TooltipWrapper
-            triggerProps={{ placement: 'left' }}
-            disabled={
-                props.initialLoading ||
-                props.loading ||
-                !canAfford(props.resources, assaultBot.cost)
-            }
-            text={`Buy an assault creep for ${formatResourceCost(
-                assaultBot.cost
-            )}`}
-        >
-            <Button
-                className="mini-btn hud-button"
-                onClick={() => {
-                    props.fetch('makeAssaultBot', {}, ({ botCount }) => ({
-                        assaultBotCount: botCount
-                    }));
-                }}
-                disabled={
-                    props.initialLoading ||
-                    props.loading ||
-                    !canAfford(props.resources, assaultBot.cost)
+        {resourceIcons.map((resource) => (
+            <IndicatorResource
+                key={resource.name}
+                {...resource}
+                count={
+                    props.initialLoading ? null : props.resources[resource.name]
                 }
-            >
-                <BotButton count={props.assaultBotCount} />
-            </Button>
-        </TooltipWrapper>
+            />
+        ))}
 
         <TooltipWrapper
             triggerProps={{ placement: 'left' }}
             text={'Active collection bots'}
         >
             <Button className="mini-btn hud-button">
-                <BotButton count={props.collectionBotCount} />
+                <IndicatorBot count={props.collectionBotCount} />
             </Button>
         </TooltipWrapper>
-
-        <Button className="mini-btn hud-button" />
     </div>
 );
 
-const BotButton = ({ count }) => (
+const IndicatorResource = ({ name, src, height, width, count }) => (
+    <TooltipWrapper
+        triggerProps={{ placement: 'left' }}
+        text={`Amount of ${name} you have collected`}
+        disabled={false}
+    >
+        <Button className="mini-btn hud-button" id="btn-mrgn">
+            <div className="hud-row">
+                <img alt={name} src={src} height={height} width={width} />
+            </div>
+            {count == null ? (
+                'loading'
+            ) : (
+                <div className="hud-row-2">
+                    <AnimateOnChange
+                        baseClassName="column-interior"
+                        animationClassName="updateable"
+                        animate={true}
+                    >
+                        {count}
+                    </AnimateOnChange>
+                </div>
+            )}
+        </Button>
+    </TooltipWrapper>
+);
+
+const IndicatorBot = ({ count }) => (
     <Fragment>
         <div className="hud-row">
             <img
@@ -136,6 +139,46 @@ const BotButton = ({ count }) => (
     </Fragment>
 );
 
+const AssaultBotButton = (props) => (
+    <TooltipWrapper
+        triggerProps={{ placement: 'left' }}
+        disabled={
+            props.initialLoading ||
+            props.loading ||
+            !canAfford(props.resources, assaultBot.cost)
+        }
+        text={`Buy an assault creep for ${formatResourceCost(assaultBot.cost)}`}
+    >
+        <Button
+            className="hud-button"
+            id="btn-mrgn"
+            onClick={() => {
+                props.fetch('makeAssaultBot', {}, ({ botCount }) => ({
+                    assaultBotCount: botCount
+                }));
+            }}
+            disabled={
+                props.initialLoading ||
+                props.loading ||
+                !canAfford(props.resources, assaultBot.cost)
+            }
+        >
+            <div className="hud-column">
+                <div className="column-interior">
+                    <img
+                        alt="assault-botface"
+                        src="assets/assault-botface.png"
+                        height="21px"
+                        width="16px"
+                    />
+                </div>
+            </div>
+            <div className="hud-column-2">{props.assaultBotCount}</div>
+        </Button>
+    </TooltipWrapper>
+);
+
+/*
 const ResourceButton = ({ name, src, height, width, count }) => (
     <Button className="hud-button" id="btn-mrgn">
         <div className="hud-column">
@@ -158,6 +201,25 @@ const ResourceButton = ({ name, src, height, width, count }) => (
         )}
     </Button>
 );
+*/
+
+/*
+<Button
+className="mini-btn hud-button"
+onClick={() => {
+    props.fetch('makeAssaultBot', {}, ({ botCount }) => ({
+        assaultBotCount: botCount
+    }));
+}}
+disabled={
+    props.initialLoading ||
+    props.loading ||
+    !canAfford(props.resources, assaultBot.cost)
+}
+>
+<IndicatorBot count={props.assaultBotCount} />
+</Button>
+*/
 
 HUD.propTypes = {
     addMenu: PropTypes.func.isRequired,
@@ -171,7 +233,7 @@ HUD.propTypes = {
 
 MiniButtons.propTypes = {
     initialLoading: PropTypes.bool.isRequired,
-    assaultBotCount: PropTypes.number.isRequired,
+    //    assaultBotCount: PropTypes.number.isRequired,
     collectionBotCount: PropTypes.number.isRequired,
     resources: PropTypes.object
 };
@@ -180,19 +242,26 @@ const WrappedMiniButtons = withSocketReq(
     MiniButtons,
     [
         [
-            'assaultBotCount',
-            ({ botCount }) => ({
-                assaultBotCount: botCount
-            })
-        ],
-        [
             'collectionBotCount',
             ({ botCount }) => ({
                 collectionBotCount: botCount
             })
         ]
     ],
-    () => ({ collectionBotCount: 0, assaultBotCount: 0 })
+    () => ({ collectionBotCount: 0 })
+);
+
+const WrappedAssaultButton = withSocketReq(
+    AssaultBotButton,
+    [
+        [
+            'assaultBotCount',
+            ({ botCount }) => ({
+                assaultBotCount: botCount
+            })
+        ]
+    ],
+    () => ({ assaultBotCount: 0 })
 );
 
 export default withSocketFetch(
