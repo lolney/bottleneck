@@ -25,7 +25,8 @@ export const getAssetPaths = () => {
         playerBase,
         waterDummy,
         verticalWall,
-        horizontalWall
+        horizontalWall,
+        tutorialArrow
     ]);
     let assetPaths = {};
     for (const item of items) {
@@ -65,6 +66,11 @@ export const verticalWall = {
 export const horizontalWall = {
     name: 'horizontalWall',
     image: 'assets/rock-wall-horizontal.png'
+};
+
+export const tutorialArrow = {
+    name: 'tutorialArrow',
+    image: 'assets/arrow.png'
 };
 
 export const dirt = {

@@ -191,7 +191,6 @@ HUD.propTypes = {
 
 MiniButtons.propTypes = {
     initialLoading: PropTypes.bool.isRequired,
-    //    assaultBotCount: PropTypes.number.isRequired,
     collectionBotCount: PropTypes.number.isRequired,
     resources: PropTypes.object
 };

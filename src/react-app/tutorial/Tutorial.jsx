@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import CancelDialog from './CancelDialog.jsx';
 import TutorialStateMachine from './StateMachine.jsx';
 import EventMiddleware from './eventMiddleware.js';
-import states from './tutorial.json';
+import createStates from './tutorialData';
 import propTypes from 'prop-types';
 import { withAlert } from 'react-alert';
 import AlertContents from './AlertContents.jsx';
@@ -32,7 +32,7 @@ class Tutorial extends React.Component {
             eventMiddleware: this.eventMiddleware,
             openModal: this.openModal,
             showArrow: this.showArrow,
-            states,
+            states: createStates(this.props.gameApi),
             renderWait: (props) => <AlertContents {...props} />,
             renderProceed: (props) => <AlertContents {...props} />
         })

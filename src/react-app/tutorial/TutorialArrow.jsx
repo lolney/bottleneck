@@ -1,9 +1,10 @@
 import React from 'react';
+import TwoVector from 'lance/serialize/TwoVector';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { Tooltip } from 'react-bootstrap';
 
-export default class TutorialArrow extends React.Component {
+export default class TutorialArrow extends React.PureComponent {
     constructor(props) {
         super(props);
 
@@ -11,19 +12,9 @@ export default class TutorialArrow extends React.Component {
     }
 
     renderCoords(coords) {
-        if (this.props.gameApi.coordsInBounds(coords)) {
-            return (
-                <MyArrow
-                    direction={
-                        this.props.direction ? this.props.direction : 'left'
-                    }
-                    x={coords.x}
-                    y={coords.y}
-                />
-            );
-        } else {
-            return null;
-        }
+        var direction = this.props.direction ? this.props.direction : 'left';
+        this.arrowObject = this.props.gameApi.addArrow(coords, direction);
+        return null;
     }
 
     render() {
@@ -42,24 +33,21 @@ export default class TutorialArrow extends React.Component {
             );
         case 'coordinates':
             var { x, y } = this.props.target;
-            var coords = this.props.gameApi.worldToCanvasCoordinates(x, y);
+            var coords = new TwoVector(x, y);
             return this.renderCoords(coords);
-
-            // call game API: add arrow at coords
         case 'game object':
             var obj = this.props.gameApi.queryObject({});
-            coords = this.props.gameApi.worldToCanvasCoordinates(
-                obj.position.x,
-                obj.position.y
-            );
-            return this.renderCoords(coords);
-
-            // call game api: find closest object
-            // call game api: add arrow at coords
+            return this.renderCoords(obj.position);
         default:
             throw new Error(
                 `Unexpected arrow config type: ${this.props.type}`
             );
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.arrowObject) {
+            this.props.gameApi.removeObject(this.arrowObject);
         }
     }
 }
@@ -91,9 +79,9 @@ MyArrow.propTypes = {
 
 TutorialArrow.propTypes = {
     gameApi: PropTypes.shape({
-        coordsInBounds: PropTypes.func.isRequired,
         queryObject: PropTypes.func.isRequired,
-        worldToCanvasCoordinates: PropTypes.func.isRequired
+        removeObject: PropTypes.func.isRequired,
+        addArrow: PropTypes.func.isRequired
     }).isRequired,
     type: PropTypes.string.isRequired,
     direction: PropTypes.string,

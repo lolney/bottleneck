@@ -5,6 +5,9 @@ import Router from './Router';
 import Socket from '../common/Socket';
 import Avatar from '../common/Avatar';
 import BotAvatar from '../common/BotAvatar';
+import TutorialArrow from '../common/TutorialArrow';
+import { waterDummy } from '../config';
+import DefenseAvatar from '../common/DefenseAvatar';
 
 export default class MyClientEngine extends ClientEngine {
     constructor(gameEngine, options, renderer = MyRenderer) {
@@ -47,6 +50,28 @@ class GameAPI {
             (a, b) => distances[a.id] - distances[b.id]
         );
         return sorted[0];
+    }
+
+    getCenter() {
+        const water = this.gameEngine.queryObject(
+            { objectType: waterDummy.name },
+            DefenseAvatar
+        );
+
+        return water.position;
+    }
+
+    removeObject(obj) {
+        this.gameEngine.removeObjectFromWorld(obj.id);
+    }
+
+    addArrow(position, direction) {
+        return this.gameEngine.addObjectToWorld(
+            new TutorialArrow(this.gameEngine, null, {
+                position,
+                direction
+            })
+        );
     }
 
     coordsInBounds(vec) {
