@@ -38,8 +38,8 @@ export default function withSocketReq(
             });
         }
 
-        fetch(event, req, handler) {
-            this.socket.emit(event, req, (resp) => {
+        async fetch(event, req, handler) {
+            const succeeded = await this.socket.emit(event, req, (resp) => {
                 if (resp.type == 'SUCCESS') {
                     handler = handler ? handler : (data) => data;
                     this.setState({
@@ -60,7 +60,11 @@ export default function withSocketReq(
                 }
             });
 
-            this.setState({ activeRequests: this.state.activeRequests + 1 });
+            if (succeeded) {
+                this.setState({
+                    activeRequests: this.state.activeRequests + 1
+                });
+            }
         }
 
         render() {
