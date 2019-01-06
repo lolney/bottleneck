@@ -36,7 +36,7 @@ class AuthFlow {
 
             logger.info(`Creating guest user: ${userId}`);
         } else {
-            let username = token.claims.sub;
+            let username = token.sub;
 
             userId = await getUserId(username);
             logger.info(`User is logging in: ${username}`);

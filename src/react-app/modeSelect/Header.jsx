@@ -1,9 +1,9 @@
 import React from 'react';
 import { Navbar, Button } from 'react-bootstrap';
-import { withAuth } from '@okta/okta-react';
 import './ModeSelect.scss';
+import withAuth from '../login/withAuth.jsx';
 
-const GUEST_USER = { preferred_username: 'Guest' };
+const GUEST_USER = { displayName: 'Guest' };
 
 class HeaderAuth extends React.Component {
     constructor(props) {
@@ -12,43 +12,41 @@ class HeaderAuth extends React.Component {
             authenticated: null,
             user: GUEST_USER
         };
-        this.checkAuthentication = this.checkAuthentication.bind(this);
-        this.checkAuthentication();
-        this.login = this.login.bind(this);
         this.logout = this.logout.bind(this);
     }
 
-    async checkAuthentication() {
-        const authenticated = await this.props.auth.isAuthenticated();
-        if (authenticated !== this.state.authenticated) {
-            let user = await this.props.auth.getUser();
-            if (!user) {
-                user = GUEST_USER;
-            }
-            this.setState({ user, authenticated });
-        }
+    componentDidMount() {
+        this.unregisterAuthObserver = this.props.firebase
+            .auth()
+            .onAuthStateChanged((user) =>
+                this.setState({
+                    authenticated: !!user,
+                    user: user ? user : GUEST_USER
+                })
+            );
     }
 
-    async login() {
-        // Redirect to '/' after login
-        this.props.auth.login('/');
+    // Make sure we un-register Firebase observers when the component unmounts.
+    componentWillUnmount() {
+        this.unregisterAuthObserver();
     }
 
     async logout() {
         // Redirect to '/' after logout
         try {
-            await this.props.auth.logout('/');
+            await this.props.firebase.auth().signOut();
         } catch (error) {
             console.error(error);
         }
-        await this.checkAuthentication();
     }
 
     render() {
         return (
             <Header
                 user={this.state.user}
-                login={this.login}
+                login={() => {
+                    window.open('/login', '_self');
+                }}
                 logout={this.logout}
             />
         );
@@ -69,7 +67,7 @@ const Header = (props) => (
                 />
                 <Navbar.Link href="#" id="text">
                     {' '}
-                    {props.user.preferred_username}
+                    {props.user.displayName}
                 </Navbar.Link>
             </Navbar.Text>
             <Navbar.Form pullRight>
@@ -80,7 +78,7 @@ const Header = (props) => (
 );
 
 const SignIn = ({ user, login, logout }) =>
-    user.preferred_username == 'Guest' || user === undefined ? (
+    user.displayName == 'Guest' || user === undefined ? (
         <Button className="hud-button" onClick={login}>
             Sign in
         </Button>
