@@ -90,11 +90,11 @@ export default (gameApi) => [
     },
     {
         text:
-            'Now you just need to gather enough resources to buy 4 more bots.',
+            'To finish, you need to buy 4 more bots and wait for them to assault the base.',
         arrow: {
             type: 'dom object',
             target: 'btn-assault-bot',
-            direction: 'left'
+            direction: 'bottom'
         },
         nextTrigger: {
             type: 'event',

@@ -2,6 +2,11 @@ import TutorialStateMachine, {
     Status
 } from '../../src/react-app/tutorial/StateMachine.jsx';
 import EventMiddleware from '../../src/react-app/tutorial/eventMiddleware.js';
+import AlertContents from '../../src/react-app/tutorial/AlertContents.jsx';
+import React from 'react';
+
+import { mount } from 'enzyme';
+import CancelDialog from '../../src/react-app/tutorial/CancelDialog.jsx';
 
 const fixtures = {
     close: {
@@ -28,25 +33,30 @@ const fixtures = {
 describe('StateMachine', () => {
     let stateMachine;
     let eventMiddleware;
-    let component;
+    let alert;
+    let closeDialog;
 
     beforeEach(() => {
         eventMiddleware = new EventMiddleware();
         const props = {
             alert: {
                 remove: () => {},
-                show: (_component) => {
-                    component = _component;
+                show: (_alert) => {
+                    alert = _alert;
                 }
             },
-            openModal: () => {},
+            openModal: (onOk, onCancel) => {
+                closeDialog = mount(
+                    <CancelDialog ok={onOk} cancel={onCancel} />
+                );
+            },
             showArrow: () => {
                 () => {};
             },
             eventMiddleware,
             states: [fixtures.close, fixtures.event],
-            renderWait: () => 'msg',
-            renderProceed: () => 'msg'
+            renderWait: (props) => mount(<AlertContents {...props} />),
+            renderProceed: (props) => mount(<AlertContents {...props} />)
         };
         stateMachine = new TutorialStateMachine(props);
     });
@@ -55,6 +65,16 @@ describe('StateMachine', () => {
         const promise = stateMachine.advanceState();
 
         eventMiddleware.emitter.emit('stop');
+        const status = await promise;
+
+        expect(status).toEqual(Status.DONE);
+    };
+
+    const stopClick = async () => {
+        const promise = stateMachine.advanceState();
+        alert.find('.close-btn-container').simulate('click');
+        closeDialog.find('.btn-default').simulate('click');
+
         const status = await promise;
 
         expect(status).toEqual(Status.DONE);
@@ -74,7 +94,9 @@ describe('StateMachine', () => {
             expect(status).toEqual(Status.CONTINUE);
         });
 
-        it('stops when clicking stop', () => {});
+        it('stops when clicking stop', async () => {
+            await stopClick();
+        });
 
         it('stops if stop event received', async () => {
             await stopEvent();
@@ -86,9 +108,18 @@ describe('StateMachine', () => {
             stateMachine.stateIndex = -1;
         });
 
-        it('proceeds when clicking proceed', () => {});
+        it('proceeds when clicking proceed', async () => {
+            const promise = stateMachine.advanceState();
+            alert.find('.proceed-btn-container').simulate('click');
 
-        it('stops when clicking stop', () => {});
+            const status = await promise;
+
+            expect(status).toEqual(Status.CONTINUE);
+        });
+
+        it('stops when clicking stop', async () => {
+            await stopClick();
+        });
 
         it('stops if stop event received', async () => {
             await stopEvent();
