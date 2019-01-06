@@ -3,32 +3,10 @@ import { Navbar, Button } from 'react-bootstrap';
 import './ModeSelect.scss';
 import withAuth from '../login/withAuth.jsx';
 
-const GUEST_USER = { displayName: 'Guest' };
-
 class HeaderAuth extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            authenticated: null,
-            user: GUEST_USER
-        };
         this.logout = this.logout.bind(this);
-    }
-
-    componentDidMount() {
-        this.unregisterAuthObserver = this.props.firebase
-            .auth()
-            .onAuthStateChanged((user) =>
-                this.setState({
-                    authenticated: !!user,
-                    user: user ? user : GUEST_USER
-                })
-            );
-    }
-
-    // Make sure we un-register Firebase observers when the component unmounts.
-    componentWillUnmount() {
-        this.unregisterAuthObserver();
     }
 
     async logout() {
@@ -43,7 +21,7 @@ class HeaderAuth extends React.Component {
     render() {
         return (
             <Header
-                user={this.state.user}
+                user={this.props.user}
                 login={() => {
                     window.open('/login', '_self');
                 }}
