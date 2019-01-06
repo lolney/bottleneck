@@ -22,7 +22,6 @@ class HUD extends React.Component {
                     />
 
                     <ControlledButton
-                        id="btn-mrgn"
                         className="hud-button"
                         addWindow={(callback) =>
                             this.props.addWindow(
@@ -151,7 +150,6 @@ const AssaultBotButton = (props) => (
     >
         <Button
             className="hud-button"
-            id="btn-mrgn"
             onClick={() => {
                 props.fetch('makeAssaultBot', {}, ({ botCount }) => ({
                     assaultBotCount: botCount
