@@ -1,9 +1,9 @@
-export default function(auth) {
+export default function(token) {
     return async (url, method) => {
         try {
             const response = await fetch(url, {
                 headers: {
-                    Authorization: 'Bearer ' + (await auth.getAccessToken())
+                    Authorization: 'Bearer ' + token
                 },
                 method
             });

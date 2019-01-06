@@ -14,7 +14,7 @@ export default class HealthBar extends React.Component {
             transform: `scaleX(${hp / playerBase.baseHP})`
         };
         return (
-            <div key={key} className="bar-container">
+            <div key={key} id={`${key}-bar`} className="bar-container">
                 <div className={key} style={style} />
                 <div className="bar-label">
                     <span className="outline-text">{hp}</span>
@@ -25,8 +25,10 @@ export default class HealthBar extends React.Component {
 
     render() {
         return (
-            <div className="health-bar">
-                {['myHp', 'enemyHp'].map(this.createBar)}
+            <div>
+                <div className="health-bar">
+                    {['myHp', 'enemyHp'].map(this.createBar)}
+                </div>
             </div>
         );
     }

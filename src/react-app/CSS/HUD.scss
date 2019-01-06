@@ -5,6 +5,9 @@ body {
     z-index: 2000;
   }
 }
+#btm-btn-mrgn {
+  margin-left: 5px;
+}
 
 .hud-buttons {
   right: 0;
@@ -91,6 +94,7 @@ body {
       height: 45px;
       display: flex;
       margin-left: 5px;
+      margin-bottom: 10%;
       .mini-btn {
         border: none;
         border-radius: 1px;
@@ -101,8 +105,9 @@ body {
         background-color: rgba(255, 255, 255, 0.8);
         display: flex;
         flex-direction: column;
-        pointer-events: all;
         flex-wrap: nowrap;
+        outline: none;
+        cursor: default;
         .hud-row {
           flex-direction: row;
           min-width: 100%;

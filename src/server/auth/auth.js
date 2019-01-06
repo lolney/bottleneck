@@ -1,15 +1,16 @@
-import OktaJwtVerifier from '@okta/jwt-verifier';
+import * as admin from 'firebase-admin';
 
-export const oktaJwtVerifier = new OktaJwtVerifier({
-    issuer: 'https://dev-169479.oktapreview.com/oauth2/default',
-    clientId: '0oaigopumvEKEibQR0h7',
-    assertClaims: {
-        aud: 'api://default'
-    }
+admin.initializeApp({
+    credential: admin.credential.cert({
+        projectId: process.env.PROJECT_ID,
+        clientEmail: process.env.CLIENT_EMAIL,
+        privateKey: process.env.PRIVATE_KEY.replace(/\\n/g, '\n')
+    }),
+    databaseURL: 'https://<DATABASE_NAME>.firebaseio.com'
 });
 
-export const verifyToken = (accessToken) => {
-    return oktaJwtVerifier.verifyAccessToken(accessToken);
+export const verifyToken = (idToken) => {
+    return admin.auth().verifyIdToken(idToken);
 };
 
 export const authRequired = (req, res, next) => {

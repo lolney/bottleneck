@@ -69,7 +69,7 @@ describe('CollectionBotAvatar', () => {
     });
 
     it('resources initialized correctly', () => {
-        let sorted = resourcePositions.sort((a, b) => a.x > b.x);
+        let sorted = resourcePositions.sort((a, b) => a.x - b.x);
         for (let i = 0; i < 3; i++) {
             expect(avatar.nextResource().position.x).toEqual(sorted[i].x);
         }

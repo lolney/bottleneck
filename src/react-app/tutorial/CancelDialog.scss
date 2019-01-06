@@ -1,0 +1,14 @@
+#cancel-dialog {
+  @import "../CSS/Common.scss";
+  #header {
+    @include header;
+    font-size: 2em;
+    text-align: left;
+    min-height: 2em;
+    padding: 15px;
+  }
+  #body {
+    font: $font-style;
+    font-size: 1em;
+  }
+}

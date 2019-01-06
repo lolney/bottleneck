@@ -22,7 +22,7 @@ $image-width: 100%;
     justify-content: center;
     background-size: contain;
     display: flex;
-    background: #666;
+    background-color: #666;
     font-family: "Lato", sans-serif;
     font-weight: 300;
   }
@@ -40,22 +40,14 @@ $image-width: 100%;
     order: 3;
     background: #666;
   }
-  @mixin image {
+  .image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .image-container {
     width: $image-width;
-    height: $image-width;
-    object-fit: contain;
     background: #666;
-    background-size: contain;
-  }
-  .image-first {
-    @include image;
-    order: 2;
-    border-bottom-left-radius: 3px;
-  }
-  .image-second {
-    @include image;
-    order: 4;
-    border-bottom-right-radius: 3px;
   }
   @mixin caption {
     width: $image-width;

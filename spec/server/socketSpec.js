@@ -1,6 +1,7 @@
 import serverIO from 'socket.io';
 import clientSocketIO from 'socket.io-client';
 import Socket, { Response } from '../../src/common/Socket';
+import EventMiddleware from '../../src/react-app/tutorial/eventMiddleware';
 
 let port = 7000;
 
@@ -81,6 +82,124 @@ describe('Socket', () => {
 
             expect(response.type).toEqual(Response.ERROR);
             expect(response.msg).toEqual('Application state is suspended');
+        });
+    });
+
+    describe('middleware', () => {
+        beforeAll(async () => {
+            await setup();
+            clientSocket.use({ handle: () => false, forward: () => {} });
+        });
+
+        it('should abort request', async (done) => {
+            serverSocket.transaction('testEvent', () => {
+                fail('should not reach server');
+            });
+            try {
+                await clientSocket.request('testEvent', {});
+            } catch (e) {
+                expect(e).toEqual(
+                    'Middleware prevented request from being sent'
+                );
+                done();
+            }
+        });
+
+        it('should abort emit', async () => {
+            const result = await clientSocket.emit('testEvent', {});
+
+            expect(result).toBe(false);
+        });
+
+        it('emit should not reach server', (done) => {
+            serverSocket.once('testEvent', () => {
+                fail('should not reach server');
+            });
+            clientSocket.emit('testEvent', {});
+
+            setTimeout(done, 100);
+        });
+    });
+
+    describe('eventMiddleware', () => {
+        let eventMiddleware;
+        let ok;
+        let cancel;
+
+        beforeEach(async () => {
+            await setup();
+            eventMiddleware = new EventMiddleware((_ok, _cancel) => {
+                ok = _ok;
+                cancel = _cancel;
+            });
+            clientSocket.use(eventMiddleware);
+        });
+
+        it('if ok is called, emit should go through', async () => {
+            const result = clientSocket.emit('testEvent', {});
+            ok();
+
+            expect(await result).toBe(true);
+        });
+
+        it('if event is allowed, emit should go through', async () => {
+            const eventName = 'testEvent';
+            eventMiddleware.addAllowedEvents(eventName);
+            const result = clientSocket.emit(eventName, {});
+
+            expect(await result).toBe(true);
+        });
+
+        it('if not active, emit should go through', async () => {
+            eventMiddleware.active = false;
+            const result = clientSocket.emit('testEvent', {});
+
+            expect(await result).toBe(true);
+        });
+
+        it('if cancel is called, emit should not go through', async () => {
+            const result = clientSocket.emit('testEvent', {});
+            cancel();
+
+            expect(await result).toBe(false);
+        });
+
+        it('if event is not allowed and cancel called, emit should not go through', async () => {
+            const eventName = 'testEvent';
+            eventMiddleware.addAllowedEvents(eventName);
+            const result = clientSocket.emit('notTestEvent', {});
+            cancel();
+
+            expect(await result).toBe(false);
+        });
+
+        it('if event is not allowed and ok called, emit should go through', async () => {
+            const eventName = 'testEvent';
+            eventMiddleware.addAllowedEvents(eventName);
+            const result = clientSocket.emit('notTestEvent', {});
+            ok();
+
+            expect(await result).toBe(true);
+        });
+
+        it('should forward events to once', (done) => {
+            const data = { data: 1 };
+            eventMiddleware.emitter.once('testEvent', (_data) => {
+                expect(_data).toEqual(data);
+                done();
+            });
+            clientSocket.once('testEvent', () => {});
+            serverSocket.emit('testEvent', data);
+        });
+
+        it('should forward events to on', (done) => {
+            const data = { data: 1 };
+            eventMiddleware.emitter.on('testEvent', (_data) => {
+                expect(_data).toEqual(data);
+                done();
+            });
+            clientSocket.once('testEvent', () => {});
+            serverSocket.emit('testEvent', data);
         });
     });
 });

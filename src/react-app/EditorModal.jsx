@@ -3,16 +3,11 @@ import Editor from './Editor.jsx';
 import ProblemComponent from './problems/ProblemComponent.jsx';
 import PropTypes from 'prop-types';
 import { withAlert } from 'react-alert';
+import NewAlertTemplate, { alertOptions } from './common/TutorialAlerts.jsx';
 
 import { Provider } from 'react-alert';
-import AlertTemplate from 'react-alert-template-basic';
 
 import './CSS/Modal.scss';
-
-const alertOptions = {
-    timeout: 0,
-    position: 'bottom center'
-};
 
 class EditorModal extends React.Component {
     constructor(props) {
@@ -70,7 +65,7 @@ class EditorModal extends React.Component {
 
 const wrapWithProvider = (ComponentClass) => {
     return (props) => (
-        <Provider template={AlertTemplate} {...alertOptions}>
+        <Provider template={NewAlertTemplate} {...alertOptions}>
             <ComponentClass {...props} />
         </Provider>
     );

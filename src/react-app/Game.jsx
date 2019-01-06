@@ -1,22 +1,28 @@
 import React from 'react';
-import querystring from 'query-string';
 import MyClientEngine from '../client/MyClientEngine';
 import MyGameEngine from '../common/MyGameEngine';
 import { clientDefaults } from '../config';
 import resolver from './login/resolver';
-import { withAuth } from '@okta/okta-react';
+import propTypes from 'prop-types';
+import withAuth from './login/withAuth.jsx';
+import { withRouter } from 'react-router-dom';
 
 class Game extends React.Component {
-    componentDidMount() {
-        const qsOptions = querystring.parse(location.search);
-        const mode = qsOptions.mode ? qsOptions.mode : 'practice';
+    shouldComponentUpdate(nextProps) {
+        return this.props.user != nextProps.user;
+    }
 
-        this.props.auth.getAccessToken().then((token) => {
+    componentDidUpdate() {
+        if (this.props.user) {
+            const token = this.props.user.getIdToken
+                ? this.props.user.getIdToken(true)
+                : null;
+
             let options = Object.assign(clientDefaults, {
                 auth: { token },
-                matchmaker: `match?mode=${mode}`,
+                matchmaker: `match?mode=${this.props.mode}`,
                 matchmakerMethod: 'POST',
-                resolver: resolver(this.props.auth)
+                resolver: resolver(token)
             });
 
             // create a client engine and a game engine
@@ -25,8 +31,8 @@ class Game extends React.Component {
 
             gameEngine.on('cameraMoved', () => this.props.onCameraMove());
 
-            clientEngine.start().then((socket) => {
-                this.props.onReceiveSocket(socket);
+            clientEngine.start().then(({ socket, gameApi }) => {
+                this.props.onStart(socket, gameApi);
                 clientEngine.socket.on('solution', (data) => {
                     gameEngine.renderer.onReceiveSolution(
                         data.problemId,
@@ -40,7 +46,7 @@ class Game extends React.Component {
                     gameEngine.setStatus(data.state);
                 });
             });
-        });
+        }
     }
 
     render() {
@@ -48,4 +54,13 @@ class Game extends React.Component {
     }
 }
 
-export default withAuth(Game);
+Game.propTypes = {
+    mode: propTypes.oneOf(['vs', 'practice']).isRequired,
+    firebase: propTypes.object.isRequired,
+    user: propTypes.object,
+    history: propTypes.object.isRequired,
+    onStart: propTypes.func.isRequired,
+    onCameraMove: propTypes.func.isRequired
+};
+
+export default withRouter(withAuth(Game));

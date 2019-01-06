@@ -2,7 +2,7 @@ import Socket from '../common/Socket';
 
 export default class Router {
     constructor(socket) {
-        this.socket = new Socket(socket, false);
+        this.socket = socket;
     }
 
     makeDefense(defenseId, position) {

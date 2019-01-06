@@ -38,14 +38,15 @@ export default function withSocketReq(
             });
         }
 
-        fetch(event, req) {
-            this.socket.emit(event, req, (resp) => {
+        async fetch(event, req, handler) {
+            const succeeded = await this.socket.emit(event, req, (resp) => {
                 if (resp.type == 'SUCCESS') {
+                    handler = handler ? handler : (data) => data;
                     this.setState({
                         activeRequests: this.state.activeRequests - 1,
                         data: {
                             ...this.state.data,
-                            ...resp.data,
+                            ...handler(resp.data),
                             _nonce: Math.random()
                         }
                     });
@@ -59,7 +60,11 @@ export default function withSocketReq(
                 }
             });
 
-            this.setState({ activeRequests: this.state.activeRequests + 1 });
+            if (succeeded) {
+                this.setState({
+                    activeRequests: this.state.activeRequests + 1
+                });
+            }
         }
 
         render() {

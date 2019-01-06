@@ -12,4 +12,5 @@ before_install:
   - psql -U postgres -c "create extension postgis"
 script: npm run-script coveralls
 env:
-  - DATABASE_URL=postgresql://postgres@localhost:5432/bottleneck_development
+  global:
+    - DATABASE_URL=postgresql://postgres@localhost:5432/bottleneck_development

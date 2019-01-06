@@ -23,9 +23,9 @@ class AuthFlow {
         let playerNumber = socket.playerId;
 
         try {
-            token = await auth.verifyToken(req.token);
+            token = await auth.verifyToken(req.token.i);
         } catch (error) {
-            logger.info(`Invalid token: ${req.token}`);
+            logger.info(`Invalid token: ${req.token}: ${error}`);
         }
 
         if (!token) {
@@ -36,7 +36,7 @@ class AuthFlow {
 
             logger.info(`Creating guest user: ${userId}`);
         } else {
-            let username = token.claims.sub;
+            let username = token.sub;
 
             userId = await getUserId(username);
             logger.info(`User is logging in: ${username}`);

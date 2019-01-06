@@ -1,9 +1,7 @@
 import ClientEngine from '../../src/client/MyClientEngine';
-import Router from '../../src/client/Router';
 import MyGameEngine from '../../src/common/MyGameEngine';
 import PlayerAvatar from '../../src/common/MyGameEngine';
 import { clientDefaults } from '../../src/config';
-import Socket from '../../src/common/Socket';
 
 class TestRenderer {
     draw() {}
@@ -32,9 +30,9 @@ export default class TestClient {
     }
 
     async start() {
-        const socket = await this.clientEngine.start();
-        this.socket = new Socket(socket, false);
-        this.router = new Router(this.socket);
+        const { socket } = await this.clientEngine.start();
+        this.socket = socket;
+        this.router = this.clientEngine.router;
         return this.socket;
     }
 

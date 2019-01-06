@@ -2,7 +2,7 @@ import { MatchmakingRouter } from '../../src/server/routers/matchmaking';
 import request from 'supertest';
 import express from 'express';
 
-/** TODO: add Okta client lib */
+/** TODO: add client lib */
 class MockAuth {
     static async authRequired(_req, _res, next) {
         next();

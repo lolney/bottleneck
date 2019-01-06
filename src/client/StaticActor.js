@@ -10,13 +10,21 @@ export default class StaticActor extends Actor {
         super(avatar, renderer, resourceName);
         PIXI = require('pixi.js');
         // Create the sprite
-        let mySprite = this.createSprite(resourceName);
-        this.sprite.addChild(mySprite);
+        this.mySprite = this.createSprite(resourceName);
+        this.sprite.addChild(this.mySprite);
 
         // Store in the renderer and in PIXI's renderer
         if (shouldAttach === true) {
             this.attach(renderer, avatar);
         }
+    }
+
+    setAnchor(x, y) {
+        this.mySprite.anchor.set(x, y);
+    }
+
+    scale(factor) {
+        this.mySprite.scale.set(factor, factor);
     }
 
     compositeSprite(resource) {

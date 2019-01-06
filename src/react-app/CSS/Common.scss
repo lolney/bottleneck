@@ -1,4 +1,9 @@
-.header {
+$tooltip-arrow-width: 20px;
+$border-radius-base: 1px;
+$tooltip-arrow-color: rgba(255, 0, 0, 0.9);
+$font-style: 300 "Lato", sans-serif;
+
+@mixin header {
   background: #f1f1f1;
   border: 1px solid #ddd;
   border-radius: 3px;
@@ -6,6 +11,10 @@
   width: 100%;
   min-height: 20px;
   text-align: center;
+}
+
+.header {
+  @include header;
 }
 
 h1 {
@@ -94,6 +103,42 @@ input {
   }
 }
 
+#pink-button {
+  @include selected-button;
+  color: white;
+  border-color: #600033;
+  background-color: #ff87c7;
+  &:focus,
+  &.focus {
+    outline: none;
+    box-shadow: none;
+    background-color: #ff87c7;
+  }
+  &:hover,
+  &.hover {
+    outline: none;
+    box-shadow: none;
+    background-color: #e37bb3;
+    &:focus,
+    &.focus {
+      outline: none;
+      background-color: #e37bb3;
+    }
+  }
+  &:active,
+  &.active {
+    outline: none;
+    box-shadow: inset 0 0 1px #333333;
+    background-color: #c96f9f;
+    &:focus,
+    &.focus {
+      outline: none;
+      box-shadow: inset 0 0 1px #333333;
+      background-color: #c96f9f;
+    }
+  }
+}
+
 .tooltip {
   font: 300 1em/1.5em "Lato", sans-serif;
   font-size: 0.7em;
@@ -101,6 +146,62 @@ input {
   background-color: rgba(0, 0, 0, 0.8);
   padding: 5px 5px 7.5px;
   border-radius: 3px;
+}
+
+.tutorial-arrow {
+  -webkit-animation: flash linear 1s 5;
+  animation: flash linear 1s 5;
+  .tooltip {
+    background-color: rgba(
+      255,
+      0,
+      0,
+      0
+    ) !important; // Made this transparent, but we may not actually want to.
+    &.left .tooltip-inner {
+      background-color: rgba(255, 0, 0, 0.9) !important;
+      padding: 9px 15px !important;
+      height: $tooltip-arrow-width - 5 !important;
+    }
+    &.right .tooltip-inner {
+      background-color: rgba(255, 0, 0, 0.9) !important;
+      padding: 9px 15px !important;
+      height: $tooltip-arrow-width - 5 !important;
+    }
+    &.top .tooltip-inner {
+      background-color: rgba(255, 0, 0, 0.9) !important;
+      padding: 15px 9px !important;
+      width: $tooltip-arrow-width - 5 !important;
+    }
+    &.bottom .tooltip-inner {
+      background-color: rgba(255, 0, 0, 0.9) !important;
+      padding: 15px 9px !important;
+      width: $tooltip-arrow-width - 5 !important;
+    }
+  }
+}
+
+@-webkit-keyframes flash {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes flash {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .bootstrap-styles {

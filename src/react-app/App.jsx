@@ -11,6 +11,10 @@ import Windows from './Windows.jsx';
 import SocketContext from './SocketContext';
 import ModeSelect from './modeSelect/App.jsx';
 import withLogin from './login/withLogin.jsx';
+import Tutorial from './tutorial/Tutorial.jsx';
+
+import { Provider } from 'react-alert';
+import querystring from 'query-string';
 
 import './CSS/Defenses.scss';
 import './CSS/HUD.scss';
@@ -22,6 +26,8 @@ import './CSS/LoadingScreen.scss';
 import './CSS/VictoryOverlay.scss';
 import './CSS/HealthBar.scss';
 import 'semantic-ui-css/semantic.min.css';
+import './tutorial/AlertContents.scss';
+import './tutorial/CancelDialog.scss';
 
 
 /*
@@ -52,12 +58,14 @@ export class App extends React.Component {
         super(props);
         this.state = {
             camera: false,
-            token: true, // TODO: initialize as null and get from login
-            socket: null
+            socket: null,
+            gameApi: null
         };
         this.onReceiveToken = this.onReceiveToken.bind(this);
-        this.onReceiveSocket = this.onReceiveSocket.bind(this);
+        this.onStart = this.onStart.bind(this);
 
+        const qsOptions = querystring.parse(location.search);
+        this.mode = qsOptions.mode ? qsOptions.mode : 'practice';
         this.windows = React.createRef();
         this.addWindow = this.addWindow.bind(this);
         this.addMenu = this.addMenu.bind(this);
@@ -86,10 +94,10 @@ export class App extends React.Component {
         this.setState({ token: token });
     }
 
-    onReceiveSocket(socket) {
+    onStart(socket, gameApi) {
         new EditorSocketWatcher(socket, this.windows.current.addWindow);
 
-        this.setState({ socket: socket });
+        this.setState({ socket, gameApi });
     }
 
     onCameraMove() {
@@ -100,19 +108,32 @@ export class App extends React.Component {
         return (
             <SocketContext.Provider value={this.state.socket}>
                 <div>
-                    {this.state.token && (
-                        <ConnectionOverlay
-                            key={this.state.socket == null}
-                            socket={this.state.socket}
-                            camera={this.state.camera}
-                        />
-                    )}
+                    <ConnectionOverlay
+                        key={this.state.socket == null}
+                        socket={this.state.socket}
+                        camera={this.state.camera}
+                    />
                     {this.state.socket && (
                         <VictoryOverlay socket={this.state.socket} />
                     )}
 
                     {this.state.socket && (
                         <HealthBarContainer socket={this.state.socket} />
+                    )}
+
+                    {this.state.socket && this.mode == 'practice' && (
+                        <Provider
+                            template={(props) => props.message}
+                            {...{
+                                timeout: 0,
+                                position: 'bottom center'
+                            }}
+                        >
+                            <Tutorial
+                                socket={this.state.socket}
+                                gameApi={this.state.gameApi}
+                            />
+                        </Provider>
                     )}
 
                     <Windows ref={this.windows} />
@@ -126,13 +147,12 @@ export class App extends React.Component {
                             socket={this.state.socket}
                         />
                     )}
-                    {this.state.token && (
-                        <Game
-                            onReceiveSocket={this.onReceiveSocket}
-                            onCameraMove={this.onCameraMove}
-                            token={this.state.token}
-                        />
-                    )}
+                    <Game
+                        mode={this.mode}
+                        onStart={this.onStart}
+                        onCameraMove={this.onCameraMove}
+                        token={this.state.token}
+                    />
                 </div>
             </SocketContext.Provider>
         );
