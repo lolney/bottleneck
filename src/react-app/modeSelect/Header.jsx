@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Navbar, Button } from 'react-bootstrap';
 import './ModeSelect.scss';
 import withAuth from '../login/withAuth.jsx';
@@ -45,7 +45,7 @@ const Header = (props) => (
                 />
                 <Navbar.Link href="#" id="text">
                     {' '}
-                    {props.user.displayName}
+                    {props.user ? props.user.displayName : 'Loading'}
                 </Navbar.Link>
             </Navbar.Text>
             <Navbar.Form pullRight>
@@ -56,10 +56,15 @@ const Header = (props) => (
 );
 
 const SignIn = ({ user, login, logout }) =>
-    user.displayName == 'Guest' || user === undefined ? (
-        <Button className="hud-button" onClick={login}>
-            Sign in
-        </Button>
+    !user ? null : user.displayName == 'Guest' ? (
+        <Fragment>
+            <Button className="hud-button" onClick={login}>
+                Sign in
+            </Button>
+            <Button className="hud-button" onClick={login}>
+                Sign up
+            </Button>
+        </Fragment>
     ) : (
         <Button className="hud-button" onClick={logout}>
             Sign out

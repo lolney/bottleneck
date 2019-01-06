@@ -13,11 +13,11 @@ class Game extends React.Component {
     }
 
     componentDidUpdate() {
-        const token = this.props.user.getIdToken
-            ? this.props.user.getIdToken(true)
-            : null;
+        if (this.props.user) {
+            const token = this.props.user.getIdToken
+                ? this.props.user.getIdToken(true)
+                : null;
 
-        if (token) {
             let options = Object.assign(clientDefaults, {
                 auth: { token },
                 matchmaker: `match?mode=${this.props.mode}`,
@@ -57,7 +57,7 @@ class Game extends React.Component {
 Game.propTypes = {
     mode: propTypes.oneOf(['vs', 'practice']).isRequired,
     firebase: propTypes.object.isRequired,
-    user: propTypes.object.isRequired,
+    user: propTypes.object,
     history: propTypes.object.isRequired,
     onStart: propTypes.func.isRequired,
     onCameraMove: propTypes.func.isRequired

@@ -11,7 +11,7 @@ const withAuth = (Component) => {
 
             this.state = {
                 authenticated: false,
-                user: GUEST_USER
+                user: null
             };
         }
 

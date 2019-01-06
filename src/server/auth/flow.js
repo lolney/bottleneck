@@ -25,7 +25,7 @@ class AuthFlow {
         try {
             token = await auth.verifyToken(req.token.i);
         } catch (error) {
-            logger.info(`Invalid token: ${req.token.toString()}: ${error}`);
+            logger.info(`Invalid token: ${req.token}: ${error}`);
         }
 
         if (!token) {
