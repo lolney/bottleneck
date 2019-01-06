@@ -128,8 +128,8 @@ const IndicatorBot = ({ count }) => (
     <Fragment>
         <div className="hud-row">
             <img
-                alt="assault-botface"
-                src="assets/assault-botface.png"
+                alt="botface"
+                src="assets/botface2.png"
                 height="21px"
                 width="16px"
             />

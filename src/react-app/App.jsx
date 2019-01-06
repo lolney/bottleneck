@@ -27,6 +27,8 @@ import './CSS/VictoryOverlay.scss';
 import './CSS/HealthBar.scss';
 import 'semantic-ui-css/semantic.min.css';
 import './tutorial/AlertContents.scss';
+import './tutorial/CancelDialog.scss';
+
 
 /*
 \ App
