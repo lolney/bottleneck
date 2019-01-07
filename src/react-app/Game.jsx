@@ -5,7 +5,6 @@ import { clientDefaults } from '../config';
 import resolver from './login/resolver';
 import propTypes from 'prop-types';
 import withAuth from './login/withAuth.jsx';
-import { withRouter } from 'react-router-dom';
 
 class Game extends React.Component {
     shouldComponentUpdate(nextProps) {
@@ -58,9 +57,8 @@ Game.propTypes = {
     mode: propTypes.oneOf(['vs', 'practice']).isRequired,
     firebase: propTypes.object.isRequired,
     user: propTypes.object,
-    history: propTypes.object.isRequired,
     onStart: propTypes.func.isRequired,
     onCameraMove: propTypes.func.isRequired
 };
 
-export default withRouter(withAuth(Game));
+export default withAuth(Game);
