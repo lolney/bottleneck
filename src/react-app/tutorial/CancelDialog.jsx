@@ -3,7 +3,7 @@ import { Modal, Button } from 'react-bootstrap';
 
 const CancelDialog = ({ cancel, ok }) => (
     <div className="bootstrap-styles" id="cancel-dialog">
-        <Modal.Dialog>
+        <Modal.Dialog bsSize="small">
             <Modal.Header id="header">
                 <Modal.Title>End the tutorial?</Modal.Title>
             </Modal.Header>
