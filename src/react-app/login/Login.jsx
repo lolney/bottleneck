@@ -4,7 +4,6 @@ import './config';
 
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import firebase from 'firebase';
-import withRouter from 'react-router-dom/withRouter';
 
 class Login extends React.Component {
     constructor(props) {
@@ -15,15 +14,9 @@ class Login extends React.Component {
             // Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
             signInSuccessUrl: '/',
             callbacks: {
-                signInSuccess: () => {
-                    const state = this.props.history.location.state;
-                    if (state && state.return) {
-                        this.props.history.push(state.return);
-                    } else {
-                        this.props.history.push('/');
-                    }
-                }
+                signInSuccess: this.props.onSuccess
             },
+            credentialHelper: 'none',
             // We will display Google and Facebook as auth providers.
             signInOptions: [
                 firebase.auth.GoogleAuthProvider.PROVIDER_ID,
@@ -35,8 +28,7 @@ class Login extends React.Component {
     render() {
         return (
             <div>
-                <h1>Bottleneck</h1>
-                <p>Please sign-in:</p>
+                <p>Select a method to sign in:</p>
                 <StyledFirebaseAuth
                     uiConfig={this.uiConfig}
                     firebaseAuth={firebase.auth()}
@@ -47,7 +39,7 @@ class Login extends React.Component {
 }
 
 Login.propTypes = {
-    history: PropTypes.object.isRequired
+    onSuccess: PropTypes.func.isRequired
 };
 
-export default withRouter(Login);
+export default Login;

@@ -1,3 +1,17 @@
+class LazyObjectQuery {
+    constructor(gameApi) {
+        this.gameApi = gameApi;
+    }
+
+    get x() {
+        return this.gameApi.getCenter().x;
+    }
+
+    get y() {
+        return this.gameApi.getCenter().y;
+    }
+}
+
 export default (gameApi) => [
     {
         text:
@@ -56,10 +70,7 @@ export default (gameApi) => [
             'Buy a bridge from the siege tools shop by dragging it to the gap in the center.',
         arrow: {
             type: 'coordinates',
-            target: {
-                x: gameApi.getCenter().x,
-                y: gameApi.getCenter().y
-            }
+            target: new LazyObjectQuery(gameApi)
         },
         nextTrigger: {
             type: 'event',
