@@ -76,5 +76,6 @@ export default wrapWithProvider(withAlert(EditorModal));
 EditorModal.propTypes = {
     onSolution: PropTypes.func.isRequired,
     problem: PropTypes.object,
-    code: PropTypes.string.isRequired
+    code: PropTypes.string.isRequired,
+    alert: PropTypes.func.isRequired
 };

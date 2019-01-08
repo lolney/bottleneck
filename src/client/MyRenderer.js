@@ -5,6 +5,7 @@ import { WIDTH, HEIGHT } from '../config';
 import TwoVector from 'lance/serialize/TwoVector';
 import DragHandler from './DragHandler';
 import { getAssetPaths } from '../config';
+import PlayerAvatar from '../common/PlayerAvatar';
 
 let PIXI = null;
 
@@ -110,6 +111,12 @@ export default class MyRenderer extends Renderer {
         document.body
             .querySelector('.pixiContainer')
             .appendChild(this.renderer.view);
+
+        this.renderer.view.addEventListener('click', (ev) => {
+            const coords = this.canvasToWorldCoordinates(ev.x, ev.y);
+
+            this.clientEngine.sendInput(coords);
+        });
 
         this.dragHandler = new DragHandler(
             this.renderer.view,
