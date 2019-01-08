@@ -112,6 +112,17 @@ export default class MyRenderer extends Renderer {
             .querySelector('.pixiContainer')
             .appendChild(this.renderer.view);
 
+        // Event listeners
+        this.renderer.view.addEventListener('touchstart', (ev) => {
+            const t = event.targetTouches[0]
+                ? event.targetTouches[0]
+                : event.changedTouches[event.changedTouches.length - 1];
+
+            const coords = this.canvasToWorldCoordinates(t.pageX, t.pageY);
+
+            this.clientEngine.sendInput(coords);
+        });
+
         this.renderer.view.addEventListener('click', (ev) => {
             const coords = this.canvasToWorldCoordinates(ev.x, ev.y);
 
