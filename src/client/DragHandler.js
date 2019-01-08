@@ -11,6 +11,10 @@ export default class DragHandler {
         this.gameEngine = gameEngine;
         this.renderer = renderer;
 
+        canvas.addEventListener('dragenter', (event) => {
+            event.preventDefault();
+        });
+
         canvas.addEventListener('dragover', (ev) => {
             ev.preventDefault();
 

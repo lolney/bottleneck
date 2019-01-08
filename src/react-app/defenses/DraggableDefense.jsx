@@ -1,5 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { polyfill } from 'mobile-drag-drop';
+
+polyfill();
 
 export default class DraggableDefense extends React.Component {
     render() {
