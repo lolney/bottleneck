@@ -1,4 +1,3 @@
-import Router from './Router';
 import { siegeItems } from '../config';
 import DefenseAvatar from '../common/DefenseAvatar';
 import BotAvatar from '../common/BotAvatar';

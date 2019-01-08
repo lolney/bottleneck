@@ -94,6 +94,8 @@ export default class PlayerAvatar extends DynamicObject {
     }
 }
 
+export const NEARNESS_THRESHOLD = 5;
+
 class MoveTo {
     constructor(object, gameEngine, destination) {
         this.gameEngine = gameEngine;
@@ -129,7 +131,7 @@ class MoveTo {
             this.destination
         );
 
-        if (distance < 5) {
+        if (distance < NEARNESS_THRESHOLD) {
             this.cancel();
         } else {
             const prevPosition = this.object.position.clone();
