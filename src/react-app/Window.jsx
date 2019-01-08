@@ -3,16 +3,17 @@ import { Button } from 'react-bootstrap';
 import Draggable from 'react-draggable';
 import PropTypes from 'prop-types';
 
-const width = 500;
+const maxWidth = '100vw';
 const barHeight = 22;
 const windowStyle = {
     boxShadow: 'rgba(0, 0, 0, 0.5) 0px 5px 15px',
     position: 'absolute',
     border: '1px solid rgba(0,0,0,.2)',
     borderRadius: '6px',
-    width: `${width}px`,
-    maxHeight: '75vh',
-    background: 'white'
+    maxWidth: `${maxWidth}`,
+    maxHeight: '100vh',
+    background: 'white',
+    zIndex: '100'
 };
 
 const barStyle = {
@@ -50,7 +51,7 @@ export default class Window extends React.Component {
                 position={null}
                 bounds={{
                     left: 0,
-                    right: window.innerWidth - width,
+                    right: window.innerWidth - maxWidth,
                     top: 0,
                     bottom: window.innerHeight - barHeight
                 }}

@@ -1,9 +1,22 @@
 .defenses {
   display: flex;
   flex-flow: column;
+  max-width: 75vw;
+  max-height: 86vh;
 
   @import "./Common.scss";
 
+  @media screen and (max-height: 375px) {
+    .header {
+      padding: 0px;
+    }
+    p {
+      margin: 0px;
+    }
+    .sidebar {
+      padding: 0.25em 1em;
+    }
+  }
   .body {
     background: white;
     border: 1px solid #ddd;

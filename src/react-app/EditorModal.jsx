@@ -42,7 +42,7 @@ class EditorModal extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="editor-modal-dimensions">
                 {this.props.problem && (
                     <ProblemComponent
                         problem={this.props.problem}

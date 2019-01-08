@@ -1,0 +1,10 @@
+.editor-modal-dimensions {
+  width: 50vw;
+  height: 75vh;
+}
+@media screen and (max-height: 375px) {
+  .editor-modal-dimensions {
+    width: 100vw;
+    height: 100vh;
+  }
+}

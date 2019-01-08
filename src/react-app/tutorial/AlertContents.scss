@@ -4,6 +4,7 @@
   display: flex;
   margin: 10px;
   flex-direction: row;
+  z-index: 1999;
 
   .icon-container {
     background-color: rgba(241, 241, 241, 0.95);
