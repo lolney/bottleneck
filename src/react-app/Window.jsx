@@ -41,6 +41,7 @@ export default class Window extends React.Component {
         return { x: draggable.state.x, y: draggable.state.y };
     }
 
+    // TODO: bounds depend on current width, height
     render() {
         return (
             <Draggable
@@ -51,7 +52,7 @@ export default class Window extends React.Component {
                 position={null}
                 bounds={{
                     left: 0,
-                    right: window.innerWidth - maxWidth,
+                    right: window.innerWidth,
                     top: 0,
                     bottom: window.innerHeight - barHeight
                 }}
