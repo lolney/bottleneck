@@ -3,6 +3,12 @@ import RandExp from 'randexp';
 
 export default class RegexProblem extends Problem {
     constructor(regex, id, subproblem, name) {
+        if (!name) {
+            name = RegexProblem.formatRegex(regex);
+        }
+        if (!subproblem) {
+            subproblem = 'default';
+        }
         super(id, subproblem, name);
         this.regex = regex;
         this.targetWords = RegexProblem.createMatches(this.regex, 30);
@@ -23,6 +29,13 @@ export default class RegexProblem extends Problem {
 
     getTypeString() {
         return 'regex';
+    }
+
+    static formatRegex(regex) {
+        const string = regex.toString();
+        if (string.length > 10) {
+            return string.slice(0, 7) + '...';
+        }
     }
 
     static createMatches(regex, n) {

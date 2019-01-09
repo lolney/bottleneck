@@ -48,12 +48,13 @@ export default class ProblemComponent extends React.Component {
             {
                 problem: this.props.problem,
                 setDone: (done) => {
-                    if (done)
+                    if (done) {
                         this.props.onSolution(
                             this.props.problem.id,
-                            this.props.generator,
-                            this.props.alert.success('Problem Solved!')
+                            this.props.generator
                         );
+                        this.props.alert.success('Problem Solved!');
+                    }
                     this.setState({ done: done });
                 },
                 generator: this.props.generator,
@@ -79,10 +80,10 @@ ProblemComponent.propTypes = {
     reportError: PropTypes.func.isRequired,
     onSolution: PropTypes.func.isRequired,
     problem: PropTypes.shape({
-        id: PropTypes.string,
-        title: PropTypes.string,
-        description: PropTypes.string,
-        type: PropTypes.string
+        id: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired,
+        description: PropTypes.string.isRequired,
+        type: PropTypes.string.isRequired
     }).isRequired,
     alert: PropTypes.object.isRequired
 };

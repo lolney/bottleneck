@@ -49,4 +49,27 @@ describe('RegexComponent', () => {
         expect(error).not.toEqual(null);
         expect(isDone).toBe(false);
     });
+
+    /* Can't test in node - an imported module throws because canvas isn't implemented
+    it('submits with the correct fields', async () => {
+        const regex = /hello/;
+        const problem = new RegexProblem(regex);
+        const serialized = await problem.serialize();
+        let submittedArgs;
+
+        const props = {
+            generator: regex,
+            reportError: () => {},
+            onSolution: (...args) => {
+                submittedArgs = args;
+            },
+            problem: serialized,
+            alert: { successs: () => {} }
+        };
+        mount(<ProblemComponent {...props} />);
+
+        console.log(submittedArgs);
+
+        expect(submittedArgs).toBeDefined();
+    });*/
 });
