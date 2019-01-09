@@ -51,12 +51,12 @@ describe('RegexGenerator', () => {
         }
     });
 
-    it('mutate creates a word with the same length', () => {
+    it('mutate creates a word with the same length or less', () => {
         for (const word of ['word', 'a', '.']) {
             const newWord = RegexProblemGenerator.mutate(word);
 
             expect(typeof newWord).toBe('string');
-            expect(newWord.length).toBe(word.length);
+            expect(newWord.length).toBeLessThan(word.length + 1);
         }
     });
 });
