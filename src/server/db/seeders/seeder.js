@@ -3,22 +3,12 @@ import uuidv4 from 'uuid/v4';
 import { date } from '../../db';
 import BinaryTreeProblem from '../../../problem-engine/BinaryTreeProblem';
 import { WIDTH, HEIGHT } from '../../.../../../config';
-
-let randomInt = (minimum, maximum) =>
-    Math.floor(Math.random() * (maximum - minimum)) + minimum;
+import RegexProblem from '../../../problem-engine/RegexProblem';
+import { randomInRanges, randomInt } from '../../../lib/random';
 
 const NUM_OBJECTS = 50;
 const RIVER_RADIUS = 120;
 const SIDE_BUFFER = 40;
-
-function randomInRanges(...ranges) {
-    let rangeIndex = randomInt(0, ranges.length);
-    let range = ranges[rangeIndex];
-    if (range.length != 2) {
-        throw new TypeError(`Expected array of length 2; got ${range}`);
-    }
-    return randomInt(range[0], range[1]);
-}
 
 function randomPoint() {
     // Can't import GameWorld here since it imports TwoVector
@@ -42,14 +32,22 @@ export async function up(queryInterface, Sequelize) {
         })
     );
     // Add BinaryTree Problems
-    problems = problems.concat([new BinaryTreeProblem()]);
-    let ids = problems.map(() => uuidv4());
+    problems = problems.concat([
+        new RegexProblem(/hello|world/),
+        new RegexProblem(
+            /(January|February|March|April|May|June|July|August|September|October|November|December) ([1-9]|[12][0-9]|3[01]), (19|20)[0-9][0-9]/
+        ),
+        new BinaryTreeProblem()
+    ]);
+    problems.forEach((problem) => {
+        problem.id = uuidv4();
+    });
 
     await queryInterface.bulkInsert(
         'problems',
         problems.map((problem, i) => {
             return {
-                id: ids[i],
+                id: problem.id,
                 title: problem.getTitle(),
                 description: problem.getDescription(),
                 name: problem.getName(),
@@ -66,9 +64,24 @@ export async function up(queryInterface, Sequelize) {
             .filter((x) => x.getTypeString() == 'image')
             .map((problem, i) => {
                 return {
-                    id: ids[i],
+                    id: problem.id,
                     type: problem.getSubproblemString(),
                     original: problem.image.getBase64(),
+                    createdAt: date(),
+                    updatedAt: date()
+                };
+            }),
+        {}
+    );
+    await queryInterface.bulkInsert(
+        'regexes',
+        problems
+            .filter((x) => x.getTypeString() == 'regex')
+            .map((problem, i) => {
+                return {
+                    id: problem.id,
+                    type: 'default',
+                    regex: problem.regex.toString().slice(1, -1),
                     createdAt: date(),
                     updatedAt: date()
                 };
@@ -129,4 +142,6 @@ export async function up(queryInterface, Sequelize) {
 export async function down(queryInterface) {
     await queryInterface.bulkDelete('gameObjects', null, {});
     await queryInterface.bulkDelete('problems', null, {});
+    await queryInterface.bulkDelete('images', null, {});
+    await queryInterface.bulkDelete('regexes', null, {});
 }

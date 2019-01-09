@@ -3,6 +3,7 @@ import BinaryTreeComponent from './BinaryTreeComponent.jsx';
 import ImageComponent from './ImageComponent.jsx';
 import PropTypes from 'prop-types';
 import '../CSS/Image.scss';
+import RegexComponent from './RegexComponent.jsx';
 
 export default class ProblemComponent extends React.Component {
     constructor(props) {
@@ -30,6 +31,8 @@ export default class ProblemComponent extends React.Component {
             return BinaryTreeComponent;
         case 'image':
             return ImageComponent;
+        case 'regex':
+            return RegexComponent;
         default:
             throw new TypeError('unexpected typeString');
         }
@@ -45,12 +48,13 @@ export default class ProblemComponent extends React.Component {
             {
                 problem: this.props.problem,
                 setDone: (done) => {
-                    if (done)
+                    if (done) {
                         this.props.onSolution(
                             this.props.problem.id,
-                            this.props.generator,
-                            this.props.alert.success('Problem Solved!')
+                            this.props.generator
                         );
+                        this.props.alert.success('Problem Solved!');
+                    }
                     this.setState({ done: done });
                 },
                 generator: this.props.generator,
@@ -72,14 +76,14 @@ export default class ProblemComponent extends React.Component {
 }
 
 ProblemComponent.propTypes = {
-    generator: PropTypes.func.isRequired,
+    generator: PropTypes.any.isRequired,
     reportError: PropTypes.func.isRequired,
     onSolution: PropTypes.func.isRequired,
     problem: PropTypes.shape({
-        id: PropTypes.string,
-        title: PropTypes.string,
-        description: PropTypes.string,
-        type: PropTypes.string
+        id: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired,
+        description: PropTypes.string.isRequired,
+        type: PropTypes.string.isRequired
     }).isRequired,
     alert: PropTypes.object.isRequired
 };

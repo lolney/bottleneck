@@ -95,6 +95,14 @@ export default class BotAvatar extends DynamicObject {
             .length();
     }
 
+    static moveTowardsWaypoint(current, dst, speed) {
+        return dst
+            .clone()
+            .subtract(current)
+            .normalize()
+            .multiplyScalar(speed);
+    }
+
     attach(controller, gameWorld, gameEngine) {
         console.log('attaching bot');
 
@@ -120,10 +128,11 @@ export default class BotAvatar extends DynamicObject {
         if (this.path.length > 0) {
             let next = this.getNextPosition();
             // console.log(next, this.position);
-            this.velocity = next
-                .subtract(this.position)
-                .normalize()
-                .multiplyScalar(this.speed);
+            this.velocity = BotAvatar.moveTowardsWaypoint(
+                this.position,
+                next,
+                this.speed
+            );
             // console.log(`setting velocity to ${this.velocity}`);
         } else this.velocity = new TwoVector(0, 0);
     }

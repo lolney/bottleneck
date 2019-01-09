@@ -17,7 +17,9 @@ const TooltipWrapper = function(props) {
 const MyTooltip = function(props) {
     if (!props.disabled) {
         return (
-            <div style={{ ...props.style, position: 'absolute' }}>
+            <div
+                style={{ ...props.style, position: 'absolute', zIndex: '1999' }}
+            >
                 <Tooltip id="tooltip" className="tooltip">
                     {props.text}
                 </Tooltip>

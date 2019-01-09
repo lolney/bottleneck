@@ -69,12 +69,10 @@ export default class BinaryTreeProblem extends Problem {
         }));
     }
 
-    serialize() {
-        return new Promise((resolve) => {
-            resolve({
-                ...super.serialize(),
-                testCases: this.getTestCases()
-            });
-        });
+    async serialize() {
+        return {
+            ...super.serialize(),
+            testCases: this.getTestCases()
+        };
     }
 }

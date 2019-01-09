@@ -17,3 +17,9 @@
   box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px;
   border-radius: 6px;
 }
+
+@media screen and (max-height: 375px) {
+  .menuWindow {
+    height: 50vh;
+  }
+}

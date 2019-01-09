@@ -1,6 +1,7 @@
 $radius: 5px;
 
 .health-bar {
+  z-index: 50;
   top: 0;
   position: absolute;
   width: 50%;
@@ -51,7 +52,7 @@ $radius: 5px;
 
   @media screen and (max-width: 600px) {
     .outline-text {
-      font-size: 2.5vh;
+      font: 300 0.85em "Lato", sans-serif;
     }
   }
 
@@ -67,5 +68,10 @@ $radius: 5px;
     border-bottom-right-radius: $radius;
     transform-origin: 100%;
     background-color: rgba(237, 99, 99, 0.9);
+  }
+}
+@media screen and (max-width: 600px) {
+  .health-bar {
+    height: 6%;
   }
 }

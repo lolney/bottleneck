@@ -318,7 +318,10 @@ export default class MyGameEngine extends GameEngine {
             let { x, y } = player.position;
             let step = player.speed;
 
-            if (inputData.input === 'up') {
+            if (inputData.input.x && inputData.input.y) {
+                const vec = inputData.input;
+                player.moveTo(this, new TwoVector(vec.x, vec.y));
+            } else if (inputData.input === 'up') {
                 player.position.y -= step;
             } else if (inputData.input === 'down') {
                 player.position.y += step;

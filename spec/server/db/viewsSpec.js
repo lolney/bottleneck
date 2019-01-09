@@ -109,6 +109,16 @@ describe('problem', () => {
         }
     });
 
+    it('properly deserializes regexes', async () => {
+        let problems = await Promise.all(objs.map((obj) => problem(obj.dbId)));
+        for (const prob of problems) {
+            let problem = prob.problem;
+            if (problem.type == 'regex') {
+                expect(typeof problem.subproblem.regex).toEqual('string');
+            }
+        }
+    });
+
     it('marks unsolved problems as unsolved', async () => {
         let problems = await Promise.all(objs.map((obj) => problem(obj.dbId)));
         for (const prob of problems) {

@@ -14,7 +14,7 @@ function loadStories() {
     require('../stories/connectionOverlay.js');
     require('../stories/tutorialAlerts.js');
     require('../stories/tutorialArrow.js');
-
+    require('../stories/regexProblems.js');
     // You can require as many stories as you need.
 }
 

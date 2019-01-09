@@ -5,6 +5,8 @@ import PlayerActor from '../client/PlayerActor.js';
 import BaseTypes from 'lance/serialize/BaseTypes';
 import Slowable from './Slowable';
 import { Player } from '../config';
+import BotAvatar from './BotAvatar.js';
+import TwoVector from 'lance/serialize/TwoVector';
 
 export default class PlayerAvatar extends DynamicObject {
     static get netScheme() {
@@ -48,6 +50,14 @@ export default class PlayerAvatar extends DynamicObject {
         return false;
     }
 
+    moveTo(gameEngine, destination) {
+        // cancel prev moves to
+        if (this.currentMoveTo) {
+            this.currentMoveTo.cancel();
+        }
+        this.currentMoveTo = new MoveTo(this, gameEngine, destination);
+    }
+
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
         if (props && props.playerId) {
@@ -81,5 +91,63 @@ export default class PlayerAvatar extends DynamicObject {
         if (gameEngine.renderer) {
             this.actor.destroy(this.id, gameEngine.renderer);
         }
+    }
+}
+
+export const NEARNESS_THRESHOLD = 5;
+
+class MoveTo {
+    constructor(object, gameEngine, destination) {
+        this.gameEngine = gameEngine;
+        this.object = object;
+        this.destination = destination;
+
+        this.cancel = this.cancel.bind(this);
+
+        this.onPreStep = () => {
+            this.followWaypoint();
+        };
+        gameEngine.on('preStep', this.onPreStep);
+
+        // setup listeners for collision detection, arrow key movement
+        gameEngine.registerCollisionStart(
+            (o1) => o1 === object,
+            (o2) => o2 !== object && o2.blocks,
+            this.cancel
+        );
+        gameEngine.on('processInput', this.cancel);
+
+        // set velocity to speed * (click - position)/dst
+        this.velocity = BotAvatar.moveTowardsWaypoint(
+            object.position,
+            destination,
+            object.speed
+        );
+    }
+
+    followWaypoint() {
+        const distance = BotAvatar.distance(
+            this.object.position,
+            this.destination
+        );
+
+        if (distance < NEARNESS_THRESHOLD) {
+            this.cancel();
+        } else {
+            const prevPosition = this.object.position.clone();
+            this.object.position = this.object.position.add(this.velocity);
+
+            const shouldRevert = this.gameEngine.causesCollision();
+            if (shouldRevert) {
+                this.object.position = prevPosition;
+            }
+        }
+    }
+
+    cancel() {
+        // cancel listeners for collision detection, arrow key movement
+        this.gameEngine.removeListener('preStep', this.onPreStep);
+        this.gameEngine.removeListener('processInput', this.cancel);
+        this.gameEngine.removeCollisionStart(this.cancel);
     }
 }

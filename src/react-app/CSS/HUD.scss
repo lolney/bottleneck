@@ -10,6 +10,7 @@ body {
 }
 
 .hud-buttons {
+  z-index: 75;
   right: 0;
   position: absolute;
   width: 15%;
@@ -43,6 +44,12 @@ body {
         font-size: 1em;
         flex-wrap: wrap;
       }
+      @media screen and (max-height: 375px) {
+        .hud-column {
+          flex: 25%;
+        }
+      }
+
       .hud-column-2 {
         min-height: 100%;
         text-align: center;
@@ -52,6 +59,13 @@ body {
         font: 300 1em/1.5em "Lato", sans-serif;
         font-size: 1em;
         flex-wrap: wrap;
+        margin: auto;
+      }
+      @media screen and (max-height: 375px) {
+        .hud-column-2 {
+          font: 300 0.85em "Lato", sans-serif;
+          flex: 75%;
+        }
       }
 
       .column-interior {
@@ -124,6 +138,11 @@ body {
           font: 300 1em/1.5em "Lato", sans-serif;
           font-size: 1em;
         }
+        @media screen and (max-height: 375px) {
+          .hud-row-2 {
+            font: 300 0.85em "Lato", sans-serif;
+          }
+        }
       }
     }
 
@@ -134,6 +153,11 @@ body {
       font-size: 1em;
       color: #000000;
       display: block;
+    }
+    @media screen and (max-height: 375px) {
+      .btm-btn {
+        font: 300 0.85em "Lato", sans-serif;
+      }
     }
     @import "./Common.scss";
   }

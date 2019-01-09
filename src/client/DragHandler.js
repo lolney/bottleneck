@@ -1,4 +1,3 @@
-import Router from './Router';
 import { siegeItems } from '../config';
 import DefenseAvatar from '../common/DefenseAvatar';
 import BotAvatar from '../common/BotAvatar';
@@ -10,6 +9,10 @@ export default class DragHandler {
         this.dragObject = null;
         this.gameEngine = gameEngine;
         this.renderer = renderer;
+
+        canvas.addEventListener('dragenter', (event) => {
+            event.preventDefault();
+        });
 
         canvas.addEventListener('dragover', (ev) => {
             ev.preventDefault();

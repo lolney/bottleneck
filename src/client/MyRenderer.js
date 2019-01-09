@@ -5,6 +5,7 @@ import { WIDTH, HEIGHT } from '../config';
 import TwoVector from 'lance/serialize/TwoVector';
 import DragHandler from './DragHandler';
 import { getAssetPaths } from '../config';
+import PlayerAvatar from '../common/PlayerAvatar';
 
 let PIXI = null;
 
@@ -110,6 +111,23 @@ export default class MyRenderer extends Renderer {
         document.body
             .querySelector('.pixiContainer')
             .appendChild(this.renderer.view);
+
+        // Event listeners
+        this.renderer.view.addEventListener('touchstart', (ev) => {
+            const t = event.targetTouches[0]
+                ? event.targetTouches[0]
+                : event.changedTouches[event.changedTouches.length - 1];
+
+            const coords = this.canvasToWorldCoordinates(t.pageX, t.pageY);
+
+            this.clientEngine.sendInput(coords);
+        });
+
+        this.renderer.view.addEventListener('click', (ev) => {
+            const coords = this.canvasToWorldCoordinates(ev.x, ev.y);
+
+            this.clientEngine.sendInput(coords);
+        });
 
         this.dragHandler = new DragHandler(
             this.renderer.view,

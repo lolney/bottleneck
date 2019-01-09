@@ -3,8 +3,16 @@ $header-height: 100px;
 .menu {
   @import "./Common.scss";
   height: 100%;
+  z-index: 150;
   .header {
     height: $header-height;
+  }
+  @media screen and (max-height: 375px) {
+    .header {
+      height: 65px;
+      padding: 0em;
+      min-height: 1px;
+    }
   }
   .menuElements {
     background: white;
@@ -31,6 +39,24 @@ $header-height: 100px;
         width: 75%;
         cursor: pointer;
       }
+      @media screen and (max-height: 375px) {
+        .btn {
+          min-height: 1px;
+          margin-top: 0.15em;
+          margin-bottom: 0.15em;
+        }
+      }
+    }
+    @media screen and (max-height: 375px) {
+      .btn-toolbar {
+        padding-top: 0.4em;
+        padding-bottom: 0em;
+      }
+    }
+  }
+  @media screen and (max-height: 375px) {
+    .menuElements {
+      height: calc(100% - 65px);
     }
   }
 }
