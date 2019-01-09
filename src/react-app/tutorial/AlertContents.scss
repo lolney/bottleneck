@@ -42,6 +42,7 @@
     display: flex;
     border: none;
     outline: none;
+    flex-grow: 2.25;
     .close-btn {
       cursor: pointer;
       margin: auto;
@@ -51,6 +52,7 @@
   .proceed-btn-container {
     background-color: rgba(255, 255, 255, 0.95);
     flex: 50%;
+    flex-grow: 1;
     display: flex;
     border: none;
     outline: none;
