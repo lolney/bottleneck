@@ -42,7 +42,7 @@ describe('RegexGenerator', () => {
         }
     });
 
-    fit('randomcharacter selects a random character', () => {
+    it('randomcharacter selects a random character', () => {
         for (let i = 0; i < 10; i++) {
             const char = RegexProblemGenerator.randomCharacter();
 
@@ -51,7 +51,7 @@ describe('RegexGenerator', () => {
         }
     });
 
-    fit('mutate creates a word with the same length', () => {
+    it('mutate creates a word with the same length', () => {
         for (const word of ['word', 'a', '.']) {
             const newWord = RegexProblemGenerator.mutate(word);
 
