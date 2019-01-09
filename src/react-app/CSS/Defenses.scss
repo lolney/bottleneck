@@ -17,6 +17,23 @@
       padding: 0.25em 1em;
     }
   }
+
+  @media screen and (min-width: 647) and (max-width: 700) {
+    width: 70vw;
+  }
+  @media screen and (min-width: 701) and (max-width: 765) {
+    width: 65vw;
+  }
+  @media screen and (min-width: 766px) and (max-width: 939px) {
+    width: 60vw;
+  }
+  @media screen and (min-width: 940px) and (max-width: 1264px) {
+    width: 50vw;
+  }
+  @media screen and (min-width: 1265px) {
+    width: 39vw;
+  }
+
   .body {
     background: white;
     border: 1px solid #ddd;

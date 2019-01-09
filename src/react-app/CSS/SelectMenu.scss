@@ -11,11 +11,6 @@
     padding: 1em;
     width: 25%;
     min-height: 20px;
-    @media screen and (max-height: 375px) {
-      .sidebar {
-        padding: 0.25em 1em;
-      }
-    }
 
     .btn {
       border: 1px solid #ddd;
@@ -41,5 +36,10 @@
       }
     }
     @import "./Common.scss";
+  }
+  @media screen and (max-height: 375px) {
+    .sidebar {
+      padding: 0em 1em;
+    }
   }
 }
