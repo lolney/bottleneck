@@ -2,6 +2,7 @@ import React from 'react';
 import { Image } from '../../problem-engine/ImageProblem';
 import PropTypes from 'prop-types';
 import { ProblemSubComponentTypes } from './PropTypes';
+import OriginalTargetComponent from './OriginalTargetComponent.jsx';
 
 export default class ImageComponent extends React.Component {
     constructor(props) {
@@ -22,43 +23,43 @@ export default class ImageComponent extends React.Component {
 
     componentDidUpdate(prevProps) {
         if (this.props.generator != prevProps.generator) {
-            let wrapped = Image.wrapGenerator(this.props.generator);
-            Image.create(wrapped)
-                .then((newImage) => {
-                    if (this.problem.original == newImage.original)
-                        this.props.setDone(true);
-                    else this.props.setDone(false);
+            try {
+                const wrapped = Image.wrapGenerator(this.props.generator);
+                Image.create(wrapped)
+                    .then((newImage) => {
+                        if (this.problem.original == newImage.original)
+                            this.props.setDone(true);
+                        else this.props.setDone(false);
 
-                    this.setState({ target: newImage.original });
-                    this.props.reportError(null);
-                })
-                .catch((error) => {
-                    this.props.reportError(error);
-                });
+                        this.setState({ target: newImage.original });
+                        this.props.reportError(null);
+                    })
+                    .catch((error) => {
+                        this.props.reportError(error);
+                    });
+            } catch (error) {
+                this.props.reportError(error);
+            }
         }
     }
 
     render() {
         return (
-            <div className="imageProblem">
-                <section className="content">
-                    <div className="row-1">
-                        <aside className="caption-first">Original</aside>
-                        <aside className="caption-second">Target</aside>
+            <OriginalTargetComponent
+                original={
+                    <div className="image-container">
+                        <img
+                            src={this.props.problem.original}
+                            className="image"
+                        />
                     </div>
-                    <div className="row-2">
-                        <div className="image-container">
-                            <img
-                                src={this.props.problem.original}
-                                className="image"
-                            />
-                        </div>
-                        <div className="image-container">
-                            <img src={this.state.target} className="image" />
-                        </div>
+                }
+                target={
+                    <div className="image-container">
+                        <img src={this.state.target} className="image" />
                     </div>
-                </section>
-            </div>
+                }
+            />
         );
     }
 }

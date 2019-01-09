@@ -24,13 +24,10 @@ class EditorModal extends React.Component {
 
     setGenerator(code) {
         try {
-            let func = eval(code);
-            if (!func) {
-                throw new Error('Output is undefined');
+            let generator = eval(code);
+            if (generator != undefined) {
+                this.setState({ generator, code: code });
             }
-            if (typeof func != 'function')
-                throw new Error('Must enter a function');
-            this.setState({ generator: func, code: code });
         } catch (error) {
             this.setState({ generatorError: error });
         }
@@ -77,5 +74,5 @@ EditorModal.propTypes = {
     onSolution: PropTypes.func.isRequired,
     problem: PropTypes.object,
     code: PropTypes.string.isRequired,
-    alert: PropTypes.func.isRequired
+    alert: PropTypes.object.isRequired
 };

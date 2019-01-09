@@ -26,6 +26,7 @@ import './CSS/LoadingScreen.scss';
 import './CSS/VictoryOverlay.scss';
 import './CSS/HealthBar.scss';
 import './CSS/EditorModal.scss';
+import './CSS/Regex.scss';
 import 'semantic-ui-css/semantic.min.css';
 import './tutorial/AlertContents.scss';
 import './tutorial/CancelDialog.scss';

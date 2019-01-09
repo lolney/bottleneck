@@ -3,44 +3,9 @@ import React from 'react';
 import { storiesOf } from '@storybook/react';
 
 import { VisualTreeComponent } from '../src/react-app/problems/BinaryTreeComponent.jsx';
-import EditorSocketWatcher from '../src/react-app/EditorSocketWatcher.jsx';
 import ImageProblem from '../src/problem-engine/ImageProblem';
 import BinaryTreeProblem from '../src/problem-engine/BinaryTreeProblem';
-import Windows from '../src/react-app/Windows.jsx';
-
-const mockEngine = (data) => ({
-    socket: {
-        removeListener: () => {},
-        on: (event, callback) => {
-            window.setTimeout(() => {
-                callback(data);
-            }, 100);
-        }
-    }
-});
-
-class AsyncComponent extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            data: null
-        };
-        this.windows = React.createRef();
-    }
-
-    componentDidMount() {
-        this.props.fetchProps().then((data) => {
-            new EditorSocketWatcher(
-                data.socket,
-                this.windows.current.addWindow
-            );
-        });
-    }
-
-    render() {
-        return <Windows ref={this.windows} />;
-    }
-}
+import AsyncComponent, { mockEngine } from './problemContainer';
 
 let treeStories = storiesOf('VisualTree', module);
 
@@ -55,7 +20,12 @@ storiesOf('BinaryTreeComponent', module)
         let fetchProps = async () => {
             let problem = new BinaryTreeProblem();
             let serialized = await problem.serialize();
-            return { socket: mockEngine({ problem: serialized }).socket };
+            return {
+                socket: mockEngine({
+                    code: '(node) => []',
+                    problem: serialized
+                }).socket
+            };
         };
         return <AsyncComponent fetchProps={fetchProps} />;
     })
@@ -79,7 +49,7 @@ storiesOf('BinaryTreeComponent', module)
             return {
                 socket: mockEngine({
                     isSolved: true,
-                    code: code,
+                    code,
                     problem: serialized
                 }).socket
             };

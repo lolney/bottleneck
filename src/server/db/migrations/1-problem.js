@@ -241,6 +241,36 @@ let migrationCommands = [
     {
         fn: 'createTable',
         params: [
+            'regexes',
+            {
+                id: {
+                    type: Sequelize.UUID,
+                    primaryKey: true,
+                    defaultValue: Sequelize.UUIDV4
+                },
+                type: {
+                    type: Sequelize.TEXT
+                },
+                regex: {
+                    type: Sequelize.TEXT
+                },
+                createdAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                },
+                updatedAt: {
+                    allowNull: false,
+                    type: Sequelize.DATE,
+                    defaultValue: Sequelize.NOW
+                }
+            },
+            {}
+        ]
+    },
+    {
+        fn: 'createTable',
+        params: [
             'players',
             {
                 id: {
@@ -395,6 +425,14 @@ module.exports = {
     down: function(queryInterface, Sequelize) {
         return Promise.all([
             queryInterface.dropTable('solvedProblems', {
+                force: true,
+                cascade: true
+            }),
+            queryInterface.dropTable('images', {
+                force: true,
+                cascade: true
+            }),
+            queryInterface.dropTable('regexes', {
                 force: true,
                 cascade: true
             }),

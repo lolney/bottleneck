@@ -3,6 +3,7 @@ import BinaryTreeComponent from './BinaryTreeComponent.jsx';
 import ImageComponent from './ImageComponent.jsx';
 import PropTypes from 'prop-types';
 import '../CSS/Image.scss';
+import RegexComponent from './RegexComponent.jsx';
 
 export default class ProblemComponent extends React.Component {
     constructor(props) {
@@ -30,6 +31,8 @@ export default class ProblemComponent extends React.Component {
             return BinaryTreeComponent;
         case 'image':
             return ImageComponent;
+        case 'regex':
+            return RegexComponent;
         default:
             throw new TypeError('unexpected typeString');
         }
@@ -72,7 +75,7 @@ export default class ProblemComponent extends React.Component {
 }
 
 ProblemComponent.propTypes = {
-    generator: PropTypes.func.isRequired,
+    generator: PropTypes.any.isRequired,
     reportError: PropTypes.func.isRequired,
     onSolution: PropTypes.func.isRequired,
     problem: PropTypes.shape({
