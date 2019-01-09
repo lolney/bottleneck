@@ -110,15 +110,14 @@ const IndicatorResource = ({ name, src, height, width, count }) => (
             {count == null ? (
                 'loading'
             ) : (
-                <div className="hud-row-2">
-                    <AnimateOnChange
-                        baseClassName="hud-row-2"
-                        animationClassName="updateable"
-                        animate={true}
-                    >
-                        {count}
-                    </AnimateOnChange>
-                </div>
+                <AnimateOnChange
+                    className="hud-row-2"
+                    baseClassName="hud-row-2"
+                    animationClassName="updateable"
+                    animate={true}
+                >
+                    {count}
+                </AnimateOnChange>
             )}
         </Button>
     </TooltipWrapper>
@@ -172,7 +171,9 @@ const AssaultBotButton = (props) => (
                     />
                 </div>
             </div>
-            <div className="hud-column-2"><div className="column-interior">{props.assaultBotCount}</div></div>
+            <div className="hud-column-2">
+                <div className="column-interior">{props.assaultBotCount}</div>
+            </div>
         </Button>
     </TooltipWrapper>
 );

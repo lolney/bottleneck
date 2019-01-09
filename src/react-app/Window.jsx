@@ -51,7 +51,7 @@ export default class Window extends React.Component {
                 defaultPosition={this.props.offset}
                 position={null}
                 bounds={{
-                    left: 0,
+                    //                    left: 0,
                     right: window.innerWidth,
                     top: 0,
                     bottom: window.innerHeight - barHeight

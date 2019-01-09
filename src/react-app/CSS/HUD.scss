@@ -44,6 +44,12 @@ body {
         font-size: 1em;
         flex-wrap: wrap;
       }
+      @media screen and (max-height: 375px) {
+        .hud-column {
+          flex: 25%;
+        }
+      }
+
       .hud-column-2 {
         min-height: 100%;
         text-align: center;
@@ -58,6 +64,7 @@ body {
       @media screen and (max-height: 375px) {
         .hud-column-2 {
           font: 300 0.85em "Lato", sans-serif;
+          flex: 75%;
         }
       }
 
