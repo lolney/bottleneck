@@ -4,22 +4,11 @@ import { date } from '../../db';
 import BinaryTreeProblem from '../../../problem-engine/BinaryTreeProblem';
 import { WIDTH, HEIGHT } from '../../.../../../config';
 import RegexProblem from '../../../problem-engine/RegexProblem';
-
-let randomInt = (minimum, maximum) =>
-    Math.floor(Math.random() * (maximum - minimum)) + minimum;
+import { randomInRanges, randomInt } from '../../../lib/random';
 
 const NUM_OBJECTS = 50;
 const RIVER_RADIUS = 120;
 const SIDE_BUFFER = 40;
-
-function randomInRanges(...ranges) {
-    let rangeIndex = randomInt(0, ranges.length);
-    let range = ranges[rangeIndex];
-    if (range.length != 2) {
-        throw new TypeError(`Expected array of length 2; got ${range}`);
-    }
-    return randomInt(range[0], range[1]);
-}
 
 function randomPoint() {
     // Can't import GameWorld here since it imports TwoVector
@@ -45,7 +34,9 @@ export async function up(queryInterface, Sequelize) {
     // Add BinaryTree Problems
     problems = problems.concat([
         new RegexProblem(/hello|world/),
-        new RegexProblem(/a+/),
+        new RegexProblem(
+            /(January|February|March|April|May|June|July|August|September|October|November|December) ([1-9]|[12][0-9]|3[01]), (19|20)[0-9][0-9]/
+        ),
         new BinaryTreeProblem()
     ]);
     problems.forEach((problem) => {

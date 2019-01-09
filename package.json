@@ -44,6 +44,7 @@
     "popper.js": "^1.14.5",
     "prop-types": "^15.6.1",
     "query-string": "^4.2.3",
+    "randexp": "^0.5.3",
     "react": "^16.4.0",
     "react-ace": "^6.1.1",
     "react-alert": "github:lolney/react-alert#master",
@@ -68,6 +69,7 @@
     "stylelint-scss": "^3.4.3",
     "typescript": "^2.9.2",
     "uuid": "^3.2.1",
+    "weighted": "^0.3.0",
     "winston": "^3.1.0"
   },
   "devDependencies": {

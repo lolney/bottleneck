@@ -2,6 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import RegexComponent from '../../src/react-app/problems/RegexComponent';
 import RegexProblem from '../../src/problem-engine/RegexProblem';
+import { regexes } from '../../stories/fixtures';
 
 describe('RegexComponent', () => {
     async function createComponent(regex, generator) {
@@ -22,7 +23,7 @@ describe('RegexComponent', () => {
     }
 
     it('sets done when provided the correct regex', async () => {
-        for (const regex of [/dfsf/g, /sdf/g]) {
+        for (const regex of regexes) {
             const { isDone } = await createComponent(regex);
 
             expect(isDone).toEqual(true);
