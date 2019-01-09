@@ -47,7 +47,7 @@ describe('RegexGenerator', () => {
             const char = RegexProblemGenerator.randomCharacter();
 
             expect(typeof char).toBe('string');
-            expect(char.length).toBe(1);
+            expect(char.length).toBeLessThan(2);
         }
     });
 
