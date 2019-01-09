@@ -40,6 +40,9 @@ export class BinaryTree {
     }
 
     static wrapGenerator(generator) {
+        if (!(generator instanceof Function)) {
+            throw new Error('You need to provide a function');
+        }
         return (...args) => {
             let returnValidator = new Validator(
                 [Type.is('object'), Type.isArray()],

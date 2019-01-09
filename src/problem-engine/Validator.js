@@ -51,6 +51,17 @@ export class Type extends Condition {
     }
 
     /**
+     * Test for an instance of `prototype`
+     * @param {function} prototype
+     */
+    static isInstance(prototype) {
+        return new Type(
+            (arg) => arg instanceof prototype,
+            `Must be type ${prototype.name}`
+        );
+    }
+
+    /**
      * Test for an integer
      * @return {Type}
      */

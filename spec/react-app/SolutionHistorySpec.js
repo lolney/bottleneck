@@ -13,7 +13,6 @@ import { solvedProblems } from '../../stories/fixtures';
 Enzyme.configure({ adapter: new Adapter() });
 process.env.NODE_ENV = 'test';
 
-const types = ['btree', 'image'];
 const subtypes = ['none', 'gradient', 'sin'];
 
 describe('SelectMenu', () => {
