@@ -5,7 +5,6 @@ import matchmakingRouter from './src/server/routers/matchmaking';
 import logger from './src/server/Logger';
 import Auth from './src/server/auth/flow';
 import * as Sentry from '@sentry/node';
-import 'newrelic';
 
 if (process.env.SENTRY_DSN) {
     Sentry.init({

@@ -45,10 +45,10 @@ export default class RegexComponent extends React.Component {
             return false;
         }
 
-        for (let i = 0; i < words.length; i++) {
-            if (words[i] != targetWords[i]) {
-                return false;
-            }
+        const wordsSet = new Set(words);
+
+        for (const elem of targetWords) {
+            if (!wordsSet.has(elem)) return false;
         }
 
         return true;
