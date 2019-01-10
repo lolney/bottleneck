@@ -13,15 +13,25 @@ let db = {};
 var pg = require('pg');
 delete pg.native;
 
-config = Object.assign(config, {
+var BASE_CONFIG = {
     logging: (sql, sequelizeObject) => logger.debug.bind(logger)(sql),
     dialect: 'postgres',
     protocol: 'postgres'
-});
+};
+config = { ...config, ...BASE_CONFIG };
 
 if (process.env.DATABASE_URL) {
     // the application is executed on Heroku ... use the postgres database
     var sequelize = new Sequelize(process.env.DATABASE_URL, config);
+} else if (process.env.RDS_HOSTNAME) {
+    // aws (elastic beanstalk)
+    var sequelize = new Sequelize({
+        ...BASE_CONFIG,
+        host: process.env.RDS_HOSTNAME,
+        username: process.env.RDS_USERNAME,
+        password: process.env.RDS_PASSWORD,
+        port: process.env.RDS_PORT
+    });
 } else if (config.use_env_variable) {
     console.log(process.env);
     var sequelize = new Sequelize(process.env[config.use_env_variable], config);
