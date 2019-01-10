@@ -17,8 +17,9 @@
   flex-wrap: nowrap;
   max-height: 53.53px;
 
-  #image {
-    vertical-align: top;
+  #master {
+    display: flex;
+    flex-direction: row;
   }
 
   #text {
@@ -28,6 +29,21 @@
   #signin {
     margin: 0 auto;
   }
+
+  .hud-button {
+    border: 1px solid #707070;
+  }
+
+  .navbar-text {
+    margin: 0px;
+  }
+
+  // built-in to navbar
+  .container {
+    margin-right: 0px;
+  }
+
+  @import "../CSS/Common.scss";
 }
 
 .matchmaking {
