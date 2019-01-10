@@ -21,21 +21,22 @@ var BASE_CONFIG = {
 config = { ...config, ...BASE_CONFIG };
 
 if (process.env.DATABASE_URL) {
+    console.log('Initializing with DATABASE_URL env variable');
     // the application is executed on Heroku ... use the postgres database
     var sequelize = new Sequelize(process.env.DATABASE_URL, config);
 } else if (process.env.RDS_HOSTNAME) {
     // aws (elastic beanstalk)
+    console.log('Using elastic beanstalk environment');
     var sequelize = new Sequelize({
         ...BASE_CONFIG,
         host: process.env.RDS_HOSTNAME,
+        database: process.env.RDS_DB_NAME,
         username: process.env.RDS_USERNAME,
         password: process.env.RDS_PASSWORD,
         port: process.env.RDS_PORT
     });
-} else if (config.use_env_variable) {
-    console.log(process.env);
-    var sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
+    console.warn('Could not find environment variables');
     var sequelize = new Sequelize(
         config.database,
         config.username,
