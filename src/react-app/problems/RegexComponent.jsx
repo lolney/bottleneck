@@ -45,7 +45,7 @@ export default class RegexComponent extends React.Component {
             return false;
         }
 
-        const wordsSet = Set(words);
+        const wordsSet = new Set(words);
 
         for (const elem of targetWords) {
             if (!wordsSet.has(elem)) return false;
