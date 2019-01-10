@@ -38,7 +38,7 @@ export default class RegexProblem extends Problem {
     }
 
     getDescription() {
-        return 'Write a regular expression that targetWords the words highlighted in yellow.';
+        return 'Write a regular expression that selects the words highlighted in yellow.';
     }
 
     getStartingCode() {
