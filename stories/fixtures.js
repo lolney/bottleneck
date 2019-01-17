@@ -1,3 +1,7 @@
+import regex from '../src/server/db/seeders/regexes.json';
+import safe from 'safe-regex';
+import RandExp from 'randexp';
+
 export const solvedProblems = [
     { problem: { name: 'image0', type: 'image' }, code: 'code' },
     { problem: { name: 'image1', type: 'image' }, code: 'code' },
@@ -19,4 +23,8 @@ export const solvedProblems = [
 export const loremIpsum =
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.                                                                                                      ';
 
-export const regexes = [/dfsf/g, /sdf/g];
+export const regexes = regex
+    .map((obj) => new RegExp(obj.regex))
+    .filter((regex) => safe(regex))
+    .filter((regex) => !!new RandExp(regex).gen())
+    .filter((regex) => !regex.test(''));

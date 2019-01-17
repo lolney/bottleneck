@@ -23,7 +23,9 @@ export default class RegexComponent extends React.Component {
                 const generator = RegexProblem.wrapGenerator(
                     this.props.generator
                 );
-                let matches = generator(this.props.problem.text);
+                let matches = this.props.problem.text.filter((testCase) =>
+                    generator(testCase)
+                );
                 matches = matches ? matches : [];
 
                 this.setState({ matches });
@@ -45,35 +47,38 @@ export default class RegexComponent extends React.Component {
             return false;
         }
 
-        const wordsSet = new Set(words);
+        const targetSet = new Set(targetWords);
 
-        for (const elem of targetWords) {
-            if (!wordsSet.has(elem)) return false;
+        for (const elem of words) {
+            if (!targetSet.has(elem)) return false;
         }
 
         return true;
+    }
+
+    renderMatch(matches, text) {
+        return <li>{matches.includes(text) ? <mark>{text}</mark> : text}</li>;
     }
 
     render() {
         return (
             <OriginalTargetComponent
                 original={
-                    <div className="regexContainer">
-                        <Highlighter
-                            searchWords={this.state.matches}
-                            autoEscape={true}
-                            textToHighlight={this.props.problem.text}
-                        />
-                    </div>
+                    <ul className="regexContainer">
+                        {this.props.problem.text.map((word) =>
+                            this.renderMatch(this.state.matches, word)
+                        )}
+                    </ul>
                 }
                 target={
-                    <div className="regexContainer">
-                        <Highlighter
-                            searchWords={this.props.problem.targetWords}
-                            autoEscape={true}
-                            textToHighlight={this.props.problem.text}
-                        />
-                    </div>
+                    <ul className="regexContainer">
+                        {this.props.problem.text.map((word) =>
+                            this.renderMatch(
+                                this.props.problem.targetWords,
+                                word
+                            )
+                        )}
+                    </ul>
                 }
             />
         );
@@ -85,7 +90,7 @@ RegexComponent.propTypes = {
     problem: PropTypes.shape({
         title: PropTypes.string,
         description: PropTypes.string,
-        text: PropTypes.string,
+        text: PropTypes.arrayOf(PropTypes.string),
         targetWords: PropTypes.arrayOf(PropTypes.string)
     })
 };

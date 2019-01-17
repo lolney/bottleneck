@@ -26,28 +26,27 @@ describe('RegexComponent', () => {
         for (const regex of regexes) {
             const { isDone } = await createComponent(regex);
 
-            expect(isDone).toEqual(true);
+            expect(isDone).toBe(true, regex.toString());
         }
     });
 
     it('if generator is not a regex, throw an error', async () => {
-        const { isDone, error } = await createComponent(/dfsf/g, 'not');
+        const { isDone, error } = await createComponent(/dfsf/, 'not');
 
         expect(error).not.toEqual(null);
         expect(isDone).toBe(false);
     });
 
-    it('if generator is not a global regex, throw an error', async () => {
-        const { isDone, error } = await createComponent(/dfsf/g, /dfsf/);
+    it('if generator is a global regex, throw an error', async () => {
+        const { isDone, error } = await createComponent(/dfsf/, /dfsf/g);
 
         expect(error).not.toEqual(null);
         expect(isDone).toBe(false);
     });
 
     it('if generator is an empty regex, terminate', async () => {
-        const { isDone, error } = await createComponent(/dfsf/g, RegExp(''));
+        const { isDone } = await createComponent(/dfsf/, RegExp(''));
 
-        expect(error).not.toEqual(null);
         expect(isDone).toBe(false);
     });
 

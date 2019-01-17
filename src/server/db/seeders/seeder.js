@@ -5,6 +5,7 @@ import BinaryTreeProblem from '../../../problem-engine/BinaryTreeProblem';
 import { WIDTH, HEIGHT } from '../../.../../../config';
 import RegexProblem from '../../../problem-engine/RegexProblem';
 import { randomInRanges, randomInt } from '../../../lib/random';
+import { regexes } from '../../../../stories/fixtures';
 
 const NUM_OBJECTS = 50;
 const RIVER_RADIUS = 120;
@@ -31,14 +32,12 @@ export async function up(queryInterface, Sequelize) {
             return await ImageProblem.createProblemFromGenerator(i);
         })
     );
-    // Add BinaryTree Problems
-    problems = problems.concat([
-        new RegexProblem(/hello|world/),
-        new RegexProblem(
-            /(January|February|March|April|May|June|July|August|September|October|November|December) ([1-9]|[12][0-9]|3[01]), (19|20)[0-9][0-9]/
-        ),
-        new BinaryTreeProblem()
-    ]);
+    // Add BinaryTree, Regex Problems
+    const regexProblems = regexes.map(
+        (obj) => new RegexProblem(new RegExp(obj))
+    );
+    problems = problems.concat([new BinaryTreeProblem()]).concat(regexProblems);
+
     problems.forEach((problem) => {
         problem.id = uuidv4();
     });
