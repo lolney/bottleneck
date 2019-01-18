@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ProblemSubComponentTypes } from './PropTypes';
-import Highlighter from 'react-highlight-words';
 import RegexProblem from '../../problem-engine/RegexProblem';
 import OriginalTargetComponent from './OriginalTargetComponent.jsx';
 
@@ -57,7 +56,11 @@ export default class RegexComponent extends React.Component {
     }
 
     renderMatch(matches, text) {
-        return <li>{matches.includes(text) ? <mark>{text}</mark> : text}</li>;
+        return (
+            <li key={text}>
+                {matches.includes(text) ? <mark>{text}</mark> : text}
+            </li>
+        );
     }
 
     render() {

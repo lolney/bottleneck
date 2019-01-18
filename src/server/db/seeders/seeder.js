@@ -5,7 +5,7 @@ import BinaryTreeProblem from '../../../problem-engine/BinaryTreeProblem';
 import { WIDTH, HEIGHT } from '../../.../../../config';
 import RegexProblem from '../../../problem-engine/RegexProblem';
 import { randomInRanges, randomInt } from '../../../lib/random';
-import { regexes } from '../../../../stories/fixtures';
+import regexes from './regexes.json';
 
 const NUM_OBJECTS = 50;
 const RIVER_RADIUS = 120;

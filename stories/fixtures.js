@@ -1,4 +1,4 @@
-import regex from '../src/server/db/seeders/regexes.json';
+import regex from './regexes.json';
 import safe from 'safe-regex';
 import RandExp from 'randexp';
 

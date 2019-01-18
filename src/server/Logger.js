@@ -23,13 +23,7 @@ const format = combine(
     })
 );
 
-const transports = [
-    new winston.transports.Console({ level: 'info' }),
-    new winston.transports.File({
-        filename: 'log.log',
-        level: 'debug'
-    })
-];
+const transports = [new winston.transports.Console({ level: 'info' })];
 
 if (process.env.PAPERTRAIL_HOST) {
     transports.push(
