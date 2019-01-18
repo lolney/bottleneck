@@ -5,6 +5,10 @@
   margin: auto;
 }
 
+body {
+  @import "../CSS/Common.scss";
+}
+
 #header .navbar {
   margin: 0px;
   background-color: black;
@@ -146,6 +150,4 @@
   .btn-2 {
     left: 10%;
   }
-
-  @import "../CSS/Common.scss";
 }

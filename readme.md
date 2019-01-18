@@ -3,7 +3,7 @@
 
 # Bottleneck
 
-Bottleneck is an open source, RTS-inspired game based around efficiently automating the management of your base. Collect resources by solving naturally-integrated programming problems, which you can use to build defenses or break down your opponent's. Win by gathering enough creeps to circumvent those defenses and breach your opponent's keep.
+Bottleneck is an open source, RTS-inspired game about efficiently automating the management of your base. Collect resources by solving naturally-integrated programming problems, which you can use to build defenses or break down your opponent's. Win by gathering enough creeps to circumvent those defenses and breach your opponent's keep.
 
 Preview:
 ![](https://i.imgur.com/d3UhZJu.jpg)

@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react';
-import { Navbar, Button, Nav } from 'react-bootstrap';
-import './ModeSelect.scss';
+import { Navbar, Button } from 'react-bootstrap';
 import withAuth from '../login/withAuth.jsx';
 import { Modal } from 'react-bootstrap';
 import Login from '../login/Login.jsx';

@@ -5,8 +5,10 @@ const webpack = require('webpack');
 module.exports = {
     entry: ['idempotent-babel-polyfill', './src/client/clientEntryPoint.js'],
     output: {
+        filename: '[name].bundle.js',
+        chunkFilename: '[name].bundle.js',
         path: path.join(__dirname, 'dist'),
-        filename: 'bundle.js'
+        publicPath: 'dist/'
     },
     module: {
         rules: [
