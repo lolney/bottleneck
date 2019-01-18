@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import './config';
 
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 class Login extends React.Component {
     constructor(props) {

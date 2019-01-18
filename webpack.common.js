@@ -1,6 +1,8 @@
 const path = require('path');
 const fs = require('fs');
 const webpack = require('webpack');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+    .BundleAnalyzerPlugin;
 
 module.exports = {
     entry: ['idempotent-babel-polyfill', './src/client/clientEntryPoint.js'],
@@ -83,6 +85,7 @@ module.exports = {
             'process.env': {
                 ENVIRONMENT: JSON.stringify('BROWSER')
             }
-        })
+        }),
+        new BundleAnalyzerPlugin()
     ]
 };
