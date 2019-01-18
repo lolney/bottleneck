@@ -2,6 +2,7 @@ import Problem from './Problem';
 import RandExp from 'randexp';
 import { randomInRanges, randomInt } from '../lib/random';
 import weighted from 'weighted';
+import safe from 'safe-regex';
 
 export default class RegexProblem extends Problem {
     constructor(regex, id, subproblem, name) {
@@ -10,6 +11,12 @@ export default class RegexProblem extends Problem {
             if (!(regex instanceof RegExp)) {
                 throw new TypeError(`${regex} must be a regular expression`);
             }
+        }
+        if (regex.global) {
+            regex = RegExp(regex, '');
+        }
+        if (!safe(regex)) {
+            throw new Error(`Regex ${regex} is not safe`);
         }
         if (!name) {
             name = RegexProblem.formatRegex(regex);
@@ -20,7 +27,7 @@ export default class RegexProblem extends Problem {
 
         super(id, subproblem, name);
 
-        const { text, targetWords } = RegexProblemGenerator.generate(regex, 30);
+        const { text, targetWords } = RegexProblemGenerator.generate(regex, 5);
         this.text = text;
         this.regex = regex;
         this.targetWords = targetWords;
@@ -42,7 +49,7 @@ export default class RegexProblem extends Problem {
     }
 
     getStartingCode() {
-        return '/hello|world/g';
+        return '/hello|world/';
     }
 
     getTypeString() {
@@ -52,6 +59,7 @@ export default class RegexProblem extends Problem {
     static findMatches(regex, string) {
         let results = [];
         let match = null;
+        regex = new RegExp(regex, 'g');
         while ((match = regex.exec(string))) {
             match = match[0];
             if (!match) {
@@ -62,18 +70,28 @@ export default class RegexProblem extends Problem {
         return results;
     }
 
+    static testFull(regex, string) {
+        let match = regex.exec(string);
+        return match ? match[0] === string : false;
+    }
+
     static wrapGenerator(regex) {
         if (!(regex instanceof RegExp)) {
             throw new Error(
                 'You need to provide a regular expression. Type it into the editor in this form: /<regex>/g'
             );
         }
-        if (!regex.global) {
+        if (regex.global) {
             throw new Error(
-                'Regex must be global. Add the \'g\' flag to the end: /<regex>/g'
+                'Regex must not be global. Remove the \'g\' flag to the end: /<regex>/g'
             );
         }
-        return (string) => RegexProblem.findMatches(regex, string);
+        if (!safe(regex)) {
+            throw new Error(
+                'Regex has star height > 1. Try reducing the nested quantifiers.'
+            );
+        }
+        return (string) => RegexProblem.testFull(regex, string);
     }
 
     async serialize() {
@@ -101,21 +119,48 @@ export class RegexProblemGenerator {
 
     createTargetWords() {
         const generator = new RandExp(this.regex);
-        return Array.from({ length: this.ntargetWords }).map(() =>
-            generator.gen()
-        );
+        return Array.from({ length: this.ntargetWords })
+            .map(() => {
+                let candidate = generator.gen();
+                let iterations = 0;
+                /**
+                 * Note: will sometimes fail on regexes like
+                 * /(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.)([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])/
+                 * which have branches that will never match
+                 *
+                 * Will also fail on regexes like
+                 * /(.+?)(.+?)(\n|\r)/
+                 * Generating strings like "\r"
+                 * Appears to not handle the lazy quantifier (+?) properly
+                 */
+                while (!RegexProblem.testFull(this.regex, candidate)) {
+                    if (iterations++ > 500) {
+                        console.error(
+                            'Too many iterations when generating matches from regex: ',
+                            this.regex
+                        );
+                        return null;
+                    }
+                    candidate = generator.gen();
+                }
+                return candidate;
+            })
+            .filter((candidate) => candidate !== null);
     }
 
     createText(targetWords) {
         const nontarget = this.createNontargetWords();
-        return this.mergeRandom(targetWords.map((e) => e), nontarget).join(' ');
+        return this.mergeRandom(targetWords.map((e) => e), nontarget);
     }
 
     createNontargetWords() {
         const targetWords = this.createTargetWords();
 
         for (const i in targetWords) {
-            while (this.regex.test(targetWords[i])) {
+            while (RegexProblem.testFull(this.regex, targetWords[i])) {
+                if (targetWords[i] === '') {
+                    break;
+                }
                 targetWords[i] = RegexProblemGenerator.mutate(targetWords[i]);
             }
         }

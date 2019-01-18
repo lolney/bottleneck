@@ -11,8 +11,23 @@ describe('RegexGenerator', () => {
                 10
             );
 
-            expect(typeof text).toEqual('string');
+            expect(text instanceof Array).toBe(true);
             expect(targetWords instanceof Array).toBe(true);
+        }
+    });
+
+    it('all target words match', () => {
+        for (const regex of regexes) {
+            const n = 10;
+
+            const { text, targetWords } = RegexProblemGenerator.generate(
+                regex,
+                n
+            );
+
+            for (const target of targetWords) {
+                expect(regex.test(target)).toBe(true);
+            }
         }
     });
 
@@ -25,8 +40,12 @@ describe('RegexGenerator', () => {
                 n
             );
 
-            expect(targetWords.length).toBeGreaterThan(n - 1);
-            expect(RegexProblem.findMatches(regex, text).length).toBe(n);
+            expect(targetWords.length).toBe(n, regex);
+            expect(
+                targetWords.every((string) =>
+                    RegexProblem.testFull(regex, string)
+                )
+            ).toBe(true, text);
         }
     });
 
@@ -37,7 +56,10 @@ describe('RegexGenerator', () => {
 
             expect(nonmatches.length).toBe(10);
             for (const nonmatch of nonmatches) {
-                expect(regex.test(nonmatch)).toBe(false);
+                expect(RegexProblem.testFull(regex, nonmatch)).toBe(
+                    false,
+                    nonmatch
+                );
             }
         }
     });

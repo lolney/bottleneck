@@ -1,6 +1,7 @@
 import React from 'react';
 import { AuthUserContext } from './config';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 const GUEST_USER = { displayName: 'Guest' };
 

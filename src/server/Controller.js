@@ -34,7 +34,10 @@ function serialize(problem) {
             problem.id
         ).serialize();
     case 'regex':
-        return new RegexProblem(problem.subproblem.regex, problem.id).serialize();
+        return new RegexProblem(
+            problem.subproblem.regex,
+            problem.id
+        ).serialize();
     default:
         throw new TypeError(`Unexpected type: ${problem.type}`);
     }

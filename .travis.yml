@@ -11,6 +11,16 @@ before_install:
   - psql -c 'create database bottleneck_development;' -U postgres
   - psql -U postgres -c "create extension postgis"
 script: npm run-script coveralls
+deploy:
+  provider: elasticbeanstalk
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY_ID
+  secret_access_key: $AWS_SECRET_ACCESS_KEY
+  region: "us-east-2"
+  app: "bottleneck"
+  env: "Bottleneck-env"
+  bucket_name: $S3_BUCKET
 env:
   global:
     - DATABASE_URL=postgresql://postgres@localhost:5432/bottleneck_development

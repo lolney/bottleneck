@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react';
 import { Navbar, Button } from 'react-bootstrap';
-import './ModeSelect.scss';
 import withAuth from '../login/withAuth.jsx';
 import { Modal } from 'react-bootstrap';
 import Login from '../login/Login.jsx';
@@ -63,22 +62,23 @@ const LoginModal = ({ onClose, title }) => (
 const Header = (props) => (
     <div id="header" className="bootstrap-styles">
         <Navbar>
-            <Navbar.Header />
-            <Navbar.Text pullRight>
-                <img
-                    id="image"
-                    alt="guest-user"
-                    src="assets/noun_unknown user_102994.png"
-                    height="20px"
-                    width="20px"
-                />
-                <Navbar.Link href="#" id="text">
-                    {' '}
-                    {props.user ? props.user.displayName : 'Loading'}
-                </Navbar.Link>
-            </Navbar.Text>
-            <Navbar.Form pullRight>
-                <SignIn {...props} />
+            <Navbar.Form pullRight id="master">
+                <Navbar.Text>
+                    <img
+                        id="image"
+                        alt="guest-user"
+                        src="assets/noun_unknown user_102994.png"
+                        height="40vh"
+                        width="40vh"
+                    />
+                    <Navbar.Link href="#" id="text">
+                        {' '}
+                        {props.user ? props.user.displayName : 'Loading'}
+                    </Navbar.Link>
+                </Navbar.Text>
+                <Navbar.Form className="navbar-text">
+                    <SignIn {...props} />
+                </Navbar.Form>
             </Navbar.Form>
         </Navbar>
     </div>

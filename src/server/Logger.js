@@ -1,4 +1,7 @@
 import winston from 'winston';
+require('winston-papertrail').Papertrail;
+require('dotenv').config();
+const { combine, timestamp, printf } = winston.format;
 
 /*
 { 
@@ -13,15 +16,31 @@ import winston from 'winston';
 }
 */
 
+const format = combine(
+    timestamp(),
+    printf((info) => {
+        return `[${info.timestamp}] [${info.level}]: ${info.message}`;
+    })
+);
+
+const transports = [new winston.transports.Console({ level: 'info' })];
+
+if (process.env.PAPERTRAIL_HOST) {
+    transports.push(
+        new winston.transports.Papertrail({
+            host: process.env.PAPERTRAIL_HOST,
+            port: process.env.PAPERTRAIL_PORT,
+            level: 'info'
+        })
+    );
+} else {
+    console.warn('PAPERTRAIL_HOST not set');
+}
+
 const logger = winston.createLogger({
     levels: winston.config.syslog.levels,
-    transports: [
-        new winston.transports.Console({ level: 'info' }),
-        new winston.transports.File({
-            filename: 'log.log',
-            level: 'debug'
-        })
-    ]
+    format,
+    transports
 });
 
 export default logger;

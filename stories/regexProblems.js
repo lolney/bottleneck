@@ -5,38 +5,59 @@ import { storiesOf } from '@storybook/react';
 import AsyncComponent, { mockEngine } from './problemContainer';
 
 import RegexProblem from '../src/problem-engine/RegexProblem';
-import { loremIpsum } from './fixtures';
+import { regexes, loremIpsum } from './fixtures';
 
 import '../src/react-app/CSS/Regex.scss';
 
-storiesOf('RegexComponent', module)
-    .addDecorator(StorybookConsole)
-    .add('Default', () => {
+const stories = storiesOf('RegexComponent', module).addDecorator(
+    StorybookConsole
+);
+
+stories.add('Default', () => {
+    let fetchProps = async () => {
+        let code = /hello|world/;
+        let problem = new RegexProblem(code);
+        let serialized = await problem.serialize();
+
+        return {
+            socket: mockEngine({
+                code: code.toString(),
+                problem: serialized
+            }).socket
+        };
+    };
+    return <AsyncComponent fetchProps={fetchProps} />;
+});
+
+stories.add('Lorem Ipsum', () => {
+    let fetchProps = async () => {
+        let problem = new RegexProblem('');
+        let serialized = await problem.serialize();
+        let code = '/hello|world/';
+        return {
+            socket: mockEngine({
+                code,
+                problem: { ...serialized, text: loremIpsum }
+            }).socket
+        };
+    };
+    return <AsyncComponent fetchProps={fetchProps} />;
+});
+
+let i = 0;
+for (const regex of regexes) {
+    stories.add('Regex' + i++, () => {
         let fetchProps = async () => {
-            let code = /hello|world/g;
-            let problem = new RegexProblem(code);
+            let problem = new RegexProblem(regex);
             let serialized = await problem.serialize();
 
             return {
                 socket: mockEngine({
-                    code: code.toString(),
+                    code: regex.toString(),
                     problem: serialized
                 }).socket
             };
         };
         return <AsyncComponent fetchProps={fetchProps} />;
-    })
-    .add('Lorem Ipsum', () => {
-        let fetchProps = async () => {
-            let problem = new RegexProblem('');
-            let serialized = await problem.serialize();
-            let code = '/hello|world/g';
-            return {
-                socket: mockEngine({
-                    code,
-                    problem: { ...serialized, text: loremIpsum }
-                }).socket
-            };
-        };
-        return <AsyncComponent fetchProps={fetchProps} />;
     });
+}
