@@ -2,6 +2,7 @@ import RegexProblem, {
     RegexProblemGenerator
 } from '../../src/problem-engine/RegexProblem';
 import { regexes } from '../../stories/fixtures';
+import weighted from 'weighted';
 
 describe('RegexGenerator', () => {
     it('should generate text and an array of targetWords', () => {
@@ -20,10 +21,7 @@ describe('RegexGenerator', () => {
         for (const regex of regexes) {
             const n = 10;
 
-            const { text, targetWords } = RegexProblemGenerator.generate(
-                regex,
-                n
-            );
+            const { targetWords } = RegexProblemGenerator.generate(regex, n);
 
             for (const target of targetWords) {
                 expect(regex.test(target)).toBe(true);
@@ -80,5 +78,60 @@ describe('RegexGenerator', () => {
             expect(typeof newWord).toBe('string');
             expect(newWord.length).toBeLessThan(word.length + 1);
         }
+    });
+});
+
+describe('MergeRandom', () => {
+    const createArrays = (n) => {
+        const array1 = [];
+        const array2 = [];
+
+        for (let i = 0; i < n * 2; i++) {
+            const array = weighted.select([array1, array2], [0.5, 0.5]);
+            array.push(Math.random());
+        }
+
+        return { array1, array2 };
+    };
+
+    it('merges two arrays', () => {
+        const length = 100;
+
+        const { array1, array2 } = createArrays(length);
+
+        const concated = array1.concat(array2);
+        const merged = RegexProblemGenerator.mergeRandom(array1, array2);
+
+        expect(merged.length).toBe(length * 2);
+        expect(new Set(merged)).toEqual(new Set(concated));
+    });
+
+    it('a particular slot in the merged array is equally likely to contain an element from the first array as the second', () => {
+        const nIters = 1000;
+        // stdev of binomial dist
+        const stdev = Math.sqrt(nIters * 0.5 * 0.5);
+
+        // count of elements in the first slot from the first array
+        let firstCount = 0;
+        for (let iter = 0; iter < nIters; iter++) {
+            const n = 100;
+            const array1 = [];
+            const array2 = [];
+
+            for (let i = 0; i < n; i++) {
+                array1[i] = i;
+                array2[i] = n + i;
+            }
+
+            const merged = RegexProblemGenerator.mergeRandom(array1, array2);
+            if (merged[0] < n) {
+                firstCount++;
+            }
+        }
+
+        console.log(stdev);
+
+        expect(firstCount).toBeLessThan(nIters / 2 + stdev * 4);
+        expect(firstCount).toBeGreaterThan(nIters / 2 - stdev * 4);
     });
 });
