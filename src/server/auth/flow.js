@@ -23,7 +23,7 @@ class AuthFlow {
         let playerNumber = socket.playerId;
 
         try {
-            token = await auth.verifyToken(req.token.i);
+            token = await auth.verifyToken(req.token);
         } catch (error) {
             logger.info(`Invalid token: ${req.token}: ${error}`);
         }
