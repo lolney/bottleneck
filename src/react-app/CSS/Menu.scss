@@ -4,6 +4,14 @@ $header-height: 100px;
   @import "./Common.scss";
   height: 100%;
   z-index: 150;
+
+  .barStyle {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    width: 100%;
+    height: 22px;
+    background: rgb(221, 221, 221);
+  }
   .header {
     height: $header-height;
   }

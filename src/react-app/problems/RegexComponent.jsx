@@ -69,17 +69,17 @@ export default class RegexComponent extends React.Component {
                 original={
                     <ul className="regexContainer">
                         {this.props.problem.text.map((word) =>
-                            this.renderMatch(this.state.matches, word)
+                            this.renderMatch(
+                                this.props.problem.targetWords,
+                                word
+                            )
                         )}
                     </ul>
                 }
                 target={
                     <ul className="regexContainer">
                         {this.props.problem.text.map((word) =>
-                            this.renderMatch(
-                                this.props.problem.targetWords,
-                                word
-                            )
+                            this.renderMatch(this.state.matches, word)
                         )}
                     </ul>
                 }
