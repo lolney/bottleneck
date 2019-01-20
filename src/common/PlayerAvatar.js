@@ -6,7 +6,6 @@ import BaseTypes from 'lance/serialize/BaseTypes';
 import Slowable from './Slowable';
 import { Player } from '../config';
 import BotAvatar from './BotAvatar.js';
-import TwoVector from 'lance/serialize/TwoVector';
 
 export default class PlayerAvatar extends DynamicObject {
     static get netScheme() {
@@ -16,6 +15,10 @@ export default class PlayerAvatar extends DynamicObject {
             },
             super.netScheme
         );
+    }
+
+    static get name() {
+        return 'PlayerAvatar';
     }
 
     /**

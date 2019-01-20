@@ -20,6 +20,10 @@ export default class Avatar extends DynamicObject {
         );
     }
 
+    static get name() {
+        return 'Avatar';
+    }
+
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
         if (props) {

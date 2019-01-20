@@ -14,6 +14,10 @@ export default class WaterAvatar extends DynamicObject {
         );
     }
 
+    static get name() {
+        return 'WaterAvatar';
+    }
+
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
         if (props) {

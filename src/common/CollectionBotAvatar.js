@@ -16,6 +16,10 @@ export default class CollectionBotAvatar extends BotAvatar {
         return Object.assign({}, BotAvatar.netScheme);
     }
 
+    static get name() {
+        return 'CollectionBotAvatar';
+    }
+
     get maxSpeed() {
         return 1;
     }

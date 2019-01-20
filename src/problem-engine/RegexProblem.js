@@ -150,7 +150,10 @@ export class RegexProblemGenerator {
 
     createText(targetWords) {
         const nontarget = this.createNontargetWords();
-        return this.mergeRandom(targetWords.map((e) => e), nontarget);
+        return RegexProblemGenerator.mergeRandom(
+            targetWords.map((e) => e),
+            nontarget
+        );
     }
 
     createNontargetWords() {
@@ -168,7 +171,7 @@ export class RegexProblemGenerator {
         return targetWords;
     }
 
-    mergeRandom(...arrays) {
+    static mergeRandom(...arrays) {
         const nonexhauted = arrays.map((_, i) => i);
         const output = [];
 
