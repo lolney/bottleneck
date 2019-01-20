@@ -15,7 +15,7 @@ class Game extends React.Component {
         if (this.props.user) {
             const token = this.props.user.getIdToken
                 ? this.props.user.getIdToken(true)
-                : async () => null;
+                : (async () => null)();
 
             token.then((token) => {
                 let options = Object.assign(clientDefaults, {
