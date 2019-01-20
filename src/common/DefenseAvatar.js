@@ -1,7 +1,7 @@
 import DynamicObject from 'lance/serialize/DynamicObject';
 import BaseTypes from 'lance/serialize/BaseTypes';
 import StaticActor from '../client/StaticActor.js';
-import { Player, getSiegeItemFromId } from '../config';
+import { getSiegeItemFromId } from '../config';
 
 export default class DefenseAvatar extends DynamicObject {
     static get netScheme() {
@@ -17,6 +17,10 @@ export default class DefenseAvatar extends DynamicObject {
             },
             super.netScheme
         );
+    }
+
+    static get name() {
+        return 'DefenseAvatar';
     }
 
     syncTo(other) {

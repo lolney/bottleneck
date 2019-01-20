@@ -16,6 +16,10 @@ export default class AssaultBotAvatar extends BotAvatar {
         return Object.assign({}, BotAvatar.netScheme);
     }
 
+    static get name() {
+        return 'AssaultBotAvatar';
+    }
+
     get maxSpeed() {
         return 1;
     }

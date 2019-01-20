@@ -30,6 +30,10 @@ export default class BotAvatar extends DynamicObject {
         );
     }
 
+    static get name() {
+        return 'BotAvatar';
+    }
+
     get maxSpeed() {
         return 5;
     }

@@ -129,8 +129,6 @@ describe('MergeRandom', () => {
             }
         }
 
-        console.log(stdev);
-
         expect(firstCount).toBeLessThan(nIters / 2 + stdev * 4);
         expect(firstCount).toBeGreaterThan(nIters / 2 - stdev * 4);
     });
