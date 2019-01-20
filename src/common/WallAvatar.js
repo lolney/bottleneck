@@ -14,6 +14,10 @@ export default class WallAvatar extends DynamicObject {
         );
     }
 
+    static get name() {
+        return 'WallAvatar';
+    }
+
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
         if (props) {

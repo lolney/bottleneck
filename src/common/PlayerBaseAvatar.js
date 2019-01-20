@@ -13,6 +13,10 @@ export default class PlayerBaseAvatar extends DynamicObject {
         );
     }
 
+    static get name() {
+        return 'PlayerBaseAvatar';
+    }
+
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
         if (props) {
