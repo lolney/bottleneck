@@ -29,21 +29,6 @@ stories.add('Default', () => {
     return <AsyncComponent fetchProps={fetchProps} />;
 });
 
-stories.add('Lorem Ipsum', () => {
-    let fetchProps = async () => {
-        let problem = new RegexProblem('');
-        let serialized = await problem.serialize();
-        let code = '/hello|world/';
-        return {
-            socket: mockEngine({
-                code,
-                problem: { ...serialized, text: loremIpsum }
-            }).socket
-        };
-    };
-    return <AsyncComponent fetchProps={fetchProps} />;
-});
-
 let i = 0;
 for (const regex of regexes) {
     stories.add('Regex' + i++, () => {

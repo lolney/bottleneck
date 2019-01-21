@@ -11,7 +11,8 @@ export const mockEngine = (data) => ({
             window.setTimeout(() => {
                 callback(data);
             }, 100);
-        }
+        },
+        emit: () => {}
     }
 });
 

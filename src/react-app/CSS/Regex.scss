@@ -11,4 +11,14 @@
   width: 210px;
   margin: auto;
   background-image: url("assets/Door1-Resized-210px.png");
+  font-weight: bold;
+}
+
+mark {
+  background-color: rgba(0, 0, 0, 0);
+  color: #ff87c7;
+}
+
+.highlight-partial {
+  opacity: 0.5;
 }

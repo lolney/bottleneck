@@ -137,6 +137,13 @@ ${RegexProblem.regexCheatsheet}`;
         return (string) => RegexProblem.testFull(regex, string);
     }
 
+    static wrapPartialGenerator(regex) {
+        return (string) => {
+            let matches = RegexProblem.findMatches(regex, string);
+            return matches.length > 0 ? matches[0] : '';
+        };
+    }
+
     async serialize() {
         return {
             ...super.serialize(),
