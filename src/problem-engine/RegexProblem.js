@@ -45,7 +45,7 @@ export default class RegexProblem extends Problem {
     }
 
     getDescription() {
-        return 'Write a regular expression that selects the words highlighted in yellow, matching the image on the right with the one on the left.';
+        return 'Write a regular expression that selects the pink words, matching the image on the right with the one on the left.';
     }
 
     getStartingCode() {

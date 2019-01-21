@@ -67,21 +67,25 @@ export default class RegexComponent extends React.Component {
         return (
             <OriginalTargetComponent
                 original={
-                    <ul className="regexContainer">
-                        {this.props.problem.text.map((word) =>
-                            this.renderMatch(
-                                this.props.problem.targetWords,
-                                word
-                            )
-                        )}
-                    </ul>
+                    <div className="regexSupercontainer">
+                        <ul className="regexContainer">
+                            {this.props.problem.text.map((word) =>
+                                this.renderMatch(
+                                    this.props.problem.targetWords,
+                                    word
+                                )
+                            )}
+                        </ul>
+                    </div>
                 }
                 target={
-                    <ul className="regexContainer">
-                        {this.props.problem.text.map((word) =>
-                            this.renderMatch(this.state.matches, word)
-                        )}
-                    </ul>
+                    <div className="regexSupercontainer">
+                        <ul className="regexContainer">
+                            {this.props.problem.text.map((word) =>
+                                this.renderMatch(this.state.matches, word)
+                            )}
+                        </ul>
+                    </div>
                 }
             />
         );
