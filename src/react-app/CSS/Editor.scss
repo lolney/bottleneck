@@ -9,11 +9,10 @@
 
 .editor {
   fieldset {
+    border-radius: 3px;
     background: #f1f1f1;
     border: 1px solid #ddd;
-    border-radius: 3px;
     padding: 1em 1em 1.5em;
-    //height: 100px + 2em; // 100px This works for my screen, but may want to reset to 50vh or sth.
     width: 100%;
     title {
       float: left;
@@ -58,11 +57,16 @@
   }
   .wrapper {
     position: relative;
-    border: 1px solid #ddd;
+    border: 0px;
     border-radius: 3px;
   }
 
-  #ace-editorid {
+  .ace_scrollbar-v {
+    display: none;
+  }
+
+  .ace_editor {
+    border: 0px;
     font-size: 1em;
     font-family: "Courier New", Courier, "Lucida Sans Typewriter",
       "Lucida Typewriter", monospace;
@@ -71,7 +75,6 @@
     right: 0;
     bottom: 0;
     left: 0;
-    border: 1px solid #ddd;
     border-radius: 3px;
   }
 }

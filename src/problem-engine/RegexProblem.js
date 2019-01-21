@@ -40,6 +40,47 @@ export default class RegexProblem extends Problem {
         }
     }
 
+    static get regexCheatsheet() {
+        return `
+/*
+**** CHEATSHEET ****
+---CHARACTERS---
+.: any character
+\\d: digit
+\\w: word character: ASCII letter, digit or underscore
+\\s: whitespace
+\\D: not a digit
+\\W: not a word
+\\S: not a whitespace
+
+[abc]: any of a, b, c
+[^abc]: not a, b, or c
+[a-c]: character between a and c
+
+---ANCHORS---
+^: start of string
+$: end of string
+\\b: word boundary
+\\B: not word boundary
+
+---Quantifiers---
++: one or more
+*: zero or more
+?: none or one
+?: makes quantifiers lazy
+{2}: 2 times
+{2,4}: 2-4 times	
+
+---Groups---
+|: OR operand
+(…): Capturing group
+\\1>: Contents of group 1
+(?:…)	Non-capturing group	
+(?=…)	positive lookahead
+(?!…)	negative lookahead
+*/`;
+    }
+
     getTitle() {
         return 'Word matching';
     }
@@ -49,7 +90,9 @@ export default class RegexProblem extends Problem {
     }
 
     getStartingCode() {
-        return '/hello|world/';
+        return `/hello|world/
+
+${RegexProblem.regexCheatsheet}`;
     }
 
     getTypeString() {
