@@ -133,25 +133,29 @@ class ResourceDisplay extends React.Component {
 }
 
 const resourcesPropType = PropTypes.shape({
-    wood: PropTypes.number.isRequired,
-    stone: PropTypes.number.isRequired
+    wood: PropTypes.number,
+    stone: PropTypes.number
 });
 
 const siegeItemPropTypes = {
     name: PropTypes.string.isRequired,
-    behavior: PropTypes.string.isRequired,
+    behavior: PropTypes.string,
     counters: PropTypes.arrayOf(PropTypes.string),
     type: PropTypes.string.isRequired
 };
 
 SiegeItemsWrapper.propTypes = {
-    data: PropTypes.arrayOf(PropTypes.object).isRequired,
+    data: PropTypes.arrayOf(PropTypes.object),
     resources: resourcesPropType.isRequired
 };
 
 SiegeItem.propTypes = {
-    data: PropTypes.arrayOf(PropTypes.object).isRequired,
-    resources: resourcesPropType.isRequired,
+    resources: PropTypes.arrayOf(
+        PropTypes.shape({
+            name: PropTypes.string.isRequired,
+            count: PropTypes.number.isRequired
+        })
+    ).isRequired,
     item: PropTypes.shape(siegeItemPropTypes).isRequired,
     isBuyable: PropTypes.bool.isRequired
 };

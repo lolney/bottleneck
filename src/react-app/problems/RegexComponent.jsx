@@ -102,7 +102,6 @@ export default class RegexComponent extends React.Component {
                         renderWord(word, i)
                     )}
                 </ul>
-                {' '}
             </div>
         );
         return (

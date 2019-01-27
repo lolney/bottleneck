@@ -14,9 +14,7 @@
 
 .regexSupercontainer {
   @include regexBasics;
-  max-height: 100%;
   position: relative;
-  //background-image: url("assets/Door1-Resized-210px.png");
 }
 
 .regexTop {
