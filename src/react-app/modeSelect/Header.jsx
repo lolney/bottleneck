@@ -91,7 +91,7 @@ const SignIn = ({ user, login, logout }) =>
                 Sign in
             </Button>
             <Button className="hud-button" onClick={() => login('Sign up')}>
-                Sign up
+                Register
             </Button>
         </Fragment>
     ) : (
