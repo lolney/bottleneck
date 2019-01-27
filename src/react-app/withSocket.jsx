@@ -63,15 +63,15 @@ export default function withSocket(
 
         componentDidMount() {
             for (const [event, handler] of handlers) {
-                let modHandler = (data) => {
+                const modHandler = this.socket.on(event, (data) => {
                     this.setState({
                         data: {
                             ...this.state.data,
                             ...handler(data, this.state.data)
                         }
                     });
-                };
-                this.socket.on(event, modHandler);
+                });
+
                 this.handlers.push([event, modHandler]);
             }
         }

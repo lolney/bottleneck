@@ -83,15 +83,23 @@ export default class Socket {
         );
     }
 
+    /**
+     * @param {*} event
+     * @param {*} handler
+     * @returns The handler, which can be unregistered via `socket.off`
+     */
     on(event, handler) {
-        this.socket.on(event, (data) => {
+        const modHandler = (data) => {
             if (!this.suspended) {
                 for (const mw of this.middleware) {
                     mw.forward(event, data);
                 }
                 handler(data);
             }
-        });
+        };
+
+        this.socket.on(event, modHandler);
+        return modHandler;
     }
 
     /**
@@ -119,16 +127,20 @@ export default class Socket {
      * ` socket.transaction(event, (data) => Response.ok(data)) `
      *
      * @param {*} event
+     * @returns The handler, which can be unregistered via `socket.off`
      */
     transaction(event, handler) {
-        this.socket.on(event, async (data, fn) => {
+        const modHandler = async (data, fn) => {
             if (!this.suspended) {
                 let resp = await handler(data);
                 fn(resp);
             } else {
                 fn(Response.err('Application state is suspended'));
             }
-        });
+        };
+
+        this.socket.on(event, modHandler);
+        return modHandler;
     }
 
     /**
