@@ -16,6 +16,10 @@ export const getSiegeItemFromId = (id) => {
     return siegeItems.find((item) => item.id == id);
 };
 
+export const getSiegeItemFromName = (name) => {
+    return siegeItems.find((item) => item.name == name);
+};
+
 export const formatResourceCost = (obj) => {
     return `${obj.wood} wood, ${obj.stone} stone`;
 };
@@ -80,27 +84,17 @@ export const dirt = {
 
 export const waterDummy = {
     id: siegeItemCounter.inc(),
-    name: 'Transparent',
+    name: 'Water',
     image: 'assets/x.svg',
     type: 'defensive'
 };
 
 export const siegeItems = [
     {
-        name: 'Gate',
-        image: 'assets/gate.png',
-        type: 'offensive',
-        width: 32,
-        height: 21,
-        cost: {
-            wood: '4',
-            stone: '0'
-        }
-    },
-    {
         name: 'Bridge',
         image: 'assets/bridge4.png',
         type: 'offensive',
+        counters: ['Water', 'Slowfield', 'Pit'],
         width: 60,
         height: 24,
         cost: {
@@ -112,6 +106,7 @@ export const siegeItems = [
         name: 'Ladder',
         image: 'assets/ladder1.png',
         type: 'offensive',
+        counters: ['Wall', 'Fence'],
         width: 12,
         height: 32,
         cost: {

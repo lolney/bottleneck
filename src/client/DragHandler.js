@@ -1,4 +1,4 @@
-import { siegeItems } from '../config';
+import { siegeItems, getSiegeItemFromName } from '../config';
 import DefenseAvatar from '../common/DefenseAvatar';
 import BotAvatar from '../common/BotAvatar';
 
@@ -109,7 +109,7 @@ class OffensiveDragObject {
         this.gameObject.setPlacable(false);
 
         this.start = (_, other) => {
-            if (other.isCountered()) {
+            if (other.isCountered() || !this.countersItem(other)) {
                 return;
             }
             console.log('attaching offensive item');
@@ -147,6 +147,11 @@ class OffensiveDragObject {
             (o) => this.attachedObjects[o.id],
             this.stop
         );
+    }
+
+    countersItem(object) {
+        const myItem = getSiegeItemFromName(this.gameObject.objectType);
+        return myItem.counters.includes(object.objectType);
     }
 
     resetAttachedObject() {
