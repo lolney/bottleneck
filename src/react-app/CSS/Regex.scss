@@ -4,14 +4,53 @@
   word-wrap: break-word;
   margin: auto;
   max-width: 60%;
+  z-index: 4;
+}
+
+@mixin regexBasics {
+  width: 210px;
+  font-weight: bold;
 }
 
 .regexSupercontainer {
-  max-width: 49%;
-  width: 210px;
-  margin: auto;
-  background-image: url("assets/Door1-Resized-210px.png");
-  font-weight: bold;
+  @include regexBasics;
+  max-height: 100%;
+  position: relative;
+  //background-image: url("assets/Door1-Resized-210px.png");
+}
+
+.regexTop {
+  @include regexBasics;
+  background-image: url("assets/Door1-Top.png");
+  z-index: 3;
+  top: 0;
+  height: 44px;
+}
+
+.regexMiddle {
+  @include regexBasics;
+  background-image: url("assets/Door1-Middle.png");
+  position: absolute;
+  z-index: -1;
+  bottom: 0;
+  height: calc(100% - 44px);
+}
+
+.regexHandle {
+  @include regexBasics;
+  background-image: url("assets/Door1-Handle.png");
+  position: absolute;
+  bottom: 40%;
+  height: 30px;
+}
+
+.regexBottom {
+  @include regexBasics;
+  background-image: url("assets/Door1-Bottom.png");
+  position: absolute;
+  bottom: 0;
+  height: 47px;
+  z-index: 3;
 }
 
 mark {

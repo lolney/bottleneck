@@ -94,11 +94,15 @@ export default class RegexComponent extends React.Component {
     render() {
         const renderRegexContainer = (renderWord) => (
             <div className="regexSupercontainer">
+                <div className="regexTop" />
+                <div className="regexMiddle" />
+                <div className="regexBottom" />
                 <ul className="regexContainer">
                     {this.props.problem.text.map((word, i) =>
                         renderWord(word, i)
                     )}
                 </ul>
+                {' '}
             </div>
         );
         return (
