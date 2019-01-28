@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
 import TooltipWrapper from './common/TooltipWrapper.jsx';
 import DefensesBrowser from './defenses/DefensesBrowser.jsx';
+import SolutionHistory from './solution-history/SolutionHistory.jsx';
 import PropTypes from 'prop-types';
 import ControlledButton from './ControlledButton.jsx';
 import { resourceIcons, assaultBot, formatResourceCost } from '../config';
@@ -41,7 +42,7 @@ class HUD extends React.Component {
                             <div className="column-interior">
                                 <img
                                     alt="defense icon"
-                                    src="assets/noun_rook_3679.svg"
+                                    src="assets/noun_rook_638920.svg"
                                     height="20px"
                                     width="20px"
                                 />
@@ -49,6 +50,47 @@ class HUD extends React.Component {
                         </div>
                         <div className="hud-column-2">
                             <div className="column-interior">Siege Tools</div>
+                        </div>
+                    </ControlledButton>
+
+                    <ControlledButton
+                        className="hud-button"
+                        addWindow={(callback) =>
+                            this.props.addWindow(
+                                <SolutionHistory
+                                    socket={this.props.socket}
+                                    openWindow={(code, id) => {
+                                        this.props.socket.emit(
+                                            'solvedProblem',
+                                            {
+                                                id: id
+                                            }
+                                        );
+                                    }}
+                                />,
+                                'solutionHistory',
+                                callback
+                            )
+                        }
+                        removeWindow={() =>
+                            this.props.removeWindow('solutionHistory')
+                        }
+                    >
+                        <div className="hud-column">
+                            <div className="column-interior">
+                                <img
+                                    alt="history icon"
+                                    //src="assets/noun_clock_2157047.svg"
+                                    src="assets/noun_History_1666964.svg"
+                                    height="20px"
+                                    width="20px"
+                                />
+                            </div>
+                        </div>
+                        <div className="hud-column-2">
+                            <div className="column-interior">
+                                Solution History
+                            </div>
                         </div>
                     </ControlledButton>
 
@@ -165,9 +207,10 @@ const AssaultBotButton = (props) => (
                 <div className="column-interior">
                     <img
                         alt="assault-botface"
-                        src="assets/assault-botface.png"
-                        height="21px"
-                        width="16px"
+                        //src="assets/noun_Legion_814530.svg"
+                        src="assets/noun_Helmet_307500.svg"
+                        height="20px"
+                        width="20px"
                     />
                 </div>
             </div>
