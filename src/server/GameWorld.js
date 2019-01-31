@@ -92,7 +92,7 @@ export default class GameWorld {
         // Add the water
         let wb = new WaterBuilder(centerBounds, maze);
         objects.push(wb.createWater());
-        objects.push(wb.createCenterBlock());
+        objects = objects.concat(wb.createWaterBlocks());
 
         // TODO: generate other connecting walls, objects
         return new GameWorld(objects, [start, mirror(start)]);
@@ -465,13 +465,41 @@ export class WaterBuilder {
         return new TwoVector(xCenter, yCenter);
     }
 
+    *waterBlockPositions() {
+        const center = this.calcDummyCenter();
+        const height = this.maze.corridorWidth;
+
+        let current = center.clone();
+
+        while (current.y + height / 2 < this.bounds.getHeight()) {
+            yield current.clone();
+            current.y = current.y + height;
+        }
+
+        current = center.clone();
+        current.y -= height;
+
+        while (current.y - height / 2 > 0) {
+            yield current.clone();
+            current.y = current.y - height;
+        }
+    }
+
+    createWaterBlocks() {
+        const result = [];
+        for (const pos of this.waterBlockPositions()) {
+            result.push(this.createWaterBlock(pos));
+        }
+        return result;
+    }
+
     /**
      * @returns {worldObject}
      */
-    createCenterBlock() {
+    createWaterBlock(position) {
         return {
             id: Math.random(),
-            position: this.calcDummyCenter(),
+            position,
             width: this.bounds.getWidth(),
             height: this.maze.corridorWidth,
             type: 'siegeItem',
