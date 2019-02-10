@@ -33,8 +33,8 @@ export default class WallAvatar extends CounterableAvatar {
         if (props) {
             this.width = props.width;
             this.height = props.height;
+            this.objectType = props.objectType ? props.objectType : 'Wall';
         }
-        this.objectType = 'Wall';
         this.attachedSiegeItemId = null;
         this.behaviors = [];
         this.class = WallAvatar;
@@ -52,42 +52,28 @@ export default class WallAvatar extends CounterableAvatar {
         return this.teleportable.handleTeleport(player);
     }
 
-    isValidDirection(direction) {
-        if (
-            direction == Edges.LEFT ||
-            (direction == Edges.RIGHT && this.width > this.height)
-        ) {
-            return true;
-        } else if (
-            direction == Edges.TOP ||
-            (direction == Edges.BOTTOM && this.height > this.width)
-        ) {
-            return true;
+    getDirections() {
+        if (this.width < this.height) {
+            return [Edges.LEFT, Edges.RIGHT];
         } else {
-            return false;
+            return [Edges.TOP, Edges.BOTTOM];
         }
     }
 
     attachSiegeItemSprite(siegeItemId) {
+        // TODO: different asset depending on orientation
         super.attachSiegeItemSprite(siegeItemId);
-        this.attachLadder(Edges.TOP);
+        this.attachLadder();
     }
 
     attachCounter(siegeItemId) {
         super.attachCounter(siegeItemId);
-        this.attachLadder(Edges.TOP);
+        this.attachLadder();
     }
 
-    attachLadder(direction) {
-        if (this.isValidDirection(direction)) {
-            if (this.teleportable) {
-                this.teleportable.addDirection(direction);
-            } else {
-                this.teleportable = new Teleportable(this, direction);
-            }
-        } else {
-            console.error(`Tried to add invalid direction: ${direction}`);
-        }
+    attachLadder() {
+        const directions = this.getDirections();
+        this.teleportable = new Teleportable(this, directions);
     }
 
     onAddToWorld(gameEngine) {
@@ -115,7 +101,7 @@ export default class WallAvatar extends CounterableAvatar {
 
 export class Teleportable {
     constructor(wall, edge) {
-        this.edges = [edge];
+        this.edges = edge instanceof Array ? edge : [edge];
         this.wall = wall;
     }
 

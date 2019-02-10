@@ -76,9 +76,9 @@ export default class GameWorld {
         objects.push(bottom.rightWall(wallWidth));
         objects = [left.bottomWall(wallWidth)].concat(objects);
 
-        objects.push(top.topWall(wallWidth));
-        objects.push(halfBounds.leftWall(wallWidth));
-        objects.push(bottom.bottomWall(wallWidth));
+        objects.push(top.topWall(wallWidth, { outer: true }));
+        objects.push(halfBounds.leftWall(wallWidth, { outer: true }));
+        objects.push(bottom.bottomWall(wallWidth, { outer: true }));
 
         let mirror = (pos) => new TwoVector(WIDTH - pos.x, pos.y);
         let start = left.getCenter();
@@ -348,72 +348,71 @@ export class Bounds {
         return this;
     }
 
+    static createWall(dims, options) {
+        const objectType = options && options.outer ? 'OuterWall' : 'Wall';
+        return {
+            ...dims,
+            id: Math.random(),
+            type: 'wall',
+            objectType
+        };
+    }
+
     /**
      * @returns {worldObject}
      */
-    topWall(wallWidth) {
+    topWall(wallWidth, options) {
         let center = new TwoVector(
             this.xLo + this.getWidth() / 2,
             this.yLo + wallWidth / 2
         );
-        return {
-            id: Math.random(),
-            position: center,
-            width: this.getWidth(),
-            height: wallWidth,
-            type: 'wall'
-        };
+        return Bounds.createWall(
+            { position: center, width: this.getWidth(), height: wallWidth },
+            options
+        );
     }
 
     /**
      * @returns {worldObject}
      */
-    rightWall(wallWidth) {
+    rightWall(wallWidth, options) {
         let center = new TwoVector(
             this.xHi - wallWidth / 2,
             this.yLo + this.getHeight() / 2
         );
-        return {
-            id: Math.random(),
-            position: center,
-            width: wallWidth,
-            height: this.getHeight(),
-            type: 'wall'
-        };
+        return Bounds.createWall(
+            { position: center, width: wallWidth, height: this.getHeight() },
+            options
+        );
     }
 
     /**
      * @returns {worldObject}
      */
-    leftWall(wallWidth) {
+    leftWall(wallWidth, options) {
         let center = new TwoVector(
             this.xLo + wallWidth / 2,
             this.yLo + this.getHeight() / 2
         );
-        return {
-            id: Math.random(),
-            position: center,
-            width: wallWidth,
-            height: this.getHeight(),
-            type: 'wall'
-        };
+        return Bounds.createWall(
+            { position: center, width: wallWidth, height: this.getHeight() },
+            options
+        );
     }
 
     /**
      * @returns {worldObject}
      */
-    bottomWall(wallWidth) {
+    bottomWall(wallWidth, options) {
         let center = new TwoVector(
             this.xLo + this.getWidth() / 2,
             this.yHi - wallWidth / 2
         );
-        return {
-            id: Math.random(),
+        return Bounds.createWall({
             position: center,
             width: this.getWidth(),
-            height: wallWidth,
-            type: 'wall'
-        };
+            height: wallWidth
+        }, options);
     }
 
     crop(xLo, xHi, yLo, yHi) {
