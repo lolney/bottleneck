@@ -1,15 +1,24 @@
-import DynamicObject from 'lance/serialize/DynamicObject';
+import CounterableAvatar from './CounterableAvatar';
 import TilingActor from '../client/TilingActor';
 import BaseTypes from 'lance/serialize/BaseTypes';
 import { horizontalWall, verticalWall } from '../config';
 import TwoVector from 'lance/serialize/TwoVector';
 
-export default class WallAvatar extends DynamicObject {
+export const Edges = Object.freeze({
+    LEFT: 'LEFT',
+    RIGHT: 'RIGHT',
+    TOP: 'TOP',
+    BOTTOM: 'BOTTOM'
+});
+
+export default class WallAvatar extends CounterableAvatar {
     static get netScheme() {
         return Object.assign(
             {
+                objectType: { type: BaseTypes.TYPES.STRING },
                 width: { type: BaseTypes.TYPES.FLOAT32 },
-                height: { type: BaseTypes.TYPES.FLOAT32 }
+                height: { type: BaseTypes.TYPES.FLOAT32 },
+                attachedSiegeItemId: { type: BaseTypes.TYPES.STRING }
             },
             super.netScheme
         );
@@ -25,6 +34,8 @@ export default class WallAvatar extends DynamicObject {
             this.width = props.width;
             this.height = props.height;
         }
+        this.objectType = 'Wall';
+        this.attachedSiegeItemId = null;
         this.behaviors = [];
         this.class = WallAvatar;
     }
@@ -43,13 +54,13 @@ export default class WallAvatar extends DynamicObject {
 
     isValidDirection(direction) {
         if (
-            direction == 'LEFT' ||
-            (direction == 'RIGHT' && this.width > this.height)
+            direction == Edges.LEFT ||
+            (direction == Edges.RIGHT && this.width > this.height)
         ) {
             return true;
         } else if (
-            direction == 'TOP' ||
-            (direction == 'BOTTOM' && this.height > this.width)
+            direction == Edges.TOP ||
+            (direction == Edges.BOTTOM && this.height > this.width)
         ) {
             return true;
         } else {
@@ -57,19 +68,23 @@ export default class WallAvatar extends DynamicObject {
         }
     }
 
-    attachLadder(gameEngine, direction) {
+    attachSiegeItemSprite(siegeItemId) {
+        super.attachSiegeItemSprite(siegeItemId);
+        this.attachLadder(Edges.TOP);
+    }
+
+    attachCounter(siegeItemId) {
+        super.attachCounter(siegeItemId);
+        this.attachLadder(Edges.TOP);
+    }
+
+    attachLadder(direction) {
         if (this.isValidDirection(direction)) {
             if (this.teleportable) {
                 this.teleportable.addDirection(direction);
             } else {
-                this.teleportable = new Teleportable(
-                    gameEngine,
-                    this,
-                    direction
-                );
+                this.teleportable = new Teleportable(this, direction);
             }
-
-            // TODO: add sprite
         } else {
             console.error(`Tried to add invalid direction: ${direction}`);
         }
@@ -82,6 +97,9 @@ export default class WallAvatar extends DynamicObject {
                     ? horizontalWall.name
                     : verticalWall.name;
             this.actor = new TilingActor(this, gameEngine.renderer, resource);
+        }
+        if (this.attachedSiegeItemId) {
+            this.attachSiegeItemSprite(this.attachedSiegeItemId);
         }
     }
 
@@ -102,7 +120,7 @@ export class Teleportable {
     }
 
     getTeleportVector(edge, player) {
-        if (edge == 'LEFT' || edge == 'RIGHT') {
+        if (edge == Edges.LEFT || edge == Edges.RIGHT) {
             const x = 2 * (this.wall.position.x - player.position.x);
             return new TwoVector(x, 0);
         } else {
@@ -135,22 +153,22 @@ export class Teleportable {
 
     checkCollision(player, edge) {
         switch (edge) {
-        case 'LEFT':
+        case Edges.LEFT:
             return (
                 player.position.x <
                     this.wall.position.x - this.wall.width / 2
             );
-        case 'RIGHT':
+        case Edges.RIGHT:
             return (
                 player.position.x >
                     this.wall.position.x + this.wall.width / 2
             );
-        case 'TOP':
+        case Edges.TOP:
             return (
                 player.position.y <
                     this.wall.position.y - this.wall.height / 2
             );
-        case 'BOTTOM':
+        case Edges.BOTTOM:
             return (
                 player.position.y >
                     this.wall.position.y + this.wall.height / 2
