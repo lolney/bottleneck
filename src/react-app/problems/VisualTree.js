@@ -59,7 +59,7 @@ class BinaryNode {
         let { dW, dH, scale } = config;
         let pos = new Point(
             config.origin[0] + x * dW,
-            config.origin[1] + depth * -dH // orign[1] dH (positive)
+            config.origin[1] + depth * dH
         );
 
         function drawEdge(pos1, pos2) {
@@ -75,12 +75,12 @@ class BinaryNode {
             // if left exists, the right child also exists
             this.leftEdge = drawEdge(
                 pos,
-                pos.add([-(1 / Math.pow(2, depth)) * dW, -dH]) // dH (positive)
+                pos.add([-(1 / Math.pow(2, depth)) * dW, dH])
             );
         if (tree.right)
             this.rightEdge = drawEdge(
                 pos,
-                pos.add([(1 / Math.pow(2, depth)) * dW, -dH]) // dH (positive)
+                pos.add([(1 / Math.pow(2, depth)) * dW, dH])
             );
 
         const radius = 20 * scale;
@@ -116,21 +116,22 @@ export default class VisualTree {
         Symbol.iterator = a;
         this.animation = animation;
 
-        const windowSize = window.devicePixelRatio ?window.devicePixelRatio : 1;
-        const scale = windowSize / 2; // 0.5
+        const windowSize = window.devicePixelRatio
+            ? window.devicePixelRatio
+            : 1;
+        const scale = windowSize / 2;
         const height = BinaryTree.getHeight(tree);
         const dH = 60 * scale;
         this.staticConfig = {
             height,
-            dH,
+            dH: -dH,
             sideMargin: 50 * scale,
             scale: scale,
-            originY: height * dH // 30 * scale
+            originY: height * dH
         };
         this.canvas = canvas;
 
         canvas.height = this.staticConfig.originY + 30;
-        // this.staticConfig.height * this.staticConfig.dH + this.staticConfig.originY;
         canvas.style.height = (1 / windowSize) * canvas.height + 'px';
 
         window.onresize = () => {
@@ -147,7 +148,7 @@ export default class VisualTree {
             ...this.staticConfig,
             canvasWidth: canvasWidth,
             origin: [canvasWidth / 2, this.staticConfig.originY],
-            dW: (canvasWidth - this.staticConfig.sideMargin) / 4 // 4
+            dW: (canvasWidth - this.staticConfig.sideMargin) / 4
         };
     }
 
