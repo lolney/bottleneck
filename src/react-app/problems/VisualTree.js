@@ -1,5 +1,6 @@
 import paper from 'paper';
 import Validator, { Type } from '../../problem-engine/Validator';
+import { ENGINE_METHOD_DH } from 'constants';
 
 export class BinaryTree {
     constructor(el) {
@@ -58,14 +59,14 @@ class BinaryNode {
         let { dW, dH, scale } = config;
         let pos = new Point(
             config.origin[0] + x * dW,
-            config.origin[1] + depth * dH
+            config.origin[1] + depth * -dH // orign[1] dH (positive)
         );
 
         function drawEdge(pos1, pos2) {
             return new Path.Line({
                 from: pos1,
                 to: pos2,
-                strokeColor: 'black',
+                strokeColor: '#90684D',
                 strokeWidth: 2 * scale
             }).sendToBack();
         }
@@ -74,20 +75,20 @@ class BinaryNode {
             // if left exists, the right child also exists
             this.leftEdge = drawEdge(
                 pos,
-                pos.add([-(1 / Math.pow(2, depth)) * dW, dH])
+                pos.add([-(1 / Math.pow(2, depth)) * dW, -dH]) // dH (positive)
             );
         if (tree.right)
             this.rightEdge = drawEdge(
                 pos,
-                pos.add([(1 / Math.pow(2, depth)) * dW, dH])
+                pos.add([(1 / Math.pow(2, depth)) * dW, -dH]) // dH (positive)
             );
 
         const radius = 20 * scale;
         this.circle = new Path.Circle({
             radius: radius,
             strokeWidth: 2 * scale,
-            fillColor: 'white',
-            strokeColor: 'black',
+            fillColor: '#6AB656',
+            strokeColor: '#6AB656',
             center: pos
         });
         this.text = new PointText({
@@ -98,6 +99,7 @@ class BinaryNode {
                 pos.y + 9 * scale
             ),
             fontSize: 26 * scale + 'px',
+            fontStyle: 'Lato sans-serif',
             fillColor: 'black',
             content: '' + tree.element
         });
@@ -114,20 +116,22 @@ export default class VisualTree {
         Symbol.iterator = a;
         this.animation = animation;
 
-        const scale = 0.5;
+        const windowSize = window.devicePixelRatio ?window.devicePixelRatio : 1;
+        const scale = windowSize / 2; // 0.5
+        const height = BinaryTree.getHeight(tree);
+        const dH = 60 * scale;
         this.staticConfig = {
-            height: BinaryTree.getHeight(tree),
-            dH: 60 * scale,
+            height,
+            dH,
             sideMargin: 50 * scale,
             scale: scale,
-            originY: 30 * scale
+            originY: height * dH // 30 * scale
         };
         this.canvas = canvas;
 
-        canvas.height =
-            this.staticConfig.height * this.staticConfig.dH +
-            this.staticConfig.originY;
-        canvas.style = '';
+        canvas.height = this.staticConfig.originY + 30;
+        // this.staticConfig.height * this.staticConfig.dH + this.staticConfig.originY;
+        canvas.style.height = (1 / windowSize) * canvas.height + 'px';
 
         window.onresize = () => {
             this.deleteTreeVisual(tree);
@@ -143,7 +147,7 @@ export default class VisualTree {
             ...this.staticConfig,
             canvasWidth: canvasWidth,
             origin: [canvasWidth / 2, this.staticConfig.originY],
-            dW: (canvasWidth - this.staticConfig.sideMargin) / 4
+            dW: (canvasWidth - this.staticConfig.sideMargin) / 4 // 4
         };
     }
 

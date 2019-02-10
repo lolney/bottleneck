@@ -85,7 +85,7 @@ export const dirt = {
 export const waterDummy = {
     id: siegeItemCounter.inc(),
     name: 'Water',
-    image: 'assets/x.svg',
+    image: 'assets/x-copy.svg',
     type: 'defensive'
 };
 
