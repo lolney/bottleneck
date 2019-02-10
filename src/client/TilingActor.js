@@ -1,4 +1,5 @@
 import Actor from './Actor';
+import Edges from '../common/WallAvatar';
 
 let PIXI = null;
 
@@ -20,5 +21,20 @@ export default class TilingActor extends Actor {
         this.sprite.addChild(mySprite);
 
         this.attach(renderer, avatar);
+    }
+
+    attachLadder(edge) {
+        switch (edge) {
+        case Edges.LEFT:
+            // facing right
+        case Edges.RIGHT:
+            // facing left
+        case Edges.TOP:
+            // Poking out from behind the top
+        case Edges.BOTTOM:
+            // Straight vertical
+        default:
+            throw new Error('Unexpected edge type: ', edge);
+        }
     }
 }

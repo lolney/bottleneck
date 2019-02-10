@@ -27,22 +27,6 @@ export default class StaticActor extends Actor {
         this.mySprite.scale.set(factor, factor);
     }
 
-    compositeSprite(resource) {
-        let newSprite = this.createSprite(resource);
-        this.sprite.addChild(newSprite);
-    }
-
-    setLoading(set = true, resource = null) {
-        if (set) {
-            this.loadingSprite = this.createSprite(resource);
-            this.loadingSprite.filters = [new PIXI.filters.AlphaFilter(0.6)];
-            this.sprite.addChild(this.loadingSprite);
-        } else if (this.loadingSprite) {
-            this.sprite.removeChild(this.loadingSprite);
-            this.loadingSprite = null;
-        }
-    }
-
     setPlacable(set) {
         if (!set) {
             this.placableFilter = new PIXI.filters.ColorMatrixFilter();

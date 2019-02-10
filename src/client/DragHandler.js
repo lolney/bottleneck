@@ -1,6 +1,7 @@
 import { siegeItems, getSiegeItemFromName } from '../config';
 import DefenseAvatar from '../common/DefenseAvatar';
 import BotAvatar from '../common/BotAvatar';
+import WallAvatar from '../common/WallAvatar';
 
 const DETACH_THRESHOLD = 100;
 
@@ -122,7 +123,8 @@ class OffensiveDragObject {
 
         let gameObjectTest = (o) => o.id == gameObject.id;
         let otherObjectTest = (o) =>
-            o instanceof DefenseAvatar && o.behaviorType == 'defensive';
+            (o instanceof DefenseAvatar && o.behaviorType == 'defensive') ||
+            o instanceof WallAvatar;
         // Can prevent players from placing on their own defences
         // && !this.gameEngine.isOwnedByPlayer(o);
 

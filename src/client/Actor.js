@@ -23,6 +23,22 @@ export default class Actor {
         }
     }
 
+    compositeSprite(resource) {
+        let newSprite = this.createSprite(resource);
+        this.sprite.addChild(newSprite);
+    }
+
+    setLoading(set = true, resource = null) {
+        if (set) {
+            this.loadingSprite = this.createSprite(resource);
+            this.loadingSprite.filters = [new PIXI.filters.AlphaFilter(0.6)];
+            this.sprite.addChild(this.loadingSprite);
+        } else if (this.loadingSprite) {
+            this.sprite.removeChild(this.loadingSprite);
+            this.loadingSprite = null;
+        }
+    }
+
     createSprite(resourceName) {
         let mySprite = new PIXI.Sprite(
             PIXI.loader.resources[resourceName].texture
