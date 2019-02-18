@@ -57,7 +57,9 @@ export default class ProblemComponent extends React.Component {
                             this.props.generator
                         );
                         alert = this.props.alert.success('Problem Solved!');
-                    } else if (this.state.alert) {
+                    }
+                    
+                    if (this.state.alert) {
                         this.state.alert.close();
                     }
 
