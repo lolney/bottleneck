@@ -205,7 +205,7 @@ export default class MyGameEngine extends GameEngine {
 
     causesCollision(collisionObjects) {
         if (!collisionObjects) {
-            return false;
+            collisionObjects = this.physicsEngine.collisionDetection.detect();
         }
         const result = this.queryCollisionObjects(
             collisionObjects,
