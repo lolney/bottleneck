@@ -3,6 +3,7 @@ import TilingActor from '../client/TilingActor';
 import BaseTypes from 'lance/serialize/BaseTypes';
 import { horizontalWall, verticalWall } from '../config';
 import TwoVector from 'lance/serialize/TwoVector';
+import { max } from 'moment';
 
 export const Edges = Object.freeze({
     LEFT: 'LEFT',
@@ -137,27 +138,45 @@ export class Teleportable {
         return undefined;
     }
 
+    inRange(player, isVertical) {
+        const prop = isVertical ? 'y' : 'x';
+        const margin = 1 / 4;
+
+        const x = this.wall.position[prop];
+        const myX = player.position[prop];
+        const length = isVertical ? this.wall.height / 2 : this.wall.width / 2;
+
+        const min = x - length * margin;
+        const max = x + length * margin;
+
+        return myX > min && myX < max;
+    }
+
     checkCollision(player, edge) {
         switch (edge) {
         case Edges.LEFT:
             return (
-                player.position.x <
-                    this.wall.position.x - this.wall.width / 2
+                this.inRange(player, true) &&
+                    player.position.x <
+                        this.wall.position.x - this.wall.width / 2
             );
         case Edges.RIGHT:
             return (
-                player.position.x >
-                    this.wall.position.x + this.wall.width / 2
+                this.inRange(player, true) &&
+                    player.position.x >
+                        this.wall.position.x + this.wall.width / 2
             );
         case Edges.TOP:
             return (
-                player.position.y <
-                    this.wall.position.y - this.wall.height / 2
+                this.inRange(player, false) &&
+                    player.position.y <
+                        this.wall.position.y - this.wall.height / 2
             );
         case Edges.BOTTOM:
             return (
-                player.position.y >
-                    this.wall.position.y + this.wall.height / 2
+                this.inRange(player, false) &&
+                    player.position.y >
+                        this.wall.position.y + this.wall.height / 2
             );
         default:
             throw new Error('Unexpected edge type: ', edge);
