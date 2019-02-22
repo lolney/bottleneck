@@ -28,6 +28,17 @@ describe('Socket', () => {
         clientSocket = new Socket(socket, false);
     };
 
+    it('should unregister handlers properly', async () => {
+        await setup();
+        const eventName = 'testEvent';
+        const handler = clientSocket.on(eventName, () => {
+            fail('should be unregistered');
+        });
+
+        clientSocket.off(eventName, handler);
+        serverSocket.emit(eventName, {});
+    });
+
     describe('when not suspended', () => {
         beforeAll(async () => await setup());
 

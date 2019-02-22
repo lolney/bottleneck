@@ -15,34 +15,36 @@ class Game extends React.Component {
         if (this.props.user) {
             const token = this.props.user.getIdToken
                 ? this.props.user.getIdToken(true)
-                : null;
+                : (async () => null)();
 
-            let options = Object.assign(clientDefaults, {
-                auth: { token },
-                matchmaker: `match?mode=${this.props.mode}`,
-                matchmakerMethod: 'POST',
-                resolver: resolver(token)
-            });
-
-            // create a client engine and a game engine
-            const gameEngine = new MyGameEngine(options);
-            const clientEngine = new MyClientEngine(gameEngine, options);
-
-            gameEngine.on('cameraMoved', () => this.props.onCameraMove());
-
-            clientEngine.start().then(({ socket, gameApi }) => {
-                this.props.onStart(socket, gameApi);
-                clientEngine.socket.on('solution', (data) => {
-                    gameEngine.renderer.onReceiveSolution(
-                        data.problemId,
-                        data.playerId
-                    );
+            token.then((token) => {
+                let options = Object.assign(clientDefaults, {
+                    auth: { token },
+                    matchmaker: `match?mode=${this.props.mode}`,
+                    matchmakerMethod: 'POST',
+                    resolver: resolver(token)
                 });
 
-                // Sync server game status with client
-                socket.on('gameState', (data) => {
-                    console.log(data);
-                    gameEngine.setStatus(data.state);
+                // create a client engine and a game engine
+                const gameEngine = new MyGameEngine(options);
+                const clientEngine = new MyClientEngine(gameEngine, options);
+
+                gameEngine.on('cameraMoved', () => this.props.onCameraMove());
+
+                clientEngine.start().then(({ socket, gameApi }) => {
+                    this.props.onStart(socket, gameApi);
+                    clientEngine.socket.on('solution', (data) => {
+                        gameEngine.renderer.onReceiveSolution(
+                            data.problemId,
+                            data.playerId
+                        );
+                    });
+
+                    // Sync server game status with client
+                    socket.on('gameState', (data) => {
+                        console.log(data);
+                        gameEngine.setStatus(data.state);
+                    });
                 });
             });
         }

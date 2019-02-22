@@ -9,7 +9,8 @@ export default class ProblemComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            done: false
+            done: false,
+            alert: undefined
         };
 
         this.getChild.bind(this);
@@ -48,14 +49,21 @@ export default class ProblemComponent extends React.Component {
             {
                 problem: this.props.problem,
                 setDone: (done) => {
+                    let alert;
+
                     if (done) {
                         this.props.onSolution(
                             this.props.problem.id,
                             this.props.generator
                         );
-                        this.props.alert.success('Problem Solved!');
+                        alert = this.props.alert.success('Problem Solved!');
                     }
-                    this.setState({ done: done });
+                    
+                    if (this.state.alert) {
+                        this.state.alert.close();
+                    }
+
+                    this.setState({ done, alert });
                 },
                 generator: this.props.generator,
                 reportError: this.props.reportError

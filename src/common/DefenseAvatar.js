@@ -1,9 +1,8 @@
-import DynamicObject from 'lance/serialize/DynamicObject';
 import BaseTypes from 'lance/serialize/BaseTypes';
 import StaticActor from '../client/StaticActor.js';
-import { getSiegeItemFromId } from '../config';
+import CounterableAvatar from './CounterableAvatar.js';
 
-export default class DefenseAvatar extends DynamicObject {
+export default class DefenseAvatar extends CounterableAvatar {
     static get netScheme() {
         return Object.assign(
             {
@@ -21,28 +20,6 @@ export default class DefenseAvatar extends DynamicObject {
 
     static get name() {
         return 'DefenseAvatar';
-    }
-
-    syncTo(other) {
-        if (
-            this.attachedSiegeItemId == null &&
-            other.attachedSiegeItemId != null &&
-            this.actor
-        ) {
-            console.log(
-                `Syncing new attachedSiegeItemId: ${other.attachedSiegeItemId}`
-            );
-            this.attachSiegeItemSprite(other.attachedSiegeItemId);
-        }
-        super.syncTo(other);
-        this.attachedSiegeItemId = other.attachedSiegeItemId;
-    }
-
-    attachSiegeItemSprite(siegeItemId) {
-        this.actor.setLoading(false);
-
-        let siegeItem = getSiegeItemFromId(siegeItemId);
-        this.actor.compositeSprite(siegeItem.name);
     }
 
     get isKeyObject() {
@@ -65,14 +42,6 @@ export default class DefenseAvatar extends DynamicObject {
         this.class = DefenseAvatar;
     }
 
-    setLoading(id) {
-        if (id) {
-            this.actor.setLoading(true, getSiegeItemFromId(id).name);
-        } else {
-            this.actor.setLoading(false);
-        }
-    }
-
     setPlacable(set) {
         this.actor.setPlacable(set);
     }
@@ -87,17 +56,6 @@ export default class DefenseAvatar extends DynamicObject {
 
     get slows() {
         return this.blockingBehavior == 'slows' && !this.isCountered();
-    }
-
-    attachCounter(siegeItemId) {
-        if (this.attachedSiegeItemId != null) {
-            throw new Error(
-                `Cannot attach siege item: ${
-                    this.attachedSiegeItemId
-                } is already attached`
-            );
-        }
-        this.attachedSiegeItemId = siegeItemId;
     }
 
     onAddToWorld(gameEngine) {

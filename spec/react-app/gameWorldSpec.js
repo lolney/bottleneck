@@ -218,17 +218,37 @@ describe('WaterBuilder', () => {
         expect(pos.y).toBeGreaterThan((1 * maze.bounds.yLo) / 4);
     });
 
-    it('properly creates the center block', () => {
-        let block = builder.createCenterBlock();
+    it('properly creates the water blocks', () => {
+        for (const block of builder.createWaterBlocks()) {
+            expect(block.width).toEqual(width);
+            expect(block.height).toEqual(CORRIDOR_WIDTH);
+            expect(block.type).toEqual('siegeItem');
+            expect(block.playerNumber).toEqual(0);
+            expect(block.collected).toEqual(false);
+            expect(block.dbId).toEqual(jasmine.any(String));
+            expect(block.objectType).toEqual(jasmine.any(String));
+            expect(block.behaviorType).toEqual(jasmine.any(String));
+        }
+    });
 
-        expect(block.width).toEqual(width);
-        expect(block.height).toEqual(CORRIDOR_WIDTH);
-        expect(block.type).toEqual('siegeItem');
-        expect(block.playerNumber).toEqual(0);
-        expect(block.collected).toEqual(false);
-        expect(block.dbId).toEqual(jasmine.any(String));
-        expect(block.objectType).toEqual(jasmine.any(String));
-        expect(block.behaviorType).toEqual(jasmine.any(String));
+    it('properly calc water block positions', () => {
+        const positions = builder.waterBlockPositions();
+
+        for (const pos of positions) {
+            expect(pos.y).toBeLessThan(builder.bounds.getHeight());
+            expect(pos.y).toBeGreaterThan(0);
+        }
+    });
+
+    it('all water block positions are unique', () => {
+        const positions = builder.waterBlockPositions();
+        const seen = new Set();
+
+        for (const pos of positions) {
+            expect(seen.has(pos.y)).toBe(false);
+
+            seen.add(pos.y);
+        }
     });
 });
 

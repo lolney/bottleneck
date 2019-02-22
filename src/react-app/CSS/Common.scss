@@ -2,6 +2,7 @@ $tooltip-arrow-width: 20px;
 $border-radius-base: 1px;
 $tooltip-arrow-color: rgba(255, 0, 0, 0.9);
 $font-style: 300 "Lato", sans-serif;
+$theme-pink: #ff87c7;
 
 @mixin header {
   background: #f1f1f1;
@@ -107,12 +108,12 @@ input {
   @include selected-button;
   color: white;
   border-color: #600033;
-  background-color: #ff87c7;
+  background-color: $theme-pink;
   &:focus,
   &.focus {
     outline: none;
     box-shadow: none;
-    background-color: #ff87c7;
+    background-color: $theme-pink;
   }
   &:hover,
   &.hover {

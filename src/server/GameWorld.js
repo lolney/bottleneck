@@ -76,9 +76,9 @@ export default class GameWorld {
         objects.push(bottom.rightWall(wallWidth));
         objects = [left.bottomWall(wallWidth)].concat(objects);
 
-        objects.push(top.topWall(wallWidth));
-        objects.push(halfBounds.leftWall(wallWidth));
-        objects.push(bottom.bottomWall(wallWidth));
+        objects.push(top.topWall(wallWidth, { outer: true }));
+        objects.push(halfBounds.leftWall(wallWidth, { outer: true }));
+        objects.push(bottom.bottomWall(wallWidth, { outer: true }));
 
         let mirror = (pos) => new TwoVector(WIDTH - pos.x, pos.y);
         let start = left.getCenter();
@@ -92,7 +92,7 @@ export default class GameWorld {
         // Add the water
         let wb = new WaterBuilder(centerBounds, maze);
         objects.push(wb.createWater());
-        objects.push(wb.createCenterBlock());
+        objects = objects.concat(wb.createWaterBlocks());
 
         // TODO: generate other connecting walls, objects
         return new GameWorld(objects, [start, mirror(start)]);
@@ -348,72 +348,71 @@ export class Bounds {
         return this;
     }
 
+    static createWall(dims, options) {
+        const objectType = options && options.outer ? 'OuterWall' : 'Wall';
+        return {
+            ...dims,
+            id: Math.random(),
+            type: 'wall',
+            objectType
+        };
+    }
+
     /**
      * @returns {worldObject}
      */
-    topWall(wallWidth) {
+    topWall(wallWidth, options) {
         let center = new TwoVector(
             this.xLo + this.getWidth() / 2,
             this.yLo + wallWidth / 2
         );
-        return {
-            id: Math.random(),
-            position: center,
-            width: this.getWidth(),
-            height: wallWidth,
-            type: 'wall'
-        };
+        return Bounds.createWall(
+            { position: center, width: this.getWidth(), height: wallWidth },
+            options
+        );
     }
 
     /**
      * @returns {worldObject}
      */
-    rightWall(wallWidth) {
+    rightWall(wallWidth, options) {
         let center = new TwoVector(
             this.xHi - wallWidth / 2,
             this.yLo + this.getHeight() / 2
         );
-        return {
-            id: Math.random(),
-            position: center,
-            width: wallWidth,
-            height: this.getHeight(),
-            type: 'wall'
-        };
+        return Bounds.createWall(
+            { position: center, width: wallWidth, height: this.getHeight() },
+            options
+        );
     }
 
     /**
      * @returns {worldObject}
      */
-    leftWall(wallWidth) {
+    leftWall(wallWidth, options) {
         let center = new TwoVector(
             this.xLo + wallWidth / 2,
             this.yLo + this.getHeight() / 2
         );
-        return {
-            id: Math.random(),
-            position: center,
-            width: wallWidth,
-            height: this.getHeight(),
-            type: 'wall'
-        };
+        return Bounds.createWall(
+            { position: center, width: wallWidth, height: this.getHeight() },
+            options
+        );
     }
 
     /**
      * @returns {worldObject}
      */
-    bottomWall(wallWidth) {
+    bottomWall(wallWidth, options) {
         let center = new TwoVector(
             this.xLo + this.getWidth() / 2,
             this.yHi - wallWidth / 2
         );
-        return {
-            id: Math.random(),
+        return Bounds.createWall({
             position: center,
             width: this.getWidth(),
-            height: wallWidth,
-            type: 'wall'
-        };
+            height: wallWidth
+        }, options);
     }
 
     crop(xLo, xHi, yLo, yHi) {
@@ -465,13 +464,41 @@ export class WaterBuilder {
         return new TwoVector(xCenter, yCenter);
     }
 
+    *waterBlockPositions() {
+        const center = this.calcDummyCenter();
+        const height = this.maze.corridorWidth;
+
+        let current = center.clone();
+
+        while (current.y + height / 2 < this.bounds.getHeight()) {
+            yield current.clone();
+            current.y = current.y + height;
+        }
+
+        current = center.clone();
+        current.y -= height;
+
+        while (current.y - height / 2 > 0) {
+            yield current.clone();
+            current.y = current.y - height;
+        }
+    }
+
+    createWaterBlocks() {
+        const result = [];
+        for (const pos of this.waterBlockPositions()) {
+            result.push(this.createWaterBlock(pos));
+        }
+        return result;
+    }
+
     /**
      * @returns {worldObject}
      */
-    createCenterBlock() {
+    createWaterBlock(position) {
         return {
             id: Math.random(),
-            position: this.calcDummyCenter(),
+            position,
             width: this.bounds.getWidth(),
             height: this.maze.corridorWidth,
             type: 'siegeItem',

@@ -124,6 +124,7 @@ export default class Windows extends React.Component {
                 socket={socket}
                 addWindow={this.addWindow}
                 removeWindow={this.removeWindow}
+                removeMenu={this.removeMenu}
             />
         );
     }

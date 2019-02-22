@@ -61,10 +61,15 @@ export default function withSocketFetch(
             if (this.state.loading) {
                 return <WrappedComponent loading={true} {...this.props} />;
             } else {
-                let Component = withSocket(WrappedComponent, handlers, () => {
-                    return this.state.data;
-                });
-                return <Component loading={false} {...this.props} />;
+                if (!this.Component)
+                    this.Component = withSocket(
+                        WrappedComponent,
+                        handlers,
+                        () => {
+                            return this.state.data;
+                        }
+                    );
+                return <this.Component loading={false} {...this.props} />;
             }
         }
     }

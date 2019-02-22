@@ -190,17 +190,47 @@ export default class MyGameEngine extends GameEngine {
         obj.hp = hp;
     }
 
-    causesCollision() {
-        let collisionObjects = this.physicsEngine.collisionDetection.detect();
+    queryCollisionObjects(collisionObjects, query1, query2) {
         for (const pair of collisionObjects) {
             let objects = Object.values(pair);
-            let object = objects.find((o) => o.blocks);
-            let player = objects.find((o) => o instanceof PlayerAvatar);
+            let obj1 = objects.find(query1);
+            let obj2 = objects.find(query2);
 
-            if (!object || !player) continue;
-            return true;
+            if (!obj1 || !obj2) continue;
+
+            return { obj1, obj2 };
         }
-        return false;
+        return undefined;
+    }
+
+    causesCollision(collisionObjects) {
+        if (!collisionObjects) {
+            collisionObjects = this.physicsEngine.collisionDetection.detect();
+        }
+        const result = this.queryCollisionObjects(
+            collisionObjects,
+            (o) => o.blocks,
+            (o) => o instanceof PlayerAvatar
+        );
+
+        return result === undefined ? false : true;
+    }
+
+    handleTeleportable(collisionObjects) {
+        const result = this.queryCollisionObjects(
+            collisionObjects,
+            (o) => o.isTeleportable,
+            (o) => o instanceof PlayerAvatar
+        );
+
+        if (result) {
+            const wall = result.obj1;
+            const player = result.obj2;
+
+            return wall.handleTeleport(player);
+        } else {
+            return false;
+        }
     }
 
     getResources(problemId) {
@@ -310,15 +340,19 @@ export default class MyGameEngine extends GameEngine {
 
         super.processInput(inputData, playerId);
         // get the player's primary object
-        let player = this.queryObject({ playerNumber: playerId }, PlayerAvatar);
+        const player = this.queryObject(
+            { playerNumber: playerId },
+            PlayerAvatar
+        );
         if (player) {
             this.trace.info(
                 () => `player ${playerId} pressed ${inputData.input}`
             );
-            let { x, y } = player.position;
-            let step = player.speed;
+            const { x, y } = player.position;
+            const step = player.speed;
 
             if (inputData.input.x && inputData.input.y) {
+                // Tap/click movement
                 const vec = inputData.input;
                 player.moveTo(this, new TwoVector(vec.x, vec.y));
             } else if (inputData.input === 'up') {
@@ -337,17 +371,20 @@ export default class MyGameEngine extends GameEngine {
                 player.position.x -= step;
             }
 
-            let shouldRevert = this.causesCollision();
-            if (shouldRevert) {
-                this.trace.info(
-                    () =>
-                        `reverting position: ${player.position.x},${
-                            player.position.y
-                        }
+            const collisionObjects = this.physicsEngine.collisionDetection.detect();
+            if (!this.handleTeleportable(collisionObjects)) {
+                const shouldRevert = this.causesCollision(collisionObjects);
+                if (shouldRevert === true) {
+                    this.trace.info(
+                        () =>
+                            `reverting position: ${player.position.x},${
+                                player.position.y
+                            }
                     } => ${x},${y}`
-                );
-                player.position.x = x;
-                player.position.y = y;
+                    );
+                    player.position.x = x;
+                    player.position.y = y;
+                }
             }
         }
     }

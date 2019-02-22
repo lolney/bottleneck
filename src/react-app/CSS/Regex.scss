@@ -2,6 +2,60 @@
   padding: 10px;
   color: white;
   word-wrap: break-word;
-  max-width: 49%;
   margin: auto;
+  max-width: 60%;
+  z-index: 4;
+}
+
+@mixin regexBasics {
+  width: 210px;
+  font-weight: bold;
+}
+
+.regexSupercontainer {
+  @include regexBasics;
+  position: relative;
+}
+
+.regexTop {
+  @include regexBasics;
+  background-image: url("assets/Door1-Top.png");
+  z-index: 3;
+  top: 0;
+  height: 44px;
+}
+
+.regexMiddle {
+  @include regexBasics;
+  background-image: url("assets/Door1-Middle.png");
+  position: absolute;
+  z-index: -1;
+  bottom: 0;
+  height: calc(100% - 44px);
+}
+
+.regexHandle {
+  @include regexBasics;
+  background-image: url("assets/Door1-Handle.png");
+  position: absolute;
+  bottom: 40%;
+  height: 30px;
+}
+
+.regexBottom {
+  @include regexBasics;
+  background-image: url("assets/Door1-Bottom.png");
+  position: absolute;
+  bottom: 0;
+  height: 47px;
+  z-index: 3;
+}
+
+mark {
+  background-color: rgba(0, 0, 0, 0);
+  color: #ff87c7;
+}
+
+.highlight-partial {
+  opacity: 0.5;
 }

@@ -1,6 +1,7 @@
-import { siegeItems } from '../config';
+import { siegeItems, getSiegeItemFromName } from '../config';
 import DefenseAvatar from '../common/DefenseAvatar';
 import BotAvatar from '../common/BotAvatar';
+import WallAvatar from '../common/WallAvatar';
 
 const DETACH_THRESHOLD = 100;
 
@@ -109,7 +110,7 @@ class OffensiveDragObject {
         this.gameObject.setPlacable(false);
 
         this.start = (_, other) => {
-            if (other.isCountered()) {
+            if (other.isCountered() || !this.countersItem(other)) {
                 return;
             }
             console.log('attaching offensive item');
@@ -122,7 +123,8 @@ class OffensiveDragObject {
 
         let gameObjectTest = (o) => o.id == gameObject.id;
         let otherObjectTest = (o) =>
-            o instanceof DefenseAvatar && o.behaviorType == 'defensive';
+            (o instanceof DefenseAvatar && o.behaviorType == 'defensive') ||
+            o instanceof WallAvatar;
         // Can prevent players from placing on their own defences
         // && !this.gameEngine.isOwnedByPlayer(o);
 
@@ -147,6 +149,11 @@ class OffensiveDragObject {
             (o) => this.attachedObjects[o.id],
             this.stop
         );
+    }
+
+    countersItem(object) {
+        const myItem = getSiegeItemFromName(this.gameObject.objectType);
+        return myItem.counters.includes(object.objectType);
     }
 
     resetAttachedObject() {

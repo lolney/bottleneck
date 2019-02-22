@@ -40,16 +40,59 @@ export default class RegexProblem extends Problem {
         }
     }
 
+    static get regexCheatsheet() {
+        return `
+/*
+**** CHEATSHEET ****
+---CHARACTERS---
+.: any character
+\\d: digit
+\\w: word character: ASCII letter, digit or underscore
+\\s: whitespace
+\\D: not a digit
+\\W: not a word
+\\S: not a whitespace
+
+[abc]: any of a, b, c
+[^abc]: not a, b, or c
+[a-c]: character between a and c
+
+---ANCHORS---
+^: start of string
+$: end of string
+\\b: word boundary
+\\B: not word boundary
+
+---Quantifiers---
++: one or more
+*: zero or more
+?: none or one
+?: makes quantifiers lazy
+{2}: 2 times
+{2,4}: 2-4 times	
+
+---Groups---
+|: OR operand
+(…): Capturing group
+\\1>: Contents of group 1
+(?:…)	Non-capturing group	
+(?=…)	positive lookahead
+(?!…)	negative lookahead
+*/`;
+    }
+
     getTitle() {
         return 'Word matching';
     }
 
     getDescription() {
-        return 'Write a regular expression that selects the words highlighted in yellow.';
+        return 'Write a regular expression that selects the pink words, matching the image on the right with the one on the left.';
     }
 
     getStartingCode() {
-        return '/hello|world/';
+        return `/hello|world/
+
+${RegexProblem.regexCheatsheet}`;
     }
 
     getTypeString() {
@@ -92,6 +135,13 @@ export default class RegexProblem extends Problem {
             );
         }
         return (string) => RegexProblem.testFull(regex, string);
+    }
+
+    static wrapPartialGenerator(regex) {
+        return (string) => {
+            let matches = RegexProblem.findMatches(regex, string);
+            return matches.length > 0 ? matches[0] : '';
+        };
     }
 
     async serialize() {

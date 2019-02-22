@@ -144,6 +144,14 @@ class Controller {
                     );
                 }
 
+                if (!defense.attachCounter) {
+                    throw new Error(
+                        `Defense '${
+                            data.gameObjectId
+                        }' does not have method attachCounter`
+                    );
+                }
+
                 await this.deductResourceCosts(playerId, resources);
 
                 defense.attachCounter(data.defenseId);

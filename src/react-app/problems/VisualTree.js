@@ -1,5 +1,6 @@
 import paper from 'paper';
 import Validator, { Type } from '../../problem-engine/Validator';
+import { ENGINE_METHOD_DH } from 'constants';
 
 export class BinaryTree {
     constructor(el) {
@@ -65,7 +66,7 @@ class BinaryNode {
             return new Path.Line({
                 from: pos1,
                 to: pos2,
-                strokeColor: 'black',
+                strokeColor: '#90684D',
                 strokeWidth: 2 * scale
             }).sendToBack();
         }
@@ -86,8 +87,8 @@ class BinaryNode {
         this.circle = new Path.Circle({
             radius: radius,
             strokeWidth: 2 * scale,
-            fillColor: 'white',
-            strokeColor: 'black',
+            fillColor: '#6AB656',
+            strokeColor: '#6AB656',
             center: pos
         });
         this.text = new PointText({
@@ -98,6 +99,7 @@ class BinaryNode {
                 pos.y + 9 * scale
             ),
             fontSize: 26 * scale + 'px',
+            fontStyle: 'Lato sans-serif',
             fillColor: 'black',
             content: '' + tree.element
         });
@@ -114,20 +116,23 @@ export default class VisualTree {
         Symbol.iterator = a;
         this.animation = animation;
 
-        const scale = 0.5;
+        const windowSize = window.devicePixelRatio
+            ? window.devicePixelRatio
+            : 1;
+        const scale = windowSize / 2;
+        const height = BinaryTree.getHeight(tree);
+        const dH = 60 * scale;
         this.staticConfig = {
-            height: BinaryTree.getHeight(tree),
-            dH: 60 * scale,
+            height,
+            dH: -dH,
             sideMargin: 50 * scale,
             scale: scale,
-            originY: 30 * scale
+            originY: height * dH
         };
         this.canvas = canvas;
 
-        canvas.height =
-            this.staticConfig.height * this.staticConfig.dH +
-            this.staticConfig.originY;
-        canvas.style = '';
+        canvas.height = this.staticConfig.originY + 30;
+        canvas.style.height = (1 / windowSize) * canvas.height + 'px';
 
         window.onresize = () => {
             this.deleteTreeVisual(tree);

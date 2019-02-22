@@ -32,6 +32,7 @@ $image-width: 100%;
   .row-2 {
     @include row;
     min-height: 37.5%;
+    z-index: 1;
   }
   .main {
     flex: 1;

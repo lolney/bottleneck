@@ -12,6 +12,7 @@ export default class MenuWindow extends React.Component {
                     socket={this.props.socket}
                     addWindow={this.props.addWindow}
                     removeWindow={this.props.removeWindow}
+                    removeMenu={this.props.removeMenu}
                 />
             </div>
         );
@@ -22,6 +23,29 @@ class Menu extends React.Component {
     render() {
         return (
             <div className="menu">
+                <div className="barStyle">
+                    <Button
+                        onClick={this.props.removeMenu}
+                        style={{
+                            position: 'absolute',
+                            right: '1px',
+                            top: '1px',
+                            padding: '1px',
+                            background: 'rgba(241, 241, 241, 0.0)',
+                            border: 'none',
+                            outline: 'none'
+                        }}
+                    >
+                        <div>
+                            <img
+                                src="assets/x.svg"
+                                alt="close-button"
+                                height="15px"
+                                width="15px"
+                            />
+                        </div>
+                    </Button>
+                </div>
                 <div className="header">
                     <h1>Main Menu</h1>
                 </div>
@@ -69,5 +93,6 @@ class Menu extends React.Component {
 Menu.propTypes = {
     socket: PropTypes.object.isRequired,
     addWindow: PropTypes.func.isRequired,
-    removeWindow: PropTypes.func.isRequired
+    removeWindow: PropTypes.func.isRequired,
+    removeMenu: PropTypes.func.isRequired
 };

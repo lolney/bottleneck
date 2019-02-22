@@ -58,6 +58,7 @@ class SiegeItem extends React.Component {
             <MyTooltipText
                 name={siegeItem.name}
                 behavior={siegeItem.behavior}
+                counters={siegeItem.counters}
                 type={siegeItem.type}
             />
         );
@@ -95,16 +96,27 @@ class SiegeItem extends React.Component {
 }
 
 class MyTooltipText extends React.Component {
+    static formatList(counters) {
+        return counters.join(', ');
+    }
+
     render() {
         if (this.props.type == 'defensive') {
             return (
                 <div>
                     <strong>{this.props.name}</strong>
-                    <span>{': ' + this.props.behavior + ' opponents'}</span>
+                    <span>{`: ${this.props.behavior} opponents`}</span>
                 </div>
             );
         } else {
-            return <div>{<strong>{this.props.name}</strong>}</div>;
+            return (
+                <div>
+                    <strong>{this.props.name}</strong>
+                    <span>{`: counters ${MyTooltipText.formatList(
+                        this.props.counters
+                    )}`}</span>
+                </div>
+            );
         }
     }
 }
@@ -120,10 +132,32 @@ class ResourceDisplay extends React.Component {
     }
 }
 
-SiegeItemsWrapper.propTypes = {
-    data: PropTypes.arrayOf(PropTypes.object).isRequired,
-    resources: PropTypes.shape({
-        wood: PropTypes.number,
-        stone: PropTypes.number
-    }).isRequired
+const resourcesPropType = PropTypes.shape({
+    wood: PropTypes.number,
+    stone: PropTypes.number
+});
+
+const siegeItemPropTypes = {
+    name: PropTypes.string.isRequired,
+    behavior: PropTypes.string,
+    counters: PropTypes.arrayOf(PropTypes.string),
+    type: PropTypes.string.isRequired
 };
+
+SiegeItemsWrapper.propTypes = {
+    data: PropTypes.arrayOf(PropTypes.object),
+    resources: resourcesPropType.isRequired
+};
+
+SiegeItem.propTypes = {
+    resources: PropTypes.arrayOf(
+        PropTypes.shape({
+            name: PropTypes.string.isRequired,
+            count: PropTypes.number.isRequired
+        })
+    ).isRequired,
+    item: PropTypes.shape(siegeItemPropTypes).isRequired,
+    isBuyable: PropTypes.bool.isRequired
+};
+
+MyTooltipText.propTypes = siegeItemPropTypes;
