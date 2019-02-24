@@ -49,12 +49,16 @@ export default class WallAvatar extends CounterableAvatar {
         return this.teleportable !== undefined;
     }
 
+    get isVertical() {
+        return this.width < this.height;
+    }
+
     handleTeleport(player) {
         return this.teleportable.handleTeleport(player);
     }
 
     getDirections() {
-        if (this.width < this.height) {
+        if (this.isVertical) {
             return [Edges.LEFT, Edges.RIGHT];
         } else {
             return [Edges.TOP, Edges.BOTTOM];
@@ -62,11 +66,16 @@ export default class WallAvatar extends CounterableAvatar {
     }
 
     attachSiegeItemSprite(siegeItemId) {
-        // TODO: different asset depending on orientation
-        super.attachSiegeItemSprite(siegeItemId);
+        const name = this.isVertical ? 'ladderSide' : 'Ladder';
+
+        super.attachSiegeItemSprite(siegeItemId, name);
         this.attachLadder();
     }
 
+    /**
+     * Required to get the desired serverside behavior
+     * @param {*} siegeItemId
+     */
     attachCounter(siegeItemId) {
         super.attachCounter(siegeItemId);
         this.attachLadder();

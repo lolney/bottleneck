@@ -1,4 +1,8 @@
-import { siegeItems, getSiegeItemFromName } from '../config';
+import {
+    siegeItems,
+    getSiegeItemFromName,
+    getSiegeItemFromId
+} from '../config';
 import DefenseAvatar from '../common/DefenseAvatar';
 import BotAvatar from '../common/BotAvatar';
 import WallAvatar from '../common/WallAvatar';
@@ -93,9 +97,9 @@ export default class DragHandler {
 
     removeTempObject() {
         let obj = this.dragObject.gameObject;
-        console.log('removing ', obj.dbId);
 
         this.gameEngine.removeObjectFromWorld(obj.id);
+        this.dragObject.removed = true;
         this.dragObject = null;
     }
 }
@@ -113,12 +117,9 @@ class OffensiveDragObject {
             if (other.isCountered() || !this.countersItem(other)) {
                 return;
             }
-            console.log('attaching offensive item');
             if (!this.attachedObjects[other.id]) {
                 this.attachedObjects[other.id] = other;
             }
-
-            console.log('attached item:', this.attachedObject);
         };
 
         let gameObjectTest = (o) => o.id == gameObject.id;
@@ -138,7 +139,7 @@ class OffensiveDragObject {
         this.attachedObjects = {};
 
         this.stop = (_, object) => {
-            if (object == this.attachedObject) {
+            if (object == this.attachedObject && !this.removed) {
                 this.resetAttachedObject();
             }
             delete this.attachedObjects[object.id];
@@ -157,7 +158,6 @@ class OffensiveDragObject {
     }
 
     resetAttachedObject() {
-        console.log('resetting');
         this.attachedObject.setLoading(false);
         this.attachedObject = null;
         this.gameObject.setPlacable(false);
@@ -213,7 +213,7 @@ class OffensiveDragObject {
             this.gameEngine.removeListener(fn)
         );
         if (this.attachedObject != null) {
-            this.attachedObject.setLoading(true);
+            this.attachedObject.setLoading(this.id);
             router.mergeObjects(id, this.attachedObject.id);
         }
     }

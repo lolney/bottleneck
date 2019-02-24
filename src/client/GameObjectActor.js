@@ -1,5 +1,4 @@
 import AnimatedActor from './AnimatedActor';
-import StaticActor from './StaticActor';
 import { waves } from '../shaders';
 let PIXI = null;
 

@@ -20,7 +20,8 @@ export default class MyRenderer extends Renderer {
                 defense: 'assets/sprites/tree1.png',
                 wall: 'assets/rock-wall-2.png',
                 dirt: 'assets/dirt.png',
-                questionMark: 'assets/questionMark.png'
+                questionMark: 'assets/questionMark.png',
+                ladderSide: 'assets/ladder2-side.png'
             },
             getAssetPaths()
         );

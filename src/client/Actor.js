@@ -31,11 +31,11 @@ export default class Actor {
     }
 
     setLoading(set = true, resource = null) {
-        if (set) {
+        if (set && !this.loadingSprite && resource != null) {
             this.loadingSprite = this.createSprite(resource);
             this.loadingSprite.filters = [new PIXI.filters.AlphaFilter(0.6)];
             this.sprite.addChild(this.loadingSprite);
-        } else if (this.loadingSprite) {
+        } else if (!set && this.loadingSprite) {
             this.sprite.removeChild(this.loadingSprite);
             this.loadingSprite = null;
         }
