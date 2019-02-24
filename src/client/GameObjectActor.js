@@ -1,4 +1,7 @@
 import AnimatedActor from './AnimatedActor';
+import StaticActor from './StaticActor';
+import { waves } from '../shaders';
+let PIXI = null;
 
 /*const State = Object.freeze({
     COLLECTED: symbol('collected'),
@@ -23,24 +26,41 @@ export default class GameObjectActor {
         solvedBy,
         collected
     ) {
+        PIXI = require('pixi.js');
+
         this.actor = new AnimatedActor(avatar, renderer, resource, 0.1, true);
+
+        // Handle special cases for different object types
+        switch (avatar.objectType) {
+        case 'tree':
+            this.actor.setShader(avatar, renderer, waves);
+            break;
+        default:
+            break;
+        }
+
         this.myplayerNumber = myplayerNumber;
         this.handleSolutionFromPlayer(solvedBy, collected);
+
+        // Add to renderer index
         renderer.addGameObjectActor(problemId, this);
     }
 
     handleSolutionFromPlayer(playerNumber, collected) {
+        // Collected
         if (collected == true) {
             this.actor.playOnce();
             let filter = new PIXI.filters.AlphaFilter(0.4);
             this.actor.sprite.filters = [filter];
-        } else if (playerNumber == undefined || playerNumber == null) {
-            this.actor.sprite.filters = [];
-        } else if (playerNumber == this.myplayerNumber) {
+        }
+        // Solved by active player
+        else if (playerNumber == this.myplayerNumber) {
             let filter = new PIXI.filters.ColorMatrixFilter();
             filter.negative();
             this.actor.sprite.filters = [filter];
-        } else {
+        }
+        // Solved by another player
+        else if (playerNumber != undefined && playerNumber != null) {
             let filter = new PIXI.filters.ColorMatrixFilter();
             filter.greyscale();
             this.actor.sprite.filters = [filter];

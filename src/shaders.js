@@ -63,3 +63,27 @@ export const water = `
         gl_FragColor.a = 0.5;
     }
 `;
+
+export const waves = `
+    varying vec2 vTextureCoord;
+    varying vec4 vColor;
+
+    uniform sampler2D uSampler;
+    uniform vec4 uTextureClamp;
+    uniform vec4 uColor;
+    uniform vec2 resolution;
+    uniform float time;
+
+    float distFromCenter() {
+        return length(vec2(.5,.5) - vTextureCoord);
+    }
+
+    void main(void)
+    {
+        float dis = distFromCenter();
+        gl_FragColor = texture2D(uSampler, vTextureCoord);
+        if(gl_FragColor.a > 0.0) {
+            gl_FragColor.r = gl_FragColor.r * 0.5 + abs(cos(time/1000.0 + 20.0*dis)) * 0.5;
+        }
+    }
+`;
