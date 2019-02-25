@@ -1,5 +1,6 @@
 import AnimatedActor from './AnimatedActor';
 import { waves } from '../shaders';
+import { resourceObjectTypes } from '../constants';
 let PIXI = null;
 
 /*const State = Object.freeze({
@@ -31,7 +32,7 @@ export default class GameObjectActor {
 
         // Handle special cases for different object types
         switch (avatar.objectType) {
-        case 'tree':
+        case resourceObjectTypes.ROCK:
             this.actor.setShader(avatar, renderer, waves);
             break;
         default:

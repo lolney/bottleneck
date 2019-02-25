@@ -1,6 +1,7 @@
 import Jimp from 'jimp'; // does not work in browser if not global
 import Problem from './Problem';
 import Validator, { Type, Range } from './Validator';
+import { problemTypes } from '../constants';
 
 function* imageIterator(image) {
     let h = image.bitmap.height;
@@ -52,7 +53,7 @@ export default class ImageProblem extends Problem {
     }
 
     getTypeString() {
-        return 'image';
+        return problemTypes.IMAGE;
     }
 
     serialize() {

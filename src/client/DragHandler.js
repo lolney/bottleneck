@@ -99,7 +99,7 @@ export default class DragHandler {
         let obj = this.dragObject.gameObject;
 
         this.gameEngine.removeObjectFromWorld(obj.id);
-        this.dragObject.removed = true;
+        this.dragObject.destroy();
         this.dragObject = null;
     }
 }
@@ -139,7 +139,7 @@ class OffensiveDragObject {
         this.attachedObjects = {};
 
         this.stop = (_, object) => {
-            if (object == this.attachedObject && !this.removed) {
+            if (object == this.attachedObject) {
                 this.resetAttachedObject();
             }
             delete this.attachedObjects[object.id];
@@ -150,6 +150,10 @@ class OffensiveDragObject {
             (o) => this.attachedObjects[o.id],
             this.stop
         );
+    }
+
+    destroy() {
+        this.gameEngine.removeCollisionStop(this.stop);
     }
 
     countersItem(object) {

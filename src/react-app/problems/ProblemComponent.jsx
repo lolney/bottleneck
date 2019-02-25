@@ -4,6 +4,7 @@ import ImageComponent from './ImageComponent.jsx';
 import PropTypes from 'prop-types';
 import '../CSS/Image.scss';
 import RegexComponent from './RegexComponent.jsx';
+import { problemTypes } from '../../constants.js';
 
 export default class ProblemComponent extends React.Component {
     constructor(props) {
@@ -28,11 +29,11 @@ export default class ProblemComponent extends React.Component {
 
     getChild(typeString) {
         switch (typeString) {
-        case 'btree':
+        case problemTypes.BTREE:
             return BinaryTreeComponent;
-        case 'image':
+        case problemTypes.IMAGE:
             return ImageComponent;
-        case 'regex':
+        case problemTypes.REGEX:
             return RegexComponent;
         default:
             throw new TypeError('unexpected typeString');
@@ -58,7 +59,7 @@ export default class ProblemComponent extends React.Component {
                         );
                         alert = this.props.alert.success('Problem Solved!');
                     }
-                    
+
                     if (this.state.alert) {
                         this.state.alert.close();
                     }

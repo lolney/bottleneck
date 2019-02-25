@@ -1,21 +1,29 @@
 import regex from './regexes.json';
 import safe from 'safe-regex';
 import RandExp from 'randexp';
+import { problemTypes } from '../src/constants.js';
 
 export const solvedProblems = [
-    { problem: { name: 'image0', type: 'image' }, code: 'code' },
-    { problem: { name: 'image1', type: 'image' }, code: 'code' },
-    { problem: { name: 'This is a long name', type: 'btree' }, code: 'code' },
+    { problem: { name: 'image0', type: problemTypes.IMAGE }, code: 'code' },
+    { problem: { name: 'image1', type: problemTypes.IMAGE }, code: 'code' },
+    {
+        problem: { name: 'This is a long name', type: problemTypes.BTREE },
+        code: 'code'
+    },
     {
         problem: {
             name: 'image2',
-            type: 'image',
+            type: problemTypes.IMAGE,
             subproblem: { type: 'gradient' }
         },
         code: 'code'
     },
     {
-        problem: { name: 'image3', type: 'image', subproblem: { type: 'sin' } },
+        problem: {
+            name: 'image3',
+            type: problemTypes.IMAGE,
+            subproblem: { type: 'sin' }
+        },
         code: 'code'
     }
 ];

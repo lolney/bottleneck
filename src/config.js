@@ -1,3 +1,5 @@
+import { resourceObjectTypes, resourceTypes } from './constants';
+
 export const WIDTH = 2000;
 export const HEIGHT = 1200;
 
@@ -179,3 +181,18 @@ export const clientDefaults = {
         }
     }
 };
+
+export const resources = [
+    {
+        objectType: resourceObjectTypes.ROCK,
+        behaviorType: 'resource',
+        yield: 5,
+        resource: resourceTypes.STONE
+    },
+    {
+        objectType: resourceObjectTypes.TREE,
+        behaviorType: 'resource',
+        yield: 5,
+        resource: resourceTypes.WOOD
+    }
+];

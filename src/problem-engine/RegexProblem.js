@@ -3,6 +3,7 @@ import RandExp from 'randexp';
 import { randomInRanges, randomInt } from '../lib/random';
 import weighted from 'weighted';
 import safe from 'safe-regex';
+import { problemTypes } from '../constants';
 
 export default class RegexProblem extends Problem {
     constructor(regex, id, subproblem, name) {
@@ -96,7 +97,7 @@ ${RegexProblem.regexCheatsheet}`;
     }
 
     getTypeString() {
-        return 'regex';
+        return problemTypes.REGEX;
     }
 
     static findMatches(regex, string) {
