@@ -1,5 +1,5 @@
 import AnimatedActor from './AnimatedActor';
-import { GameStatus as Status } from '../common/types';
+import { Status } from '../common/BotAvatar';
 
 let PIXI = null;
 
