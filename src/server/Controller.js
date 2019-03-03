@@ -23,16 +23,19 @@ import logger from './Logger';
 import { GameStatus as Status } from '../common/types';
 import Socket, { Response } from '../common/Socket';
 import ProblemGenerator from '../problem-engine/ProblemGenerator';
+import FeatureFlags from '../FeatureFlags';
 
 /**
  * Mediates interaction between the client, server-side game engine,
  * and DB. Must be initialized with {@link Controller#attachGameEngine}.
  */
 class Controller {
-    constructor(gameEngine, gameWorld) {
+    constructor(gameEngine, gameWorld, config) {
         this.playerMap = new PlayerMap();
         this.gameEngine = gameEngine;
         this.gameWorld = gameWorld;
+
+        this.featureFlags = new FeatureFlags(config);
     }
 
     /**
@@ -341,14 +344,15 @@ class Controller {
             throw Error('Problem not found');
         }
 
-        // TODO: temporary; should only be on solved problem
-        if (!this.playerMap.botExists(playerId)) {
-            this.addCollectorbot(
-                playerId,
-                this.playerMap.getPlayerNumber(playerId),
-                prob.id
-            );
-            this.playerMap.setBotExists(playerId);
+        if (this.featureFlags.isDebug()) {
+            if (!this.playerMap.botExists(playerId)) {
+                this.addCollectorbot(
+                    playerId,
+                    this.playerMap.getPlayerNumber(playerId),
+                    prob.id
+                );
+                this.playerMap.setBotExists(playerId);
+            }
         }
 
         this.playerMap.publish(playerId, 'problem', {
