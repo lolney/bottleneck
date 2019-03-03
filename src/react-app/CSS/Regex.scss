@@ -5,6 +5,12 @@
   margin: auto;
   max-width: 60%;
   z-index: 4;
+
+  li {
+    width: 100%;
+    word-break: break-all;
+    white-space: pre-wrap;
+  }
 }
 
 @mixin regexBasics {
