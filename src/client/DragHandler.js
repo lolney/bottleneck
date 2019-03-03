@@ -236,4 +236,6 @@ class DefensiveDragObject {
     handleDrop(router, id) {
         router.makeDefense(id, this.gameObject.position);
     }
+
+    destroy() {}
 }
