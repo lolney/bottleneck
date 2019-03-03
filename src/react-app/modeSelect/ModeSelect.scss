@@ -87,17 +87,30 @@ body {
     display: block;
     text-align: center;
     margin: auto;
-    width: 9vw;
+    width: 10vw;
+  }
+
+  .text-box {
+    display: flex;
+    flex-direction: row;
+    flex: 70%;
+    flex-wrap: wrap;
   }
 
   .title {
     color: #ff87c7;
     font: 300 1em "Lato", sans-serif;
-    font-size: 10vw;
-    text-align: center;
-    flex: 70%;
-    flex-wrap: wrap;
+    font-size: 8vw;
     display: block;
+    margin-bottom: -8%;
+  }
+
+  .subtitle {
+    color: #ff87c7;
+    font: 300 1em "Lato", sans-serif;
+    font-size: 2vw;
+    flex-wrap: nowrap;
+    margin-left: 0.4em;
   }
 
   .body-box {
