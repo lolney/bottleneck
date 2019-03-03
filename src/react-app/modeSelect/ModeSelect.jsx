@@ -22,7 +22,7 @@ export default class ModeSelect extends React.Component {
                             <div className="text-box">
                                 <div className="title">Bottleneck</div>
                                 <div className="subtitle">
-                                    Automate your base. Assault your opponents.
+                                    {'Automate your base. Assault your opponent\'s.'}
                                 </div>
                             </div>
                         </div>
