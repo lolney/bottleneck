@@ -194,5 +194,11 @@ export const resources = [
         behaviorType: 'resource',
         yield: 5,
         resource: resourceTypes.WOOD
+    },
+    {
+        objectType: resourceObjectTypes.MINE,
+        behaviorType: 'resource',
+        yield: 10,
+        resource: resourceTypes.STONE
     }
 ];

@@ -16,6 +16,7 @@ export default class MyRenderer extends Renderer {
                 collectionBot: 'assets/sprites/botwalk.json',
                 assaultBot: 'assets/sprites/assault-botwalk.json',
                 rock: 'assets/sprites/Rock2.json',
+                mine: 'assets/sprites/Door4.json',
                 background: '/assets/grass.jpg',
                 defense: 'assets/sprites/tree1.png',
                 wall: 'assets/rock-wall-2.png',
