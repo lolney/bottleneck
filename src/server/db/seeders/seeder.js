@@ -39,8 +39,11 @@ export async function up(queryInterface, Sequelize) {
     );
     problems = problems.concat([new BinaryTreeProblem()]).concat(regexProblems);
 
+    const problemById = {};
+
     problems.forEach((problem) => {
         problem.id = uuidv4();
+        problemById[problem.id] = problem;
     });
 
     await queryInterface.bulkInsert(
@@ -96,13 +99,16 @@ export async function up(queryInterface, Sequelize) {
     await queryInterface.bulkInsert(
         'gameObjects',
         [...Array(NUM_OBJECTS).keys()].map((i) => {
+            const problemId = rows[randomInt(0, rows.length)].id;
+            const objectType = problemById[problemId].getResourceType();
+
             return {
                 id: uuidv4(),
                 location: Sequelize.fn('ST_GeomFromText', randomPoint()),
-                objectType: resourceObjectTypes.ROCK,
+                objectType,
                 collected: false,
                 behaviorType: 'resource',
-                problemId: rows[randomInt(0, rows.length)].id,
+                problemId,
                 createdAt: date(),
                 updatedAt: date()
             };

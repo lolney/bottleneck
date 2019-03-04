@@ -2,7 +2,7 @@
 
 import DynamicObject from 'lance/serialize/DynamicObject';
 import BaseTypes from 'lance/serialize/BaseTypes';
-import GameObjectActor from '../client/GameObjectActor.js';
+import { GameObjectActorFactory } from '../client/GameObjectActor.js';
 import { Player } from '../config';
 
 export default class Avatar extends DynamicObject {
@@ -56,7 +56,7 @@ export default class Avatar extends DynamicObject {
 
     onAddToWorld(gameEngine) {
         if (gameEngine.renderer) {
-            this.actor = new GameObjectActor(
+            this.actor = GameObjectActorFactory.create(
                 this,
                 gameEngine.renderer,
                 this.objectType,

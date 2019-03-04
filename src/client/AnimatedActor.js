@@ -44,10 +44,14 @@ export default class AnimatedActor extends Actor {
         this.animate = !this.animate;
     }
 
-    playOnce() {
+    playOnce(index) {
+        index = index === undefined ? 0 : index;
+
         this.sprite.onLoop = () => {
-            // let nframes = this.sprite._textures.length;
-            this.sprite.gotoAndStop(0);
+            let nframes = this.sprite._textures.length;
+            let stop = (nframes + index) % nframes;
+
+            this.sprite.gotoAndStop(stop);
             this.sprite.onLoop = null;
         };
         this.sprite.play();
