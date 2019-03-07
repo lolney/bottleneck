@@ -169,10 +169,15 @@ export const clientDefaults = {
     delayInputCount: 3,
     scheduler: 'render-schedule',
     syncOptions: {
+        // Extrapolate: can go beyond server data, then corrected
+        // Interpolate: must wait for server data
         sync: 'extrapolate',
-        localObjBending: 0.0,
-        remoteObjBending: 0.0,
-        bendingIncrements: 6
+        // Bending: 0-1. Controls object angle, position, velocity.
+        // Amount of the total to bend in a single step
+        localObjBending: 0, // local objects: those belonging to current player
+        remoteObjBending: 0.1,
+        // Number of steps to apply the bending
+        bendingIncrements: 10
     },
     collisionOptions: {
         collisions: {

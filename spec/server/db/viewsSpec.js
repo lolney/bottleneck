@@ -59,7 +59,7 @@ describe('objects', () => {
                 for (const obj of objs) {
                     expect(obj.dbId).toEqual(jasmine.any(String));
                     expect(obj.position.length).toEqual(2);
-                    expect(obj.objectType).toEqual(resourceObjectTypes.ROCK);
+                    expect(Object.values(resourceObjectTypes)).toContain(obj.objectType);
                     expect(obj.behaviorType).toEqual('resource');
                     expect(obj.problemId).toEqual(jasmine.any(String));
                     expect(obj.solvedBy).toBeDefined();
