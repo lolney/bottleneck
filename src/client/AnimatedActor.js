@@ -1,9 +1,11 @@
+import Actor from './Actor';
+
 let PIXI = null;
 
 /**
  * Handles renderer-specific details for player
  */
-export default class AnimatedActor {
+export default class AnimatedActor extends Actor {
     /**
      *
      * @param {GameObject} avatar - corresponding GameObject
@@ -13,6 +15,8 @@ export default class AnimatedActor {
      * @param {boolean} shouldAdd - if true, add to the renderer's camera
      */
     constructor(avatar, renderer, resource, animationSpeed, shouldAdd = false) {
+        super();
+
         PIXI = require('pixi.js');
         // Create the sprite
         let sheet = PIXI.loader.resources[resource].spritesheet;
@@ -27,10 +31,8 @@ export default class AnimatedActor {
         this.animate = false;
 
         if (shouldAdd) {
-            renderer.camera.addChild(this.sprite);
+            this.attach(renderer, avatar);
         }
-        // Store in the renderer and in PIXI's renderer
-        renderer.sprites[avatar.id] = this.sprite;
     }
 
     togglePlay() {
@@ -42,19 +44,16 @@ export default class AnimatedActor {
         this.animate = !this.animate;
     }
 
-    playOnce() {
+    playOnce(index) {
+        index = index === undefined ? 0 : index;
+
         this.sprite.onLoop = () => {
-            // let nframes = this.sprite._textures.length;
-            this.sprite.gotoAndStop(0);
+            let nframes = this.sprite._textures.length;
+            let stop = (nframes + index) % nframes;
+
+            this.sprite.gotoAndStop(stop);
             this.sprite.onLoop = null;
         };
         this.sprite.play();
-    }
-
-    destroy(id, renderer) {
-        if (this.sprite) {
-            this.sprite.destroy();
-            delete renderer.sprites[id];
-        }
     }
 }

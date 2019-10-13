@@ -1,5 +1,5 @@
 import React from 'react';
-import { ButtonToolbar, Button } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
 /**

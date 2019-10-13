@@ -1,4 +1,8 @@
-import { siegeItems, getSiegeItemFromName } from '../config';
+import {
+    siegeItems,
+    getSiegeItemFromName,
+    getSiegeItemFromId
+} from '../config';
 import DefenseAvatar from '../common/DefenseAvatar';
 import BotAvatar from '../common/BotAvatar';
 import WallAvatar from '../common/WallAvatar';
@@ -93,9 +97,9 @@ export default class DragHandler {
 
     removeTempObject() {
         let obj = this.dragObject.gameObject;
-        console.log('removing ', obj.dbId);
 
         this.gameEngine.removeObjectFromWorld(obj.id);
+        this.dragObject.destroy();
         this.dragObject = null;
     }
 }
@@ -113,12 +117,9 @@ class OffensiveDragObject {
             if (other.isCountered() || !this.countersItem(other)) {
                 return;
             }
-            console.log('attaching offensive item');
             if (!this.attachedObjects[other.id]) {
                 this.attachedObjects[other.id] = other;
             }
-
-            console.log('attached item:', this.attachedObject);
         };
 
         let gameObjectTest = (o) => o.id == gameObject.id;
@@ -151,13 +152,16 @@ class OffensiveDragObject {
         );
     }
 
+    destroy() {
+        this.gameEngine.removeCollisionStop(this.stop);
+    }
+
     countersItem(object) {
         const myItem = getSiegeItemFromName(this.gameObject.objectType);
         return myItem.counters.includes(object.objectType);
     }
 
     resetAttachedObject() {
-        console.log('resetting');
         this.attachedObject.setLoading(false);
         this.attachedObject = null;
         this.gameObject.setPlacable(false);
@@ -213,7 +217,7 @@ class OffensiveDragObject {
             this.gameEngine.removeListener(fn)
         );
         if (this.attachedObject != null) {
-            this.attachedObject.setLoading(true);
+            this.attachedObject.setLoading(this.id);
             router.mergeObjects(id, this.attachedObject.id);
         }
     }
@@ -232,4 +236,6 @@ class DefensiveDragObject {
     handleDrop(router, id) {
         router.makeDefense(id, this.gameObject.position);
     }
+
+    destroy() {}
 }

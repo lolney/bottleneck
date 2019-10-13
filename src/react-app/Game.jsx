@@ -29,7 +29,7 @@ class Game extends React.Component {
                 const gameEngine = new MyGameEngine(options);
                 const clientEngine = new MyClientEngine(gameEngine, options);
 
-                gameEngine.on('cameraMoved', () => this.props.onCameraMove());
+                gameEngine.once('cameraMoved', () => this.props.onCameraMove());
 
                 clientEngine.start().then(({ socket, gameApi }) => {
                     this.props.onStart(socket, gameApi);

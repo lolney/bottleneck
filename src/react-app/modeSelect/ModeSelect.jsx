@@ -19,7 +19,12 @@ export default class ModeSelect extends React.Component {
                                     src="assets/PlayerFace.png"
                                 />
                             </div>
-                            <div className="title">Bottleneck</div>
+                            <div className="text-box">
+                                <div className="title">Bottleneck</div>
+                                <div className="subtitle">
+                                    {'Automate your base. Assault your opponent\'s.'}
+                                </div>
+                            </div>
                         </div>
 
                         <div className="body-box">

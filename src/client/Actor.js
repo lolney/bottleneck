@@ -6,9 +6,11 @@ let PIXI = null;
 export default class Actor {
     constructor(avatar) {
         PIXI = require('pixi.js');
-        // Create the sprite
         this.sprite = new PIXI.Container();
-        this.sprite.position.set(avatar.position.x, avatar.position.y);
+        if (avatar) {
+            // Create the sprite
+            this.sprite.position.set(avatar.position.x, avatar.position.y);
+        }
     }
 
     attach(renderer, avatar) {
@@ -29,11 +31,11 @@ export default class Actor {
     }
 
     setLoading(set = true, resource = null) {
-        if (set) {
+        if (set && !this.loadingSprite && resource != null) {
             this.loadingSprite = this.createSprite(resource);
             this.loadingSprite.filters = [new PIXI.filters.AlphaFilter(0.6)];
             this.sprite.addChild(this.loadingSprite);
-        } else if (this.loadingSprite) {
+        } else if (!set && this.loadingSprite) {
             this.sprite.removeChild(this.loadingSprite);
             this.loadingSprite = null;
         }
@@ -45,6 +47,31 @@ export default class Actor {
         );
         mySprite.anchor.set(0.5, 0.5);
         return mySprite;
+    }
+
+    setShader(avatar, renderer, shader, sprite) {
+        if (!sprite) {
+            sprite = this.sprite;
+        }
+
+        let getAdustment = () => [renderer.camera.x, renderer.camera.y];
+        let myFilter = new PIXI.Filter(
+            null,
+            shader, // fragment shader
+            {
+                time: { value: 0.0 },
+                resolution: { value: [avatar.width, avatar.height] },
+                adjustment: { value: getAdustment() }
+            }
+        );
+
+        const fps = 60;
+        const interval = 1000 / fps;
+        renderer.gameEngine.on('preStep', () => {
+            myFilter.uniforms.time += interval;
+            myFilter.uniforms.adjustment = getAdustment();
+        });
+        sprite.filters = [myFilter];
     }
 
     getSprite() {

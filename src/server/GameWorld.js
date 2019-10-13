@@ -42,7 +42,7 @@ export default class GameWorld {
         let gameBounds = Bounds.fromDimensions(WIDTH, HEIGHT);
         let halfBounds = gameBounds.scale(0.48, 1);
 
-        let { left, top, bottom, center: mazeBounds } = halfBounds.crop(
+        let { top } = halfBounds.crop(
             0.25,
             1,
             0.3,

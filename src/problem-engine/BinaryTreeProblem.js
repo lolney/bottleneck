@@ -1,4 +1,5 @@
 import Problem from './Problem';
+import { problemTypes } from '../constants';
 
 export default class BinaryTreeProblem extends Problem {
     constructor(id) {
@@ -18,7 +19,7 @@ export default class BinaryTreeProblem extends Problem {
     }
 
     getTypeString() {
-        return 'btree';
+        return problemTypes.BTREE;
     }
 
     static getTrees() {

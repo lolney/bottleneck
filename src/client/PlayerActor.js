@@ -1,5 +1,5 @@
 import AnimatedActor from './AnimatedActor';
-import { GameStatus as Status } from '../common/types';
+import { Status } from '../common/BotAvatar';
 
 let PIXI = null;
 
@@ -8,7 +8,7 @@ let PIXI = null;
  */
 export default class PlayerActor extends AnimatedActor {
     constructor(avatar, renderer, identity, mainPlayer) {
-        super(avatar, renderer, identity, 0.25);
+        super(avatar, renderer, identity, 0.25, false);
         PIXI = require('pixi.js');
 
         this.lastPosition = Object.assign({}, avatar.position);
@@ -27,6 +27,7 @@ export default class PlayerActor extends AnimatedActor {
             this.sprite.y = renderer.viewportHeight / 2;
             renderer.layer1.addChild(this.sprite);
         }
+        renderer.sprites[avatar.id] = this.sprite;
     }
 
     applyFilters(identity, renderer, avatar) {

@@ -42,28 +42,28 @@ export default function withSocketReq(
             const succeeded = await this.socket.emit(event, req, (resp) => {
                 if (resp.type == 'SUCCESS') {
                     handler = handler ? handler : (data) => data;
-                    this.setState({
+                    this.setState(({ data }) => ({
                         activeRequests: this.state.activeRequests - 1,
                         data: {
-                            ...this.state.data,
+                            ...data,
                             ...handler(resp.data),
                             _nonce: Math.random()
                         }
-                    });
+                    }));
                 } else {
                     console.error(
                         `Error while handling request ${event}: ${resp.msg}`
                     );
-                    this.setState({
-                        activeRequests: this.state.activeRequests - 1
-                    });
+                    this.setState(({ activeRequests }) => ({
+                        activeRequests: activeRequests - 1
+                    }));
                 }
             });
 
             if (succeeded) {
-                this.setState({
-                    activeRequests: this.state.activeRequests + 1
-                });
+                this.setState(({ activeRequests }) => ({
+                    activeRequests: activeRequests + 1
+                }));
             }
         }
 

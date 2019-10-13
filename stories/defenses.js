@@ -6,7 +6,6 @@ import DefensesBrowser from '../src/react-app/defenses/DefensesBrowser.jsx';
 import '../src/react-app/CSS/Defenses.scss';
 
 import { siegeItems } from '../src/config';
-import { solvedProblems } from '../src/config';
 import MockSocket from './mockSocket';
 
 let socket = new MockSocket()

@@ -23,6 +23,8 @@ export default class PlayerAvatar extends DynamicObject {
 
     /**
      * Overriding bendToCurrent to maintain position, velocity from server
+     * Even with local bending set to zero, current player is a bit jumpy
+     * without doing this.
      */
     bendToCurrent(original, percent, worldSettings, isLocal, increments) {
         let position = this.position.clone();

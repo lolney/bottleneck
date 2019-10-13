@@ -19,11 +19,13 @@ export default class CounterableAvatar extends DynamicObject {
         this.attachedSiegeItemId = other.attachedSiegeItemId;
     }
 
-    attachSiegeItemSprite(siegeItemId) {
+    attachSiegeItemSprite(siegeItemId, name) {
         this.actor.setLoading(false);
 
-        let siegeItem = getSiegeItemFromId(siegeItemId);
-        this.actor.compositeSprite(siegeItem.name);
+        const siegeItem = getSiegeItemFromId(siegeItemId);
+        name = name == undefined ? siegeItem.name : name;
+
+        this.actor.compositeSprite(name);
     }
 
     isCountered() {

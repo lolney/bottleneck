@@ -1,11 +1,7 @@
 import AnimatedActor from './AnimatedActor';
-
-/*const State = Object.freeze({
-    COLLECTED: symbol('collected'),
-    SOLVED_BY_ME: symbol('solved_by_me'),
-    SOLVED_BY_OTHER: symbol('solved_by_other'),
-    UNSOLVED: symbol('unsolved')
-});*/
+import { waves } from '../shaders';
+import { resourceObjectTypes } from '../constants';
+let PIXI = null;
 
 /**
  * Has sprites for
@@ -13,7 +9,7 @@ import AnimatedActor from './AnimatedActor';
  * - Solved by another player
  * - Solved by player that owns this game engine
  */
-export default class GameObjectActor {
+class GameObjectActor {
     constructor(
         avatar,
         renderer,
@@ -23,24 +19,32 @@ export default class GameObjectActor {
         solvedBy,
         collected
     ) {
+        PIXI = require('pixi.js');
+
         this.actor = new AnimatedActor(avatar, renderer, resource, 0.1, true);
+
         this.myplayerNumber = myplayerNumber;
         this.handleSolutionFromPlayer(solvedBy, collected);
+
+        // Add to renderer index
         renderer.addGameObjectActor(problemId, this);
     }
 
     handleSolutionFromPlayer(playerNumber, collected) {
+        // Collected
         if (collected == true) {
-            this.actor.playOnce();
+            this.actor.playOnce(-1);
             let filter = new PIXI.filters.AlphaFilter(0.4);
             this.actor.sprite.filters = [filter];
-        } else if (playerNumber == undefined || playerNumber == null) {
-            this.actor.sprite.filters = [];
-        } else if (playerNumber == this.myplayerNumber) {
+        }
+        // Solved by active player
+        else if (playerNumber == this.myplayerNumber) {
             let filter = new PIXI.filters.ColorMatrixFilter();
             filter.negative();
             this.actor.sprite.filters = [filter];
-        } else {
+        }
+        // Solved by another player
+        else if (playerNumber != undefined) {
             let filter = new PIXI.filters.ColorMatrixFilter();
             filter.greyscale();
             this.actor.sprite.filters = [filter];
@@ -53,5 +57,81 @@ export default class GameObjectActor {
 
     getSprite() {
         return this.actor.sprite;
+    }
+}
+
+class RockActor extends GameObjectActor {
+    constructor(
+        avatar,
+        renderer,
+        resource,
+        problemId,
+        myplayerNumber,
+        solvedBy,
+        collected
+    ) {
+        super(
+            avatar,
+            renderer,
+            resource,
+            problemId,
+            myplayerNumber,
+            solvedBy,
+            collected
+        );
+        this.actor.setShader(avatar, renderer, waves);
+    }
+}
+
+class MineActor extends GameObjectActor {
+    handleSolutionFromPlayer(playerNumber, collected) {
+        // Collected
+        if (collected == true) {
+            let filter = new PIXI.filters.AlphaFilter(0.4);
+            this.actor.sprite.filters = [filter];
+        }
+        // Solved by active player
+        else if (playerNumber == this.myplayerNumber) {
+            this.actor.playOnce(-1);
+            super.handleSolutionFromPlayer(playerNumber, collected);
+        }
+        // Solved by another player
+        else if (playerNumber != undefined && playerNumber != null) {
+            this.actor.playOnce(-1);
+            super.handleSolutionFromPlayer(playerNumber, collected);
+        }
+    }
+}
+
+export class GameObjectActorFactory {
+    static create(
+        avatar,
+        renderer,
+        resource,
+        problemId,
+        myplayerNumber,
+        solvedBy,
+        collected
+    ) {
+        const Actor = (() => {
+            switch (avatar.objectType) {
+            case resourceObjectTypes.MINE:
+                return MineActor;
+            case resourceObjectTypes.ROCK:
+                return RockActor;
+            default:
+                return GameObjectActor;
+            }
+        })();
+
+        return new Actor(
+            avatar,
+            renderer,
+            resource,
+            problemId,
+            myplayerNumber,
+            solvedBy,
+            collected
+        );
     }
 }

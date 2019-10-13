@@ -19,9 +19,6 @@ export const mockEngine = (data) => ({
 export default class AsyncComponent extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            data: null
-        };
         this.windows = React.createRef();
     }
 

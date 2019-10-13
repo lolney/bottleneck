@@ -1,3 +1,5 @@
+import { resourceObjectTypes } from '../constants';
+
 export default class Problem {
     constructor(id, subproblem, name) {
         this.id = id;
@@ -27,6 +29,14 @@ export default class Problem {
 
     getStartingCode() {
         return '() => {return 0};';
+    }
+
+    getResourceType() {
+        return resourceObjectTypes.ROCK;
+    }
+
+    getWeight() {
+        return 1;
     }
 
     getTypeString() {

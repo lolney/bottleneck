@@ -6,6 +6,7 @@ import { WIDTH, HEIGHT } from '../../.../../../config';
 import RegexProblem from '../../../problem-engine/RegexProblem';
 import { randomInRanges, randomInt } from '../../../lib/random';
 import regexes from './regexes.json';
+import { resourceObjectTypes, problemTypes } from '../../../constants';
 
 const NUM_OBJECTS = 50;
 const RIVER_RADIUS = 120;
@@ -38,8 +39,11 @@ export async function up(queryInterface, Sequelize) {
     );
     problems = problems.concat([new BinaryTreeProblem()]).concat(regexProblems);
 
+    const problemById = {};
+
     problems.forEach((problem) => {
         problem.id = uuidv4();
+        problemById[problem.id] = problem;
     });
 
     await queryInterface.bulkInsert(
@@ -60,7 +64,7 @@ export async function up(queryInterface, Sequelize) {
     await queryInterface.bulkInsert(
         'images',
         problems
-            .filter((x) => x.getTypeString() == 'image')
+            .filter((x) => x.getTypeString() == problemTypes.IMAGE)
             .map((problem, i) => {
                 return {
                     id: problem.id,
@@ -75,7 +79,7 @@ export async function up(queryInterface, Sequelize) {
     await queryInterface.bulkInsert(
         'regexes',
         problems
-            .filter((x) => x.getTypeString() == 'regex')
+            .filter((x) => x.getTypeString() == problemTypes.REGEX)
             .map((problem, i) => {
                 return {
                     id: problem.id,
@@ -95,13 +99,16 @@ export async function up(queryInterface, Sequelize) {
     await queryInterface.bulkInsert(
         'gameObjects',
         [...Array(NUM_OBJECTS).keys()].map((i) => {
+            const problemId = rows[randomInt(0, rows.length)].id;
+            const objectType = problemById[problemId].getResourceType();
+
             return {
                 id: uuidv4(),
                 location: Sequelize.fn('ST_GeomFromText', randomPoint()),
-                objectType: 'tree',
+                objectType,
                 collected: false,
                 behaviorType: 'resource',
-                problemId: rows[randomInt(0, rows.length)].id,
+                problemId,
                 createdAt: date(),
                 updatedAt: date()
             };

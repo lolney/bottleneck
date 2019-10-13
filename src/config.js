@@ -1,3 +1,5 @@
+import { resourceObjectTypes, resourceTypes } from './constants';
+
 export const WIDTH = 2000;
 export const HEIGHT = 1200;
 
@@ -167,10 +169,15 @@ export const clientDefaults = {
     delayInputCount: 3,
     scheduler: 'render-schedule',
     syncOptions: {
+        // Extrapolate: can go beyond server data, then corrected
+        // Interpolate: must wait for server data
         sync: 'extrapolate',
-        localObjBending: 0.0,
-        remoteObjBending: 0.0,
-        bendingIncrements: 6
+        // Bending: 0-1. Controls object angle, position, velocity.
+        // Amount of the total to bend in a single step
+        localObjBending: 0, // local objects: those belonging to current player
+        remoteObjBending: 0.1,
+        // Number of steps to apply the bending
+        bendingIncrements: 10
     },
     collisionOptions: {
         collisions: {
@@ -179,3 +186,24 @@ export const clientDefaults = {
         }
     }
 };
+
+export const resources = [
+    {
+        objectType: resourceObjectTypes.ROCK,
+        behaviorType: 'resource',
+        yield: 5,
+        resource: resourceTypes.STONE
+    },
+    {
+        objectType: resourceObjectTypes.TREE,
+        behaviorType: 'resource',
+        yield: 5,
+        resource: resourceTypes.WOOD
+    },
+    {
+        objectType: resourceObjectTypes.MINE,
+        behaviorType: 'resource',
+        yield: 10,
+        resource: resourceTypes.STONE
+    }
+];

@@ -13,8 +13,8 @@ let disconnect = MockSocket.create('disconnect');
 
 storiesOf('ConnectionOverlay', module)
     .addDecorator(StorybookConsole)
-    .add('Finishing', () => <ConnectionOverlay {connect.socket} />)
-    .add('Matchmaking', () => <ConnectionOverlay {disconnect.socket} />);
+    .add('Finishing', () => <ConnectionOverlay socket={connect.socket} />)
+    .add('Matchmaking', () => <ConnectionOverlay socket={disconnect.socket} />);
 
 //    .add('Disconnect Overlay', () => (
 //        <ConnectionOverlay openWindow={(code) => alert(code)} socket={lose} />

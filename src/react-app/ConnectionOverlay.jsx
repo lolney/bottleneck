@@ -1,9 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import withSocket from './withSocket.jsx';
 import { GameStatus as Status } from '../common/types';
 import 'semantic-ui-css/semantic.min.css';
-import { Dimmer, Loader, Image, Segment } from 'semantic-ui-react';
+import { Dimmer, Loader } from 'semantic-ui-react';
 
 const State = Object.freeze({
     Connected: 'connected',

@@ -5,7 +5,6 @@ import { WIDTH, HEIGHT } from '../config';
 import TwoVector from 'lance/serialize/TwoVector';
 import DragHandler from './DragHandler';
 import { getAssetPaths } from '../config';
-import PlayerAvatar from '../common/PlayerAvatar';
 
 let PIXI = null;
 
@@ -16,12 +15,14 @@ export default class MyRenderer extends Renderer {
                 player: 'assets/sprites/walking.json',
                 collectionBot: 'assets/sprites/botwalk.json',
                 assaultBot: 'assets/sprites/assault-botwalk.json',
-                tree: 'assets/sprites/Rock2.json',
+                rock: 'assets/sprites/Rock2.json',
+                mine: 'assets/sprites/Door4.json',
                 background: '/assets/grass.jpg',
                 defense: 'assets/sprites/tree1.png',
                 wall: 'assets/rock-wall-2.png',
                 dirt: 'assets/dirt.png',
-                questionMark: 'assets/questionMark.png'
+                questionMark: 'assets/questionMark.png',
+                ladderSide: 'assets/ladder2-side.png'
             },
             getAssetPaths()
         );

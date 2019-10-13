@@ -27,6 +27,7 @@ import { createGame, destroyGame } from '../../../src/server/db/views/game';
 import models from '../../../src/server/db/models';
 import TwoVector from 'lance/serialize/TwoVector';
 import { assaultBot, playerBase } from '../../../src/config';
+import { problemTypes, resourceObjectTypes } from '../../../src/constants';
 
 let userCount = 0;
 
@@ -58,7 +59,7 @@ describe('objects', () => {
                 for (const obj of objs) {
                     expect(obj.dbId).toEqual(jasmine.any(String));
                     expect(obj.position.length).toEqual(2);
-                    expect(obj.objectType).toEqual('tree');
+                    expect(Object.values(resourceObjectTypes)).toContain(obj.objectType);
                     expect(obj.behaviorType).toEqual('resource');
                     expect(obj.problemId).toEqual(jasmine.any(String));
                     expect(obj.solvedBy).toBeDefined();
@@ -103,7 +104,7 @@ describe('problem', () => {
         let problems = await Promise.all(objs.map((obj) => problem(obj.dbId)));
         for (const prob of problems) {
             let problem = prob.problem;
-            if (problem.type == 'image') {
+            if (problem.type == problemTypes.IMAGE) {
                 expect(typeof problem.subproblem.original).toEqual('string');
             }
         }
@@ -113,7 +114,7 @@ describe('problem', () => {
         let problems = await Promise.all(objs.map((obj) => problem(obj.dbId)));
         for (const prob of problems) {
             let problem = prob.problem;
-            if (problem.type == 'regex') {
+            if (problem.type == problemTypes.REGEX) {
                 expect(typeof problem.subproblem.regex).toEqual('string');
             }
         }
@@ -122,7 +123,7 @@ describe('problem', () => {
     it('marks unsolved problems as unsolved', async () => {
         let problems = await Promise.all(objs.map((obj) => problem(obj.dbId)));
         for (const prob of problems) {
-            if (prob.problem.type == 'image') {
+            if (prob.problem.type == problemTypes.IMAGE) {
                 expect(prob.isSolved).toBe(false);
             }
         }
@@ -265,7 +266,7 @@ describe('addSolution', () => {
             expect(solved.problem).toBeDefined();
             expect(solved.problem.name).toBeDefined();
             expect(solved.problem.type).toBeDefined();
-            if (solved.problem.type == 'image') {
+            if (solved.problem.type == problemTypes.IMAGE) {
                 expect(solved.problem.subproblem).toBeDefined();
                 expect(solved.problem.subproblem.type).toBeDefined();
             } else {
