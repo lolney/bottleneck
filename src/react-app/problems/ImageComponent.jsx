@@ -9,16 +9,11 @@ export default class ImageComponent extends React.Component {
         super(props);
 
         this.state = {
-            generator: this.props.generator,
             target: this.props.problem.target
         };
         this.problem = new Image(this.props.problem.original);
 
         this.componentDidUpdate = this.componentDidUpdate.bind(this);
-    }
-
-    componentDidMount() {
-        this.componentDidUpdate({ generator: null });
     }
 
     componentDidUpdate(prevProps) {

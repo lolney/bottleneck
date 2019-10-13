@@ -7,7 +7,7 @@ let PIXI = null;
  */
 export default class StaticActor extends Actor {
     constructor(avatar, renderer, resourceName, shouldAttach = true) {
-        super(avatar, renderer, resourceName);
+        super(avatar);
         PIXI = require('pixi.js');
         // Create the sprite
         this.mySprite = this.createSprite(resourceName);

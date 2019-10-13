@@ -14,8 +14,7 @@ class Tutorial extends React.Component {
 
         this.state = {
             modal: null,
-            arrow: null,
-            isActive: true
+            arrow: null
         };
 
         this.openModal = this.openModal.bind(this);
@@ -43,9 +42,6 @@ class Tutorial extends React.Component {
     }
 
     endTutorial() {
-        this.setState({
-            isActive: false
-        });
         this.eventMiddleware.active = false;
     }
 

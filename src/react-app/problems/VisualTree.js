@@ -1,6 +1,5 @@
 import paper from 'paper';
 import Validator, { Type } from '../../problem-engine/Validator';
-import { ENGINE_METHOD_DH } from 'constants';
 
 export class BinaryTree {
     constructor(el) {

@@ -68,13 +68,9 @@ export default class Windows extends React.Component {
 
     bringToFront(key) {
         let i = this.findKey(key);
-        this.setState({
-            order: [
-                ...this.state.order.slice(0, i),
-                ...this.state.order.slice(i + 1),
-                key
-            ]
-        });
+        this.setState(({ order }) => ({
+            order: [...order.slice(0, i), ...order.slice(i + 1), key]
+        }));
     }
 
     getTopKey(includeMenu = false) {
@@ -162,11 +158,11 @@ export default class Windows extends React.Component {
             callbacks[key] = callback;
         }
 
-        this.setState({
+        this.setState(({ order }) => ({
             windows: windows,
-            order: [...this.state.order, key],
+            order: [...order, key],
             callbacks: callbacks
-        });
+        }));
         return true;
     }
 
@@ -181,14 +177,11 @@ export default class Windows extends React.Component {
             delete callbacks[key];
         }
 
-        this.setState({
+        this.setState(({ order }) => ({
             windows: windows,
-            order: [
-                ...this.state.order.slice(0, i),
-                ...this.state.order.slice(i + 1)
-            ],
+            order: [...order.slice(0, i), ...order.slice(i + 1)],
             callbacks: callbacks
-        });
+        }));
     }
 
     render() {

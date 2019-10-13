@@ -44,7 +44,7 @@ class GameObjectActor {
             this.actor.sprite.filters = [filter];
         }
         // Solved by another player
-        else if (playerNumber != undefined && playerNumber != null) {
+        else if (playerNumber != undefined) {
             let filter = new PIXI.filters.ColorMatrixFilter();
             filter.greyscale();
             this.actor.sprite.filters = [filter];

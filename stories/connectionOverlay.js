@@ -9,9 +9,6 @@ import '../src/react-app/CSS/LoadingScreen.scss';
 import MockSocket from './mockSocket';
 
 let connect = MockSocket.create('connect');
-let authenticated = MockSocket.create('authenticated');
-
-let matchmaking = MockSocket.create('matchmaking');
 
 storiesOf('ConnectionOverlay', module)
     .addDecorator(StorybookConsole)

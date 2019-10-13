@@ -158,5 +158,5 @@ export class App extends React.Component {
     }
 }
 
-const GameContainer = withLogin(App, '/game.html');
+const GameContainer = withLogin(App);
 export default GameContainer;

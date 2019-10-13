@@ -5,7 +5,7 @@ import { storiesOf } from '@storybook/react';
 import AsyncComponent, { mockEngine } from './problemContainer';
 
 import RegexProblem from '../src/problem-engine/RegexProblem';
-import { regexes, loremIpsum } from './fixtures';
+import { regexes } from './fixtures';
 
 import '../src/react-app/CSS/Regex.scss';
 

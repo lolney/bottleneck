@@ -1,5 +1,3 @@
-import Socket from '../common/Socket';
-
 export default class Router {
     constructor(socket) {
         this.socket = socket;

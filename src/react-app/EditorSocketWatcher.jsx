@@ -1,14 +1,5 @@
 import React from 'react';
 import EditorModal from './EditorModal.jsx';
-import PropTypes from 'prop-types';
-import Windows from './Windows.jsx';
-import { Provider } from 'react-alert';
-import AlertTemplate from 'react-alert-template-basic';
-
-const options = {
-    timeout: 0,
-    position: 'bottom center'
-};
 
 /**
  * Handles socket interactions for all editor windows

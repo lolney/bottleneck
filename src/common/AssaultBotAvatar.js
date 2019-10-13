@@ -1,5 +1,4 @@
 import BotAvatar from './BotAvatar';
-import BaseTypes from 'lance/serialize/BaseTypes';
 
 export const State = {
     AT_ENEMY_BASE: Symbol('at_enemy_base'),

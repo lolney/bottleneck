@@ -11,8 +11,7 @@ export default class Editor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            value: props.value,
-            markers: []
+            value: props.value
         };
         this.onChange = this.onChange.bind(this);
         this.aceEditor = React.createRef();

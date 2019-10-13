@@ -3,7 +3,6 @@ import TilingActor from '../client/TilingActor';
 import BaseTypes from 'lance/serialize/BaseTypes';
 import { horizontalWall, verticalWall } from '../config';
 import TwoVector from 'lance/serialize/TwoVector';
-import { max } from 'moment';
 
 export const Edges = Object.freeze({
     LEFT: 'LEFT',
