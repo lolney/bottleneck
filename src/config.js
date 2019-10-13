@@ -174,10 +174,10 @@ export const clientDefaults = {
         sync: 'extrapolate',
         // Bending: 0-1. Controls object angle, position, velocity.
         // Amount of the total to bend in a single step
-        localObjBending: 0, // local objects: those belonging to current player
-        remoteObjBending: 0.1,
+        localObjBending: 0.0, // local objects: those belonging to current player
+        remoteObjBending: 0.0,
         // Number of steps to apply the bending
-        bendingIncrements: 10
+        bendingIncrements: 6
     },
     collisionOptions: {
         collisions: {
