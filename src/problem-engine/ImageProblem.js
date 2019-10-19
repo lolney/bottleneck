@@ -100,20 +100,15 @@ export default class ImageProblem extends Problem {
             for (const period of periods) {
                 for (const amplitude of amplitudes) {
                     for (const zero of zeros) {
-                        for (const independentX of [true, false]) {
-                            yield {
-                                generator: ImageProblem.sinGenerator(
-                                    period,
-                                    amplitude,
-                                    zero,
-                                    independentX
-                                ),
-                                name: `period ${period}, amplitude ${amplitude}, zero ${zero}, ${
-                                    independentX ? 'x' : 'y'
-                                }`,
-                                subproblem: 'sin'
-                            };
-                        }
+                        yield {
+                            generator: ImageProblem.sinGenerator(
+                                period,
+                                amplitude,
+                                zero,
+                            ),
+                            name: `period ${period}, amplitude ${amplitude}, zero ${zero}`,
+                            subproblem: 'sin'
+                        };
                     }
                 }
             }
@@ -122,7 +117,7 @@ export default class ImageProblem extends Problem {
         return [...gen()];
     }
 
-    static sinGenerator(period, amplitude, zero, independentX = true) {
+    static sinGenerator(period, amplitude, zero) {
         let factor = (2 * Math.PI) / period;
         let clamp = (x) => {
             if (x < 0) return 0;
@@ -132,8 +127,7 @@ export default class ImageProblem extends Problem {
         let fn = (x) =>
             Math.round(clamp(amplitude * Math.sin(x * factor) + zero));
 
-        if (independentX) return (x, y) => fn(x);
-        else return (x, y) => fn(y);
+        return (x, y) => fn(y);
     }
 
     static random(x, y) {

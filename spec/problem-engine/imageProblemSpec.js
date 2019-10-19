@@ -139,9 +139,9 @@ describe('constructor', () => {
 
 describe('sinGenerator', () => {
     it('creates a sin function', () => {
-        let generator = ImageProblem.sinGenerator(2 * Math.PI, 255, 0, true);
+        let generator = ImageProblem.sinGenerator(2 * Math.PI, 255, 0);
 
         expect(generator(0, 0)).toEqual(0);
-        expect(generator(Math.PI / 2, 0)).toEqual(255);
+        expect(generator(0, Math.PI / 2)).toEqual(255);
     });
 });
