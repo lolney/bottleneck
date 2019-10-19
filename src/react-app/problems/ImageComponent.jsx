@@ -16,22 +16,20 @@ export default class ImageComponent extends React.Component {
         this.componentDidUpdate = this.componentDidUpdate.bind(this);
     }
 
-    componentDidUpdate(prevProps) {
+    async componentDidUpdate(prevProps) {
         if (this.props.generator != prevProps.generator) {
             try {
                 const wrapped = Image.wrapGenerator(this.props.generator);
-                Image.create(wrapped)
-                    .then((newImage) => {
-                        if (this.problem.original == newImage.original)
-                            this.props.setDone(true);
-                        else this.props.setDone(false);
+                const newImage = await Image.create(wrapped);
+                const isApproximatelyEqual = await newImage.compareImage(
+                    this.problem
+                );
 
-                        this.setState({ target: newImage.original });
-                        this.props.reportError(null);
-                    })
-                    .catch((error) => {
-                        this.props.reportError(error);
-                    });
+                if (isApproximatelyEqual) this.props.setDone(true);
+                else this.props.setDone(false);
+
+                this.setState({ target: newImage.original });
+                this.props.reportError(null);
             } catch (error) {
                 this.props.reportError(error);
             }

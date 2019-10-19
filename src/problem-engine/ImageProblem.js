@@ -49,7 +49,7 @@ export default class ImageProblem extends Problem {
     }
 
     getStartingCode() {
-        return '(x,y) => {return 0};';
+        return '(x,y) => Math.round(255 * Math.sin(1));';
     }
 
     getTypeString() {
@@ -201,28 +201,26 @@ export class Image {
         });
     }
 
-    compareGenerator(generator) {
+    compareGenerator(generator, threshold = 0.1) {
         let orig = this.getImage();
         let play = Image.genImage(generator);
         return Promise.all([orig, play]).then((images) => {
-            return Image.compareImages(images[0], images[1]);
+            return Image.compareImages(images[0], images[1], threshold);
         });
     }
 
-    compareImage(problem) {
-        return Promise.all([this, problem].map((a) => a.getImage())).then(
-            (images) => {
-                return Image.compareImages(images[0], images[1]);
-            }
+    async compareImage(problem, threshold) {
+        const [image1, image2] = await Promise.all(
+            [this, problem].map((a) => a.getImage())
         );
+        return Image.compareImages(image1, image2, threshold);
     }
 
-    static compareImages(image1, image2) {
-        for (const index of imageIterator(image1)) {
-            if (image1.bitmap.data[index] != image2.bitmap.data[index])
-                return false;
-        }
-        return true;
+    // threshold of 0 means the images need to be identical
+    static compareImages(image1, image2, threshold = 0.2) {
+        const diff = Jimp.diff(image1, image2, threshold);
+        const distance = Jimp.distance(image1, image2);
+        return diff.percent <= threshold && distance <= threshold;
     }
 
     static wrapGenerator(generator) {
