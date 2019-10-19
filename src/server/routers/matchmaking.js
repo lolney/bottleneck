@@ -51,21 +51,18 @@ export class MatchmakingRouter {
         router.use(cookieParser());
 
         router.post('/match', async (req, res) => {
-            if (!req.query) {
-                res.status(500).send('Must include querystring');
-            } else {
-                const mode = req.query.mode;
+            if (!req.query)
+                return res.status(500).send('Must include querystring');
 
-                switch (mode) {
-                case 'vs':
-                    this.handleVs(res, req);
-                    break;
-                case 'practice':
-                    await this.handlePractice(res, req);
-                    break;
-                default:
-                    res.status(500).send('Must include mode parameter');
-                }
+            const mode = req.query.mode;
+
+            switch (mode) {
+            case 'vs':
+                return this.handleVs(res, req);
+            case 'practice':
+                return this.handlePractice(res, req);
+            default:
+                res.status(500).send('Must include mode parameter');
             }
         });
 

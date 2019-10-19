@@ -1,8 +1,4 @@
-import {
-    siegeItems,
-    getSiegeItemFromName,
-    getSiegeItemFromId
-} from '../config';
+import { siegeItems, getSiegeItemFromName } from '../config';
 import DefenseAvatar from '../common/DefenseAvatar';
 import BotAvatar from '../common/BotAvatar';
 import WallAvatar from '../common/WallAvatar';

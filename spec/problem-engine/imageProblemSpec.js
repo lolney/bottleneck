@@ -4,7 +4,7 @@ describe('compareGenerator', () => {
     it('an image should equal itself', (done) => {
         Image.create()
             .then((problem) => {
-                return problem.compareGenerator(ImageProblem.generate());
+                return problem.compareGenerator(ImageProblem.generate(), 0);
             })
             .then((result) => {
                 expect(result).toBe(true);
@@ -16,13 +16,25 @@ describe('compareGenerator', () => {
     it('two different images should not be equal', (done) => {
         Image.create()
             .then((problem) => {
-                return problem.compareGenerator(ImageProblem.random);
+                return problem.compareGenerator(ImageProblem.random, 0);
             })
             .then((result) => {
                 expect(result).toBe(false);
                 done();
             })
             .catch(done.fail);
+    });
+
+    it('two approximately equal images should be equal', async () => {
+        const image1 = await Image.create(() => 0).then((img) =>
+            img.getImage()
+        );
+        const image2 = await Image.create(() => 1).then((img) =>
+            img.getImage()
+        );
+        const result = Image.compareImages(image1, image2);
+
+        expect(result).toBe(true);
     });
 });
 
@@ -92,7 +104,7 @@ describe('constructor', () => {
                 .then((images) => {
                     const [image1, image2] = images;
 
-                    expect(Image.compareImages(image1, image2)).toBe(true);
+                    expect(Image.compareImages(image1, image2, 0)).toBe(true);
                     done();
                 })
                 .catch(done.fail);
@@ -111,7 +123,7 @@ describe('constructor', () => {
                 .then((images) => {
                     const [image1, image2] = images;
 
-                    expect(Image.compareImages(image1, image2)).toBe(false);
+                    expect(Image.compareImages(image1, image2, 0)).toBe(false);
                     done();
                 })
                 .catch(done.fail);

@@ -1,6 +1,3 @@
-import ImageProblem from '../problem-engine/ImageProblem';
-import BinaryTreeProblem from '../problem-engine/BinaryTreeProblem';
-
 import {
     problem,
     getObjectResources,
@@ -130,9 +127,7 @@ class Controller {
 
                 if (!defense.attachCounter) {
                     throw new Error(
-                        `Defense '${
-                            data.gameObjectId
-                        }' does not have method attachCounter`
+                        `Defense '${data.gameObjectId}' does not have method attachCounter`
                     );
                 }
 
