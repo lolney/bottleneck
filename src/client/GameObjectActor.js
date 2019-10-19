@@ -96,7 +96,7 @@ class MineActor extends GameObjectActor {
             super.handleSolutionFromPlayer(playerNumber, collected);
         }
         // Solved by another player
-        else if (playerNumber != undefined && playerNumber != null) {
+        else if (playerNumber != undefined) {
             this.actor.playOnce(-1);
             super.handleSolutionFromPlayer(playerNumber, collected);
         }

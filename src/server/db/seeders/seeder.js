@@ -6,7 +6,7 @@ import { WIDTH, HEIGHT } from '../../.../../../config';
 import RegexProblem from '../../../problem-engine/RegexProblem';
 import { randomInRanges, randomInt } from '../../../lib/random';
 import regexes from './regexes.json';
-import { resourceObjectTypes, problemTypes } from '../../../constants';
+import { problemTypes } from '../../../constants';
 
 const NUM_OBJECTS = 50;
 const RIVER_RADIUS = 120;
