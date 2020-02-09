@@ -2,7 +2,7 @@
   "name": "bottleneck",
   "version": "2.0.0",
   "engines": {
-    "node": ">= 7.6.0"
+    "node": "8.10.0"
   },
   "description": "Multiplayer RPG with scripting-based problem solving",
   "main": "main.js",
