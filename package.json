@@ -103,7 +103,6 @@
     "node-sass": "^4.11.0",
     "nyc": "^14.1.1",
     "raw-loader": "^0.5.1",
-    "react-jsdom": "git+https://github.com/tomcardoso/react-jsdom.git",
     "react-storybook-console": "^2.0.4",
     "sass-loader": "^7.0.1",
     "sequelize-auto-migrations": "^1.0.2",
