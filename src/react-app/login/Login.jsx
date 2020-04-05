@@ -10,19 +10,16 @@ class Login extends React.Component {
     constructor(props) {
         super(props);
         this.uiConfig = {
-            // Popup signin flow rather than redirect flow.
             signInFlow: 'popup',
-            // Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
             signInSuccessUrl: '/',
             callbacks: {
-                signInSuccess: this.props.onSuccess
+                signInSuccess: this.props.onSuccess,
             },
             credentialHelper: 'none',
-            // We will display Google and Facebook as auth providers.
             signInOptions: [
                 firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-                firebase.auth.EmailAuthProvider.PROVIDER_ID
-            ]
+                firebase.auth.EmailAuthProvider.PROVIDER_ID,
+            ],
         };
     }
 
@@ -40,7 +37,7 @@ class Login extends React.Component {
 }
 
 Login.propTypes = {
-    onSuccess: PropTypes.func.isRequired
+    onSuccess: PropTypes.func.isRequired,
 };
 
 export default Login;
