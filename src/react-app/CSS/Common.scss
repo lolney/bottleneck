@@ -1,7 +1,7 @@
 $tooltip-arrow-width: 20px;
 $border-radius-base: 1px;
 $tooltip-arrow-color: rgba(255, 0, 0, 0.9);
-$font-style: 300 "Lato", sans-serif;
+$font-style: 300 'Lato', sans-serif;
 $theme-pink: #ff87c7;
 
 @mixin header {
@@ -21,13 +21,13 @@ $theme-pink: #ff87c7;
 h1 {
   color: black;
   display: block;
-  font: 300 1em/1.5em "Lato", sans-serif;
+  font: 300 1em/1.5em 'Lato', sans-serif;
   font-size: 3em;
 }
 
 p {
   text-align: center;
-  font: 300 1em/1.5em "Lato", sans-serif;
+  font: 300 1em/1.5em 'Lato', sans-serif;
   font-size: 1em;
 }
 
@@ -141,7 +141,7 @@ input {
 }
 
 .tooltip {
-  font: 300 1em/1.5em "Lato", sans-serif;
+  font: 300 1em/1.5em 'Lato', sans-serif;
   font-size: 0.7em;
   color: white;
   background-color: rgba(0, 0, 0, 0.8);
@@ -207,5 +207,5 @@ input {
 
 .bootstrap-styles {
   $screen-sm: 1px;
-  @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap.scss";
+  @import 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap.scss';
 }
