@@ -62,7 +62,7 @@
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.84.0",
     "sequelize": "^4.44.3",
-    "socket.io": "^1.4.8",
+    "socket.io": "^2.4.0",
     "socketio-auth": "^0.1.1",
     "source-map-loader": "^0.2.3",
     "style-loader": "^0.21.0",
