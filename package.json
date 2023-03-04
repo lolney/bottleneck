@@ -100,7 +100,7 @@
     "image-webpack-loader": "^4.6.0",
     "jasmine": "^3.1.0",
     "jsdom": "^16.5.0",
-    "node-sass": "^4.14.1",
+    "node-sass": "^7.0.0",
     "nyc": "^14.1.1",
     "raw-loader": "^0.5.1",
     "react-storybook-console": "^2.0.4",
